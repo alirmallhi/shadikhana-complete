@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShadiKhana – Pakistan's Most Trusted Matrimony</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --burgundy:#7B1D3A; --rose:#C94070; --gold:#D4A853;
+  --cream:#FDF6EE; --ivory:#FAF3E8; --charcoal:#1C1C2E;
+  --mid:#5A5370; --light:#EDE3D6; --white:#FFFFFF; --green:#2D7A5F;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--charcoal);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:68px;background:rgba(253,246,238,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,168,83,0.2)}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--burgundy);text-decoration:none}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--burgundy),var(--rose));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:1.8rem}
+.nav-links a{text-decoration:none;color:var(--mid);font-size:.88rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--burgundy)}
+.nav-cta{background:var(--burgundy);color:#fff!important;padding:.45rem 1.2rem;border-radius:6px;font-weight:600!important}
+.nav-cta:hover{background:var(--rose)!important}
+.lang-toggle{display:flex;align-items:center;gap:6px;background:var(--light);border:none;border-radius:20px;padding:.3rem .8rem;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--mid)}
+.lang-toggle:hover{background:var(--gold);color:#fff}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+.hamburger span{width:24px;height:2px;background:var(--burgundy);border-radius:2px;display:block}
+.mobile-menu{display:none;position:fixed;top:68px;left:0;right:0;background:var(--white);padding:1.5rem 5%;border-bottom:1px solid var(--light);z-index:99;flex-direction:column;gap:1rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{text-decoration:none;color:var(--charcoal);font-size:1rem;font-weight:500;padding:.5rem 0;border-bottom:1px solid var(--light)}
+
+/* URDU MODE */
+body.urdu-mode{direction:rtl}
+body.urdu-mode .nav-logo,.urdu-content{font-family:'Noto Nastaliq Urdu',serif}
+.urdu-only{display:none}
+.eng-only{display:inline}
+body.urdu-mode .urdu-only{display:inline}
+body.urdu-mode .eng-only{display:none}
+
+/* HERO */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 5%;padding-top:68px;background:linear-gradient(135deg,var(--cream) 60%,#F5E6D3 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,64,112,0.08),transparent 70%);pointer-events:none}
+.hero-text{max-width:560px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(123,29,58,0.08);color:var(--burgundy);padding:.35rem 1rem;border-radius:20px;font-size:.8rem;font-weight:600;letter-spacing:.04em;margin-bottom:1.5rem;text-transform:uppercase}
+.urdu-tag{font-family:'Noto Nastaliq Urdu',serif;font-size:1rem;color:var(--gold)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,4vw,3.6rem);font-weight:700;line-height:1.13;margin-bottom:1.2rem}
+.hero h1 em{color:var(--burgundy);font-style:normal}
+.hero-sub{font-size:1rem;color:var(--mid);line-height:1.7;max-width:460px;margin-bottom:2rem}
+.hero-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,var(--burgundy),var(--rose));color:#fff;padding:.85rem 2rem;border-radius:8px;font-weight:600;font-size:.95rem;text-decoration:none;box-shadow:0 4px 18px rgba(123,29,58,0.35);transition:transform .2s,box-shadow .2s;border:none;cursor:pointer;display:inline-block}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(123,29,58,0.4)}
+.btn-outline{border:2px solid var(--burgundy);color:var(--burgundy);padding:.8rem 1.8rem;border-radius:8px;font-weight:600;font-size:.95rem;text-decoration:none;transition:background .2s,color .2s;display:inline-block}
+.btn-outline:hover{background:var(--burgundy);color:#fff}
+.hero-stats{display:flex;gap:2rem;margin-top:2.5rem;flex-wrap:wrap}
+.hero-stat strong{display:block;font-size:1.7rem;font-weight:700;color:var(--burgundy);font-family:'Playfair Display',serif}
+.hero-stat span{font-size:.8rem;color:var(--mid)}
+.lahore-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(45,122,95,0.1);color:var(--green);border:1px solid rgba(45,122,95,0.2);border-radius:20px;padding:.3rem .9rem;font-size:.78rem;font-weight:600;margin-top:1.5rem}
+
+/* PHONE MOCKUP */
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center;animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.phone-mockup{width:265px;height:545px;background:var(--charcoal);border-radius:40px;box-shadow:0 30px 80px rgba(28,28,46,0.35),0 0 0 8px rgba(28,28,46,0.08);position:relative;overflow:hidden;border:2px solid rgba(255,255,255,0.1)}
+.phone-screen{position:absolute;inset:10px;border-radius:32px;background:var(--ivory);overflow:hidden}
+.phone-header{background:linear-gradient(135deg,var(--burgundy),var(--rose));padding:18px 14px 14px;color:#fff}
+.phone-header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.phone-logo{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700}
+.phone-notif{background:rgba(255,255,255,0.2);border-radius:10px;padding:2px 8px;font-size:.65rem}
+.phone-search{background:rgba(255,255,255,0.2);border-radius:8px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:6px}
+.phone-cards{padding:10px;display:flex;flex-direction:column;gap:8px}
+.pcard{background:#fff;border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+.pcard-avatar{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.pcard-name{font-weight:600;font-size:.78rem;color:var(--charcoal)}
+.pcard-meta{font-size:.67rem;color:var(--mid);margin-top:2px}
+.pcard-badge{font-size:.6rem;padding:2px 6px;border-radius:10px;font-weight:600;margin-top:4px;display:inline-block}
+.badge-verified{background:#E8F5F0;color:var(--green)}
+.badge-featured{background:#FEF3E2;color:var(--gold)}
+.phone-bottom-nav{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #f0e8e0;display:flex;justify-content:space-around;padding:8px 0 10px}
+.pnav-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.pnav-item span:first-child{font-size:1.1rem}
+.pnav-item span:last-child{font-size:.55rem;color:var(--mid)}
+.pnav-item.active span:last-child{color:var(--burgundy);font-weight:600}
+.floating-card{position:absolute;background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 8px 30px rgba(0,0,0,0.12);font-size:.78rem}
+.float-match{left:-65px;top:110px}
+.float-match .match-pct{font-size:1.4rem;font-weight:700;color:var(--rose);font-family:'Playfair Display',serif}
+.float-notif{right:-55px;bottom:150px;min-width:155px}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.notif-dot{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse-dot 2s infinite}
+
+/* SECTION COMMONS */
+section{padding:90px 5%}
+.section-label{display:inline-block;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.7rem);font-weight:700;color:var(--charcoal);line-height:1.2;margin-bottom:1rem}
+.section-sub{font-size:.95rem;color:var(--mid);line-height:1.7}
+.section-header{margin-bottom:3.5rem}
+
+/* TRUST BAR */
+.trust{background:var(--white);padding:40px 5%}
+.trust-inner{display:flex;align-items:center;justify-content:center;gap:2.5rem;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:.6rem;color:var(--mid);font-size:.86rem;font-weight:500}
+.trust-item-icon{font-size:1.3rem}
+
+/* HOW IT WORKS */
+.how{background:var(--white)}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+.step{text-align:center;padding:2rem 1rem;border-radius:16px;position:relative;transition:transform .2s,box-shadow .2s}
+.step:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(123,29,58,0.1)}
+.step-num{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700}
+.step:nth-child(1) .step-num{background:rgba(123,29,58,0.08);color:var(--burgundy)}
+.step:nth-child(2) .step-num{background:rgba(212,168,83,0.12);color:var(--gold)}
+.step:nth-child(3) .step-num{background:rgba(201,64,112,0.1);color:var(--rose)}
+.step:nth-child(4) .step-num{background:rgba(45,122,95,0.1);color:var(--green)}
+.step-icon{font-size:2rem;margin-bottom:.8rem}
+.step h3{font-weight:600;font-size:.95rem;margin-bottom:.5rem}
+.step p{font-size:.85rem;color:var(--mid);line-height:1.6}
+.step-connector{position:absolute;top:38px;right:-1rem;color:var(--light);font-size:1.4rem}
+
+/* PRICING */
+.plans{background:var(--ivory)}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;align-items:start;max-width:1100px;margin:0 auto}
+.plan-card.executive{border-color:#1565C0;border-width:3px;background:linear-gradient(160deg,#F0F7FF 0%,#E8F2FF 60%,#F0F7FF 100%);color:#0D2B5E;box-shadow:0 20px 60px rgba(21,101,192,0.18)}
+.plan-card.executive .plan-name{color:#1565C0}
+.plan-card.executive .plan-price{color:#0D47A1}
+.plan-card.executive .plan-sub{color:#4A7FBF}
+.plan-card.executive .plan-success-fee{background:rgba(21,101,192,0.08);border-color:rgba(21,101,192,0.25);color:#1565C0}
+.plan-card.executive .plan-features li{color:#1A3560}
+.plan-card.executive .plan-features li::before{color:#1565C0}
+.plan-card.executive .btn-plan{background:linear-gradient(135deg,#1565C0,#0D47A1);color:#fff;font-weight:700;box-shadow:0 4px 16px rgba(21,101,192,0.4)}
+.plan-card.executive .btn-plan:hover{filter:brightness(1.1)}
+.exec-badge{position:absolute;top:0;right:20px;background:linear-gradient(135deg,#2196F3,#0A6ECC);color:#fff;font-size:.68rem;font-weight:800;padding:5px 13px;border-radius:0 0 10px 10px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.plan-card{border-radius:22px;padding:2.2rem 1.8rem;position:relative;overflow:hidden;border:2px solid var(--light);background:var(--white);transition:transform .2s,box-shadow .2s}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(123,29,58,0.12)}
+.plan-card.featured{border-color:var(--burgundy);background:linear-gradient(160deg,var(--burgundy) 0%,#5A1028 100%);color:#fff;transform:scale(1.04);box-shadow:0 20px 60px rgba(123,29,58,0.35)}
+.plan-badge{position:absolute;top:0;right:20px;background:var(--gold);color:var(--charcoal);font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:0 0 10px 10px;letter-spacing:.05em;text-transform:uppercase}
+.plan-icon{font-size:2rem;margin-bottom:.8rem}
+.plan-name{font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}
+.plan-card:not(.featured) .plan-name{color:var(--mid)}
+.plan-card.featured .plan-name{color:rgba(255,255,255,0.7)}
+.plan-price{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;line-height:1;margin-bottom:.2rem}
+.plan-card:not(.featured) .plan-price{color:var(--burgundy)}
+.plan-sub{font-size:.78rem;margin-bottom:.3rem}
+.plan-card:not(.featured) .plan-sub{color:var(--mid)}
+.plan-card.featured .plan-sub{color:rgba(255,255,255,0.65)}
+.plan-success-fee{background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);border-radius:8px;padding:.6rem .8rem;font-size:.78rem;margin-bottom:1.4rem;color:var(--gold);font-weight:600}
+.plan-card.featured .plan-success-fee{background:rgba(212,168,83,0.2);border-color:rgba(212,168,83,0.4)}
+.plan-features{list-style:none;margin-bottom:2rem;display:flex;flex-direction:column;gap:.7rem}
+.plan-features li{font-size:.88rem;display:flex;align-items:flex-start;gap:.6rem;line-height:1.4}
+.plan-features li::before{content:'✓';font-weight:700;flex-shrink:0}
+.plan-card:not(.featured) .plan-features li::before{color:var(--green)}
+.plan-card.featured .plan-features li::before{color:var(--gold)}
+.plan-card:not(.featured) .plan-features li{color:var(--mid)}
+.plan-card.featured .plan-features li{color:rgba(255,255,255,0.85)}
+.plan-card:not(.featured) .plan-features li.disabled{opacity:.4}
+.plan-card:not(.featured) .plan-features li.disabled::before{content:'✕';color:var(--mid)}
+.btn-plan{width:100%;padding:.85rem;border-radius:10px;font-weight:600;font-size:.95rem;cursor:pointer;border:none;transition:transform .15s,box-shadow .15s;font-family:inherit}
+.plan-card:not(.featured) .btn-plan{background:var(--burgundy);color:#fff;box-shadow:0 4px 14px rgba(123,29,58,0.25)}
+.plan-card:not(.featured) .btn-plan:hover{background:var(--rose)}
+.plan-card.featured .btn-plan{background:var(--gold);color:var(--charcoal);box-shadow:0 4px 14px rgba(212,168,83,0.4)}
+.success-fee-note{background:var(--white);border-radius:16px;padding:1.8rem 2rem;margin-top:2.5rem;border:2px solid var(--light);display:flex;align-items:flex-start;gap:1.2rem}
+.sfn-icon{font-size:2.2rem;flex-shrink:0}
+.sfn-title{font-weight:700;font-size:1rem;margin-bottom:.4rem}
+.sfn-desc{font-size:.88rem;color:var(--mid);line-height:1.6}
+.payment-methods{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--light);justify-content:center}
+.pm-label{font-size:.82rem;color:var(--mid);font-weight:600}
+.pm-badge{background:var(--white);border:1.5px solid var(--light);border-radius:8px;padding:.4rem .9rem;font-size:.82rem;font-weight:700;color:var(--charcoal)}
+
+/* PROFILES */
+.profiles-section{background:var(--cream)}
+.profiles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.profile-card{background:var(--white);border-radius:18px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.07);transition:transform .2s,box-shadow .2s;cursor:pointer}
+.profile-card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(123,29,58,0.14)}
+.profile-card-top{height:150px;display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative}
+.pc1{background:linear-gradient(135deg,#FDE8EF,#FAD0DE)}
+.pc2{background:linear-gradient(135deg,#E8F0FD,#D0DCFA)}
+.pc3{background:linear-gradient(135deg,#FEF3E2,#FAE5C0)}
+.pc4{background:linear-gradient(135deg,#E8F5F0,#C8EAE0)}
+.pc5{background:linear-gradient(135deg,#F3E8FE,#E0C8FA)}
+.pc6{background:linear-gradient(135deg,#FDE8E8,#FAD0D0)}
+.profile-verified-badge{position:absolute;top:10px;right:10px;background:var(--green);color:#fff;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:10px}
+.profile-featured-badge{position:absolute;top:10px;right:10px;background:var(--gold);color:#fff;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:10px}
+.profile-vip-badge{position:absolute;top:10px;right:10px;background:var(--burgundy);color:#fff;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:10px}
+.profile-card-body{padding:1.2rem 1.3rem 1.4rem}
+.profile-name{font-weight:700;font-size:1rem;margin-bottom:.25rem}
+.profile-details{font-size:.8rem;color:var(--mid);margin-bottom:.7rem;line-height:1.55}
+.profile-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.9rem}
+.tag{background:var(--cream);color:var(--mid);font-size:.68rem;padding:3px 8px;border-radius:6px;border:1px solid var(--light)}
+.profile-actions{display:flex;gap:.6rem}
+.btn-interest{flex:1;background:var(--burgundy);color:#fff;border:none;border-radius:8px;padding:.55rem;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
+.btn-interest:hover{background:var(--rose)}
+.btn-save{border:1.5px solid var(--light);background:transparent;border-radius:8px;padding:.55rem .8rem;font-size:1rem;cursor:pointer;transition:border-color .2s}
+.btn-save:hover{border-color:var(--rose)}
+
+/* FEATURES */
+.features{background:var(--white)}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
+.features-list{display:flex;flex-direction:column;gap:1.5rem}
+.feature-item{display:flex;gap:1.2rem;align-items:flex-start}
+.feature-icon{width:46px;height:46px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.fi1{background:rgba(123,29,58,0.1)}
+.fi2{background:rgba(212,168,83,0.15)}
+.fi3{background:rgba(45,122,95,0.1)}
+.fi4{background:rgba(201,64,112,0.1)}
+.fi5{background:rgba(90,83,112,0.1)}
+.fi6{background:rgba(28,28,46,0.08)}
+.feature-item h4{font-weight:600;font-size:.92rem;margin-bottom:.3rem}
+.feature-item p{font-size:.84rem;color:var(--mid);line-height:1.6}
+.features-visual{border-radius:24px;overflow:hidden;background:linear-gradient(135deg,var(--burgundy),#4A0F22);padding:2.5rem;color:#fff}
+.fv-title{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:1.5rem}
+.fv-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.fv-stat{background:rgba(255,255,255,0.1);border-radius:14px;padding:1.2rem;border:1px solid rgba(255,255,255,0.15)}
+.fv-stat strong{display:block;font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);margin-bottom:.3rem}
+.fv-stat span{font-size:.78rem;color:rgba(255,255,255,0.7)}
+.fv-bar-section{margin-top:1.1rem}
+.fv-bar-label{display:flex;justify-content:space-between;font-size:.78rem;color:rgba(255,255,255,0.8);margin-bottom:.4rem}
+.fv-bar-track{background:rgba(255,255,255,0.15);border-radius:4px;height:6px}
+.fv-bar-fill{height:6px;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--rose))}
+
+/* TESTIMONIALS */
+.testimonials{background:var(--ivory)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.testi-card{background:var(--white);border-radius:18px;padding:1.8rem;box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+.testi-stars{color:var(--gold);font-size:.85rem;margin-bottom:.6rem}
+.testi-quote{font-size:2rem;color:var(--rose);line-height:1;margin-bottom:.8rem}
+.testi-text{font-size:.88rem;color:var(--mid);line-height:1.7;margin-bottom:1.2rem}
+.testi-author{display:flex;align-items:center;gap:.8rem}
+.testi-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.ta1{background:linear-gradient(135deg,#FDE8EF,#FAD0DE)}
+.ta2{background:linear-gradient(135deg,#E8F0FD,#D0DCFA)}
+.ta3{background:linear-gradient(135deg,#E8F5F0,#C8EAE0)}
+.testi-author-name{font-weight:600;font-size:.88rem}
+.testi-author-loc{font-size:.76rem;color:var(--mid)}
+
+/* APP */
+.app-section{background:linear-gradient(135deg,var(--charcoal) 0%,#2D1440 100%);color:#fff;padding:80px 5%;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.app-title{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.5vw,2.8rem);margin-bottom:1rem;line-height:1.2}
+.app-title em{color:var(--gold);font-style:normal}
+.app-sub{color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:2rem;font-size:.92rem}
+.app-stores{display:flex;gap:1rem;flex-wrap:wrap}
+.store-btn{display:flex;align-items:center;gap:.8rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:.8rem 1.4rem;text-decoration:none;color:#fff;transition:background .2s}
+.store-btn:hover{background:rgba(255,255,255,0.18)}
+.store-btn-icon{font-size:1.8rem}
+.store-btn-text small{font-size:.68rem;opacity:.7;display:block}
+.store-btn-text strong{font-size:.9rem}
+.app-phones{display:flex;justify-content:center;align-items:flex-end;gap:1.5rem}
+.app-phone-mini{background:var(--charcoal);border-radius:28px;border:2px solid rgba(255,255,255,0.15);box-shadow:0 20px 60px rgba(0,0,0,0.4);overflow:hidden}
+.apm1{width:145px;height:285px}
+.apm2{width:145px;height:305px}
+
+/* FOOTER */
+footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 30px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand .nav-logo{color:#fff;display:inline-flex;margin-bottom:1rem}
+.footer-about{font-size:.86rem;line-height:1.7;max-width:280px}
+.footer-col h4{color:#fff;font-size:.88rem;font-weight:600;margin-bottom:1rem}
+.footer-col a{display:block;color:rgba(255,255,255,0.6);text-decoration:none;font-size:.84rem;margin-bottom:.5rem;transition:color .2s}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.1);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;flex-wrap:wrap;gap:.5rem}
+.footer-socials{display:flex;gap:1rem}
+.footer-socials a{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:1rem;text-decoration:none;transition:background .2s}
+.footer-socials a:hover{background:var(--rose)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:24px;padding:2.5rem;width:90%;max-width:500px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:1.2rem;right:1.2rem;background:var(--light);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.4rem}
+.modal-sub{color:var(--mid);font-size:.86rem;margin-bottom:1.8rem;line-height:1.5}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.8rem;font-weight:600;margin-bottom:.4rem;color:var(--charcoal)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:.72rem 1rem;border:1.5px solid var(--light);border-radius:10px;font-size:.88rem;font-family:inherit;color:var(--charcoal);background:var(--cream);transition:border-color .2s;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--rose)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.tabs{display:flex;gap:0;margin-bottom:1.8rem;border:1.5px solid var(--light);border-radius:10px;overflow:hidden}
+.tab-btn{flex:1;padding:.62rem;border:none;background:transparent;font-size:.84rem;font-weight:500;cursor:pointer;color:var(--mid);transition:background .2s,color .2s;font-family:inherit}
+.tab-btn.active{background:var(--burgundy);color:#fff;font-weight:600}
+.plan-select-card{border:2px solid var(--light);border-radius:14px;padding:1.1rem 1.2rem;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:.8rem;display:flex;align-items:center;gap:1rem}
+.plan-select-card:hover{border-color:var(--rose)}
+.plan-select-card.selected{border-color:var(--burgundy);background:rgba(123,29,58,0.04)}
+.plan-select-card input[type=radio]{accent-color:var(--burgundy)}
+.psc-info{flex:1}
+.psc-name{font-weight:700;font-size:.95rem}
+.psc-price{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--burgundy)}
+.psc-desc{font-size:.75rem;color:var(--mid);margin-top:2px}
+.psc-badge{font-size:.68rem;padding:3px 8px;border-radius:10px;font-weight:600;white-space:nowrap}
+.step-indicator{display:flex;align-items:center;gap:.5rem;margin-bottom:1.8rem}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;transition:background .3s,color .3s}
+.step-dot.done{background:var(--green);color:#fff}
+.step-dot.active{background:var(--burgundy);color:#fff}
+.step-dot.pending{background:var(--light);color:var(--mid)}
+.step-line{flex:1;height:2px;background:var(--light);border-radius:2px}
+.step-line.done{background:var(--green)}
+
+/* FADE IN */
+.fade-in{opacity:1;transform:translateY(0)}
+.js-ready .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.js-ready .fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;text-align:center;padding-top:90px}
+  .hero-text{max-width:100%}
+  .hero-actions,.hero-stats{justify-content:center}
+  .hero-visual{margin-top:2rem}
+  .float-match,.float-notif{display:none}
+  .steps-grid{grid-template-columns:1fr 1fr}
+  .step-connector{display:none}
+  .profiles-grid{grid-template-columns:1fr 1fr}
+  .plans-grid{grid-template-columns:1fr;max-width:480px;margin:0 auto}
+  .plan-card.featured{transform:scale(1)}
+  .features-grid{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .app-section{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .steps-grid,.profiles-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .footer-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .hero h1{font-size:2rem}
+  section{padding:60px 5%}
+}
+
+.modal-wide{max-width:640px}
+.step-indicator-wrap{margin-bottom:1.6rem}
+.step-pills{display:flex;gap:0;border-radius:12px;overflow:hidden;border:1.5px solid var(--light)}
+.step-pill{flex:1;padding:.5rem .3rem;border:none;background:transparent;font-size:.72rem;font-weight:600;color:var(--mid);cursor:default;display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .2s,color .2s;border-right:1px solid var(--light)}
+.step-pill:last-child{border-right:none}
+.step-pill.done{background:#E8F5F0;color:var(--green)}
+.step-pill.active{background:var(--burgundy);color:#fff}
+.step-pill-num{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700}
+.step-pill.done .step-pill-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-pill.done .step-pill-num::after{content:'✓'}
+.step-pill.done .step-pill-num span{display:none}
+.step-pill.active .step-pill-num{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.5)}
+.form-section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:1.1rem 0 .7rem;display:flex;align-items:center;gap:.5rem}
+.form-section-label::after{content:'';flex:1;height:1px;background:var(--light)}
+.form-group textarea{width:100%;padding:.72rem 1rem;border:1.5px solid var(--light);border-radius:10px;font-size:.88rem;font-family:inherit;color:var(--charcoal);background:var(--cream);transition:border-color .2s;outline:none;resize:vertical;min-height:80px}
+.form-group textarea:focus{border-color:var(--rose)}
+.checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.checkbox-item{display:flex;align-items:center;gap:.5rem;font-size:.84rem;color:var(--mid);cursor:pointer}
+.checkbox-item input{accent-color:var(--burgundy);width:15px;height:15px}
+.photo-upload-area{border:2px dashed var(--light);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--cream)}
+.photo-upload-area:hover{border-color:var(--rose);background:#FFF5F7}
+.photo-upload-icon{font-size:2rem;margin-bottom:.4rem}
+.photo-upload-text{font-size:.82rem;color:var(--mid)}
+.photo-upload-sub{font-size:.74rem;color:var(--light);margin-top:.2rem}
+
+/* ── Contact Preference Toggle ── */
+.contact-pref-box{border:2px solid var(--light);border-radius:16px;padding:1.4rem 1.6rem;margin:1rem 0;transition:border-color .3s,background .3s}
+.contact-pref-box.direct{border-color:#2D7A5F;background:rgba(45,122,95,0.05)}
+.contact-pref-box.via-us{border-color:var(--burgundy);background:rgba(123,29,58,0.04)}
+.pref-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.pref-toggle-label{flex:1}
+.pref-toggle-label h4{font-weight:700;font-size:.95rem;margin-bottom:.25rem}
+.pref-toggle-label p{font-size:.8rem;color:var(--mid);line-height:1.5}
+.pref-switch{position:relative;width:56px;height:28px;flex-shrink:0}
+.pref-switch input{opacity:0;width:0;height:0}
+.pref-switch-slider{position:absolute;inset:0;border-radius:28px;background:var(--light);cursor:pointer;transition:.3s}
+.pref-switch-slider::before{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;left:3px;top:3px;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.pref-switch input:checked+.pref-switch-slider{background:var(--green)}
+.pref-switch input:checked+.pref-switch-slider::before{transform:translateX(28px)}
+.pref-status-tag{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:.5rem;display:inline-block}
+.pref-status-direct{background:#E8F5F0;color:var(--green)}
+.pref-status-viaus{background:rgba(123,29,58,0.1);color:var(--burgundy)}
+
+/* ── Contact Preference badge on profile cards ── */
+.contact-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;
+               padding:3px 8px;border-radius:10px;margin-bottom:.5rem}
+.contact-badge.direct{background:#E8F5F0;color:#2D7A5F}
+.contact-badge.via-us{background:rgba(123,29,58,0.1);color:var(--burgundy)}
+
+/* ── Direct Contact Action Buttons on profile cards ── */
+.btn-call{background:linear-gradient(135deg,#2D7A5F,#1A5C45);color:#fff;border:none;
+          border-radius:8px;padding:.52rem .7rem;font-size:.85rem;cursor:pointer;
+          transition:opacity .2s;flex-shrink:0}
+.btn-call:hover{opacity:.85}
+.btn-msg{background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;
+         border-radius:8px;padding:.52rem .7rem;font-size:.85rem;cursor:pointer;
+         transition:opacity .2s;flex-shrink:0}
+.btn-msg:hover{opacity:.85}
+.btn-via-us{flex:1;background:var(--ivory);color:var(--burgundy);border:1.5px solid var(--burgundy);
+            border-radius:8px;padding:.52rem;font-size:.78rem;font-weight:600;cursor:pointer;
+            transition:background .2s}
+.btn-via-us:hover{background:var(--burgundy);color:#fff}
+
+/* ── Contact Modal ── */
+.contact-method-card{border:2px solid var(--light);border-radius:14px;padding:1.2rem;
+                      cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:.8rem;
+                      display:flex;align-items:center;gap:1rem}
+.contact-method-card:hover{border-color:var(--rose)}
+.contact-method-card.selected{border-color:var(--burgundy);background:rgba(123,29,58,0.04)}
+.contact-method-icon{font-size:1.8rem;flex-shrink:0}
+
+/* ── Privacy Controls ── */
+.privacy-preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.2rem}
+.privacy-preset-card{border:2px solid var(--light);border-radius:14px;padding:1rem .8rem;
+                     text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.privacy-preset-card:hover{border-color:var(--rose);transform:translateY(-2px)}
+.privacy-preset-card.selected{border-color:var(--burgundy);background:rgba(123,29,58,0.04)}
+.privacy-preset-card.selected-open{border-color:#2D7A5F;background:rgba(45,122,95,0.05)}
+.privacy-preset-card.selected-strict{border-color:#1565C0;background:rgba(21,101,192,0.05)}
+.privacy-preset-icon{font-size:1.8rem;margin-bottom:.4rem}
+.privacy-preset-name{font-weight:700;font-size:.88rem;margin-bottom:.25rem}
+.privacy-preset-desc{font-size:.7rem;color:var(--mid);line-height:1.4}
+.privacy-check-mark{position:absolute;top:8px;right:8px;width:18px;height:18px;
+                    border-radius:50%;background:var(--burgundy);color:#fff;
+                    font-size:.65rem;display:none;align-items:center;justify-content:center}
+.privacy-preset-card.selected .privacy-check-mark,
+.privacy-preset-card.selected-open .privacy-check-mark,
+.privacy-preset-card.selected-strict .privacy-check-mark{display:flex}
+.privacy-preset-card.selected-open .privacy-check-mark{background:#2D7A5F}
+.privacy-preset-card.selected-strict .privacy-check-mark{background:#1565C0}
+
+.privacy-toggle-row{display:flex;align-items:center;justify-content:space-between;
+                    padding:.75rem 0;border-bottom:1px solid var(--light);gap:1rem}
+.privacy-toggle-row:last-child{border-bottom:none}
+.ptog-left{flex:1}
+.ptog-label{font-size:.88rem;font-weight:600;color:var(--charcoal);margin-bottom:.15rem}
+.ptog-sub{font-size:.75rem;color:var(--mid);line-height:1.4}
+.ptog-badge{font-size:.65rem;padding:2px 7px;border-radius:8px;font-weight:700;
+            margin-left:6px;vertical-align:middle}
+.ptog-badge.mutual{background:rgba(123,29,58,0.1);color:var(--burgundy)}
+.ptog-badge.premium{background:rgba(212,168,83,0.15);color:#8A6010}
+.privacy-mini-toggle{position:relative;width:42px;height:22px;flex-shrink:0}
+.privacy-mini-toggle input{opacity:0;width:0;height:0}
+.pmt-slider{position:absolute;inset:0;border-radius:22px;background:var(--light);
+            cursor:pointer;transition:.3s}
+.pmt-slider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;
+                    background:#fff;left:2px;top:2px;transition:.3s;
+                    box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.privacy-mini-toggle input:checked+.pmt-slider{background:#2D7A5F}
+.privacy-mini-toggle input:checked+.pmt-slider::before{transform:translateX(20px)}
+.privacy-summary-bar{background:var(--ivory);border-radius:10px;padding:.8rem 1rem;
+                     margin-top:1rem;font-size:.8rem;color:var(--mid);line-height:1.6;
+                     border:1px solid var(--light)}
+
+/* ── Privacy badge on profile cards ── */
+.privacy-shield{position:absolute;bottom:10px;left:10px;background:rgba(28,28,46,0.75);
+                color:#fff;font-size:.62rem;font-weight:700;padding:3px 8px;
+                border-radius:8px;backdrop-filter:blur(4px)}
+
+/* ── Blurred photo placeholder ── */
+.photo-blurred{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+               flex-direction:column;gap:.4rem;font-size:.75rem;font-weight:600;color:var(--mid)}
+.photo-blur-icon{font-size:2rem;filter:blur(1px)}
+.unlock-info-btn{background:transparent;border:1.5px solid var(--light);border-radius:20px;
+                 padding:3px 12px;font-size:.7rem;font-weight:600;cursor:pointer;color:var(--mid);
+                 transition:all .2s;margin-top:.3rem}
+.unlock-info-btn:hover{border-color:var(--burgundy);color:var(--burgundy);background:rgba(123,29,58,0.05)}
+.contact-method-info strong{display:block;font-size:.92rem;font-weight:700;margin-bottom:.2rem}
+.contact-method-info span{font-size:.8rem;color:var(--mid)}
+.required-star{color:var(--rose);margin-left:2px}
+
+</style>
+</head>
+<body>
+<noscript>
+  <style>
+    .fade-in { opacity: 1 !important; transform: none !important; }
+    #reg-step-2, #reg-step-3, #reg-step-4, #reg-step-5, #reg-step-6 { display: none !important; }
+  </style>
+</noscript>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><div class="logo-icon">💍</div>ShadiKhana</a>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#plans">Pricing</a>
+    <a href="#profiles">Browse</a>
+    <a href="#features">Why Us</a>
+    <button class="lang-toggle" onclick="toggleLang()">
+      <span class="eng-only">🇵🇰 اردو</span>
+      <span class="urdu-only">EN English</span>
+    </button>
+    <a href="#" onclick="openModal('login');return false">Sign In</a>
+    <a href="#" class="nav-cta" onclick="openModal('register');return false">Register Now</a>
+  </div>
+  <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#how" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
+  <a href="#plans" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
+  <a href="#profiles" onclick="document.getElementById('mobileMenu').classList.remove('open')">Browse Profiles</a>
+  <a href="#" onclick="openModal('login');return false">Sign In</a>
+  <a href="#" onclick="openModal('register');return false" style="color:var(--burgundy);font-weight:700">Register Free →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text fade-in">
+    <div class="hero-eyebrow">
+      <span class="eng-only">Pakistan's Trusted Matrimony</span>
+      <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">پاکستان کا معتمد رشتہ پلیٹ فارم</span>
+      <span class="urdu-tag">رشتہ</span>
+    </div>
+    <h1>
+      <span class="eng-only">Find Your <em>Perfect Rishta,</em><br>The Modern Way</span>
+      <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif;color:var(--charcoal)">اپنا <em>بہترین رشتہ</em> تلاش کریں</span>
+    </h1>
+    <p class="hero-sub">
+      <span class="eng-only">ShadiKhana connects Pakistani families across all four provinces — and the diaspora — seeking meaningful, halal matrimonial partnerships. You connect directly. We bring you together.</span>
+      <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">شادی میچ پاکستانی خاندانوں کو جوڑتا ہے — ملک بھر میں اور بیرون ملک بھی۔</span>
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary" onclick="openModal('register');return false">
+        <span class="eng-only">Create Free Profile</span>
+        <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">پروفائل بنائیں</span>
+      </a>
+      <a href="#profiles" class="btn-outline">
+        <span class="eng-only">Browse Profiles</span>
+        <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">پروفائل دیکھیں</span>
+      </a>
+    </div>
+    <div class="lahore-badge">
+      📍 <span class="eng-only">In-Person Services Available in Lahore</span>
+      <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">لاہور میں ذاتی خدمات دستیاب</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>85,000+</strong><span class="eng-only">Active Profiles</span><span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">پروفائل</span></div>
+      <div class="hero-stat"><strong>12,400+</strong><span class="eng-only">Successful Matches</span><span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">کامیاب رشتے</span></div>
+      <div class="hero-stat"><strong>All 4</strong><span class="eng-only">Provinces Covered</span><span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">صوبے</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="floating-card float-match">
+      <div class="match-pct">94%</div>
+      <div style="font-size:.72rem;color:var(--mid)">Match Score</div>
+    </div>
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div class="phone-header">
+          <div class="phone-header-top">
+            <span class="phone-logo">💍 ShadiKhana</span>
+            <span class="phone-notif">3 New</span>
+          </div>
+          <div class="phone-search">🔍 Search by city, sect, profession...</div>
+        </div>
+        <div class="phone-cards">
+          <div class="pcard">
+            <div class="pcard-avatar" style="background:linear-gradient(135deg,#FDE8EF,#FAD0DE)">👩</div>
+            <div>
+              <div class="pcard-name">Ayesha R., 26</div>
+              <div class="pcard-meta">Lahore · MBA · Sunni</div>
+              <div class="pcard-badge badge-verified">✓ Verified</div>
+            </div>
+          </div>
+          <div class="pcard">
+            <div class="pcard-avatar" style="background:linear-gradient(135deg,#FEF3E2,#FAE5C0)">👨</div>
+            <div>
+              <div class="pcard-name">Ahmed K., 30</div>
+              <div class="pcard-meta">Karachi · Engineer · Sunni</div>
+              <div class="pcard-badge badge-featured">⭐ VIP Member</div>
+            </div>
+          </div>
+          <div class="pcard">
+            <div class="pcard-avatar" style="background:linear-gradient(135deg,#E8F5F0,#C8EAE0)">👩</div>
+            <div>
+              <div class="pcard-name">Fatima S., 24</div>
+              <div class="pcard-meta">Islamabad · Doctor · Shia</div>
+              <div class="pcard-badge badge-verified">✓ Premium</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-bottom-nav">
+          <div class="pnav-item active"><span>🏠</span><span>Home</span></div>
+          <div class="pnav-item"><span>🔍</span><span>Search</span></div>
+          <div class="pnav-item"><span>💬</span><span>Messages</span></div>
+          <div class="pnav-item"><span>👤</span><span>Profile</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="floating-card float-notif">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span class="notif-dot"></span>
+        <span style="font-weight:600;font-size:.75rem">New Interest!</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--mid)">Ahmed sent you a request</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust">
+  <div class="trust-inner">
+    <div class="trust-item"><span class="trust-item-icon">🔒</span>100% Privacy Protected</div>
+    <div class="trust-item"><span class="trust-item-icon">✅</span>CNIC Verification Available</div>
+    <div class="trust-item"><span class="trust-item-icon">🇵🇰</span>Pan-Pakistan Coverage</div>
+    <div class="trust-item"><span class="trust-item-icon">📍</span>In-Person: Lahore Office</div>
+    <div class="trust-item"><span class="trust-item-icon">📱</span>Android & iOS App</div>
+    <div class="trust-item"><span class="trust-item-icon">🤝</span>Family-Friendly Platform</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-header fade-in">
+    <div class="section-label">Simple Process</div>
+    <h2 class="section-title">
+      <span class="eng-only">From Registration to Rishta in 4 Steps</span>
+      <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">رجسٹریشن سے رشتے تک</span>
+    </h2>
+    <p class="section-sub">No middlemen. No monthly subscriptions. You pay once, we bring you matches, and a final success fee only when your rishta is finalised.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step fade-in">
+      <div class="step-num">1</div>
+      <div class="step-icon">📝</div>
+      <h3>Register & Choose Package</h3>
+      <p>Create your profile and pay a one-time registration fee. Basic, Premium, or VIP — your choice determines your features.</p>
+      <div class="step-connector">→</div>
+    </div>
+    <div class="step fade-in">
+      <div class="step-num">2</div>
+      <div class="step-icon">🔍</div>
+      <h3>Browse Unlimited Matches</h3>
+      <p>Instantly access profiles matching your criteria — city, sect, education, age. Filter and shortlist freely.</p>
+      <div class="step-connector">→</div>
+    </div>
+    <div class="step fade-in">
+      <div class="step-num">3</div>
+      <div class="step-icon">💌</div>
+      <h3>Connect Directly</h3>
+      <p>Express interest, exchange messages, and let families speak — all within the platform. No middleman required.</p>
+      <div class="step-connector">→</div>
+    </div>
+    <div class="step fade-in">
+      <div class="step-num">4</div>
+      <div class="step-icon">💍</div>
+      <h3>Finalise the Rishta</h3>
+      <p>When your rishta is confirmed, a one-time success fee applies — PKR 40,000 (Basic), PKR 70,000 (Premium), or PKR 1,00,000 (Executive). No match, no fee.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="plans" id="plans">
+  <div class="section-header fade-in" style="text-align:center">
+    <div class="section-label">Membership Packages</div>
+    <h2 class="section-title">One-Time Registration. No Monthly Fees.</h2>
+    <p class="section-sub" style="max-width:620px;margin:0 auto">Pay once to register. No monthly charges — ever. A one-time success fee applies only when your rishta is successfully finalised. Our <strong style="color:var(--gold)">Executive / Overseas</strong> tier offers full white-glove service including family verification, background checks, and personal family meet-ups.</p>
+  </div>
+  <div class="plans-grid">
+    <!-- Basic -->
+    <div class="plan-card fade-in">
+      <div class="plan-icon">🌱</div>
+      <div class="plan-name">Basic</div>
+      <div class="plan-price">PKR 10,000</div>
+      <div class="plan-sub">One-time registration · No monthly charges</div>
+      <div class="plan-success-fee">💍 Success fee: PKR 40,000 (on confirmed match only)</div>
+      <ul class="plan-features">
+        <li>Full profile creation</li>
+        <li>Unlimited profile browsing</li>
+        <li>Filter by city, sect, age, profession</li>
+        <li>Send & receive interest requests</li>
+        <li>Basic messaging</li>
+        <li>Online support</li>
+        <li>Access to matching profiles</li>
+        <li class="disabled">Featured profile placement</li>
+        <li class="disabled">CNIC verification badge</li>
+        <li class="disabled">Dedicated matchmaker</li>
+        <li class="disabled">In-person consultation (Lahore)</li>
+      </ul>
+      <button class="btn-plan" onclick="openModal('register')">Register – Basic · PKR 10,000</button>
+    </div>
+    <!-- Premium -->
+    <div class="plan-card featured fade-in">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-icon">⭐</div>
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">PKR 30,000</div>
+      <div class="plan-sub">One-time registration · No monthly charges</div>
+      <div class="plan-success-fee">💍 Success fee: PKR 70,000 (on confirmed match only)</div>
+      <ul class="plan-features">
+        <li>Everything in Basic</li>
+        <li>Featured profile placement</li>
+        <li>CNIC verification badge</li>
+        <li>Priority in search results</li>
+        <li>Unlimited messaging</li>
+        <li>View full contact details</li>
+        <li>Dedicated online matchmaker</li>
+        <li>WhatsApp concierge support</li>
+        <li>In-person consultation — Lahore office</li>
+        <li>Home visit by matchmaker (Lahore)</li>
+      </ul>
+      <button class="btn-plan" onclick="openModal('register')">Register – Premium · PKR 30,000</button>
+    </div>
+    <!-- Executive / Overseas -->
+    <div class="plan-card executive fade-in">
+      <div class="exec-badge">👑 Business &amp; Overseas Elite</div>
+      <div class="plan-icon">🌐</div>
+      <div class="plan-name">Executive / Overseas</div>
+      <div class="plan-price">PKR 50,000</div>
+      <div class="plan-sub">One-time registration · Exclusively for business-class &amp; overseas families</div>
+      <div class="plan-success-fee">💍 Success fee: PKR 1,00,000 (on confirmed match only)</div>
+      <ul class="plan-features">
+        <li>Everything in Premium, plus full white-glove service</li>
+        <li>Exclusively for business-class &amp; overseas Pakistani families</li>
+        <li>Complete family background verification</li>
+        <li>CNIC, business &amp; social status verification</li>
+        <li>Personal one-on-one family meet-up arranged by ShadiKhana</li>
+        <li>Senior matchmaker attends initial family meeting</li>
+        <li>Home visit &amp; family assessment (Lahore &amp; nearby)</li>
+        <li>Overseas family liaison — coordinate across countries</li>
+        <li>Private, approval-only profile visibility</li>
+        <li>Dedicated senior relationship manager</li>
+        <li>Concierge WhatsApp &amp; video call support</li>
+        <li>Priority placement — top of all search results</li>
+      </ul>
+      <button class="btn-plan" onclick="openModal('register')">Register – Executive · PKR 50,000</button>
+    </div>
+  </div>
+
+  <div class="success-fee-note">
+    <div class="sfn-icon">💡</div>
+    <div>
+      <div class="sfn-title">How Our Success Fee Works</div>
+      <p class="sfn-desc">We believe in earning only when you succeed. Your one-time registration gives full platform access with no time limit and no recurring charges. A one-time success fee applies only when your rishta is confirmed — <strong>PKR 40,000 for Basic</strong>, <strong>PKR 70,000 for Premium</strong>, and <strong>PKR 1,00,000 for Executive / Overseas</strong> members. For our Executive tier, the success fee covers the complete end-to-end service including family meetings, verifications, and matchmaker attendance — all included. <strong>If no match is made, no success fee is ever charged.</strong></p>
+    </div>
+  </div>
+
+  <!-- Payment Methods -->
+  <div class="payment-methods">
+    <span class="pm-label">Pay via:</span>
+    <span class="pm-badge">🏦 Bank Transfer</span>
+    <span class="pm-badge">📱 JazzCash</span>
+    <span class="pm-badge">📱 EasyPaisa</span>
+    <span class="pm-badge">💳 Visa / Mastercard</span>
+    <span class="pm-badge">🏛 Bank Transfer</span>
+  </div>
+</section>
+
+<!-- BROWSE PROFILES -->
+<section class="profiles-section" id="profiles">
+  <div class="section-header fade-in">
+    <div class="section-label">Active Members</div>
+    <h2 class="section-title">Browse Recent Profiles</h2>
+    <p class="section-sub">Genuine, family-vetted profiles from across Pakistan and the overseas community. Register to unlock full details.</p>
+  </div>
+  <div class="profiles-grid">
+    <div class="profile-card fade-in">
+      <div class="profile-card-top pc1" style="position:relative">
+        <span>👩</span>
+        <span class="profile-verified-badge">✓ Verified</span>
+        <div class="privacy-shield">🔓 Open Profile</div>
+      </div>
+      <div class="profile-card-body">
+        <div class="profile-name">Ayesha Raza</div>
+        <div class="profile-details">26 yrs · Lahore · MBA Finance<br>Sunni (Barelvi) · 5'4" · Never Married</div>
+        <div class="profile-tags"><span class="tag">Lahore</span><span class="tag">Working</span><span class="tag">Doctor's Family</span></div>
+        <div class="contact-badge direct">📱 Open to Direct Contact</div>
+        <div class="profile-actions">
+          <button class="btn-interest" onclick="openModal('register')" style="flex:1">Send Interest</button>
+          <button class="btn-msg"  onclick="openContactModal('Ayesha Raza','whatsapp','03001234567')" title="WhatsApp">💬</button>
+          <button class="btn-call" onclick="openContactModal('Ayesha Raza','call','03001234567')"    title="Call">📞</button>
+          <button class="btn-save">🤍</button>
+        </div>
+      </div>
+    </div>
+    <div class="profile-card fade-in">
+      <div class="profile-card-top pc2" style="position:relative">
+        <div class="photo-blurred">
+          <span class="photo-blur-icon">👨</span>
+          <span>Photo Hidden</span>
+          <button class="unlock-info-btn" onclick="openModal('register')">🔒 Unlock after Interest</button>
+        </div>
+        <span class="profile-featured-badge">👑 VIP</span>
+        <div class="privacy-shield">🔒 Standard Privacy</div>
+      </div>
+      <div class="profile-card-body">
+        <div class="profile-name">Ahmed Khan</div>
+        <div class="profile-details">30 yrs · Karachi · Software Engineer<br>Sunni (Deobandi) · 5'10" · Never Married</div>
+        <div style="font-size:.78rem;color:var(--mid);margin-bottom:.5rem">
+          <span onclick="openPrivacyLocked('contact')" style="cursor:pointer;text-decoration:underline;color:var(--mid)">📱 Contact: 🔒 Hidden</span> ·
+          <span onclick="openPrivacyLocked('family')"  style="cursor:pointer;text-decoration:underline;color:var(--mid)">👨‍👩‍👧 Family: 🔒 Hidden</span>
+        </div>
+        <div class="profile-tags"><span class="tag">Karachi</span><span class="tag">UK Based</span><span class="tag">Urdu Speaking</span></div>
+        <div class="contact-badge via-us">🔒 Contact via ShadiKhana</div>
+        <div class="profile-actions">
+          <button class="btn-via-us" onclick="openViaUsModal('Ahmed Khan')">📋 Request via ShadiKhana</button>
+          <button class="btn-save">🤍</button>
+        </div>
+      </div>
+    </div>
+    <div class="profile-card fade-in">
+      <div class="profile-card-top pc3" style="position:relative">
+        <span>👩</span>
+        <span class="profile-verified-badge">⭐ Premium</span>
+        <div class="privacy-shield">🔓 Open Profile</div>
+      </div>
+      <div class="profile-card-body">
+        <div class="profile-name">Fatima Siddiqui</div>
+        <div class="profile-details">24 yrs · Islamabad · MBBS Doctor<br>Shia · 5'3" · Never Married</div>
+        <div class="profile-tags"><span class="tag">Islamabad</span><span class="tag">Professional</span><span class="tag">Business Family</span></div>
+        <div class="contact-badge direct">📱 Open to Direct Contact</div>
+        <div class="profile-actions">
+          <button class="btn-interest" onclick="openModal('register')" style="flex:1">Send Interest</button>
+          <button class="btn-msg"  onclick="openContactModal('Fatima Siddiqui','whatsapp','03211234567')" title="WhatsApp">💬</button>
+          <button class="btn-save">🤍</button>
+        </div>
+      </div>
+    </div>
+    <div class="profile-card fade-in">
+      <div class="profile-card-top pc4" style="position:relative">
+        <div class="photo-blurred">
+          <span class="photo-blur-icon">👨</span>
+          <span>Strict Privacy</span>
+          <button class="unlock-info-btn" onclick="openModal('register')">🛡️ Info via ShadiKhana</button>
+        </div>
+        <div class="privacy-shield">🛡️ Strict Privacy</div>
+      </div>
+      <div class="profile-card-body">
+        <div class="profile-name">Bilal Chaudhry</div>
+        <div class="profile-details">33 yrs · Faisalabad · <span onclick="openPrivacyLocked('strict')" style="cursor:pointer;color:var(--mid);text-decoration:underline">🛡️ Profession Hidden</span><br>Sunni · <span onclick="openPrivacyLocked('strict')" style="cursor:pointer;color:var(--mid);text-decoration:underline">Height Hidden</span> · Marital status hidden</div>
+        <div style="font-size:.78rem;background:rgba(21,101,192,0.07);border-radius:8px;padding:5px 8px;margin-bottom:.5rem;color:#1565C0;cursor:pointer"
+             onclick="openPrivacyLocked('strict')">
+          🛡️ Strict Privacy — most info hidden. Contact via ShadiKhana to learn more.
+        </div>
+        <div class="profile-tags"><span class="tag">Faisalabad</span><span class="tag" style="filter:blur(4px);user-select:none">██████</span></div>
+        <div class="contact-badge via-us">🔒 Contact via ShadiKhana</div>
+        <div class="profile-actions">
+          <button class="btn-via-us" onclick="openViaUsModal('Bilal Chaudhry')">📋 Request via ShadiKhana</button>
+          <button class="btn-save">🤍</button>
+        </div>
+      </div>
+    </div>
+    <div class="profile-card fade-in">
+      <div class="profile-card-top pc5" style="position:relative">
+        <div class="photo-blurred">
+          <span class="photo-blur-icon">👩</span>
+          <span>Photo Hidden</span>
+          <button class="unlock-info-btn" onclick="openModal('register')">🔒 Unlock after Interest</button>
+        </div>
+        <span class="profile-featured-badge">👑 VIP</span>
+        <div class="privacy-shield">🔒 Standard Privacy</div>
+      </div>
+      <div class="profile-card-body">
+        <div class="profile-name">Sana Mirza</div>
+        <div class="profile-details">28 yrs · Rawalpindi · Civil Servant<br>Sunni · 5'5" · Never Married</div>
+        <div style="font-size:.78rem;color:var(--mid);margin-bottom:.5rem">
+          <span onclick="openPrivacyLocked('family')" style="cursor:pointer;text-decoration:underline;color:var(--mid)">👨‍👩‍👧 Family info: 🔒 After mutual interest</span>
+        </div>
+        <div class="profile-tags"><span class="tag">Twin Cities</span><span class="tag">Govt. Officer</span><span class="tag">Educated</span></div>
+        <div class="contact-badge direct">📱 Open to Direct Contact</div>
+        <div class="profile-actions">
+          <button class="btn-interest" onclick="openModal('register')" style="flex:1">Send Interest</button>
+          <button class="btn-msg"  onclick="openContactModal('Sana Mirza','whatsapp','03331234567')"  title="WhatsApp">💬</button>
+          <button class="btn-call" onclick="openContactModal('Sana Mirza','call','03331234567')"     title="Call">📞</button>
+          <button class="btn-save">🤍</button>
+        </div>
+      </div>
+    </div>
+    <div class="profile-card fade-in">
+      <div class="profile-card-top pc6" style="position:relative">
+        <span>👨</span>
+        <span class="profile-verified-badge">✓ Verified</span>
+        <div class="privacy-shield">🔓 Open Profile</div>
+      </div>
+      <div class="profile-card-body">
+        <div class="profile-name">Usman Malik</div>
+        <div class="profile-details">29 yrs · Multan · Civil Engineer<br>Sunni · 6'0" · Never Married</div>
+        <div class="profile-tags"><span class="tag">Multan</span><span class="tag">UAE Based</span><span class="tag">Saraiki</span></div>
+        <div class="contact-badge via-us">🔒 Contact via ShadiKhana</div>
+        <div class="profile-actions">
+          <button class="btn-via-us" onclick="openViaUsModal('Usman Malik')">📋 Request via ShadiKhana</button>
+          <button class="btn-save">🤍</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:3rem">
+    <a href="#" class="btn-primary" onclick="openModal('register');return false">View All 85,000+ Profiles</a>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-grid">
+    <div>
+      <div class="section-label fade-in">Why ShadiKhana</div>
+      <h2 class="section-title fade-in">Built for Pakistani Families,<br>With Privacy at Heart</h2>
+      <div class="features-list">
+        <div class="feature-item fade-in">
+          <div class="feature-icon fi1">🔒</div>
+          <div><h4>Full Privacy Control</h4><p>You decide who sees your photo and contact details. Photos are blurred for non-members by default.</p></div>
+        </div>
+        <div class="feature-item fade-in">
+          <div class="feature-icon fi2">🧕</div>
+          <div><h4>Wali / Guardian Mode</h4><p>A parent or guardian can manage the profile on behalf of their son or daughter — fully supported and encouraged.</p></div>
+        </div>
+        <div class="feature-item fade-in">
+          <div class="feature-icon fi3">✅</div>
+          <div><h4>CNIC-Based Verification</h4><p>Available for Premium & VIP. A verified badge gives families the confidence that your profile is real and trustworthy.</p></div>
+        </div>
+        <div class="feature-item fade-in">
+          <div class="feature-icon fi4">📍</div>
+          <div><h4>In-Person &amp; Family Meet-Up Service</h4><p>Premium members get in-person consultations at our Lahore office. Executive / Overseas members receive a fully arranged family meet-up, with a senior ShadiKhana matchmaker present, plus home visits and overseas liaison support.</p></div>
+        </div>
+        <div class="feature-item fade-in">
+          <div class="feature-icon fi5">🔍</div>
+          <div><h4>Advanced Search & Filters</h4><p>Filter by province, city, sect, caste, profession, education, height, marital status, and overseas status.</p></div>
+        </div>
+        <div class="feature-item fade-in">
+          <div class="feature-icon fi6">💰</div>
+          <div><h4>No Monthly Subscriptions — Ever</h4><p>Pay once, access the platform forever. A success fee is only charged when your rishta is confirmed — aligned with your success.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="features-visual fade-in">
+      <div class="fv-title">ShadiKhana at a Glance</div>
+      <div class="fv-stat-grid">
+        <div class="fv-stat"><strong>85K+</strong><span>Active Profiles</span></div>
+        <div class="fv-stat"><strong>12.4K</strong><span>Matches Confirmed</span></div>
+        <div class="fv-stat"><strong>4</strong><span>Provinces Covered</span></div>
+        <div class="fv-stat"><strong>4.8★</strong><span>App Rating</span></div>
+      </div>
+      <div class="fv-bar-section">
+        <div class="fv-bar-label"><span>Punjab (incl. Lahore)</span><span>42%</span></div>
+        <div class="fv-bar-track"><div class="fv-bar-fill" style="width:42%"></div></div>
+      </div>
+      <div class="fv-bar-section">
+        <div class="fv-bar-label"><span>Sindh (incl. Karachi)</span><span>31%</span></div>
+        <div class="fv-bar-track"><div class="fv-bar-fill" style="width:31%"></div></div>
+      </div>
+      <div class="fv-bar-section">
+        <div class="fv-bar-label"><span>KPK & Islamabad</span><span>18%</span></div>
+        <div class="fv-bar-track"><div class="fv-bar-fill" style="width:18%"></div></div>
+      </div>
+      <div class="fv-bar-section">
+        <div class="fv-bar-label"><span>Overseas Pakistanis</span><span>9%</span></div>
+        <div class="fv-bar-track"><div class="fv-bar-fill" style="width:9%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- EXECUTIVE SHOWCASE -->
+<section style="background:linear-gradient(160deg,#03162A 0%,#072444 45%,#03162A 100%);padding:90px 5%;color:#fff;position:relative;overflow:hidden">
+  <!-- decorative circles -->
+  <div style="position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,83,0.12),transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,64,112,0.08),transparent 70%);pointer-events:none"></div>
+
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:3.5rem">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(33,150,243,0.15);border:1px solid rgba(33,150,243,0.35);color:#5BC4F5;padding:.35rem 1.1rem;border-radius:20px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.2rem">
+        🌐 Executive / Overseas Tier
+      </div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.5vw,3rem);font-weight:700;line-height:1.2;margin-bottom:1rem">
+        Pakistan's Most Exclusive<br><span style="color:#5BC4F5">Matrimonial White-Glove Service</span>
+      </h2>
+      <p style="font-size:1rem;color:rgba(255,255,255,0.65);max-width:580px;margin:0 auto;line-height:1.7">
+        Designed exclusively for business-class families, senior executives, and overseas Pakistanis — where privacy, discretion, and a personal touch matter most.
+      </p>
+    </div>
+
+    <!-- Service cards grid -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3rem">
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
+        <div style="font-size:2.2rem;margin-bottom:1rem">🔍</div>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Complete Family Background Verification</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">We conduct thorough family background checks — including CNIC verification, business standing, social reputation, and residential confirmation — so you engage only with verified, credible families.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
+        <div style="font-size:2.2rem;margin-bottom:1rem">🤝</div>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Personal Family Meet-Up — Arranged by Us</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">Our senior matchmaker personally facilitates and attends the first family meeting — at your home, our Lahore office, or a neutral venue of your choosing. We handle all logistics so families can focus on what matters.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
+        <div style="font-size:2.2rem;margin-bottom:1rem">🌍</div>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Overseas Family Coordination</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">For UK, UAE, USA, and other diaspora families, we bridge the distance — coordinating with families in Pakistan on your behalf, arranging video introductions, and scheduling in-person meetings during visits.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
+        <div style="font-size:2.2rem;margin-bottom:1rem">🛡️</div>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Strict Privacy &amp; Controlled Visibility</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">Your profile is never publicly visible. It is shown only to handpicked, verified families who meet your criteria — approved by our team first. Your privacy is treated as non-negotiable.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
+        <div style="font-size:2.2rem;margin-bottom:1rem">👤</div>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Dedicated Senior Relationship Manager</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">You are assigned a named, senior relationship manager who knows your profile, preferences, and family expectations inside out. Every update, every match, every meeting is handled personally by them.</p>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
+        <div style="font-size:2.2rem;margin-bottom:1rem">📋</div>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Curated, Handpicked Match Profiles Only</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">No endless browsing. Our senior matchmakers personally curate and present only the most suitable, verified profiles — saving your time and ensuring quality over quantity at every step.</p>
+      </div>
+
+    </div>
+
+    <!-- CTA strip -->
+    <div style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.3);border-radius:18px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Executive / Overseas Registration</div>
+        <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 50,000 one-time registration &nbsp;·&nbsp; PKR 1,00,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
+      </div>
+      <a href="#" class="btn-primary" onclick="openModal('register');return false" style="background:linear-gradient(135deg,#2196F3,#0D6EBE);color:#fff;font-weight:700;white-space:nowrap;flex-shrink:0">
+        Register Executive →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-header fade-in" style="text-align:center">
+    <div class="section-label">Success Stories</div>
+    <h2 class="section-title">Families Who Found Their Rishta</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card fade-in">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">"</div>
+      <p class="testi-text">We registered with the Premium package and found each other within six weeks. The matchmaker kept us updated throughout. Our nikkah was in March — Alhamdulillah.</p>
+      <div class="testi-author">
+        <div class="testi-avatar ta1">👩</div>
+        <div><div class="testi-author-name">Mariam & Faisal</div><div class="testi-author-loc">Lahore — Married March 2025</div></div>
+      </div>
+    </div>
+    <div class="testi-card fade-in">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">"</div>
+      <p class="testi-text">As a parent I was nervous about online rishtas. The in-person visit at their Lahore office changed everything. Very respectful, very family-oriented. My son is now happily married.</p>
+      <div class="testi-author">
+        <div class="testi-avatar ta2">🧓</div>
+        <div><div class="testi-author-name">Rana Sahib (VIP Member)</div><div class="testi-author-loc">Lahore — Son married 2024</div></div>
+      </div>
+    </div>
+    <div class="testi-card fade-in">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">"</div>
+      <p class="testi-text">I was based in Birmingham and struggling to find a match back home. ShadiKhana's overseas filter was exactly what I needed. Wonderful partner from Islamabad. Worth every rupee.</p>
+      <div class="testi-author">
+        <div class="testi-avatar ta3">👨</div>
+        <div><div class="testi-author-name">Zafar Ahmed (Premium)</div><div class="testi-author-loc">Birmingham UK — Married 2025</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP -->
+<section class="app-section">
+  <div class="fade-in">
+    <div class="section-label" style="color:var(--gold)">Mobile App</div>
+    <h2 class="app-title">Take ShadiKhana <em>Everywhere</em></h2>
+    <p class="app-sub">Browse profiles, message families, track interests, and get instant notifications — on our free app for Android and iPhone. Available pan-Pakistan.</p>
+    <div class="app-stores">
+      <a href="#" class="store-btn"><span class="store-btn-icon">🍎</span><div class="store-btn-text"><small>Download on the</small><strong>App Store</strong></div></a>
+      <a href="#" class="store-btn"><span class="store-btn-icon">🤖</span><div class="store-btn-text"><small>Get it on</small><strong>Google Play</strong></div></a>
+    </div>
+  </div>
+  <div class="app-phones fade-in">
+    <div class="app-phone-mini apm1" style="background:#1C1C2E;display:flex;flex-direction:column;overflow:hidden">
+      <div style="background:linear-gradient(135deg,var(--burgundy),var(--rose));padding:16px 12px;color:#fff">
+        <div style="font-family:'Playfair Display',serif;font-size:.85rem;margin-bottom:10px">💍 ShadiKhana</div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:8px;font-size:.65rem">
+          <div style="opacity:.7;margin-bottom:4px">Today's Top Match</div>
+          <div style="font-weight:600">Ayesha R. — 94% match</div>
+        </div>
+      </div>
+      <div style="padding:10px;flex:1;background:var(--ivory)">
+        <div style="background:#fff;border-radius:10px;padding:10px;font-size:.65rem;box-shadow:0 2px 8px rgba(0,0,0,0.07)">
+          <div style="color:var(--mid);margin-bottom:4px">New Interests</div>
+          <div style="font-size:1.6rem;font-weight:700;color:var(--burgundy);font-family:'Playfair Display',serif">7</div>
+        </div>
+      </div>
+    </div>
+    <div class="app-phone-mini apm2" style="background:var(--ivory);display:flex;flex-direction:column">
+      <div style="background:#fff;padding:12px;border-bottom:1px solid var(--light);font-size:.72rem;font-weight:600">💬 Messages</div>
+      <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
+        <div style="background:#fff;border-radius:10px 10px 10px 2px;padding:7px 10px;font-size:.62rem;line-height:1.4;max-width:85%;box-shadow:0 1px 4px rgba(0,0,0,0.06)">Assalam o Alaikum, we saw your profile and are very interested</div>
+        <div style="background:var(--burgundy);color:#fff;border-radius:10px 10px 2px 10px;padding:7px 10px;font-size:.62rem;line-height:1.4;max-width:85%;align-self:flex-end">Walaikum Assalam, JazakAllah. Please share family details 🤲</div>
+        <div style="background:#fff;border-radius:10px 10px 10px 2px;padding:7px 10px;font-size:.62rem;line-height:1.4;max-width:85%;box-shadow:0 1px 4px rgba(0,0,0,0.06)">Of course! My father will call tomorrow InshaAllah</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo"><div class="logo-icon">💍</div>ShadiKhana</a>
+      <p class="footer-about">Pakistan's most trusted matrimonial platform — pan-Pakistan online, with personal in-person service in Lahore. Your rishta, your terms, our support.</p>
+      <div style="margin-top:1.2rem;font-size:.82rem;color:rgba(255,255,255,0.5)">
+        📍 Office: Model Town, Lahore<br>
+        📞 +92 321 4133233<br>
+        ✉ help@shadikhana.pk
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="#">Browse Profiles</a>
+      <a href="#">How It Works</a>
+      <a href="#">Membership Plans</a>
+      <a href="#">Success Stories</a>
+      <a href="#">Mobile App</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About ShadiKhana</a>
+      <a href="#">Our Team</a>
+      <a href="#">Lahore Office</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Help Centre</a>
+      <a href="#">Report a Profile</a>
+      <a href="#">Safety Guidelines</a>
+      <a href="#">Payment Help</a>
+      <a href="#">WhatsApp Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2025 ShadiKhana. All rights reserved. Made with ❤️ in Lahore, Pakistan.</div>
+    <div class="footer-socials">
+      <a href="#" title="Facebook">📘</a>
+      <a href="#" title="Instagram">📸</a>
+      <a href="#" title="WhatsApp">💬</a>
+      <a href="#" title="YouTube">▶️</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════ MODALS ═══════════════════════════ -->
+
+
+
+<!-- REGISTER -->
+<div class="modal-overlay" id="modal-register">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="closeModal('register')">✕</button>
+
+    <!-- Step Pills -->
+    <div class="step-indicator-wrap">
+      <div class="step-pills" id="step-pills">
+        <div class="step-pill active" id="sp1"><div class="step-pill-num"><span>1</span></div>Account</div>
+        <div class="step-pill pending" id="sp2"><div class="step-pill-num"><span>2</span></div>Personal</div>
+        <div class="step-pill pending" id="sp3"><div class="step-pill-num"><span>3</span></div>Background</div>
+        <div class="step-pill pending" id="sp4"><div class="step-pill-num"><span>4</span></div>Lifestyle</div>
+        <div class="step-pill pending" id="sp5"><div class="step-pill-num"><span>5</span></div>Package</div>
+        <div class="step-pill pending" id="sp6"><div class="step-pill-num"><span>6</span></div>Payment</div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: Account & Contact ── -->
+    <div id="reg-step-1">
+      <h2 class="modal-title">Create Your Account</h2>
+      <p class="modal-sub">Start with your basic contact details. Takes about 5 minutes to complete your full profile.</p>
+
+      <div class="form-section-label">Profile Is For</div>
+      <div class="tabs" style="margin-bottom:1rem">
+        <button class="tab-btn active" onclick="setTab(this)">Myself — Man 👨</button>
+        <button class="tab-btn" onclick="setTab(this)">Myself — Woman 👩</button>
+        <button class="tab-btn" onclick="setTab(this)">My Son / Daughter 🤲</button>
+      </div>
+
+      <div class="form-section-label">Contact Information</div>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name<span class="required-star">*</span></label><input type="text" id="f-fullname" placeholder="e.g. Muhammad Ahmed / Fatima Malik"></div>
+        <div class="form-group"><label>Display Name / Alias</label><input type="text" id="f-alias" placeholder="Name shown on profile (optional)"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Mobile Number<span class="required-star">*</span></label><input type="tel" id="f-mobile" placeholder="+92 300 1234567"></div>
+        <div class="form-group"><label>WhatsApp Number</label><input type="tel" id="f-whatsapp" placeholder="Same or different number"></div>
+      </div>
+      <div class="form-group"><label>Email Address<span class="required-star">*</span></label><input type="email" id="f-email" placeholder="you@email.com"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Create Password<span class="required-star">*</span></label><input type="password" placeholder="Min. 8 characters"></div>
+        <div class="form-group"><label>Confirm Password<span class="required-star">*</span></label><input type="password" placeholder="Repeat password"></div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;padding:.9rem;margin-top:.4rem" onclick="goStep(2)">Next: Personal Details →</button>
+      <p style="text-align:center;font-size:.8rem;color:var(--mid);margin-top:.8rem">Already registered? <a href="#" onclick="closeModal('register');openModal('login');return false" style="color:var(--burgundy);font-weight:600">Sign In</a></p>
+    </div>
+
+    <!-- ── STEP 2: Personal Details ── -->
+    <div id="reg-step-2" style="display:none">
+      <h2 class="modal-title">Personal Details</h2>
+      <p class="modal-sub">Tell families about yourself — who you are and what you look like.</p>
+
+      <div class="form-section-label">Basic Info</div>
+      <div class="form-row">
+        <div class="form-group"><label>Gender<span class="required-star">*</span></label>
+          <select id="f-gender"><option>Select Gender</option><option>Male</option><option>Female</option></select>
+        </div>
+        <div class="form-group"><label>Date of Birth<span class="required-star">*</span></label>
+          <input type="date" id="f-dob">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Marital Status<span class="required-star">*</span></label>
+          <select id="f-marital">
+            <option>Select Status</option>
+            <option>Never Married</option>
+            <option>Divorced</option>
+            <option>Widowed</option>
+            <option>Separated</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Children (if any)</label>
+          <select id="f-children">
+            <option>No Children</option>
+            <option>1 Child (living with me)</option>
+            <option>1 Child (not with me)</option>
+            <option>2 Children (living with me)</option>
+            <option>2 Children (not with me)</option>
+            <option>3+ Children</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-label">Physical Appearance</div>
+      <div class="form-row">
+        <div class="form-group"><label>Height<span class="required-star">*</span></label>
+          <select id="f-height">
+            <option>Select Height</option>
+            <option>4'8"</option><option>4'9"</option><option>4'10"</option><option>4'11"</option>
+            <option>5'0"</option><option>5'1"</option><option>5'2"</option><option>5'3"</option>
+            <option>5'4"</option><option>5'5"</option><option>5'6"</option><option>5'7"</option>
+            <option>5'8"</option><option>5'9"</option><option>5'10"</option><option>5'11"</option>
+            <option>6'0"</option><option>6'1"</option><option>6'2"</option><option>6'3"+</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Weight (kg)</label>
+          <input type="number" id="f-weight" placeholder="e.g. 65" min="35" max="200">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Complexion</label>
+          <select id="f-complexion">
+            <option>Select Complexion</option>
+            <option>Very Fair</option><option>Fair</option><option>Wheatish</option>
+            <option>Wheatish Brown</option><option>Brown</option><option>Dark</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Body Type</label>
+          <select id="f-bodytype">
+            <option>Select Body Type</option>
+            <option>Slim / Lean</option><option>Athletic</option><option>Average</option>
+            <option>Heavyset</option><option>Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-label">Profile Photo</div>
+      <div class="photo-upload-area" onclick="alert('Photo upload will open here')">
+        <div class="photo-upload-icon">📷</div>
+        <div class="photo-upload-text">Click to upload your profile photo</div>
+        <div class="photo-upload-sub">JPG or PNG · Max 5MB · Photo visible only to approved members</div>
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:1.4rem">
+        <button class="btn-outline" style="flex:1;padding:.82rem;font-family:inherit" onclick="goStep(1)">← Back</button>
+        <button class="btn-primary" style="flex:2;padding:.9rem" onclick="goStep(3)">Next: Background →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Religion, Caste & Education ── -->
+    <div id="reg-step-3" style="display:none">
+      <h2 class="modal-title">Background & Education</h2>
+      <p class="modal-sub">Religion, caste, and academic background — the details families look for most.</p>
+
+      <div class="form-section-label">Religion & Community</div>
+      <div class="form-row">
+        <div class="form-group"><label>Religion<span class="required-star">*</span></label>
+          <select id="f-religion">
+            <option>Select Religion</option>
+            <option>Islam</option><option>Christianity</option><option>Hinduism</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Sect<span class="required-star">*</span></label>
+          <select id="f-sect">
+            <option>Select Sect</option>
+            <option>Sunni – Barelvi</option><option>Sunni – Deobandi</option>
+            <option>Sunni – Ahle Hadith</option><option>Sunni – Other</option>
+            <option>Shia – Ithna Ashari</option><option>Shia – Ismaili</option>
+            <option>Shia – Other</option><option>Ahmadi</option>
+            <option>Non-Denominational</option><option>Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Ethnicity / Mother Tongue<span class="required-star">*</span></label>
+          <select id="f-ethnicity">
+            <option>Select Ethnicity</option>
+            <option>Punjabi</option><option>Urdu Speaking / Muhajir</option>
+            <option>Sindhi</option><option>Pashtun</option><option>Baloch</option>
+            <option>Saraiki</option><option>Kashmiri</option><option>Hazara</option>
+            <option>Gilgiti / Baltistani</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Caste / Biradari<span class="required-star">*</span></label>
+          <select id="f-caste">
+            <option>Select Caste</option>
+            <optgroup label="Syed / Sadat">
+              <option>Syed</option>
+            </optgroup>
+            <optgroup label="Punjabi">
+              <option>Awan</option><option>Arain</option><option>Rajput</option>
+              <option>Jat</option><option>Gujjar</option><option>Sheikh</option>
+              <option>Chaudhry</option><option>Mian</option><option>Butt</option>
+              <option>Mughal</option><option>Malik</option>
+            </optgroup>
+            <optgroup label="Urdu Speaking">
+              <option>Ansari</option><option>Siddiqui</option><option>Farooqi</option>
+              <option>Qureshi</option><option>Abbasi</option>
+            </optgroup>
+            <optgroup label="Sindhi / Baloch">
+              <option>Sindhi – Memon</option><option>Sindhi – Soomro</option>
+              <option>Baloch – Marri</option><option>Baloch – Bugti</option>
+            </optgroup>
+            <optgroup label="Pashtun">
+              <option>Yusufzai</option><option>Durrani</option><option>Afridi</option><option>Khattak</option>
+            </optgroup>
+            <option>Other (specify in description)</option>
+            <option>Does Not Matter</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Religiosity / Practice Level</label>
+        <select id="f-piety">
+          <option>Select Practice Level</option>
+          <option>Very Religious (observant)</option>
+          <option>Moderately Religious</option>
+          <option>Cultural / Traditional</option>
+          <option>Spiritual but not strict</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+
+      <div class="form-section-label">Education</div>
+      <div class="form-row">
+        <div class="form-group"><label>Highest Education<span class="required-star">*</span></label>
+          <select id="f-education">
+            <option>Select Education</option>
+            <option>Matric (Grade 10)</option>
+            <option>Intermediate (Grade 12 / F.A / F.Sc)</option>
+            <option>Diploma / Certificate</option>
+            <option>Bachelor's (BA / BSc / BBA / MBBS etc.)</option>
+            <option>Master's (MA / MSc / MBA / MS etc.)</option>
+            <option>M.Phil / MPhil</option>
+            <option>PhD / Doctorate</option>
+            <option>Islamic Studies / Aalim</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Field of Study</label>
+          <input type="text" id="f-studyfield" placeholder="e.g. Computer Science, Medicine, Law">
+        </div>
+      </div>
+      <div class="form-group"><label>Institution / University</label>
+        <input type="text" id="f-institution" placeholder="e.g. University of Punjab, LUMS, Aga Khan">
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:1.4rem">
+        <button class="btn-outline" style="flex:1;padding:.82rem;font-family:inherit" onclick="goStep(2)">← Back</button>
+        <button class="btn-primary" style="flex:2;padding:.9rem" onclick="goStep(4)">Next: Lifestyle →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Profession, Residence & Lifestyle ── -->
+    <div id="reg-step-4" style="display:none">
+      <h2 class="modal-title">Career, Residence & Lifestyle</h2>
+      <p class="modal-sub">Help families understand your professional life, where you live, and what you are looking for.</p>
+
+      <div class="form-section-label">Career & Income</div>
+      <div class="form-row">
+        <div class="form-group"><label>Employment Status<span class="required-star">*</span></label>
+          <select id="f-employment">
+            <option>Select Status</option>
+            <option>Employed – Private Sector</option>
+            <option>Employed – Government / Civil Service</option>
+            <option>Self-Employed / Business Owner</option>
+            <option>Doctor / Medical Professional</option>
+            <option>Engineer</option>
+            <option>Teacher / Academic</option>
+            <option>Lawyer / Legal</option>
+            <option>Armed Forces / Police</option>
+            <option>IT / Tech Professional</option>
+            <option>Banker / Finance</option>
+            <option>Student</option>
+            <option>Housewife / Not Working</option>
+            <option>Retired</option>
+            <option>Unemployed (seeking)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Profession / Job Title</label>
+          <input type="text" id="f-profession" placeholder="e.g. Software Engineer, Doctor, Teacher">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Monthly Income (PKR)</label>
+          <select id="f-income">
+            <option>Select Range</option>
+            <option>Under PKR 30,000</option>
+            <option>PKR 30,000 – 60,000</option>
+            <option>PKR 60,000 – 1,00,000</option>
+            <option>PKR 1,00,000 – 2,00,000</option>
+            <option>PKR 2,00,000 – 5,00,000</option>
+            <option>PKR 5,00,000+</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Employer / Company</label>
+          <input type="text" id="f-employer" placeholder="e.g. Lahore Electric Supply, Own Business">
+        </div>
+      </div>
+
+      <div class="form-section-label">Residence & Property</div>
+      <div class="form-row">
+        <div class="form-group"><label>Country of Residence<span class="required-star">*</span></label>
+          <select id="f-country">
+            <option>Pakistan</option>
+            <option>United Kingdom</option><option>United Arab Emirates</option>
+            <option>Saudi Arabia</option><option>United States</option>
+            <option>Canada</option><option>Australia</option>
+            <option>Qatar</option><option>Kuwait</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>City of Residence<span class="required-star">*</span></label>
+          <select id="f-city">
+            <option>Select City</option>
+            <option>Lahore</option><option>Karachi</option><option>Islamabad</option>
+            <option>Rawalpindi</option><option>Faisalabad</option><option>Multan</option>
+            <option>Peshawar</option><option>Quetta</option><option>Hyderabad</option>
+            <option>Sialkot</option><option>Gujranwala</option><option>Gujrat</option>
+            <option>Bahawalpur</option><option>Sargodha</option><option>Abbottabad</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Residential Area / Neighbourhood</label>
+          <input type="text" id="f-area" placeholder="e.g. DHA Phase 5, Gulberg, Model Town">
+        </div>
+        <div class="form-group"><label>Residence Status</label>
+          <select id="f-residencestatus">
+            <option>Select Status</option>
+            <option>Own House</option>
+            <option>Parents' House (joint family)</option>
+            <option>Rented House</option>
+            <option>Rented Apartment / Flat</option>
+            <option>Company / Official Residence</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>House Size</label>
+          <select id="f-housesize">
+            <option>Select Size</option>
+            <option>3 Marla</option><option>5 Marla</option><option>7 Marla</option>
+            <option>10 Marla</option><option>1 Kanal</option><option>2 Kanal</option>
+            <option>3 Kanal+</option><option>Apartment / Flat</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Family Living Arrangement</label>
+          <select id="f-familytype">
+            <option>Select Arrangement</option>
+            <option>Nuclear Family (separate)</option>
+            <option>Joint Family (with parents)</option>
+            <option>Extended Family (relatives nearby)</option>
+            <option>Living Alone</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-label">Partner Preferences</div>
+      <div class="form-row">
+        <div class="form-group"><label>Preferred Partner Age (Min)</label>
+          <input type="number" id="f-partnerage-min" placeholder="e.g. 22" min="18" max="70">
+        </div>
+        <div class="form-group"><label>Preferred Partner Age (Max)</label>
+          <input type="number" id="f-partnerage-max" placeholder="e.g. 30" min="18" max="70">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Preferred Partner City / Region</label>
+          <select id="f-partnercity">
+            <option>No Preference</option>
+            <option>Lahore only</option><option>Any Punjab city</option>
+            <option>Karachi only</option><option>Any Sindh city</option>
+            <option>Islamabad / Rawalpindi</option><option>Any KPK city</option>
+            <option>Overseas Pakistanis</option><option>Anywhere in Pakistan</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Preferred Partner Education</label>
+          <select id="f-partneredu">
+            <option>No Preference</option>
+            <option>At least Matric</option><option>At least Intermediate</option>
+            <option>At least Bachelor's</option><option>At least Master's</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Open to Divorced / Widowed Partner?</label>
+        <select id="f-partnerdivorced">
+          <option>Prefer Never Married</option>
+          <option>Open to Divorced (no children)</option>
+          <option>Open to Divorced (with children)</option>
+          <option>Open to Widowed</option>
+          <option>No Preference</option>
+        </select>
+      </div>
+
+      <div class="form-section-label">Contact Preference</div>
+
+      <div class="contact-pref-box" id="contact-pref-box">
+        <div class="pref-toggle-row">
+          <div class="pref-toggle-label">
+            <h4 id="pref-title">🔒 Contact via ShadiKhana Only</h4>
+            <p id="pref-desc">Other members will not be able to contact you directly. All communication will go through ShadiKhana management. Recommended for privacy.</p>
+          </div>
+          <label class="pref-switch">
+            <input type="checkbox" id="f-contact-direct" onchange="toggleContactPref(this)">
+            <span class="pref-switch-slider"></span>
+          </label>
+        </div>
+        <div id="pref-status-tag" class="pref-status-tag pref-status-viaus">🔒 Via ShadiKhana Only</div>
+      </div>
+
+      <div id="contact-direct-details" style="display:none">
+        <div style="background:rgba(45,122,95,0.06);border:1.5px solid rgba(45,122,95,0.2);
+                    border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:.84rem;color:#1A5C45">
+          <strong>✅ Direct contact enabled.</strong> Your mobile and WhatsApp will be shown to Premium & Executive members only.
+          Basic members will still need to contact you through ShadiKhana.
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Preferred Contact Method</label>
+            <select id="f-contact-method">
+              <option value="both">📱 WhatsApp + Phone Call</option>
+              <option value="whatsapp">💬 WhatsApp Only</option>
+              <option value="call">📞 Phone Call Only</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Contact Hours (Optional)</label>
+            <select id="f-contact-hours">
+              <option value="anytime">Any Time</option>
+              <option value="morning">Morning (8am–12pm)</option>
+              <option value="afternoon">Afternoon (12pm–5pm)</option>
+              <option value="evening">Evening (5pm–9pm)</option>
+              <option value="weekends">Weekends Only</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Message to Interested Families</label>
+          <input type="text" id="f-contact-note"
+                 placeholder='e.g. "Please WhatsApp first before calling. Serious proposals only."'
+                 style="font-size:.86rem">
+        </div>
+      </div>
+
+      <div class="form-section-label">Privacy Settings</div>
+
+      <!-- Preset Cards -->
+      <div class="privacy-preset-grid">
+        <div class="privacy-preset-card selected-open" id="preset-open" onclick="setPrivacyPreset('open')">
+          <div class="privacy-check-mark">✓</div>
+          <div class="privacy-preset-icon">🔓</div>
+          <div class="privacy-preset-name" style="color:#2D7A5F">Open</div>
+          <div class="privacy-preset-desc">All information visible to active members</div>
+        </div>
+        <div class="privacy-preset-card" id="preset-standard-card" onclick="setPrivacyPreset('standard')">
+          <div class="privacy-check-mark">✓</div>
+          <div class="privacy-preset-icon">🔒</div>
+          <div class="privacy-preset-name">Standard</div>
+          <div class="privacy-preset-desc">Basics visible, sensitive info after mutual interest</div>
+        </div>
+        <div class="privacy-preset-card" id="preset-strict" onclick="setPrivacyPreset('strict')">
+          <div class="privacy-check-mark">✓</div>
+          <div class="privacy-preset-icon">🛡️</div>
+          <div class="privacy-preset-name">Strict</div>
+          <div class="privacy-preset-desc">Only basic info shown. Everything else hidden</div>
+        </div>
+      </div>
+
+      <!-- Hidden field to store chosen preset -->
+      <input type="hidden" id="f-privacy-preset" value="open">
+
+      <!-- Advanced Custom Toggles -->
+      <div id="privacy-custom-panel" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    margin-bottom:.8rem;padding:.5rem .8rem;background:var(--ivory);border-radius:8px">
+          <span style="font-size:.8rem;font-weight:600;color:var(--mid)">⚙️ Custom Privacy Settings</span>
+          <span style="font-size:.72rem;color:var(--burgundy);cursor:pointer;font-weight:600"
+                onclick="resetPrivacyToPreset()">Reset to preset</span>
+        </div>
+        <div style="border:1.5px solid var(--light);border-radius:12px;padding:.5rem 1rem">
+
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Profile Photo <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Hide your photo until both sides accept each other's interest</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="priv-photo" onchange="updatePrivacySummary()">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Contact Number <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Your mobile & WhatsApp hidden until mutual interest is confirmed</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="priv-contact" onchange="updatePrivacySummary()">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Family Details <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Parents' names, occupations & family description hidden until matched</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="priv-family" onchange="updatePrivacySummary()">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Income & Employer <span class="ptog-badge premium">Premium+ Only</span></div>
+              <div class="ptog-sub">Monthly income and employer name visible to Premium & Executive only</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="priv-income" onchange="updatePrivacySummary()">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Exact Location <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Hide area/neighbourhood — only show city until matched</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="priv-location" onchange="updatePrivacySummary()">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Show Full Name vs Alias Only</div>
+              <div class="ptog-sub">When ON — only your display/alias name is shown, not your full name</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="priv-name" onchange="updatePrivacySummary()">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Marital History Details <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Detailed marital info (divorce/widowed details) hidden until matched</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="priv-marital" onchange="updatePrivacySummary()">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Customise link -->
+      <div style="text-align:center;margin:.8rem 0">
+        <button type="button" onclick="toggleCustomPrivacy()"
+                id="custom-privacy-btn"
+                style="background:none;border:none;color:var(--burgundy);font-size:.82rem;
+                       font-weight:600;cursor:pointer;text-decoration:underline">
+          ⚙️ Customise individual privacy settings
+        </button>
+      </div>
+
+      <!-- Summary bar -->
+      <div class="privacy-summary-bar" id="privacy-summary">
+        🔓 <strong>Open:</strong> All your profile information will be visible to active members.
+      </div>
+
+      <div class="form-section-label">About Yourself</div>
+      <div class="form-group"><label>Personal Description</label>
+        <textarea id="f-aboutme" placeholder="Describe yourself — your personality, values, hobbies, and what kind of life partner you are looking for. (Min. 50 words recommended)"></textarea>
+      </div>
+      <div class="form-group"><label>Family Description</label>
+        <textarea id="f-familydesc" placeholder="Brief description of your family background, siblings, and family values." style="min-height:65px"></textarea>
+      </div>
+
+      <div class="form-section-label">Parents' Occupation</div>
+      <div class="form-row">
+        <div class="form-group"><label>Father's Name</label>
+          <input type="text" id="f-fathername" placeholder="e.g. Muhammad Akram">
+        </div>
+        <div class="form-group"><label>Father's Occupation<span class="required-star">*</span></label>
+          <select id="f-fatherjob">
+            <option>Select Occupation</option>
+            <option>Business Owner / Entrepreneur</option>
+            <option>Government Officer (Grade 17+)</option>
+            <option>Civil Servant / Bureaucrat</option>
+            <option>Armed Forces – Officer</option>
+            <option>Armed Forces – JCO / Soldier</option>
+            <option>Police Officer</option>
+            <option>Doctor / Medical Professional</option>
+            <option>Engineer</option>
+            <option>Lawyer / Judge</option>
+            <option>Teacher / Professor / Academic</option>
+            <option>Banker / Finance Professional</option>
+            <option>IT / Tech Professional</option>
+            <option>Accountant / CA / CPA</option>
+            <option>Agriculturalist / Farmer / Zamindar</option>
+            <option>Trader / Merchant / Shopkeeper</option>
+            <option>Industrialist / Factory Owner</option>
+            <option>Landlord / Property Owner</option>
+            <option>Retired (Government)</option>
+            <option>Retired (Private)</option>
+            <option>Deceased</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Father's Employer / Business Name</label>
+        <input type="text" id="f-fatheremployer" placeholder="e.g. Own business, Government of Punjab, Army, etc.">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>Mother's Name</label>
+          <input type="text" id="f-mothername" placeholder="e.g. Shahnaz Begum">
+        </div>
+        <div class="form-group"><label>Mother's Occupation<span class="required-star">*</span></label>
+          <select id="f-motherjob">
+            <option>Select Occupation</option>
+            <option>Housewife / Homemaker</option>
+            <option>Doctor / Medical Professional</option>
+            <option>Teacher / Professor / Academic</option>
+            <option>Government Officer</option>
+            <option>Business Owner / Entrepreneur</option>
+            <option>Banker / Finance Professional</option>
+            <option>Lawyer / Judge</option>
+            <option>IT / Tech Professional</option>
+            <option>NGO / Social Worker</option>
+            <option>Retired (Government)</option>
+            <option>Retired (Private)</option>
+            <option>Deceased</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Mother's Employer / Institution</label>
+        <input type="text" id="f-motheremployer" placeholder="e.g. DHQ Hospital, Government School, Own business (leave blank if housewife)">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>Parents' Marital Status</label>
+          <select id="f-parentsstatus">
+            <option>Married (together)</option>
+            <option>Father Deceased</option>
+            <option>Mother Deceased</option>
+            <option>Both Deceased</option>
+            <option>Separated / Divorced</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Number of Siblings</label>
+          <select id="f-siblings">
+            <option>Only Child</option>
+            <option>1 Sibling</option>
+            <option>2 Siblings</option>
+            <option>3 Siblings</option>
+            <option>4 Siblings</option>
+            <option>5+ Siblings</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:1.4rem">
+        <button class="btn-outline" style="flex:1;padding:.82rem;font-family:inherit" onclick="goStep(3)">← Back</button>
+        <button class="btn-primary" style="flex:2;padding:.9rem" onclick="goStep(5)">Next: Choose Package →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 5: Package Selection ── -->
+    <div id="reg-step-5" style="display:none">
+      <h2 class="modal-title">Choose Your Package</h2>
+      <p class="modal-sub">One-time registration fee. No monthly charges — ever.</p>
+
+      <div onclick="selectPlan(this,'basic')" class="plan-select-card selected">
+        <input type="radio" name="pkg" value="basic" checked>
+        <div class="psc-info">
+          <div class="psc-name">🌱 Basic</div>
+          <div class="psc-price">PKR 10,000</div>
+          <div class="psc-desc">Core access · Success fee on match: PKR 40,000</div>
+        </div>
+      </div>
+      <div onclick="selectPlan(this,'premium')" class="plan-select-card">
+        <input type="radio" name="pkg" value="premium">
+        <div class="psc-info">
+          <div class="psc-name">⭐ Premium</div>
+          <div class="psc-price">PKR 30,000</div>
+          <div class="psc-desc">All features + Matchmaker + Lahore in-person · Success fee: PKR 70,000</div>
+        </div>
+        <span class="psc-badge" style="background:rgba(123,29,58,0.1);color:var(--burgundy)">Popular</span>
+      </div>
+      <div onclick="selectPlan(this,'executive')" class="plan-select-card">
+        <input type="radio" name="pkg" value="executive">
+        <div class="psc-info">
+          <div class="psc-name">🌐 Executive / Overseas</div>
+          <div class="psc-price" style="color:var(--gold)">PKR 50,000</div>
+          <div class="psc-desc">Business-class &amp; overseas families · Full family verification · Personal meet-up arranged · Success fee: PKR 1,00,000</div>
+        </div>
+        <span class="psc-badge" style="background:rgba(33,150,243,0.15);color:#1565C0">👑 Elite</span>
+      </div>
+
+      <div style="background:rgba(212,168,83,0.08);border:1px solid rgba(212,168,83,0.25);border-radius:10px;padding:.85rem 1rem;margin-top:1rem;font-size:.8rem;color:#8A6010;line-height:1.6">
+        💡 <strong>Success fee</strong> is only charged once your rishta is confirmed. If no match is made, no success fee is ever due.
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:1.4rem">
+        <button class="btn-outline" style="flex:1;padding:.82rem;font-family:inherit" onclick="goStep(4)">← Back</button>
+        <button class="btn-primary" style="flex:2;padding:.9rem" onclick="goStep(6)">Next: Payment →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 6: Payment ── -->
+    <div id="reg-step-6" style="display:none">
+      <h2 class="modal-title">Complete Payment</h2>
+      <p class="modal-sub">Secure, instant payment. Your profile goes live within 24 hours of admin review.</p>
+
+      <div style="background:var(--ivory);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;border:1.5px solid var(--light)">
+        <div style="font-size:.78rem;color:var(--mid)">You selected</div>
+        <div style="font-weight:700;font-size:1.1rem;color:var(--burgundy)" id="plan-summary-text">Basic – PKR 10,000</div>
+        <div style="font-size:.74rem;color:var(--mid);margin-top:3px">One-time registration · No recurring charges</div>
+      </div>
+
+      <div class="form-group"><label>Payment Method<span class="required-star">*</span></label>
+        <select id="payment-method" onchange="updatePaymentFields()">
+          <option value="jazzcash">📱 JazzCash</option>
+          <option value="easypaisa">📱 EasyPaisa</option>
+          <option value="meezan">🏦 Bank Transfer</option>
+          <option value="card">💳 Visa / Mastercard</option>
+        </select>
+      </div>
+      <div id="payment-fields">
+        <div class="form-group"><label>JazzCash Mobile Number</label><input type="tel" placeholder="03xx-xxxxxxx"></div>
+      </div>
+
+      <div style="background:#E8F5F0;border-radius:10px;padding:.85rem 1rem;margin-bottom:1.1rem;font-size:.81rem;color:var(--green);line-height:1.5">
+        🔒 256-bit SSL encrypted. Your payment details are never stored on our servers.
+      </div>
+
+      <div style="font-size:.78rem;color:var(--mid);margin-bottom:1rem;line-height:1.5">
+        By completing registration you agree to our <a href="#" style="color:var(--burgundy)">Terms of Service</a> and <a href="#" style="color:var(--burgundy)">Privacy Policy</a>. Your profile will be reviewed by our team before going live.
+      </div>
+
+      <div style="background:rgba(37,211,102,0.08);border:1.5px solid rgba(37,211,102,0.25);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.84rem;color:#1A7A3C;line-height:1.7">
+        <strong>📱 How this works:</strong><br>
+        Clicking the button below will open <strong>WhatsApp</strong> with your full profile pre-filled as a message. Simply <strong>press Send</strong> — then share your payment screenshot in the same chat. Our team confirms within 24 hours.
+      </div>
+
+      <div style="display:flex;gap:1rem">
+        <button class="btn-outline" style="flex:1;padding:.82rem;font-family:inherit" onclick="goStep(5)">← Back</button>
+        <button class="btn-primary" style="flex:2;padding:.9rem;background:linear-gradient(135deg,#25D366,#128C7E);box-shadow:0 4px 16px rgba(37,211,102,0.4)" onclick="sendToWhatsApp()">
+          📱 Send Profile via WhatsApp →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DIRECT CONTACT MODAL -->
+<div class="modal-overlay" id="modal-direct-contact">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('direct-contact')">✕</button>
+    <div id="dc-content">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- VIA SHADIKHANA MODAL -->
+<div class="modal-overlay" id="modal-via-us">
+  <div class="modal" style="max-width:460px">
+    <button class="modal-close" onclick="closeModal('via-us')">✕</button>
+    <div style="text-align:center;margin-bottom:1.2rem">
+      <div style="font-size:2.5rem;margin-bottom:.6rem">🤝</div>
+      <h2 class="modal-title">Contact via ShadiKhana</h2>
+      <p class="modal-sub" id="via-us-desc">This member prefers all contact to go through ShadiKhana. We will pass on your interest and arrange communication on their behalf.</p>
+    </div>
+    <div style="background:var(--ivory);border-radius:14px;padding:1.2rem 1.4rem;margin-bottom:1.2rem">
+      <div style="font-size:.82rem;font-weight:700;color:var(--mid);margin-bottom:.8rem;text-transform:uppercase;letter-spacing:.05em">How it works</div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div style="display:flex;align-items:flex-start;gap:.8rem;font-size:.86rem">
+          <span style="background:var(--burgundy);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">1</span>
+          <span>You submit your interest request with a brief message below</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:.8rem;font-size:.86rem">
+          <span style="background:var(--burgundy);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">2</span>
+          <span>ShadiKhana contacts this member on your behalf within 24 hours</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:.8rem;font-size:.86rem">
+          <span style="background:var(--burgundy);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">3</span>
+          <span>If they are interested, we will connect both families with full privacy</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Your Message to ShadiKhana <span style="color:var(--rose)">*</span></label>
+      <textarea id="via-us-message" placeholder="e.g. I am interested in this profile. My name is Ahmed, 30, from Karachi, Engineer. Please pass on my interest." style="min-height:90px"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Your Contact Number</label>
+      <input type="tel" id="via-us-phone" placeholder="Your WhatsApp / mobile number">
+    </div>
+    <div style="background:rgba(45,122,95,0.08);border-radius:10px;padding:.8rem 1rem;margin-bottom:1.2rem;font-size:.82rem;color:var(--green)">
+      🔒 Your contact details will only be shared with this member if they express mutual interest.
+    </div>
+    <button class="btn-primary" style="width:100%;padding:.9rem" onclick="submitViaUs()">
+      📋 Submit Request to ShadiKhana →
+    </button>
+  </div>
+</div>
+
+<!-- VIA SHADIKHANA SUCCESS -->
+<div class="modal-overlay" id="modal-via-us-sent">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+    <h2 class="modal-title">Request Submitted!</h2>
+    <p class="modal-sub">Our team will contact this member within 24 hours on your behalf. You will hear back from us on WhatsApp.</p>
+    <div style="background:var(--ivory);border-radius:12px;padding:1rem;margin:1rem 0;font-size:.84rem;text-align:left;color:var(--mid);line-height:1.7">
+      📱 WhatsApp us anytime: <strong style="color:var(--charcoal)">+92 321 4133233</strong><br>
+      ✉ Email: <strong style="color:var(--charcoal)">hello@shadikhana.pk</strong>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:.9rem" onclick="closeModal('via-us-sent')">Done</button>
+  </div>
+</div>
+
+<!-- PRIVACY LOCKED INFO MODAL -->
+<div class="modal-overlay" id="modal-privacy-locked">
+  <div class="modal" style="max-width:420px;text-align:center">
+    <button class="modal-close" onclick="closeModal('privacy-locked')">✕</button>
+    <div style="font-size:3rem;margin-bottom:.8rem" id="priv-lock-icon">🔒</div>
+    <h2 class="modal-title" id="priv-lock-title">Information Hidden</h2>
+    <p class="modal-sub" id="priv-lock-desc">This member has chosen to keep this information private.</p>
+
+    <div style="background:var(--ivory);border-radius:14px;padding:1.2rem;margin:1rem 0;text-align:left">
+      <div style="font-size:.82rem;font-weight:700;color:var(--mid);text-transform:uppercase;
+                  letter-spacing:.05em;margin-bottom:.8rem">How to unlock</div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div style="display:flex;gap:.8rem;align-items:flex-start;font-size:.86rem">
+          <span style="background:var(--burgundy);color:#fff;border-radius:50%;min-width:22px;height:22px;
+                       display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700">1</span>
+          <span>Send this member an <strong>interest request</strong></span>
+        </div>
+        <div style="display:flex;gap:.8rem;align-items:flex-start;font-size:.86rem">
+          <span style="background:var(--burgundy);color:#fff;border-radius:50%;min-width:22px;height:22px;
+                       display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700">2</span>
+          <span>They accept your interest — creating a <strong>mutual match</strong></span>
+        </div>
+        <div style="display:flex;gap:.8rem;align-items:flex-start;font-size:.86rem">
+          <span style="background:var(--burgundy);color:#fff;border-radius:50%;min-width:22px;height:22px;
+                       display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700">3</span>
+          <span>Hidden information is <strong>automatically unlocked</strong> for both of you</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(45,122,95,0.07);border-radius:10px;padding:.8rem 1rem;
+                margin-bottom:1.2rem;font-size:.82rem;color:var(--green);text-align:left">
+      🔒 This privacy system protects members' dignity and safety. ShadiKhana respects all privacy choices.
+    </div>
+
+    <button class="btn-primary" style="width:100%;padding:.88rem" onclick="closeModal('privacy-locked');openModal('register')">
+      Send Interest Request →
+    </button>
+    <div style="margin-top:.8rem">
+      <a href="#" onclick="closeModal('privacy-locked');openViaUsModal('this member');return false"
+         style="font-size:.82rem;color:var(--burgundy);font-weight:600">
+        Or request info via ShadiKhana →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <h2 class="modal-title">Welcome Back</h2>
+    <p class="modal-sub">Sign in to your ShadiKhana account</p>
+    <div class="form-group"><label>Mobile or Email</label><input type="text" placeholder="+92 300... or email@..."></div>
+    <div class="form-group"><label>Password</label><input type="password" placeholder="Your password"></div>
+    <button class="btn-primary" style="width:100%;padding:.9rem;margin-top:.3rem">Sign In</button>
+    <p style="text-align:center;font-size:.8rem;color:var(--mid);margin-top:1rem">New here? <a href="#" onclick="closeModal('login');openModal('register');return false" style="color:var(--burgundy);font-weight:600">Create Free Profile</a></p>
+    <p style="text-align:center;font-size:.8rem;margin-top:.4rem"><a href="#" style="color:var(--mid)">Forgot password?</a></p>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="modal-overlay" id="modal-success">
+  <div class="modal" style="text-align:center">
+    <div style="font-size:3.5rem;margin-bottom:1rem">✅</div>
+    <h2 class="modal-title">Profile Submitted!</h2>
+    <p class="modal-sub">Your WhatsApp should have opened with your full profile details. Please <strong>send that message</strong> to complete your registration.</p>
+    <div style="background:rgba(45,122,95,0.08);border-radius:12px;padding:1.1rem 1.2rem;margin:1rem 0;font-size:.86rem;color:var(--green);text-align:left;line-height:1.8">
+      ✅ Profile details compiled &amp; sent to WhatsApp<br>
+      ⏳ Our team will confirm your registration within 24 hours<br>
+      💳 Share your payment screenshot on the same WhatsApp chat<br>
+      📞 We'll contact you on <strong>${gv('f-mobile') || 'your number'}</strong> to confirm
+    </div>
+    <div style="background:var(--ivory);border-radius:12px;padding:1rem 1.2rem;font-size:.84rem;color:var(--mid);text-align:left;margin-bottom:1.2rem">
+      <strong>Didn't open WhatsApp?</strong><br>
+      Message us directly at <a href="https://wa.me/923214133233" target="_blank" style="color:var(--burgundy);font-weight:600">+92 321 4133233</a> and mention your name and chosen package.
+    </div>
+    <button class="btn-primary" style="width:100%;padding:.9rem" onclick="closeModal('success')">Done — I've Sent the Message ✓</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  PRIVACY CONTROLS
+// ══════════════════════════════════════════
+const PRIVACY_PRESETS = {
+  open:     { photo:false, contact:false, family:false, income:false, location:false, name:false, marital:false },
+  standard: { photo:true,  contact:true,  family:true,  income:true,  location:false, name:false, marital:true  },
+  strict:   { photo:true,  contact:true,  family:true,  income:true,  location:true,  name:true,  marital:true  }
+};
+const PRIVACY_SUMMARIES = {
+  open:     '🔓 <strong>Open:</strong> All your profile information is visible to all active members.',
+  standard: '🔒 <strong>Standard:</strong> Basic info visible to all. Photo, contact, family & marital history shown only after mutual interest. Income shown to Premium+ only.',
+  strict:   '🛡️ <strong>Strict:</strong> Only name/alias, age, city, religion & education are visible. Everything else hidden.',
+  custom:   '⚙️ <strong>Custom:</strong> Your own mix of privacy settings applied.'
+};
+let currentPrivacyPreset = 'open';
+let customPrivacyOpen = false;
+
+function setPrivacyPreset(preset) {
+  currentPrivacyPreset = preset;
+  var fi = document.getElementById('f-privacy-preset');
+  if (fi) fi.value = preset;
+  var idMap = { open:'preset-open', standard:'preset-standard-card', strict:'preset-strict' };
+  var classMap = { open:'selected-open', standard:'selected', strict:'selected-strict' };
+  ['preset-open','preset-standard-card','preset-strict'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.className = 'privacy-preset-card';
+  });
+  var target = document.getElementById(idMap[preset]);
+  if (target) target.className = 'privacy-preset-card ' + (classMap[preset] || 'selected');
+  var settings = PRIVACY_PRESETS[preset] || PRIVACY_PRESETS.standard;
+  Object.keys(settings).forEach(function(key) {
+    var tog = document.getElementById('priv-' + key);
+    if (tog) tog.checked = settings[key];
+  });
+  updatePrivacySummary(preset);
+}
+
+function toggleCustomPrivacy() {
+  customPrivacyOpen = !customPrivacyOpen;
+  var panel = document.getElementById('privacy-custom-panel');
+  var btn   = document.getElementById('custom-privacy-btn');
+  if (panel) panel.style.display = customPrivacyOpen ? 'block' : 'none';
+  if (btn)   btn.textContent = customPrivacyOpen ? '⬆️ Hide custom settings' : '⚙️ Customise individual privacy settings';
+}
+
+function updatePrivacySummary(forcePreset) {
+  var preset  = forcePreset || currentPrivacyPreset;
+  var summary = document.getElementById('privacy-summary');
+  if (!summary) return;
+  if (forcePreset) { summary.innerHTML = PRIVACY_SUMMARIES[preset] || PRIVACY_SUMMARIES.standard; return; }
+  var expected = PRIVACY_PRESETS[preset] || {};
+  var isCustom = false;
+  ['photo','contact','family','income','location','name','marital'].forEach(function(k) {
+    var tog = document.getElementById('priv-' + k);
+    if (tog && tog.checked !== expected[k]) isCustom = true;
+  });
+  summary.innerHTML = isCustom ? PRIVACY_SUMMARIES.custom : PRIVACY_SUMMARIES[preset];
+}
+
+function resetPrivacyToPreset() { setPrivacyPreset(currentPrivacyPreset); }
+
+function getPrivacySettings() {
+  return {
+    privacy_preset: document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'open',
+    priv_photo:     !!(document.getElementById('priv-photo')    && document.getElementById('priv-photo').checked),
+    priv_contact:   !!(document.getElementById('priv-contact')  && document.getElementById('priv-contact').checked),
+    priv_family:    !!(document.getElementById('priv-family')   && document.getElementById('priv-family').checked),
+    priv_income:    !!(document.getElementById('priv-income')   && document.getElementById('priv-income').checked),
+    priv_location:  !!(document.getElementById('priv-location') && document.getElementById('priv-location').checked),
+    priv_name:      !!(document.getElementById('priv-name')     && document.getElementById('priv-name').checked),
+    priv_marital:   !!(document.getElementById('priv-marital')  && document.getElementById('priv-marital').checked)
+  };
+}
+
+// ══════════════════════════════════════════
+//  PRIVACY LOCKED MODAL
+// ══════════════════════════════════════════
+function openPrivacyLocked(type) {
+  var configs = {
+    photo:    { icon:'📷', title:'Photo Hidden',          desc:'This member has hidden their photo until mutual interest is confirmed.' },
+    contact:  { icon:'📱', title:'Contact Info Hidden',   desc:'This member's phone number is hidden. Send an interest request to unlock.' },
+    family:   { icon:'👨‍👩‍👧', title:'Family Details Hidden', desc:'Family information is only shared after both sides accept each other's interest.' },
+    income:   { icon:'💰', title:'Income Info Hidden',    desc:'This member has chosen to keep income details private.' },
+    location: { icon:'📍', title:'Exact Location Hidden', desc:'Only the city is shown. Full area unlocked after mutual interest.' },
+    strict:   { icon:'🛡️', title:'Strict Privacy Mode',   desc:'This member uses Strict Privacy. Only basic info is visible. Contact through ShadiKhana to learn more.' }
+  };
+  var cfg = configs[type] || configs.strict;
+  var icon  = document.getElementById('priv-lock-icon');
+  var title = document.getElementById('priv-lock-title');
+  var desc  = document.getElementById('priv-lock-desc');
+  if (icon)  icon.textContent  = cfg.icon;
+  if (title) title.textContent = cfg.title;
+  if (desc)  desc.textContent  = cfg.desc;
+  openModal('privacy-locked');
+}
+
+// ══════════════════════════════════════════
+//  CONTACT PREFERENCE TOGGLE
+// ══════════════════════════════════════════
+function toggleContactPref(checkbox) {
+  var box       = document.getElementById('contact-pref-box');
+  var title     = document.getElementById('pref-title');
+  var desc      = document.getElementById('pref-desc');
+  var statusTag = document.getElementById('pref-status-tag');
+  var details   = document.getElementById('contact-direct-details');
+  if (checkbox.checked) {
+    if (box)       box.className       = 'contact-pref-box direct';
+    if (title)     title.textContent   = '📱 Allow Direct Contact';
+    if (desc)      desc.textContent    = 'Other members can contact you directly via WhatsApp or phone call. Your number will be visible to Premium & Executive members.';
+    if (statusTag) { statusTag.className = 'pref-status-tag pref-status-direct'; statusTag.textContent = '📱 Direct Contact Enabled'; }
+    if (details)   details.style.display = 'block';
+  } else {
+    if (box)       box.className       = 'contact-pref-box via-us';
+    if (title)     title.textContent   = '🔒 Contact via ShadiKhana Only';
+    if (desc)      desc.textContent    = 'Other members will not be able to contact you directly. All communication will go through ShadiKhana management.';
+    if (statusTag) { statusTag.className = 'pref-status-tag pref-status-viaus'; statusTag.textContent = '🔒 Via ShadiKhana Only'; }
+    if (details)   details.style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════════
+//  DIRECT CONTACT MODAL
+// ══════════════════════════════════════════
+function openContactModal(name, type, number) {
+  var clean  = number.replace(/\D/g, '');
+  var isWA   = (type === 'whatsapp' || type === 'both');
+  var isCall = (type === 'call'     || type === 'both');
+  var waUrl  = 'https://wa.me/' + clean + '?text=' + encodeURIComponent('Assalam o Alaikum, I saw your profile on ShadiKhana and I am interested in learning more. JazakAllah.');
+  var html   = '<div style="text-align:center;margin-bottom:1.4rem">';
+  html += '<div style="font-size:2.2rem;margin-bottom:.5rem">' + (isWA && isCall ? '📱' : isWA ? '💬' : '📞') + '</div>';
+  html += '<h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.3rem">Contact ' + name + '</h2>';
+  html += '<p style="font-size:.85rem;color:var(--mid)">This member is open to direct contact. Choose your preferred method below.</p>';
+  html += '</div>';
+  if (isWA) {
+    html += '<div class="contact-method-card selected" onclick="window.open('' + waUrl + '','_blank')">';
+    html += '<div class="contact-method-icon">💬</div>';
+    html += '<div class="contact-method-info"><strong>WhatsApp Message</strong><span>Opens WhatsApp with a pre-written introduction</span></div>';
+    html += '</div>';
+  }
+  if (isCall) {
+    html += '<div class="contact-method-card" onclick="window.location.href='tel:' + number + ''">';
+    html += '<div class="contact-method-icon">📞</div>';
+    html += '<div class="contact-method-info"><strong>Phone Call</strong><span>' + number + '</span></div>';
+    html += '</div>';
+  }
+  html += '<div style="background:rgba(212,168,83,0.1);border:1px solid rgba(212,168,83,0.25);border-radius:10px;padding:.85rem 1rem;margin-top:.8rem;font-size:.8rem;color:#8A6010;line-height:1.5">';
+  html += '💡 <strong>Etiquette reminder:</strong> Please introduce yourself politely — your name, age, city and that you found them on ShadiKhana.';
+  html += '</div>';
+  html += '<div style="text-align:center;margin-top:1rem;font-size:.78rem;color:var(--mid)">Prefer to go through ShadiKhana? ';
+  html += '<a href="#" onclick="closeModal('direct-contact');openViaUsModal('' + name + '');return false" style="color:var(--burgundy);font-weight:600">Click here</a></div>';
+  var dc = document.getElementById('dc-content');
+  if (dc) dc.innerHTML = html;
+  openModal('direct-contact');
+}
+
+// ══════════════════════════════════════════
+//  VIA SHADIKHANA MODAL
+// ══════════════════════════════════════════
+var currentViaUsMember = '';
+function openViaUsModal(name) {
+  currentViaUsMember = name;
+  var descEl = document.getElementById('via-us-desc');
+  if (descEl) descEl.textContent = name + ' prefers all contact to go through ShadiKhana. We will pass on your interest and arrange communication on their behalf.';
+  var msgEl = document.getElementById('via-us-message');
+  var phEl  = document.getElementById('via-us-phone');
+  if (msgEl) msgEl.value = '';
+  if (phEl)  phEl.value  = '';
+  closeModal('direct-contact');
+  openModal('via-us');
+}
+
+function submitViaUs() {
+  var msgEl = document.getElementById('via-us-message');
+  var phEl  = document.getElementById('via-us-phone');
+  var msg   = msgEl ? msgEl.value.trim() : '';
+  var phone = phEl  ? phEl.value.trim()  : '';
+  if (!msg) {
+    if (msgEl) msgEl.style.borderColor = 'var(--rose)';
+    if (msgEl) msgEl.focus();
+    return;
+  }
+  var waMsg = '📋 *New Contact Request via ShadiKhana*\n\n' +
+              'Interested in: *' + currentViaUsMember + '*\n\n' +
+              'Message: ' + msg + '\n\n' +
+              'Contact: ' + (phone || 'Not provided') + '\n\n' +
+              '— Sent from shadikhana.pk';
+  window.open('https://wa.me/923214133233?text=' + encodeURIComponent(waMsg), '_blank');
+  closeModal('via-us');
+  openModal('via-us-sent');
+}
+
+// ══════════════════════════════════════════
+//  LANGUAGE TOGGLE
+// ══════════════════════════════════════════
+function toggleLang() {
+  document.body.classList.toggle('urdu-mode');
+}
+
+// ══════════════════════════════════════════
+//  MODAL OPEN / CLOSE
+// ══════════════════════════════════════════
+function openModal(id) {
+  var el = document.getElementById('modal-' + id);
+  if (el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; }
+}
+function closeModal(id) {
+  var el = document.getElementById('modal-' + id);
+  if (el) { el.classList.remove('open'); document.body.style.overflow = ''; }
+}
+document.querySelectorAll('.modal-overlay').forEach(function(o) {
+  o.addEventListener('click', function(e) {
+    if (e.target === this) { this.classList.remove('open'); document.body.style.overflow = ''; }
+  });
+});
+
+// ══════════════════════════════════════════
+//  REGISTRATION TABS
+// ══════════════════════════════════════════
+function setTab(btn) {
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+//  REGISTRATION STEPS (6-step flow)
+// ══════════════════════════════════════════
+var currentStep = 1;
+var totalSteps  = 6;
+var planNames = {
+  basic:     'Basic – PKR 10,000  ·  Success fee on match: PKR 40,000',
+  premium:   'Premium – PKR 30,000  ·  Success fee on match: PKR 70,000',
+  executive: 'Executive / Overseas – PKR 50,000  ·  Success fee on match: PKR 1,00,000'
+};
+var selectedPlan = 'basic';
+
+function goStep(n) {
+  var current = document.getElementById('reg-step-' + currentStep);
+  var next    = document.getElementById('reg-step-' + n);
+  if (current) current.style.display = 'none';
+  if (next)    next.style.display    = 'block';
+  for (var i = 1; i <= totalSteps; i++) {
+    var pill = document.getElementById('sp' + i);
+    if (!pill) continue;
+    pill.className = 'step-pill ' + (i < n ? 'done' : i === n ? 'active' : 'pending');
+  }
+  if (n === 6) {
+    var pst = document.getElementById('plan-summary-text');
+    if (pst) pst.textContent = planNames[selectedPlan] || 'Basic – PKR 10,000';
+  }
+  currentStep = n;
+  var modal = document.querySelector('#modal-register .modal');
+  if (modal) modal.scrollTop = 0;
+}
+
+function selectPlan(card, plan) {
+  document.querySelectorAll('.plan-select-card').forEach(function(c) { c.classList.remove('selected'); });
+  card.classList.add('selected');
+  var radio = card.querySelector('input');
+  if (radio) radio.checked = true;
+  selectedPlan = plan;
+}
+
+// ══════════════════════════════════════════
+//  PAYMENT FIELDS (dynamic by method)
+// ══════════════════════════════════════════
+function updatePaymentFields() {
+  var method = document.getElementById('payment-method');
+  if (!method) return;
+  var val    = method.value;
+  var fields = document.getElementById('payment-fields');
+  if (!fields) return;
+  if (val === 'jazzcash') {
+    fields.innerHTML = '<div class="form-group"><label>JazzCash Mobile Number</label><input type="tel" placeholder="03xx-xxxxxxx"></div>';
+  } else if (val === 'easypaisa') {
+    fields.innerHTML = '<div class="form-group"><label>EasyPaisa Mobile Number</label><input type="tel" placeholder="03xx-xxxxxxx"></div>';
+  } else if (val === 'meezan' || val === 'bank_transfer') {
+    fields.innerHTML = '<div class="form-group"><label>Bank Transfer Details</label><div style="background:var(--ivory);border-radius:10px;padding:.8rem 1rem;font-size:.84rem;color:var(--mid);border:1.5px solid var(--light)">Transfer to:<br><strong style="color:var(--charcoal)">Bank Transfer · ShadiKhana</strong><br>IBAN: PK00MEZN0001234567890<br><br>Send screenshot to WhatsApp: <strong>+92 321 4133233</strong></div></div>';
+  } else {
+    fields.innerHTML = '<div class="form-group"><label>Card Number</label><input type="text" placeholder="1234 5678 9012 3456"></div><div class="form-row"><div class="form-group"><label>Expiry</label><input type="text" placeholder="MM/YY"></div><div class="form-group"><label>CVV</label><input type="text" placeholder="123"></div></div>';
+  }
+}
+
+// ══════════════════════════════════════════
+//  FORM VALUE GETTER
+// ══════════════════════════════════════════
+function gv(id) {
+  var el = document.getElementById(id);
+  if (!el) return '—';
+  var val = el.value ? el.value.trim() : '';
+  return val || '—';
+}
+
+// ══════════════════════════════════════════
+//  WHATSAPP REGISTRATION SUBMISSION
+// ══════════════════════════════════════════
+function sendToWhatsApp() {
+  var planEl = document.getElementById('plan-summary-text');
+  var plan   = planEl ? planEl.textContent.trim() : '—';
+  var pmEl   = document.getElementById('payment-method');
+  var pm     = pmEl ? pmEl.options[pmEl.selectedIndex].text.trim() : '—';
+  var priv   = getPrivacySettings();
+
+  var lines = [
+    '🌸 *NEW SHADIKHANA REGISTRATION* 🌸',
+    '─────────────────────────────',
+    '*📋 ACCOUNT DETAILS*',
+    '• Full Name: '       + gv('f-fullname'),
+    '• Display Name: '    + gv('f-alias'),
+    '• Mobile: '          + gv('f-mobile'),
+    '• WhatsApp: '        + gv('f-whatsapp'),
+    '• Email: '           + gv('f-email'),
+    '─────────────────────────────',
+    '*👤 PERSONAL DETAILS*',
+    '• Gender: '          + gv('f-gender'),
+    '• Date of Birth: '   + gv('f-dob'),
+    '• Marital Status: '  + gv('f-marital'),
+    '• Children: '        + gv('f-children'),
+    '• Height: '          + gv('f-height'),
+    '• Weight: '          + gv('f-weight') + ' kg',
+    '• Complexion: '      + gv('f-complexion'),
+    '─────────────────────────────',
+    '*🕌 RELIGION & BACKGROUND*',
+    '• Religion: '        + gv('f-religion'),
+    '• Sect: '            + gv('f-sect'),
+    '• Ethnicity: '       + gv('f-ethnicity'),
+    '• Caste: '           + gv('f-caste'),
+    '• Education: '       + gv('f-education'),
+    '• Field of Study: '  + gv('f-studyfield'),
+    '• Institution: '     + gv('f-institution'),
+    '─────────────────────────────',
+    '*💼 CAREER & RESIDENCE*',
+    '• Employment: '      + gv('f-employment'),
+    '• Profession: '      + gv('f-profession'),
+    '• Income: '          + gv('f-income'),
+    '• City: '            + gv('f-city'),
+    '• Country: '         + gv('f-country'),
+    '• House Size: '      + gv('f-housesize'),
+    '─────────────────────────────',
+    '*👨‍👩‍👧 PARENTS*',
+    '• Father Name: '     + gv('f-fathername'),
+    '• Father Job: '      + gv('f-fatherjob'),
+    '• Mother Name: '     + gv('f-mothername'),
+    '• Mother Job: '      + gv('f-motherjob'),
+    '• Siblings: '        + gv('f-siblings'),
+    '─────────────────────────────',
+    '*🔒 PRIVACY & CONTACT*',
+    '• Privacy Preset: '  + priv.privacy_preset,
+    '• Contact Pref: '    + (document.getElementById('f-contact-direct') && document.getElementById('f-contact-direct').checked ? 'Direct Contact' : 'Via ShadiKhana'),
+    '─────────────────────────────',
+    '*💳 PACKAGE & PAYMENT*',
+    '• Package: '         + plan,
+    '• Payment Method: '  + pm,
+    '─────────────────────────────',
+    '⏳ _Awaiting payment confirmation & profile review._',
+    '_ShadiKhana Team — shadikhana.pk_'
+  ];
+
+  var msg     = lines.join('\n');
+  var encoded = encodeURIComponent(msg);
+  window.open('https://wa.me/923214133233?text=' + encoded, '_blank');
+  closeModal('register');
+  openModal('success');
+}
+
+// ══════════════════════════════════════════
+//  SCROLL FADE-IN
+// ══════════════════════════════════════════
+// Add js-ready to body — this enables fade-in animations safely
+// Content is visible without JS; animation only kicks in when JS runs successfully
+document.body.classList.add('js-ready');
+
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.05 });
+document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); });
+
+// Initialise privacy preset on load
+document.addEventListener('DOMContentLoaded', function() {
+  setPrivacyPreset('open');
+});
+
+// Pre-select Silver radio in payment modal
+var silverRadio = document.querySelector('input[value="silver"]');
+if (silverRadio) silverRadio.checked = true;
+</script>
+</body>
+</html>
