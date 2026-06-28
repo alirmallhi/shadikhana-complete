@@ -1,90 +1,38 @@
-// api.js — ShadiKhana Frontend ↔ Backend connector
-// Add to your HTML: <script src="/api.js"></script>
-// Or host on Vercel and reference: <script src="https://shadikhana.vercel.app/api.js"></script>
+// ShadiKhana — Frontend to Backend Connector
+// This file connects your website to the backend API on Render
 
-// ── CONFIG: Update this to your Render URL after deployment ──
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:5000/api'                        // Local development
-  : 'https://shadikhana-api.onrender.com/api';         // Production (your Render URL)
+var API_BASE = 'https://shadikhana-api.onrender.com/api';
 
-// ════════════════════════════════════════════
-//  CORE API HELPER
-// ════════════════════════════════════════════
-async function apiCall(endpoint, method = 'GET', body = null, isAdmin = false) {
-  const tokenKey = isAdmin ? 'sk_admin_token' : 'sk_token';
-  const token    = localStorage.getItem(tokenKey);
-
-  const headers = {};
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  const opts = { method, headers };
-
-  if (body && !(body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(body);
-  } else if (body instanceof FormData) {
-    // Let browser set multipart boundary automatically
-    opts.body = body;
+// ── Make API calls ──
+async function apiCall(endpoint, method, body) {
+  var token = localStorage.getItem('sk_token');
+  var headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  var opts = { method: method || 'GET', headers: headers };
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    var res  = await fetch(API_BASE + endpoint, opts);
+    var data = await res.json();
+    return data;
+  } catch (err) {
+    console.log('API error:', err);
+    return { success: false, message: 'Connection error' };
   }
-
-  const res  = await fetch(`${API_BASE}${endpoint}`, opts);
-  const data = await res.json();
-
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
-  return data;
 }
 
-// ════════════════════════════════════════════
-//  FORM HELPERS
-// ════════════════════════════════════════════
-function gv(id) {
-  const el = document.getElementById(id);
-  if (!el) return '';
-  return (el.value || '').trim();
-}
-
-function getSelectedTab() {
-  const active = document.querySelector('.tabs .tab-btn.active');
-  if (!active) return 'self_male';
-  const text = active.textContent.toLowerCase();
-  if (text.includes('man'))      return 'self_male';
-  if (text.includes('woman'))    return 'self_female';
-  if (text.includes('son'))      return 'son';
-  if (text.includes('daughter')) return 'daughter';
-  return 'self_male';
-}
-
-function showFormError(msg) {
-  let el = document.getElementById('form-error-msg');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'form-error-msg';
-    el.style.cssText = 'background:#FDE8EF;border-radius:10px;padding:.8rem 1rem;' +
-                       'color:#B0002F;font-size:.84rem;margin-bottom:1rem;font-weight:500;';
-    const step6 = document.getElementById('reg-step-6');
-    if (step6) step6.insertBefore(el, step6.firstChild);
-  }
-  el.textContent = '⚠️ ' + msg;
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-// ════════════════════════════════════════════
-//  REGISTRATION — saves to database via API
-// ════════════════════════════════════════════
+// ── Submit Registration to Backend ──
 async function submitRegistration() {
-  const btn = document.querySelector('#reg-step-6 .btn-primary');
+  var btn = document.getElementById('submit-btn') ||
+            document.querySelector('#reg-step-6 .btn-primary');
 
-  const payload = {
-    // Step 1 — Account
+  // Collect all form values
+  var payload = {
     full_name:           gv('f-fullname'),
     display_name:        gv('f-alias'),
     mobile:              gv('f-mobile'),
     whatsapp:            gv('f-whatsapp'),
     email:               gv('f-email'),
-    password:            document.getElementById('f-password')?.value || '',
-    profile_for:         getSelectedTab(),
-
-    // Step 2 — Personal
+    password:            document.getElementById('f-password') ? document.getElementById('f-password').value : '',
     gender:              gv('f-gender'),
     date_of_birth:       gv('f-dob'),
     marital_status:      gv('f-marital'),
@@ -93,8 +41,6 @@ async function submitRegistration() {
     weight:              gv('f-weight'),
     complexion:          gv('f-complexion'),
     body_type:           gv('f-bodytype'),
-
-    // Step 3 — Background
     religion:            gv('f-religion'),
     sect:                gv('f-sect'),
     ethnicity:           gv('f-ethnicity'),
@@ -103,8 +49,6 @@ async function submitRegistration() {
     education:           gv('f-education'),
     study_field:         gv('f-studyfield'),
     institution:         gv('f-institution'),
-
-    // Step 4 — Lifestyle
     employment_status:   gv('f-employment'),
     profession:          gv('f-profession'),
     monthly_income:      gv('f-income'),
@@ -122,8 +66,6 @@ async function submitRegistration() {
     partner_divorced_ok: gv('f-partnerdivorced'),
     about_me:            gv('f-aboutme'),
     family_description:  gv('f-familydesc'),
-
-    // Parents
     father_name:         gv('f-fathername'),
     father_occupation:   gv('f-fatherjob'),
     father_employer:     gv('f-fatheremployer'),
@@ -132,181 +74,143 @@ async function submitRegistration() {
     mother_employer:     gv('f-motheremployer'),
     parents_status:      gv('f-parentsstatus'),
     siblings_count:      gv('f-siblings'),
-
-    // Step 5 — Package
-    package: selectedPlan || 'basic',
-
-    // Contact Preference (Step 4)
-    contact_preference: document.getElementById('f-contact-direct')?.checked ? 'direct' : 'via_us',
-    contact_method:     document.getElementById('f-contact-method')?.value  || 'both',
-    contact_hours:      document.getElementById('f-contact-hours')?.value   || 'anytime',
-    contact_note:       document.getElementById('f-contact-note')?.value    || '',
-
-    // Step 6 — Payment
-    payment_method: document.getElementById('payment-method')?.value || 'bank_transfer',
+    package:             selectedPlan || 'basic',
+    payment_method:      gv('payment-method') || 'bank_transfer',
+    privacy_preset:      document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'open',
+    priv_photo:          document.getElementById('priv-photo') ? document.getElementById('priv-photo').checked : false,
+    priv_contact:        document.getElementById('priv-contact') ? document.getElementById('priv-contact').checked : false,
+    priv_family:         document.getElementById('priv-family') ? document.getElementById('priv-family').checked : false,
+    priv_income:         document.getElementById('priv-income') ? document.getElementById('priv-income').checked : false,
+    priv_location:       document.getElementById('priv-location') ? document.getElementById('priv-location').checked : false,
+    priv_name:           document.getElementById('priv-name') ? document.getElementById('priv-name').checked : false,
+    priv_marital:        document.getElementById('priv-marital') ? document.getElementById('priv-marital').checked : false,
+    contact_preference:  document.getElementById('f-contact-direct') && document.getElementById('f-contact-direct').checked ? 'direct' : 'via_us',
+    contact_method:      gv('f-contact-method') || 'both',
+    contact_hours:       gv('f-contact-hours') || 'anytime',
+    contact_note:        gv('f-contact-note') || ''
   };
 
-  // Client-side validation
-  if (!payload.full_name)      return showFormError('Full name is required (Step 1).');
-  if (!payload.email)          return showFormError('Email address is required (Step 1).');
-  if (!payload.mobile)         return showFormError('Mobile number is required (Step 1).');
-  if (!payload.password || payload.password.length < 6)
-                               return showFormError('Password must be at least 6 characters (Step 1).');
-  if (!payload.gender || payload.gender === 'Select Gender')
-                               return showFormError('Please select your gender (Step 2).');
-
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Submitting...'; }
-
-  try {
-    // ── Save to database ──
-    const result = await apiCall('/auth/register', 'POST', payload);
-
-    // Store token and member data
-    localStorage.setItem('sk_token',  result.data.token);
-    localStorage.setItem('sk_member', JSON.stringify(result.data.member));
-
-    // ── Initiate payment based on method ──
-    const pm = payload.payment_method;
-    if (pm === 'jazzcash') {
-      await apiCall('/payment/jazzcash', 'POST', {
-        payment_type:  'registration',
-        mobile_number: payload.mobile,
-      });
-    } else if (pm === 'easypaisa') {
-      await apiCall('/payment/easypaisa', 'POST', {
-        payment_type:  'registration',
-        mobile_number: payload.mobile,
-      });
-    } else {
-      // Bank transfer — submit record + notify admin via WhatsApp
-      await apiCall('/payment/bank-transfer', 'POST', {
-        payment_type: 'registration',
-        sender_name:  payload.full_name,
-      });
-      // Also open WhatsApp with profile summary as backup
-      sendToWhatsApp();
-      return; // sendToWhatsApp handles modal transition
-    }
-
-    closeModal('register');
-    openModal('success');
-
-  } catch (err) {
-    showFormError(err.message || 'Registration failed. Please try again.');
-  } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '📱 Send Profile via WhatsApp →'; }
+  // Basic validation
+  if (!payload.full_name || payload.full_name === 'x2014') {
+    alert('Please enter your full name.');
+    return;
   }
-}
-
-// ════════════════════════════════════════════
-//  PHOTO UPLOAD (to Cloudinary via API)
-// ════════════════════════════════════════════
-async function uploadProfilePhoto(fileInput) {
-  if (!fileInput.files || !fileInput.files[0]) return;
-
-  const formData = new FormData();
-  formData.append('photo', fileInput.files[0]);
-
-  try {
-    const result = await apiCall('/member/photo', 'POST', formData);
-    // Show preview
-    const preview = document.getElementById('photo-preview');
-    if (preview && result.data?.photo_url) {
-      preview.src   = result.data.photo_url;
-      preview.style.display = 'block';
-    }
-    alert('✅ Photo uploaded successfully!');
-  } catch (err) {
-    alert('Photo upload failed: ' + err.message);
+  if (!payload.email) {
+    alert('Please enter your email address.');
+    return;
   }
-}
+  if (!payload.mobile) {
+    alert('Please enter your mobile number.');
+    return;
+  }
+  if (!payload.password || payload.password.length < 6) {
+    alert('Password must be at least 6 characters.');
+    return;
+  }
 
-// ════════════════════════════════════════════
-//  AUTH
-// ════════════════════════════════════════════
-async function submitLogin(email, password, isAdmin = false) {
+  // Show loading
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+  }
+
   try {
-    const endpoint = isAdmin ? '/admin/login' : '/auth/login';
-    const result   = await apiCall(endpoint, 'POST', { email, password }, isAdmin);
+    // Save to database
+    var result = await apiCall('/auth/register', 'POST', payload);
 
-    if (isAdmin) {
-      localStorage.setItem('sk_admin_token', result.data.token);
-      localStorage.setItem('sk_admin',       JSON.stringify(result.data.admin));
-      window.location.href = '/admin/';
-    } else {
-      localStorage.setItem('sk_token',  result.data.token);
+    if (result.success) {
+      // Save token
+      localStorage.setItem('sk_token', result.data.token);
       localStorage.setItem('sk_member', JSON.stringify(result.data.member));
-      closeModal('login');
-      openModal('success');
+
+      // Handle payment method
+      var pm = payload.payment_method;
+      if (pm === 'jazzcash' || pm === 'easypaisa') {
+        await apiCall('/payment/' + pm, 'POST', {
+          payment_type: 'registration',
+          mobile_number: payload.mobile
+        });
+      } else {
+        // Bank transfer - submit record
+        await apiCall('/payment/bank-transfer', 'POST', {
+          payment_type: 'registration',
+          sender_name: payload.full_name
+        });
+        // Also send via WhatsApp as backup
+        sendToWhatsApp();
+        return;
+      }
+
+      // Show success
+      if (typeof closeModal === 'function') closeModal('register');
+      if (typeof openModal === 'function') openModal('success');
+
+    } else {
+      alert('Registration failed: ' + (result.message || 'Please try again.'));
     }
+
   } catch (err) {
-    alert('Login failed: ' + err.message);
+    console.log('Registration error:', err);
+    alert('Something went wrong. Please try again.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = 'Send Profile via WhatsApp';
+    }
   }
 }
 
-function logout(isAdmin = false) {
-  localStorage.removeItem(isAdmin ? 'sk_admin_token' : 'sk_token');
-  localStorage.removeItem(isAdmin ? 'sk_admin'       : 'sk_member');
+// ── Login ──
+async function loginMember(email, password) {
+  var result = await apiCall('/auth/login', 'POST', { email: email, password: password });
+  if (result.success) {
+    localStorage.setItem('sk_token', result.data.token);
+    localStorage.setItem('sk_member', JSON.stringify(result.data.member));
+    return true;
+  }
+  return false;
+}
+
+// ── Check if logged in ──
+function isLoggedIn() {
+  return !!localStorage.getItem('sk_token');
+}
+
+// ── Get current member ──
+function getCurrentMember() {
+  var data = localStorage.getItem('sk_member');
+  return data ? JSON.parse(data) : null;
+}
+
+// ── Logout ──
+function logout() {
+  localStorage.removeItem('sk_token');
+  localStorage.removeItem('sk_member');
   window.location.href = '/';
 }
 
-// ════════════════════════════════════════════
-//  PROFILES
-// ════════════════════════════════════════════
-async function loadProfiles(filters = {}) {
-  const params = new URLSearchParams(
-    Object.fromEntries(Object.entries(filters).filter(([, v]) => v))
-  ).toString();
-  return await apiCall(`/profiles?${params}`);
+// ── Load profiles from backend ──
+async function loadProfiles(filters) {
+  var params = new URLSearchParams(filters || {}).toString();
+  return await apiCall('/profiles?' + params, 'GET');
 }
 
-async function viewProfile(uuid) {
-  return await apiCall(`/profiles/${uuid}`);
+// ── Send interest ──
+async function sendInterest(receiverUuid, message) {
+  return await apiCall('/interests/send', 'POST', {
+    receiver_uuid: receiverUuid,
+    message: message || ''
+  });
 }
 
-// ════════════════════════════════════════════
-//  INTERESTS
-// ════════════════════════════════════════════
-async function sendInterest(receiverUuid, message = '') {
-  return await apiCall('/interests/send', 'POST', { receiver_uuid: receiverUuid, message });
+// ── Get notifications ──
+async function getNotifications() {
+  return await apiCall('/notifications', 'GET');
 }
 
-async function respondInterest(interestId, action) {
-  return await apiCall('/interests/respond', 'POST', { interest_id: interestId, action });
-}
-
-async function getMyInterests() {
-  return await apiCall('/interests');
-}
-
-// ════════════════════════════════════════════
-//  MESSAGES
-// ════════════════════════════════════════════
-async function sendMessage(receiverUuid, content) {
-  return await apiCall('/messages/send', 'POST', { receiver_uuid: receiverUuid, content });
-}
-
-async function getConversations() {
-  return await apiCall('/messages');
-}
-
-async function getMessages(memberUuid) {
-  return await apiCall(`/messages/${memberUuid}`);
-}
-
-// ════════════════════════════════════════════
-//  PAYMENTS
-// ════════════════════════════════════════════
+// ── Get payment history ──
 async function getPaymentHistory() {
-  return await apiCall('/payment/history');
+  return await apiCall('/payment/history', 'GET');
 }
 
-// ════════════════════════════════════════════
-//  UTILITIES
-// ════════════════════════════════════════════
-function isLoggedIn()      { return !!localStorage.getItem('sk_token'); }
-function isAdminLoggedIn() { return !!localStorage.getItem('sk_admin_token'); }
-function getCurrentMember() {
-  const d = localStorage.getItem('sk_member');
-  return d ? JSON.parse(d) : null;
-}
+console.log('ShadiKhana API connector loaded successfully');
