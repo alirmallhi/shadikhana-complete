@@ -263,9 +263,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 .footer-socials a:hover{background:var(--rose)}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);backdrop-filter:blur(6px);align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto}
 .modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:24px;padding:2.5rem;width:90%;max-width:540px;position:relative;max-height:92vh;overflow-y:auto;scroll-behavior:smooth}
+.modal{background:var(--white);border-radius:24px;padding:2rem;width:95%;max-width:580px;position:relative;height:auto;max-height:95vh;overflow-y:scroll;scroll-behavior:smooth}
 .modal-close{position:absolute;top:1.2rem;right:1.2rem;background:var(--light);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
 .modal-title{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.4rem}
 .modal-sub{color:var(--mid);font-size:.86rem;margin-bottom:1.8rem;line-height:1.5}
@@ -328,8 +328,8 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
 .modal-wide{max-width:660px}
 .step-indicator-wrap{margin-bottom:1.6rem}
-.step-pills{display:flex;gap:0;border-radius:12px;overflow:hidden;border:1.5px solid var(--light)}
-.step-pill{flex:1;padding:.5rem .3rem;border:none;background:transparent;font-size:.72rem;font-weight:600;color:var(--mid);cursor:default;display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .2s,color .2s;border-right:1px solid var(--light)}
+.step-pills{display:flex;gap:0;border-radius:12px;overflow:hidden;border:1.5px solid var(--light);margin-bottom:.8rem}
+.step-pill{flex:1;padding:.35rem .2rem;border:none;background:transparent;font-size:.65rem;font-weight:600;color:var(--mid);cursor:default;display:flex;flex-direction:column;align-items:center;gap:2px;transition:background .2s,color .2s;border-right:1px solid var(--light)}
 .step-pill:last-child{border-right:none}
 .step-pill.done{background:#E8F5F0;color:var(--green)}
 .step-pill.active{background:var(--burgundy);color:#fff}
