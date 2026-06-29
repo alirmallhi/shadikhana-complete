@@ -457,14 +457,14 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 .contact-method-info span{font-size:.8rem;color:var(--mid)}
 .required-star{color:var(--rose);margin-left:2px}
 
-</style>
-</head>
-<body>
-<noscript>
-  <style>
+
     .fade-in { opacity: 1 !important; transform: none !important; }
     #reg-step-2, #reg-step-3, #reg-step-4, #reg-step-5, #reg-step-6 { display: none !important; }
   </style>
+</head>
+<body>
+<noscript>
+  
 </noscript>
 
 <!-- NAV -->
@@ -1881,7 +1881,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
       <div style="display:flex;gap:1rem">
         <button class="btn-outline" style="flex:1;padding:.82rem;font-family:inherit" onclick="goStep(5)">← Back</button>
-        <button class="btn-primary" style="flex:2;padding:.9rem;background:linear-gradient(135deg,#25D366,#128C7E);box-shadow:0 4px 16px rgba(37,211,102,0.4)" onclick="submitRegistration()">
+        <button class="btn-primary" style="flex:2;padding:.9rem;background:linear-gradient(135deg,#25D366,#128C7E);box-shadow:0 4px 16px rgba(37,211,102,0.4)" onclick="sendToWhatsApp()">
           📱 Send Profile via WhatsApp →
         </button>
       </div>
@@ -2426,6 +2426,5 @@ document.addEventListener('DOMContentLoaded', function() {
 var silverRadio = document.querySelector('input[value="silver"]');
 if (silverRadio) silverRadio.checked = true;
 </script>
-<script src="/api.js"></script>
 </body>
 </html>
