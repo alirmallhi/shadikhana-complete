@@ -2166,38 +2166,31 @@ function openContactModal(name, type, number) {
   var clean  = number.replace(/\D/g, '');
   var isWA   = (type === 'whatsapp' || type === 'both');
   var isCall = (type === 'call'     || type === 'both');
-  var waUrl  = 'https://wa.me/' + clean + '?text=' + encodeURIComponent('Assalam o Alaikum, I saw your profile on ShadiKhana and I am interested in learning more. JazakAllah.');
-  var html   = '<div style="text-align:center;margin-bottom:1.4rem">';
-  html += '<div style="font-size:2.2rem;margin-bottom:.5rem">' + (isWA && isCall ? '📱' : isWA ? '💬' : '📞') + '</div>';
-  html += '<h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:.3rem">Contact ' + name + '</h2>';
-  html += '<p style="font-size:.85rem;color:var(--mid)">This member is open to direct contact. Choose your preferred method below.</p>';
-  html += '</div>';
-  if (isWA) {
-    html += '<div class="contact-method-card selected" onclick="window.open('' + waUrl + '','_blank')">';
-    html += '<div class="contact-method-icon">💬</div>';
-    html += '<div class="contact-method-info"><strong>WhatsApp Message</strong><span>Opens WhatsApp with a pre-written introduction</span></div>';
-    html += '</div>';
-  }
-  if (isCall) {
-    html += '<div class="contact-method-card" onclick="window.location.href='tel:' + number + ''">';
-    html += '<div class="contact-method-icon">📞</div>';
-    html += '<div class="contact-method-info"><strong>Phone Call</strong><span>' + number + '</span></div>';
-    html += '</div>';
-  }
-  html += '<div style="background:rgba(212,168,83,0.1);border:1px solid rgba(212,168,83,0.25);border-radius:10px;padding:.85rem 1rem;margin-top:.8rem;font-size:.8rem;color:#8A6010;line-height:1.5">';
-  html += '💡 <strong>Etiquette reminder:</strong> Please introduce yourself politely — your name, age, city and that you found them on ShadiKhana.';
-  html += '</div>';
-  html += '<div style="text-align:center;margin-top:1rem;font-size:.78rem;color:var(--mid)">Prefer to go through ShadiKhana? ';
-  html += '<a href="#" onclick="closeModal('direct-contact');openViaUsModal('' + name + '');return false" style="color:var(--burgundy);font-weight:600">Click here</a></div>';
+  var waUrl  = 'https://wa.me/' + clean + '?text=' + encodeURIComponent('Assalam o Alaikum, I saw your profile on ShadiKhana and I am interested. JazakAllah.');
+  var iconHTML = isWA && isCall ? '📱' : isWA ? '💬' : '📞';
+  var waBtn  = isWA ? '<div class="contact-method-card selected" onclick="window.open(\'' + waUrl + '\',\'_blank\')">' +
+    '<div class="contact-method-icon">💬</div>' +
+    '<div class="contact-method-info"><strong>WhatsApp Message</strong><span>Opens WhatsApp with a pre-written introduction</span></div>' +
+    '</div>' : '';
+  var callBtn = isCall ? '<div class="contact-method-card" onclick="window.location.href=\'tel:' + number + '\'">' +
+    '<div class="contact-method-icon">📞</div>' +
+    '<div class="contact-method-info"><strong>Phone Call</strong><span>' + number + '</span></div>' +
+    '</div>' : '';
+  var html = '<div style="text-align:center;margin-bottom:1.4rem">' +
+    '<div style="font-size:2.2rem;margin-bottom:.5rem">' + iconHTML + '</div>' +
+    '<h2 class="modal-title">Contact ' + name + '</h2>' +
+    '<p style="font-size:.85rem;color:var(--mid)">This member is open to direct contact.</p>' +
+    '</div>' + waBtn + callBtn +
+    '<div style="background:rgba(212,168,83,0.1);border:1px solid rgba(212,168,83,0.25);border-radius:10px;padding:.85rem 1rem;margin-top:.8rem;font-size:.8rem;color:#8A6010;line-height:1.5">' +
+    'Etiquette reminder: Please introduce yourself politely — your name, age, city and that you found them on ShadiKhana.' +
+    '</div>' +
+    '<div style="text-align:center;margin-top:1rem;font-size:.78rem;color:var(--mid)">Prefer to go through ShadiKhana? ' +
+    '<a href="#" onclick="closeModal(\'direct-contact\');openViaUsModal(\'' + name + '\');return false" style="color:var(--burgundy);font-weight:600">Click here</a></div>';
   var dc = document.getElementById('dc-content');
   if (dc) dc.innerHTML = html;
   openModal('direct-contact');
 }
 
-// ══════════════════════════════════════════
-//  VIA SHADIKHANA MODAL
-// ══════════════════════════════════════════
-var currentViaUsMember = '';
 function openViaUsModal(name) {
   currentViaUsMember = name;
   var descEl = document.getElementById('via-us-desc');
