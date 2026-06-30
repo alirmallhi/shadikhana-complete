@@ -155,26 +155,25 @@ async function submitRegistration() {
       // Automatically notify WhatsApp in the background — no extra click
       autoNotifyWhatsApp(payload);
 
-      var pm = payload.payment_method;
-      if (pm === 'jazzcash' || pm === 'easypaisa') {
-        await apiCall('/payment/' + pm, 'POST', {
-          payment_type: 'registration',
-          mobile_number: payload.mobile
-        });
-      } else {
-        await apiCall('/payment/bank-transfer', 'POST', {
-          payment_type: 'registration',
-          sender_name: payload.full_name
-        });
-      }
+      // Record a pending payment entry — actual confirmation happens manually
+      // once admin verifies the payment screenshot sent via WhatsApp/email
+      await apiCall('/payment/bank-transfer', 'POST', {
+        payment_type: 'registration',
+        sender_name: payload.full_name
+      });
 
       if (typeof closeModal === 'function') closeModal('register');
       if (typeof openModal === 'function') openModal('success');
 
-      // Fill in the real mobile number on the success screen
+      // Fill in the real mobile number and package on the success screen
       var mobileDisplay = document.getElementById('success-mobile-display');
       if (mobileDisplay) {
         mobileDisplay.textContent = payload.mobile || 'your registered number';
+      }
+      var pkgDisplay = document.getElementById('success-package-display');
+      if (pkgDisplay) {
+        var pkgAmounts = { basic: '10,000', premium: '30,000', executive: '50,000' };
+        pkgDisplay.textContent = 'PKR ' + (pkgAmounts[payload.package] || '10,000');
       }
 
     } else {
