@@ -230,11 +230,8 @@ async function handleLogin() {
     var result = await loginMember(email, password);
 
     if (result.success) {
-      // Logged in successfully
-      if (typeof closeModal === 'function') closeModal('login');
-      alert('Welcome back, ' + (result.data.member.full_name || 'Member') + '!');
-      // Reload page so nav can reflect logged-in state
-      window.location.reload();
+      // Logged in successfully — redirect straight to dashboard
+      window.location.href = '/dashboard.html';
     } else {
       if (errorEl) {
         errorEl.textContent = result.message || 'Invalid email or password. Please try again.';
