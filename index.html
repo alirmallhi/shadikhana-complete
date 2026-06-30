@@ -2023,14 +2023,21 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 <div class="modal-overlay" id="modal-success">
   <div class="modal" style="text-align:center">
     <div style="font-size:3.5rem;margin-bottom:1rem">✅</div>
-    <h2 class="modal-title">Profile Submitted!</h2>
-    <p class="modal-sub">Your WhatsApp should have opened with your full profile details. Please <strong>send that message</strong> to complete your registration.</p>
+    <h2 class="modal-title">Registration Successful!</h2>
+    <p class="modal-sub">Thank you for registering with ShadiKhana. Your profile has been submitted for review.</p>
     <div style="background:rgba(45,122,95,0.08);border-radius:12px;padding:1.1rem 1.2rem;margin:1rem 0;font-size:.86rem;color:var(--green);text-align:left;line-height:1.8">
-      ✅ Profile details compiled &amp; sent to WhatsApp<br>
+      ✅ Profile saved successfully<br>
       ⏳ Our team will confirm your registration within 24 hours<br>
-      💳 Share your payment screenshot on the same WhatsApp chat<br>
-      📞 We'll contact you on <strong>${gv('f-mobile') || 'your number'}</strong> to confirm
+      💳 Share your payment screenshot on WhatsApp if not already sent<br>
+      📞 We'll contact you on <strong id="success-mobile-display">your registered number</strong> to confirm
     </div>
+    <div style="background:var(--ivory);border-radius:12px;padding:1rem 1.2rem;font-size:.84rem;color:var(--mid);text-align:left;margin-bottom:1.2rem">
+      <strong>Need help?</strong><br>
+      Message us directly at <a href="https://wa.me/923214133233" target="_blank" style="color:var(--burgundy);font-weight:600">+92 321 4133233</a> and mention your name and chosen package.
+    </div>
+    <button class="btn-primary" style="width:100%;padding:.9rem" onclick="closeModal('success')">Done ✓</button>
+  </div>
+</div>
     <div style="background:var(--ivory);border-radius:12px;padding:1rem 1.2rem;font-size:.84rem;color:var(--mid);text-align:left;margin-bottom:1.2rem">
       <strong>Didn't open WhatsApp?</strong><br>
       Message us directly at <a href="https://wa.me/923214133233" target="_blank" style="color:var(--burgundy);font-weight:600">+92 321 4133233</a> and mention your name and chosen package.
