@@ -1880,7 +1880,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
       <div style="display:flex;gap:1rem">
         <button class="btn-outline" style="flex:1;padding:.82rem;font-family:inherit" onclick="goStep(5)">← Back</button>
-        <button class="btn-primary" style="flex:2;padding:.9rem;background:linear-gradient(135deg,#25D366,#128C7E);box-shadow:0 4px 16px rgba(37,211,102,0.4)" onclick="sendToWhatsApp()">
+        <button class="btn-primary" id="submit-btn" style="flex:2;padding:.9rem;background:linear-gradient(135deg,#25D366,#128C7E);box-shadow:0 4px 16px rgba(37,211,102,0.4)" onclick="submitRegistration()">
           📱 Send Profile via WhatsApp →
         </button>
       </div>
@@ -2422,5 +2422,6 @@ document.addEventListener('DOMContentLoaded', function() {
 var silverRadio = document.querySelector('input[value="silver"]');
 if (silverRadio) silverRadio.checked = true;
 </script>
+<script src="/api.js"></script>
 </body>
 </html>
