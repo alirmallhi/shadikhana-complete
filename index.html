@@ -2021,29 +2021,47 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 </div>
 
 <!-- SUCCESS -->
+<!-- SUCCESS -->
 <div class="modal-overlay" id="modal-success">
-  <div class="modal" style="text-align:center">
+  <div class="modal" style="text-align:center;max-width:480px">
     <div style="font-size:3.5rem;margin-bottom:1rem">✅</div>
-    <h2 class="modal-title">Registration Successful!</h2>
-    <p class="modal-sub">Thank you for registering with ShadiKhana. Your profile has been submitted for review.</p>
-    <div style="background:rgba(45,122,95,0.08);border-radius:12px;padding:1.1rem 1.2rem;margin:1rem 0;font-size:.86rem;color:var(--green);text-align:left;line-height:1.8">
-      ✅ Profile saved successfully<br>
-      ⏳ Our team will confirm your registration within 24 hours<br>
-      💳 Share your payment screenshot on WhatsApp if not already sent<br>
+    <h2 class="modal-title">Registration Submitted!</h2>
+    <p class="modal-sub">One last step to activate your profile — please complete your payment below.</p>
+
+    <div style="background:rgba(123,29,58,0.06);border:1.5px solid rgba(123,29,58,0.2);border-radius:14px;padding:1.2rem;margin:1rem 0;text-align:left">
+      <div style="font-size:.78rem;font-weight:700;color:var(--burgundy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem">Amount Due</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--burgundy)" id="success-package-display">PKR 10,000</div>
+      <div style="font-size:.78rem;color:var(--mid);margin-top:.2rem">One-time registration fee · No recurring charges</div>
+    </div>
+
+    <div style="background:var(--ivory);border-radius:14px;padding:1.2rem;margin-bottom:1rem;text-align:left">
+      <div style="font-size:.78rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem">Pay via any of these methods</div>
+      <div style="font-size:.86rem;line-height:1.9">
+        📱 <strong>JazzCash:</strong> 0321-4133233 (ShadiKhana)<br>
+        📲 <strong>EasyPaisa:</strong> 0321-4133233 (ShadiKhana)<br>
+        🏦 <strong>Bank Transfer:</strong> Meezan Bank<br>
+        &nbsp;&nbsp;&nbsp;IBAN: PK00MEZN0001234567890<br>
+        &nbsp;&nbsp;&nbsp;Title: ShadiKhana (Pvt)
+      </div>
+    </div>
+
+    <div style="background:rgba(45,122,95,0.08);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1rem;font-size:.86rem;color:var(--green);text-align:left;line-height:1.8">
+      ✅ Profile details saved successfully<br>
+      📸 Please send your <strong>payment screenshot</strong> to our WhatsApp<br>
+      ⏳ We'll verify and activate your profile within 24 hours<br>
       📞 We'll contact you on <strong id="success-mobile-display">your registered number</strong> to confirm
     </div>
-    <div style="background:var(--ivory);border-radius:12px;padding:1rem 1.2rem;font-size:.84rem;color:var(--mid);text-align:left;margin-bottom:1.2rem">
+
+    <a href="https://wa.me/923214133233" target="_blank" style="display:block;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;padding:.85rem;border-radius:10px;font-weight:700;font-size:.92rem;text-decoration:none;margin-bottom:.8rem">
+      💬 Send Payment Screenshot on WhatsApp
+    </a>
+
+    <div style="background:var(--cream);border-radius:12px;padding:1rem 1.2rem;font-size:.84rem;color:var(--mid);text-align:left;margin-bottom:1.2rem">
       <strong>Need help?</strong><br>
-      Message us directly at <a href="https://wa.me/923214133233" target="_blank" style="color:var(--burgundy);font-weight:600">+92 321 4133233</a> and mention your name and chosen package.
+      Message us at <a href="https://wa.me/923214133233" target="_blank" style="color:var(--burgundy);font-weight:600">+92 321 4133233</a> or email <a href="mailto:hello@shadikhana.pk" style="color:var(--burgundy);font-weight:600">hello@shadikhana.pk</a>
     </div>
+
     <button class="btn-primary" style="width:100%;padding:.9rem" onclick="closeModal('success')">Done ✓</button>
-  </div>
-</div>
-    <div style="background:var(--ivory);border-radius:12px;padding:1rem 1.2rem;font-size:.84rem;color:var(--mid);text-align:left;margin-bottom:1.2rem">
-      <strong>Didn't open WhatsApp?</strong><br>
-      Message us directly at <a href="https://wa.me/923214133233" target="_blank" style="color:var(--burgundy);font-weight:600">+92 321 4133233</a> and mention your name and chosen package.
-    </div>
-    <button class="btn-primary" style="width:100%;padding:.9rem" onclick="closeModal('success')">Done — I've Sent the Message ✓</button>
   </div>
 </div>
 
