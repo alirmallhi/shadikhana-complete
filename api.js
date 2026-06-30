@@ -2,6 +2,7 @@
 // This file connects your website to the backend API on Render
 
 var API_BASE = 'https://shadikhana-api.onrender.com/api';
+var WA_NUMBER = '923214133233';
 
 // ── Make API calls ──
 async function apiCall(endpoint, method, body) {
@@ -20,12 +21,52 @@ async function apiCall(endpoint, method, body) {
   }
 }
 
+function gv(id) {
+  var el = document.getElementById(id);
+  return el ? (el.value || '').trim() : '';
+}
+
+// ── Automatically open WhatsApp in background with profile summary ──
+// Called right after a successful database save — no extra click needed
+function autoNotifyWhatsApp(payload) {
+  var msg =
+    'SHADIKHANA - NEW PROFILE REGISTRATION\n' +
+    '========================================\n' +
+    'Name: '             + (payload.full_name || '-')   + '\n' +
+    'Gender: '           + (payload.gender || '-')       + '\n' +
+    'City: '             + (payload.city || '-')         + '\n' +
+    'Mobile: '           + (payload.mobile || '-')       + '\n' +
+    'Email: '            + (payload.email || '-')        + '\n' +
+    'Sect: '             + (payload.sect || '-')          + '\n' +
+    'Caste: '            + (payload.caste || '-')         + '\n' +
+    'Education: '        + (payload.education || '-')     + '\n' +
+    'Profession: '       + (payload.profession || '-')    + '\n' +
+    'Marital Status: '   + (payload.marital_status || '-')+ '\n' +
+    'Height: '           + (payload.height || '-')        + '\n' +
+    "Father's Job: "     + (payload.father_occupation || '-') + '\n' +
+    "Mother's Job: "     + (payload.mother_occupation || '-') + '\n' +
+    'Contact Pref: '     + (payload.contact_preference === 'direct' ? 'Direct Contact Allowed' : 'Via ShadiKhana Only') + '\n' +
+    '----------------------------------------\n' +
+    'Package: ' + (payload.package || '-') + '\n' +
+    'Payment Method: ' + (payload.payment_method || '-') + '\n' +
+    '========================================\n' +
+    'Submitted automatically from shadikhana.pk';
+
+  var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+
+  // Open in a new background tab — does not interrupt the user's flow
+  var waWindow = window.open(url, '_blank');
+
+  if (!waWindow) {
+    console.log('WhatsApp auto-notification popup was blocked by the browser. Registration was still saved successfully.');
+  }
+}
+
 // ── Submit Registration to Backend ──
 async function submitRegistration() {
   var btn = document.getElementById('submit-btn') ||
             document.querySelector('#reg-step-6 .btn-primary');
 
-  // Collect all form values
   var payload = {
     full_name:           gv('f-fullname'),
     display_name:        gv('f-alias'),
@@ -90,40 +131,30 @@ async function submitRegistration() {
     contact_note:        gv('f-contact-note') || ''
   };
 
-  // Basic validation
-  if (!payload.full_name || payload.full_name === 'x2014') {
-    alert('Please enter your full name.');
-    return;
-  }
-  if (!payload.email) {
-    alert('Please enter your email address.');
-    return;
-  }
-  if (!payload.mobile) {
-    alert('Please enter your mobile number.');
-    return;
-  }
+  // Validation
+  if (!payload.full_name) { alert('Please enter your full name.'); return; }
+  if (!payload.email)     { alert('Please enter your email address.'); return; }
+  if (!payload.mobile)    { alert('Please enter your mobile number.'); return; }
   if (!payload.password || payload.password.length < 6) {
     alert('Password must be at least 6 characters.');
     return;
   }
 
-  // Show loading
   if (btn) {
     btn.disabled = true;
     btn.textContent = 'Submitting...';
   }
 
   try {
-    // Save to database
     var result = await apiCall('/auth/register', 'POST', payload);
 
     if (result.success) {
-      // Save token
       localStorage.setItem('sk_token', result.data.token);
       localStorage.setItem('sk_member', JSON.stringify(result.data.member));
 
-      // Handle payment method
+      // Automatically notify WhatsApp in the background — no extra click
+      autoNotifyWhatsApp(payload);
+
       var pm = payload.payment_method;
       if (pm === 'jazzcash' || pm === 'easypaisa') {
         await apiCall('/payment/' + pm, 'POST', {
@@ -131,19 +162,20 @@ async function submitRegistration() {
           mobile_number: payload.mobile
         });
       } else {
-        // Bank transfer - submit record
         await apiCall('/payment/bank-transfer', 'POST', {
           payment_type: 'registration',
           sender_name: payload.full_name
         });
-        // Also send via WhatsApp as backup
-        sendToWhatsApp();
-        return;
       }
 
-      // Show success
       if (typeof closeModal === 'function') closeModal('register');
       if (typeof openModal === 'function') openModal('success');
+
+      // Fill in the real mobile number on the success screen
+      var mobileDisplay = document.getElementById('success-mobile-display');
+      if (mobileDisplay) {
+        mobileDisplay.textContent = payload.mobile || 'your registered number';
+      }
 
     } else {
       alert('Registration failed: ' + (result.message || 'Please try again.'));
@@ -155,7 +187,7 @@ async function submitRegistration() {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = 'Send Profile via WhatsApp';
+      btn.textContent = 'Submit';
     }
   }
 }
@@ -166,36 +198,80 @@ async function loginMember(email, password) {
   if (result.success) {
     localStorage.setItem('sk_token', result.data.token);
     localStorage.setItem('sk_member', JSON.stringify(result.data.member));
-    return true;
+    return result;
   }
-  return false;
+  return result;
 }
 
-// ── Check if logged in ──
+// ── Handle Sign In button click ──
+async function handleLogin() {
+  var emailEl    = document.getElementById('login-email');
+  var passwordEl = document.getElementById('login-password');
+  var errorEl    = document.getElementById('login-error');
+  var btn        = document.getElementById('login-btn');
+
+  var email    = emailEl    ? emailEl.value.trim()    : '';
+  var password = passwordEl ? passwordEl.value.trim() : '';
+
+  if (errorEl) errorEl.style.display = 'none';
+
+  if (!email) {
+    if (errorEl) { errorEl.textContent = 'Please enter your email or mobile number.'; errorEl.style.display = 'block'; }
+    return;
+  }
+  if (!password) {
+    if (errorEl) { errorEl.textContent = 'Please enter your password.'; errorEl.style.display = 'block'; }
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+
+  try {
+    var result = await loginMember(email, password);
+
+    if (result.success) {
+      // Logged in successfully
+      if (typeof closeModal === 'function') closeModal('login');
+      alert('Welcome back, ' + (result.data.member.full_name || 'Member') + '!');
+      // Reload page so nav can reflect logged-in state
+      window.location.reload();
+    } else {
+      if (errorEl) {
+        errorEl.textContent = result.message || 'Invalid email or password. Please try again.';
+        errorEl.style.display = 'block';
+      }
+    }
+  } catch (err) {
+    console.log('Login error:', err);
+    if (errorEl) {
+      errorEl.textContent = 'Something went wrong. Please try again.';
+      errorEl.style.display = 'block';
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+  }
+}
+
 function isLoggedIn() {
   return !!localStorage.getItem('sk_token');
 }
 
-// ── Get current member ──
 function getCurrentMember() {
   var data = localStorage.getItem('sk_member');
   return data ? JSON.parse(data) : null;
 }
 
-// ── Logout ──
 function logout() {
   localStorage.removeItem('sk_token');
   localStorage.removeItem('sk_member');
   window.location.href = '/';
 }
 
-// ── Load profiles from backend ──
 async function loadProfiles(filters) {
   var params = new URLSearchParams(filters || {}).toString();
   return await apiCall('/profiles?' + params, 'GET');
 }
 
-// ── Send interest ──
 async function sendInterest(receiverUuid, message) {
   return await apiCall('/interests/send', 'POST', {
     receiver_uuid: receiverUuid,
@@ -203,12 +279,10 @@ async function sendInterest(receiverUuid, message) {
   });
 }
 
-// ── Get notifications ──
 async function getNotifications() {
   return await apiCall('/notifications', 'GET');
 }
 
-// ── Get payment history ──
 async function getPaymentHistory() {
   return await apiCall('/payment/history', 'GET');
 }
