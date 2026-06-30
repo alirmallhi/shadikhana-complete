@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard – ShadiKhana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --burg:#7B1D3A; --rose:#C94070; --gold:#D4A853;
+  --cream:#FDF6EE; --ivory:#FAF3E8; --mid:#5A5370;
+  --light:#EDE3D6; --green:#2D7A5F; --white:#fff; --charcoal:#1C1C2E;
+  --wa:#25D366; --wa-dark:#128C7E;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* ── TOP BAR ── */
+.topbar{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--light);
+  height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 5%}
+.logo{display:flex;align-items:center;gap:9px;font-family:'Playfair Display',serif;
+  font-size:1.35rem;font-weight:700;color:var(--burg)}
+.logo-dot{width:32px;height:32px;background:linear-gradient(135deg,var(--burg),var(--rose));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.notif-btn{position:relative;background:var(--ivory);border:none;border-radius:10px;
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--rose);
+  border-radius:50%;border:2px solid #fff;display:none}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--ivory);border-radius:24px;
+  padding:.4rem .9rem .4rem .4rem;cursor:pointer;border:1.5px solid var(--light)}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--burg),var(--rose));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0}
+.user-chip-name{font-size:.84rem;font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logout-btn{background:none;border:none;color:var(--mid);font-size:.8rem;cursor:pointer;padding:.4rem .6rem}
+.logout-btn:hover{color:var(--rose)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px)}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--white);border-right:1px solid var(--light);padding:1.5rem 0}
+.nav-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.4rem;color:var(--mid);
+  font-size:.88rem;font-weight:500;cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover{background:var(--ivory);color:var(--burg)}
+.nav-item.active{background:rgba(123,29,58,0.06);color:var(--burg);border-left-color:var(--burg);font-weight:700}
+.nav-item-icon{font-size:1.1rem;width:22px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--rose);color:#fff;font-size:.65rem;font-weight:700;
+  padding:1px 7px;border-radius:10px}
+.sidebar-divider{height:1px;background:var(--light);margin:1rem 1.4rem}
+.sidebar-section-label{padding:.5rem 1.4rem;font-size:.68rem;font-weight:700;color:var(--mid);
+  text-transform:uppercase;letter-spacing:.06em}
+
+/* ── MAIN CONTENT ── */
+.content{padding:2rem 5%;max-width:1100px}
+.panel{display:none}
+.panel.active{display:block}
+.page-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;margin-bottom:.3rem}
+.page-sub{color:var(--mid);font-size:.92rem;margin-bottom:2rem}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:18px;padding:1.6rem;box-shadow:0 2px 14px rgba(0,0,0,0.05);margin-bottom:1.5rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.card-title{font-weight:700;font-size:1.02rem}
+
+/* ── DASHBOARD HOME ── */
+.welcome-banner{background:linear-gradient(135deg,var(--burg),#5A1028);border-radius:20px;
+  padding:1.8rem 2rem;color:#fff;margin-bottom:1.5rem;display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.welcome-text h2{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:.3rem}
+.welcome-text p{font-size:.86rem;color:rgba(255,255,255,0.8)}
+.pkg-badge-big{background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.3);
+  border-radius:12px;padding:.6rem 1.2rem;text-align:center}
+.pkg-badge-big .pname{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;opacity:.8}
+.pkg-badge-big .pval{font-weight:700;font-size:1.05rem;margin-top:.15rem}
+
+.status-banner{border-radius:14px;padding:1rem 1.3rem;margin-bottom:1.5rem;font-size:.86rem;
+  display:flex;align-items:center;gap:.7rem}
+.status-pending{background:#FEF3E2;color:#8A6010;border:1.5px solid rgba(212,168,83,0.3)}
+.status-active{background:#E8F5F0;color:var(--green);border:1.5px solid rgba(45,122,95,0.25)}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border-radius:16px;padding:1.3rem;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.stat-icon{font-size:1.5rem;margin-bottom:.5rem}
+.stat-value{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--burg)}
+.stat-label{font-size:.78rem;color:var(--mid);margin-top:.2rem}
+
+.completion-bar-track{background:var(--light);border-radius:8px;height:10px;overflow:hidden;margin-top:.6rem}
+.completion-bar-fill{height:10px;background:linear-gradient(90deg,var(--gold),var(--burg));border-radius:8px;transition:width .5s}
+
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.qa-btn{background:var(--ivory);border:1.5px solid var(--light);border-radius:14px;padding:1.1rem;
+  text-align:center;cursor:pointer;transition:border-color .2s,transform .2s}
+.qa-btn:hover{border-color:var(--burg);transform:translateY(-2px)}
+.qa-icon{font-size:1.6rem;margin-bottom:.4rem}
+.qa-label{font-size:.84rem;font-weight:600}
+
+/* ── PROFILE FORM ── */
+.form-section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--gold);margin:1.2rem 0 .7rem;display:flex;align-items:center;gap:.5rem}
+.form-section-label:first-child{margin-top:0}
+.form-section-label::after{content:'';flex:1;height:1px;background:var(--light)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.8rem;font-weight:600;margin-bottom:.4rem}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:.7rem .9rem;border:1.5px solid var(--light);border-radius:10px;
+  font-size:.87rem;font-family:inherit;background:var(--cream);color:var(--charcoal);outline:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--rose)}
+.form-group textarea{min-height:80px;resize:vertical}
+.btn-save{background:linear-gradient(135deg,var(--burg),var(--rose));color:#fff;border:none;
+  border-radius:10px;padding:.8rem 1.8rem;font-weight:700;font-size:.9rem;cursor:pointer}
+.btn-save:hover{opacity:.92}
+
+.photo-section{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;padding:1.2rem;
+  background:var(--ivory);border-radius:14px}
+.photo-preview{width:90px;height:90px;border-radius:50%;background:var(--light);
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;flex-shrink:0}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-upload-btn{background:var(--white);border:1.5px solid var(--light);border-radius:8px;
+  padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;cursor:pointer}
+.photo-upload-btn:hover{border-color:var(--burg);color:var(--burg)}
+
+/* ── BROWSE PROFILES ── */
+.filter-bar{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+.filter-select,.filter-input{padding:.6rem .9rem;border:1.5px solid var(--light);border-radius:10px;
+  font-size:.84rem;font-family:inherit;background:var(--white);color:var(--charcoal)}
+.filter-input{flex:1;min-width:180px}
+.btn-filter{background:var(--burg);color:#fff;border:none;border-radius:10px;padding:.6rem 1.3rem;
+  font-size:.84rem;font-weight:600;cursor:pointer}
+
+.profiles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem}
+.profile-card{background:var(--white);border-radius:16px;overflow:hidden;
+  box-shadow:0 2px 14px rgba(0,0,0,0.06);transition:transform .2s,box-shadow .2s;cursor:pointer}
+.profile-card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(123,29,58,0.12)}
+.pc-top{height:140px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;
+  background:linear-gradient(135deg,#FDE8EF,#FAD0DE);position:relative}
+.pc-badge{position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;
+  padding:3px 8px;border-radius:10px;background:#E8F5F0;color:var(--green)}
+.pc-body{padding:1rem 1.1rem}
+.pc-name{font-weight:700;font-size:.94rem;margin-bottom:.2rem}
+.pc-meta{font-size:.78rem;color:var(--mid);line-height:1.5;margin-bottom:.7rem}
+.pc-score{display:inline-block;background:rgba(123,29,58,0.08);color:var(--burg);
+  font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:8px;margin-bottom:.6rem}
+.pc-actions{display:flex;gap:.5rem}
+.btn-interest-sm{flex:1;background:var(--burg);color:#fff;border:none;border-radius:8px;
+  padding:.5rem;font-size:.78rem;font-weight:600;cursor:pointer}
+.btn-interest-sm:hover{background:var(--rose)}
+.btn-interest-sm:disabled{background:var(--light);color:var(--mid);cursor:not-allowed}
+
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--mid)}
+.empty-state .ei{font-size:2.5rem;margin-bottom:.8rem}
+
+/* ── INTERESTS ── */
+.tabs-row{display:flex;gap:.5rem;margin-bottom:1.3rem;border-bottom:2px solid var(--light)}
+.tab-btn{background:none;border:none;padding:.7rem 1.2rem;font-size:.88rem;font-weight:600;
+  color:var(--mid);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:var(--burg);border-bottom-color:var(--burg)}
+
+.interest-row{display:flex;align-items:center;gap:1rem;padding:1rem 1.1rem;background:var(--white);
+  border-radius:14px;margin-bottom:.7rem;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
+.interest-av{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#FEF3E2,#FAE5C0);
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.interest-info{flex:1}
+.interest-name{font-weight:700;font-size:.9rem}
+.interest-meta{font-size:.78rem;color:var(--mid)}
+.interest-status{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:10px}
+.is-sent{background:#FEF3E2;color:#8A6010}
+.is-accepted{background:#E8F5F0;color:var(--green)}
+.is-rejected{background:#FDE8EF;color:var(--rose)}
+.interest-action-btns{display:flex;gap:.5rem}
+.btn-accept{background:var(--green);color:#fff;border:none;border-radius:8px;padding:.4rem .9rem;
+  font-size:.78rem;font-weight:600;cursor:pointer}
+.btn-reject{background:transparent;border:1.5px solid var(--light);color:var(--mid);border-radius:8px;
+  padding:.4rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer}
+
+/* ── LOADING ── */
+.loading-spinner{text-align:center;padding:3rem;color:var(--mid);font-size:.9rem}
+
+/* ── PROFILE DETAIL MODAL ── */
+.overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);
+  align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.overlay.open{display:flex}
+.detail-modal{background:#fff;border-radius:20px;padding:2rem;max-width:540px;width:100%;position:relative}
+.detail-close{position:absolute;top:1.1rem;right:1.1rem;background:var(--light);border:none;
+  border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem}
+.detail-photo{width:100%;height:200px;border-radius:14px;background:linear-gradient(135deg,#FDE8EF,#FAD0DE);
+  display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:1.2rem}
+.detail-name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:.2rem}
+.detail-meta{color:var(--mid);font-size:.86rem;margin-bottom:1.2rem}
+.detail-field{display:flex;padding:.5rem 0;border-bottom:1px solid var(--light);font-size:.84rem}
+.detail-field-label{font-weight:700;min-width:140px;color:var(--mid)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .profiles-grid{grid-template-columns:1fr 1fr}
+  .quick-actions{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:1fr}
+  .profiles-grid{grid-template-columns:1fr}
+  .content{padding:1.5rem 4%}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="/" class="logo"><div class="logo-dot">💍</div>ShadiKhana</a>
+  <div class="topbar-right">
+    <button class="notif-btn" onclick="showPanel('notifications')">🔔<span class="notif-dot" id="notif-indicator"></span></button>
+    <div class="user-chip" onclick="showPanel('profile')">
+      <div class="user-avatar" id="user-initial">?</div>
+      <span class="user-chip-name" id="user-name-chip">Loading...</span>
+    </div>
+    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="nav-item active" onclick="showPanel('home', this)">
+      <span class="nav-item-icon">🏠</span>Dashboard
+    </div>
+    <div class="nav-item" onclick="showPanel('profile', this)">
+      <span class="nav-item-icon">👤</span>My Profile
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Find a Match</div>
+
+    <div class="nav-item" onclick="showPanel('browse', this)">
+      <span class="nav-item-icon">🔍</span>Browse Profiles
+    </div>
+    <div class="nav-item" onclick="showPanel('matches', this)">
+      <span class="nav-item-icon">💍</span>My Matches
+    </div>
+    <div class="nav-item" onclick="showPanel('interests', this)">
+      <span class="nav-item-icon">💌</span>Interests
+      <span class="nav-badge" id="interests-badge" style="display:none">0</span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Account</div>
+
+    <div class="nav-item" onclick="showPanel('notifications', this)">
+      <span class="nav-item-icon">🔔</span>Notifications
+    </div>
+    <div class="nav-item" onclick="window.location.href='/'">
+      <span class="nav-item-icon">🌐</span>Back to Website
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- ══════════ DASHBOARD HOME ══════════ -->
+    <div class="panel active" id="panel-home">
+      <h1 class="page-title">Welcome to Your Dashboard</h1>
+      <p class="page-sub">Here's a quick overview of your ShadiKhana profile</p>
+
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2 id="welcome-name">Assalam o Alaikum!</h2>
+          <p id="welcome-sub">Loading your profile...</p>
+        </div>
+        <div class="pkg-badge-big">
+          <div class="pname">Your Package</div>
+          <div class="pval" id="welcome-package">—</div>
+        </div>
+      </div>
+
+      <div class="status-banner" id="status-banner" style="display:none"></div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">💌</div>
+          <div class="stat-value" id="stat-sent">0</div>
+          <div class="stat-label">Interests Sent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💝</div>
+          <div class="stat-value" id="stat-received">0</div>
+          <div class="stat-label">Interests Received</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💍</div>
+          <div class="stat-value" id="stat-matches">0</div>
+          <div class="stat-label">Recommended Matches</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="stat-completion">0%</div>
+          <div class="stat-label">Profile Complete</div>
+          <div class="completion-bar-track"><div class="completion-bar-fill" id="completion-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Quick Actions</span></div>
+        <div class="quick-actions">
+          <div class="qa-btn" onclick="showPanel('profile')">
+            <div class="qa-icon">✏️</div>
+            <div class="qa-label">Edit My Profile</div>
+          </div>
+          <div class="qa-btn" onclick="showPanel('browse')">
+            <div class="qa-icon">🔍</div>
+            <div class="qa-label">Browse Profiles</div>
+          </div>
+          <div class="qa-btn" onclick="showPanel('matches')">
+            <div class="qa-icon">💍</div>
+            <div class="qa-label">View My Matches</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ MY PROFILE ══════════ -->
+    <div class="panel" id="panel-profile">
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-sub">Keep your profile up to date for better matches</p>
+
+      <div class="card">
+        <div class="photo-section">
+          <div class="photo-preview" id="profile-photo-preview">👤</div>
+          <div>
+            <input type="file" id="photo-upload-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
+            <button class="photo-upload-btn" onclick="document.getElementById('photo-upload-input').click()">📷 Change Photo</button>
+            <p style="font-size:.75rem;color:var(--mid);margin-top:.5rem">JPG or PNG, max 5MB</p>
+          </div>
+        </div>
+
+        <form id="profile-form">
+          <div class="form-section-label">Basic Information</div>
+          <div class="form-row">
+            <div class="form-group"><label>Full Name</label><input type="text" id="p-full_name"></div>
+            <div class="form-group"><label>Display Name</label><input type="text" id="p-display_name"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Height</label><input type="text" id="p-height"></div>
+            <div class="form-group"><label>Weight (kg)</label><input type="number" id="p-weight"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Complexion</label><input type="text" id="p-complexion"></div>
+            <div class="form-group"><label>Body Type</label><input type="text" id="p-body_type"></div>
+          </div>
+
+          <div class="form-section-label">Career & Income</div>
+          <div class="form-row">
+            <div class="form-group"><label>Profession</label><input type="text" id="p-profession"></div>
+            <div class="form-group"><label>Employer</label><input type="text" id="p-employer"></div>
+          </div>
+          <div class="form-group"><label>Monthly Income</label><input type="text" id="p-monthly_income"></div>
+
+          <div class="form-section-label">Location</div>
+          <div class="form-group"><label>Area / Neighbourhood</label><input type="text" id="p-area"></div>
+
+          <div class="form-section-label">Partner Preferences</div>
+          <div class="form-row">
+            <div class="form-group"><label>Preferred Age (Min)</label><input type="number" id="p-partner_age_min"></div>
+            <div class="form-group"><label>Preferred Age (Max)</label><input type="number" id="p-partner_age_max"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Preferred City</label><input type="text" id="p-partner_city"></div>
+            <div class="form-group"><label>Preferred Education</label><input type="text" id="p-partner_education"></div>
+          </div>
+
+          <div class="form-section-label">About</div>
+          <div class="form-group"><label>About Me</label><textarea id="p-about_me"></textarea></div>
+          <div class="form-group"><label>Family Description</label><textarea id="p-family_description"></textarea></div>
+
+          <button type="button" class="btn-save" onclick="saveProfile()">Save Changes</button>
+          <span id="profile-save-status" style="margin-left:1rem;font-size:.84rem;color:var(--green);display:none">✅ Saved successfully!</span>
+        </form>
+      </div>
+    </div>
+
+    <!-- ══════════ BROWSE PROFILES ══════════ -->
+    <div class="panel" id="panel-browse">
+      <h1 class="page-title">Browse Profiles</h1>
+      <p class="page-sub">Find profiles that match your preferences</p>
+
+      <div class="filter-bar">
+        <select class="filter-select" id="filter-gender">
+          <option value="">Any Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <input class="filter-input" id="filter-city" placeholder="City">
+        <select class="filter-select" id="filter-religion">
+          <option value="">Any Religion</option>
+          <option value="Islam">Islam</option>
+        </select>
+        <input class="filter-input" id="filter-age-min" type="number" placeholder="Min Age" style="max-width:100px">
+        <input class="filter-input" id="filter-age-max" type="number" placeholder="Max Age" style="max-width:100px">
+        <button class="btn-filter" onclick="loadBrowseProfiles(1)">Search</button>
+      </div>
+
+      <div id="browse-results">
+        <div class="loading-spinner">Loading profiles...</div>
+      </div>
+    </div>
+
+    <!-- ══════════ MY MATCHES ══════════ -->
+    <div class="panel" id="panel-matches">
+      <h1 class="page-title">My Recommended Matches</h1>
+      <p class="page-sub">Profiles our matchmakers have specially recommended for you</p>
+
+      <div id="matches-results">
+        <div class="loading-spinner">Loading your matches...</div>
+      </div>
+    </div>
+
+    <!-- ══════════ INTERESTS ══════════ -->
+    <div class="panel" id="panel-interests">
+      <h1 class="page-title">Interests</h1>
+      <p class="page-sub">Manage interests you've sent and received</p>
+
+      <div class="tabs-row">
+        <button class="tab-btn active" onclick="switchInterestTab('received', this)">Received</button>
+        <button class="tab-btn" onclick="switchInterestTab('sent', this)">Sent</button>
+      </div>
+
+      <div id="interests-results">
+        <div class="loading-spinner">Loading interests...</div>
+      </div>
+    </div>
+
+    <!-- ══════════ NOTIFICATIONS ══════════ -->
+    <div class="panel" id="panel-notifications">
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-sub">Stay updated on your ShadiKhana activity</p>
+
+      <div id="notifications-results">
+        <div class="loading-spinner">Loading notifications...</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- PROFILE DETAIL MODAL -->
+<div class="overlay" id="overlay-detail">
+  <div class="detail-modal">
+    <button class="detail-close" onclick="closeDetailModal()">✕</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<script src="/api.js"></script>
+<script>
+// ══════════════════════════════════════════
+//  DASHBOARD INITIALISATION
+// ══════════════════════════════════════════
+
+var currentMember = null;
+var currentInterestTab = 'received';
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!isLoggedIn()) {
+    window.location.href = '/';
+    return;
+  }
+  initDashboard();
+});
+
+async function initDashboard() {
+  var result = await apiCall('/member/profile', 'GET');
+  if (!result.success) {
+    alert('Session expired. Please sign in again.');
+    logout();
+    return;
+  }
+  currentMember = result.data;
+  localStorage.setItem('sk_member', JSON.stringify(currentMember));
+  renderUserChip();
+  renderDashboardHome();
+  loadInterestsCount();
+}
+
+function renderUserChip() {
+  var name = currentMember.full_name || currentMember.display_name || 'Member';
+  document.getElementById('user-name-chip').textContent = name;
+  document.getElementById('user-initial').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('welcome-name').textContent = 'Assalam o Alaikum, ' + name.split(' ')[0] + '!';
+}
+
+// ══════════════════════════════════════════
+//  PANEL SWITCHING
+// ══════════════════════════════════════════
+function showPanel(id, navEl) {
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  var panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  if (navEl) navEl.classList.add('active');
+  else {
+    document.querySelectorAll('.nav-item').forEach(function(n) {
+      if (n.textContent.toLowerCase().indexOf(id) > -1) n.classList.add('active');
+    });
+  }
+
+  if (id === 'home')        renderDashboardHome();
+  if (id === 'profile')     loadProfileForm();
+  if (id === 'browse')      loadBrowseProfiles(1);
+  if (id === 'matches')     loadMyMatches();
+  if (id === 'interests')   loadInterests();
+  if (id === 'notifications') loadNotifications();
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD HOME
+// ══════════════════════════════════════════
+async function renderDashboardHome() {
+  if (!currentMember) return;
+
+  var pkgLabel = (currentMember.package || 'basic').toUpperCase();
+  document.getElementById('welcome-package').textContent = pkgLabel;
+  document.getElementById('welcome-sub').textContent =
+    'Member since ' + new Date(currentMember.created_at || Date.now()).toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+
+  // Status banner
+  var statusEl = document.getElementById('status-banner');
+  if (currentMember.account_status === 'pending') {
+    statusEl.style.display = 'flex';
+    statusEl.className = 'status-banner status-pending';
+    statusEl.innerHTML = '⏳ <span>Your profile is under review. We will activate it within 24 hours of payment confirmation.</span>';
+  } else if (currentMember.account_status === 'active') {
+    statusEl.style.display = 'flex';
+    statusEl.className = 'status-banner status-active';
+    statusEl.innerHTML = '✅ <span>Your profile is active and visible to other members!</span>';
+  } else {
+    statusEl.style.display = 'none';
+  }
+
+  // Profile completion
+  var fields = ['full_name','gender','date_of_birth','city','religion','sect','education',
+                'profession','about_me','height','marital_status'];
+  var filled = fields.filter(function(f) { return currentMember[f] && currentMember[f] !== '—'; }).length;
+  var pct = Math.round((filled / fields.length) * 100);
+  document.getElementById('stat-completion').textContent = pct + '%';
+  document.getElementById('completion-bar').style.width = pct + '%';
+
+  // Load interests stats
+  var interestsResult = await apiCall('/interests', 'GET');
+  if (interestsResult.success) {
+    document.getElementById('stat-sent').textContent = interestsResult.data.sent.length;
+    document.getElementById('stat-received').textContent = interestsResult.data.received.length;
+  }
+
+  // Load matches count
+  var matchesResult = await apiCall('/matches/recommended', 'GET');
+  if (matchesResult.success) {
+    document.getElementById('stat-matches').textContent = matchesResult.data.length;
+  }
+}
+
+async function loadInterestsCount() {
+  var result = await apiCall('/interests', 'GET');
+  if (result.success) {
+    var pendingReceived = result.data.received.filter(function(i) { return i.status === 'sent'; }).length;
+    var badge = document.getElementById('interests-badge');
+    if (pendingReceived > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = pendingReceived;
+      document.getElementById('notif-indicator').style.display = 'block';
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  MY PROFILE
+// ══════════════════════════════════════════
+function loadProfileForm() {
+  if (!currentMember) return;
+  var fields = ['full_name','display_name','height','weight','complexion','body_type',
+                'profession','employer','monthly_income','area',
+                'partner_age_min','partner_age_max','partner_city','partner_education',
+                'about_me','family_description'];
+  fields.forEach(function(f) {
+    var el = document.getElementById('p-' + f);
+    if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
+  });
+
+  var photoPreview = document.getElementById('profile-photo-preview');
+  if (currentMember.photo_url) {
+    photoPreview.innerHTML = '<img src="' + currentMember.photo_url + '" alt="Profile photo">';
+  }
+}
+
+async function saveProfile() {
+  var fields = ['display_name','height','weight','complexion','body_type',
+                'profession','employer','monthly_income','area',
+                'partner_age_min','partner_age_max','partner_city','partner_education',
+                'about_me','family_description'];
+  var updates = {};
+  fields.forEach(function(f) {
+    var el = document.getElementById('p-' + f);
+    if (el) updates[f] = el.value;
+  });
+
+  var result = await apiCall('/member/profile', 'PUT', updates);
+  var statusEl = document.getElementById('profile-save-status');
+  if (result.success) {
+    statusEl.style.display = 'inline';
+    statusEl.style.color = 'var(--green)';
+    statusEl.textContent = '✅ Saved successfully!';
+    Object.assign(currentMember, updates);
+    setTimeout(function() { statusEl.style.display = 'none'; }, 3000);
+  } else {
+    statusEl.style.display = 'inline';
+    statusEl.style.color = 'var(--rose)';
+    statusEl.textContent = '⚠️ ' + (result.message || 'Could not save changes.');
+  }
+}
+
+async function handlePhotoUpload(input) {
+  if (!input.files || !input.files[0]) return;
+  var formData = new FormData();
+  formData.append('photo', input.files[0]);
+
+  var token = localStorage.getItem('sk_token');
+  try {
+    var res = await fetch(API_BASE + '/member/photo', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    });
+    var data = await res.json();
+    if (data.success) {
+      document.getElementById('profile-photo-preview').innerHTML =
+        '<img src="' + data.data.photo_url + '" alt="Profile photo">';
+      currentMember.photo_url = data.data.photo_url;
+    } else {
+      alert('Photo upload failed: ' + (data.message || 'Please try again.'));
+    }
+  } catch (err) {
+    alert('Photo upload failed. Please try again.');
+  }
+}
+
+// ══════════════════════════════════════════
+//  BROWSE PROFILES
+// ══════════════════════════════════════════
+async function loadBrowseProfiles(page) {
+  var container = document.getElementById('browse-results');
+  container.innerHTML = '<div class="loading-spinner">Loading profiles...</div>';
+
+  var filters = {
+    page: page || 1,
+    limit: 12,
+    gender: document.getElementById('filter-gender').value,
+    city: document.getElementById('filter-city').value,
+    age_min: document.getElementById('filter-age-min').value,
+    age_max: document.getElementById('filter-age-max').value
+  };
+
+  var params = Object.keys(filters)
+    .filter(function(k) { return filters[k]; })
+    .map(function(k) { return k + '=' + encodeURIComponent(filters[k]); })
+    .join('&');
+
+  var result = await apiCall('/profiles?' + params, 'GET');
+
+  if (!result.success) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load profiles. Please try again.</div>';
+    return;
+  }
+
+  var profiles = result.data.profiles;
+  if (!profiles.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">🔍</div>No profiles found matching your filters.</div>';
+    return;
+  }
+
+  var html = '<div class="profiles-grid">';
+  profiles.forEach(function(p) {
+    var initial = p.gender === 'Male' ? '👨' : '👩';
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    html +=
+      '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
+      '<div class="pc-top">' + photo + verifiedBadge + '</div>' +
+      '<div class="pc-body">' +
+      '<div class="pc-name">' + (p.display_name || p.full_name) + '</div>' +
+      '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
+      '<div class="pc-actions">' +
+      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      '</div></div></div>';
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+async function sendInterestTo(uuid, btnEl) {
+  btnEl.disabled = true;
+  btnEl.textContent = 'Sending...';
+  var result = await sendInterest(uuid, '');
+  if (result.success) {
+    btnEl.textContent = '✓ Sent';
+  } else {
+    btnEl.disabled = false;
+    btnEl.textContent = 'Send Interest';
+    alert(result.message || 'Could not send interest.');
+  }
+}
+
+// ══════════════════════════════════════════
+//  PROFILE DETAIL MODAL
+// ══════════════════════════════════════════
+async function viewProfileDetail(uuid) {
+  var result = await apiCall('/profiles/' + uuid, 'GET');
+  if (!result.success) {
+    alert('Could not load profile.');
+    return;
+  }
+  var p = result.data;
+  var initial = p.gender === 'Male' ? '👨' : '👩';
+  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : initial;
+
+  var html =
+    '<div class="detail-photo">' + photo + '</div>' +
+    '<div class="detail-name">' + (p.display_name || p.full_name) + '</div>' +
+    '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
+    detailField('Religion / Sect', (p.religion || '—') + ' / ' + (p.sect || '—')) +
+    detailField('Education', p.education || '—') +
+    detailField('Profession', p.profession || '—') +
+    detailField('Height', p.height || '—') +
+    detailField('Caste', p.caste || '—') +
+    (p.mobile ? detailField('Mobile', p.mobile) : '') +
+    (p.about_me ? detailField('About', p.about_me) : '') +
+    '<button class="btn-save" style="width:100%;margin-top:1.2rem" onclick="sendInterestTo(\'' + p.uuid + '\', this);this.textContent=\'Sending...\'">Send Interest</button>';
+
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('overlay-detail').classList.add('open');
+}
+
+function detailField(label, value) {
+  return '<div class="detail-field"><span class="detail-field-label">' + label + '</span><span>' + value + '</span></div>';
+}
+
+function closeDetailModal() {
+  document.getElementById('overlay-detail').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+//  MY MATCHES
+// ══════════════════════════════════════════
+async function loadMyMatches() {
+  var container = document.getElementById('matches-results');
+  container.innerHTML = '<div class="loading-spinner">Loading your matches...</div>';
+
+  var result = await apiCall('/matches/recommended', 'GET');
+  if (!result.success || !result.data.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">💍</div>No recommended matches yet. Our matchmakers are working on finding your perfect match!</div>';
+    return;
+  }
+
+  var html = '<div class="profiles-grid">';
+  result.data.forEach(function(p) {
+    var initial = p.gender === 'Male' ? '👨' : '👩';
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    html +=
+      '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
+      '<div class="pc-top">' + photo + '</div>' +
+      '<div class="pc-body">' +
+      '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
+      '<div class="pc-name">' + (p.display_name || p.full_name) + '</div>' +
+      '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
+      (p.admin_notes ? '<div class="pc-meta" style="font-style:italic;color:var(--burg)">"' + p.admin_notes + '"</div>' : '') +
+      '<div class="pc-actions">' +
+      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      '</div></div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+//  INTERESTS
+// ══════════════════════════════════════════
+function switchInterestTab(tab, btnEl) {
+  currentInterestTab = tab;
+  document.querySelectorAll('.tabs-row .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  btnEl.classList.add('active');
+  loadInterests();
+}
+
+async function loadInterests() {
+  var container = document.getElementById('interests-results');
+  container.innerHTML = '<div class="loading-spinner">Loading interests...</div>';
+
+  var result = await apiCall('/interests', 'GET');
+  if (!result.success) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load interests.</div>';
+    return;
+  }
+
+  var list = currentInterestTab === 'sent' ? result.data.sent : result.data.received;
+
+  if (!list.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">💌</div>No ' + currentInterestTab + ' interests yet.</div>';
+    return;
+  }
+
+  var html = '';
+  list.forEach(function(i) {
+    var statusClass = i.status === 'accepted' ? 'is-accepted' : i.status === 'rejected' ? 'is-rejected' : 'is-sent';
+    var statusLabel = i.status.charAt(0).toUpperCase() + i.status.slice(1);
+
+    html += '<div class="interest-row">' +
+      '<div class="interest-av">👤</div>' +
+      '<div class="interest-info">' +
+      '<div class="interest-name">' + i.full_name + '</div>' +
+      '<div class="interest-meta">' + (i.age || '—') + ' yrs · ' + (i.city || '—') + ' · ' + (i.profession || '—') + '</div>' +
+      '</div>';
+
+    if (currentInterestTab === 'received' && i.status === 'sent') {
+      html += '<div class="interest-action-btns">' +
+        '<button class="btn-accept" onclick="respondToInterest(' + i.id + ', \'accepted\')">Accept</button>' +
+        '<button class="btn-reject" onclick="respondToInterest(' + i.id + ', \'rejected\')">Decline</button>' +
+        '</div>';
+    } else {
+      html += '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>';
+    }
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+async function respondToInterest(interestId, action) {
+  var result = await apiCall('/interests/respond', 'POST', { interest_id: interestId, action: action });
+  if (result.success) {
+    loadInterests();
+    loadInterestsCount();
+  } else {
+    alert(result.message || 'Could not process this interest.');
+  }
+}
+
+// ══════════════════════════════════════════
+//  NOTIFICATIONS
+// ══════════════════════════════════════════
+async function loadNotifications() {
+  var container = document.getElementById('notifications-results');
+  container.innerHTML = '<div class="loading-spinner">Loading notifications...</div>';
+
+  var result = await apiCall('/notifications', 'GET');
+  if (!result.success || !result.data.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">🔔</div>No notifications yet.</div>';
+    return;
+  }
+
+  var html = '';
+  result.data.forEach(function(n) {
+    html += '<div class="interest-row">' +
+      '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : '🔔') + '</div>' +
+      '<div class="interest-info">' +
+      '<div class="interest-name">' + n.title + '</div>' +
+      '<div class="interest-meta">' + n.body + '</div>' +
+      '</div></div>';
+  });
+  container.innerHTML = html;
+  document.getElementById('notif-indicator').style.display = 'none';
+}
+
+// ══════════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════════
+function handleLogout() {
+  if (confirm('Are you sure you want to log out?')) {
+    logout();
+  }
+}
+</script>
+</body>
+</html>
