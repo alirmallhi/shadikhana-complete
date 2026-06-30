@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShadiKhana – Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --burgundy:#7B1D3A;--rose:#C94070;--gold:#D4A853;
+  --cream:#FDF6EE;--ivory:#FAF3E8;--charcoal:#1C1C2E;
+  --mid:#5A5370;--light:#EDE3D6;--white:#FFFFFF;
+  --green:#2D7A5F;--sidebar:#12101E;--sidebar2:#1C1930;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F4F0EB;color:var(--charcoal);display:flex;min-height:100vh;overflow-x:hidden}
+
+/* SIDEBAR */
+.sidebar{width:240px;min-height:100vh;background:var(--sidebar);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;transition:transform .3s}
+.sidebar-logo{padding:1.5rem 1.4rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sidebar-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--burgundy),var(--rose));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.sidebar-logo-text{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fff}
+.sidebar-logo-sub{font-size:.6rem;color:rgba(255,255,255,0.4);margin-top:1px}
+.sidebar-section{padding:.8rem 1rem .4rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.2rem;color:rgba(255,255,255,0.6);text-decoration:none;font-size:.86rem;font-weight:500;cursor:pointer;border-radius:8px;margin:2px 8px;transition:background .15s,color .15s;border:none;background:none;width:calc(100%-16px)}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:#fff}
+.nav-item.active{background:var(--burgundy);color:#fff}
+.nav-item-icon{font-size:1.05rem;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--rose);color:#fff;font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:10px}
+.sidebar-footer{margin-top:auto;padding:1rem;border-top:1px solid rgba(255,255,255,0.07)}
+.admin-user{display:flex;align-items:center;gap:.8rem}
+.admin-avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--burgundy),var(--rose));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.admin-name{font-size:.82rem;font-weight:600;color:#fff}
+.admin-role{font-size:.68rem;color:rgba(255,255,255,0.4)}
+
+/* MAIN */
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--white);border-bottom:1px solid var(--light);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.page-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--charcoal)}
+.page-title span{font-family:'Inter',sans-serif;font-size:.8rem;font-weight:400;color:var(--mid);margin-left:.6rem}
+.topbar-actions{display:flex;align-items:center;gap:1rem}
+.notif-btn{position:relative;background:var(--ivory);border:none;border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--rose);border-radius:50%;border:2px solid #fff}
+.content{padding:2rem;flex:1}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:2rem}
+.kpi-card{background:var(--white);border-radius:16px;padding:1.4rem 1.5rem;position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.kpi-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.08}
+.kpi-card:nth-child(1)::after{background:var(--burgundy)}
+.kpi-card:nth-child(2)::after{background:var(--gold)}
+.kpi-card:nth-child(3)::after{background:var(--green)}
+.kpi-card:nth-child(4)::after{background:var(--rose)}
+.kpi-icon{font-size:1.6rem;margin-bottom:.7rem}
+.kpi-value{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;line-height:1;margin-bottom:.25rem}
+.kpi-label{font-size:.78rem;color:var(--mid);font-weight:500}
+.kpi-change{font-size:.75rem;font-weight:600;margin-top:.4rem}
+.kpi-change.up{color:var(--green)}
+.kpi-change.down{color:var(--rose)}
+
+/* CARDS */
+.card{background:var(--white);border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.05);margin-bottom:1.5rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.card-title{font-weight:700;font-size:1rem}
+.card-action{font-size:.8rem;color:var(--burgundy);font-weight:600;cursor:pointer;border:none;background:none}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{font-size:.75rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;padding:.7rem 1rem;text-align:left;border-bottom:2px solid var(--light)}
+td{padding:.8rem 1rem;font-size:.86rem;border-bottom:1px solid var(--light);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--cream)}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
+.status-active{background:#E8F5F0;color:var(--green)}
+.status-pending{background:#FEF3E2;color:#B8820A}
+.status-vip{background:rgba(123,29,58,0.1);color:var(--burgundy)}
+.status-premium{background:rgba(212,168,83,0.15);color:#A07020}
+.status-basic{background:rgba(90,83,112,0.1);color:var(--mid)}
+.status-matched{background:rgba(45,122,95,0.12);color:var(--green)}
+.status-paid{background:#E8F5F0;color:var(--green)}
+.status-unpaid{background:#FDE8EF;color:var(--rose)}
+.status-review{background:#FEF3E2;color:#B8820A}
+.action-btn{border:none;background:none;cursor:pointer;font-size:.8rem;font-weight:600;padding:.3rem .7rem;border-radius:6px;transition:background .15s}
+.action-edit{color:var(--burgundy)}.action-edit:hover{background:rgba(123,29,58,0.08)}
+.action-view{color:var(--mid)}.action-view:hover{background:var(--light)}
+.action-approve{color:var(--green)}.action-approve:hover{background:#E8F5F0}
+.action-delete{color:var(--rose)}.action-delete:hover{background:#FDE8EF}
+
+/* DASHBOARD 2-COL */
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem}
+.revenue-chart{display:flex;align-items:flex-end;gap:8px;height:140px;padding-bottom:.5rem}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{border-radius:6px 6px 0 0;transition:height .5s ease;cursor:pointer;position:relative}
+.bar:hover::after{content:attr(data-val);position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:var(--charcoal);color:#fff;font-size:.65rem;padding:2px 6px;border-radius:4px;white-space:nowrap}
+.bar-label{font-size:.65rem;color:var(--mid);text-align:center}
+.quick-stats{display:flex;flex-direction:column;gap:.8rem}
+.qs-item{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;background:var(--ivory);border-radius:12px}
+.qs-left{display:flex;align-items:center;gap:.7rem}
+.qs-icon{font-size:1.2rem}
+.qs-label{font-size:.82rem;font-weight:500}
+.qs-value{font-weight:700;font-size:.95rem;color:var(--burgundy)}
+
+/* ACTIVITY FEED */
+.activity-item{display:flex;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--light)}
+.activity-item:last-child{border-bottom:none}
+.act-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.act-reg{background:rgba(123,29,58,0.1)}
+.act-pay{background:rgba(45,122,95,0.1)}
+.act-match{background:rgba(212,168,83,0.12)}
+.act-time{font-size:.72rem;color:var(--mid);margin-top:2px}
+.act-text{font-size:.84rem;font-weight:500}
+
+/* SEARCH / FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.filter-input{flex:1;min-width:200px;padding:.65rem 1rem;border:1.5px solid var(--light);border-radius:10px;font-size:.86rem;font-family:inherit;background:var(--white);outline:none;color:var(--charcoal)}
+.filter-input:focus{border-color:var(--rose)}
+.filter-select{padding:.65rem 1rem;border:1.5px solid var(--light);border-radius:10px;font-size:.84rem;font-family:inherit;background:var(--white);color:var(--charcoal);cursor:pointer;outline:none}
+.btn-sm{padding:.55rem 1.2rem;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.btn-sm-primary{background:var(--burgundy);color:#fff}
+.btn-sm-primary:hover{background:var(--rose)}
+.btn-sm-outline{border:1.5px solid var(--light);background:#fff;color:var(--mid)}
+.btn-sm-outline:hover{border-color:var(--burgundy);color:var(--burgundy)}
+.btn-sm-green{background:var(--green);color:#fff}
+
+/* PAYMENT DETAIL */
+.payment-method-tag{background:var(--ivory);border-radius:6px;padding:2px 8px;font-size:.72rem;font-weight:600;color:var(--mid);border:1px solid var(--light)}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:1.2rem;font-size:.82rem;color:var(--mid)}
+.page-btns{display:flex;gap:.4rem}
+.page-btn{padding:.4rem .8rem;border-radius:6px;border:1.5px solid var(--light);background:#fff;cursor:pointer;font-size:.8rem;font-family:inherit}
+.page-btn.active{background:var(--burgundy);color:#fff;border-color:var(--burgundy)}
+.page-btn:hover:not(.active){border-color:var(--burgundy);color:var(--burgundy)}
+
+/* SUCCESS FEE PANEL */
+.sf-card{background:linear-gradient(135deg,var(--burgundy),#4A0F22);border-radius:16px;padding:1.5rem;color:#fff;margin-bottom:1.5rem}
+.sf-card-title{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:1rem}
+.sf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.sf-stat strong{display:block;font-size:1.6rem;font-weight:700;color:var(--gold);font-family:'Playfair Display',serif}
+.sf-stat span{font-size:.75rem;color:rgba(255,255,255,0.7)}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.settings-section{background:var(--white);border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.settings-section h3{font-weight:700;font-size:.95rem;margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid var(--light)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--light)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:.86rem;font-weight:500}
+.setting-sub{font-size:.75rem;color:var(--mid)}
+.toggle{position:relative;width:42px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;border-radius:22px;background:var(--light);cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;left:2px;top:2px;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.toggle input:checked+.toggle-slider{background:var(--burgundy)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(20px)}
+.form-group-sm label{font-size:.8rem;font-weight:600;display:block;margin-bottom:.4rem}
+.form-group-sm input,.form-group-sm select{width:100%;padding:.6rem .9rem;border:1.5px solid var(--light);border-radius:8px;font-size:.84rem;font-family:inherit;background:var(--cream);outline:none;margin-bottom:.8rem}
+.form-group-sm input:focus{border-color:var(--rose)}
+
+/* MOBILE */
+.sidebar-toggle{display:none;position:fixed;top:14px;left:14px;z-index:100;background:var(--sidebar);border:none;border-radius:8px;width:38px;height:38px;cursor:pointer;align-items:center;justify-content:center;color:#fff;font-size:1.1rem}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .dash-grid{grid-template-columns:1fr}
+  .settings-grid{grid-template-columns:1fr}
+  .sidebar-toggle{display:flex}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ ADMIN LOGIN GATE ══════════ -->
+<div id="admin-login-gate" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#7B1D3A,#1C1C2E);
+     display:flex;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#fff;border-radius:20px;padding:2.5rem;max-width:380px;width:100%">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,#7B1D3A,#C94070);border-radius:50%;
+           display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto .8rem">💍</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#1C1C2E">ShadiKhana Admin</h2>
+      <p style="font-size:.84rem;color:#5A5370;margin-top:.2rem">Sign in to manage your platform</p>
+    </div>
+    <div style="margin-bottom:1rem">
+      <label style="display:block;font-size:.8rem;font-weight:700;margin-bottom:.4rem">Admin Email</label>
+      <input type="email" id="admin-login-email" placeholder="admin@shadikhana.pk"
+             style="width:100%;padding:.7rem .9rem;border:1.5px solid #EDE3D6;border-radius:10px;font-size:.87rem">
+    </div>
+    <div style="margin-bottom:1rem">
+      <label style="display:block;font-size:.8rem;font-weight:700;margin-bottom:.4rem">Password</label>
+      <input type="password" id="admin-login-password" placeholder="Your password"
+             style="width:100%;padding:.7rem .9rem;border:1.5px solid #EDE3D6;border-radius:10px;font-size:.87rem">
+    </div>
+    <p id="admin-login-error" style="display:none;color:#C94070;font-size:.82rem;margin-bottom:.8rem"></p>
+    <button id="admin-login-btn" onclick="handleAdminLogin()"
+            style="width:100%;padding:.85rem;background:linear-gradient(135deg,#7B1D3A,#C94070);color:#fff;
+                   border:none;border-radius:10px;font-weight:700;font-size:.92rem;cursor:pointer">
+      Sign In
+    </button>
+  </div>
+</div>
+
+<script>
+async function handleAdminLogin() {
+  var emailEl    = document.getElementById('admin-login-email');
+  var passwordEl = document.getElementById('admin-login-password');
+  var errorEl    = document.getElementById('admin-login-error');
+  var btn        = document.getElementById('admin-login-btn');
+
+  var email    = emailEl.value.trim();
+  var password = passwordEl.value.trim();
+
+  errorEl.style.display = 'none';
+  if (!email || !password) {
+    errorEl.textContent = 'Please enter both email and password.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+
+  try {
+    var res  = await fetch('https://shadikhana-api.onrender.com/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+    var data = await res.json();
+
+    if (data.success) {
+      localStorage.setItem('sk_admin_token', data.data.token);
+      localStorage.setItem('sk_admin', JSON.stringify(data.data.admin));
+      document.getElementById('admin-login-gate').style.display = 'none';
+      if (typeof loadDashboardStats === 'function') loadDashboardStats();
+    } else {
+      errorEl.textContent = data.message || 'Invalid email or password.';
+      errorEl.style.display = 'block';
+    }
+  } catch (err) {
+    errorEl.textContent = 'Connection error. Please try again.';
+    errorEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+}
+
+// Check on page load — if no admin token, show login gate; otherwise hide it
+(function checkAdminAuth() {
+  var token = localStorage.getItem('sk_admin_token');
+  if (token) {
+    var gate = document.getElementById('admin-login-gate');
+    if (gate) gate.style.display = 'none';
+    // Wait for the rest of the page's scripts to load, then fetch live dashboard data
+    window.addEventListener('load', function() {
+      if (typeof loadDashboardStats === 'function') loadDashboardStats();
+    });
+  }
+})();
+
+function adminLogout() {
+  localStorage.removeItem('sk_admin_token');
+  localStorage.removeItem('sk_admin');
+  window.location.reload();
+}
+</script>
+
+
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">💍</div>
+    <div>
+      <div class="sidebar-logo-text">ShadiKhana</div>
+      <div class="sidebar-logo-sub">Admin Dashboard</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Main</div>
+  <button class="nav-item active" onclick="showPanel('dashboard',this)">
+    <span class="nav-item-icon">📊</span>Dashboard
+  </button>
+  <button class="nav-item" onclick="showPanel('members',this)">
+    <span class="nav-item-icon">👥</span>Members
+    <span class="nav-badge">12</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('matches',this)">
+    <span class="nav-item-icon">💍</span>Matches
+  </button>
+  <button class="nav-item" onclick="showPanel('matching',this)">
+    <span class="nav-item-icon">🧠</span>Smart Matching
+    <span class="nav-badge" id="pending-badge">—</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('payments',this)">
+    <span class="nav-item-icon">💰</span>Payments
+    <span class="nav-badge">5</span>
+  </button>
+
+  <div class="sidebar-section">Management</div>
+  <button class="nav-item" onclick="showPanel('pending',this)">
+    <span class="nav-item-icon">⏳</span>Pending Approvals
+    <span class="nav-badge">8</span>
+  </button>
+  <button class="nav-item" onclick="showPanel('successfee',this)">
+    <span class="nav-item-icon">🏆</span>Success Fees
+  </button>
+  <button class="nav-item" onclick="showPanel('reports',this)">
+    <span class="nav-item-icon">📈</span>Reports
+  </button>
+
+  <div class="sidebar-section">System</div>
+  <button class="nav-item" onclick="showPanel('settings',this)">
+    <span class="nav-item-icon">⚙️</span>Settings
+  </button>
+  <button class="nav-item" onclick="alert('Logging out...')">
+    <span class="nav-item-icon">🚪</span>Log Out
+  </button>
+
+  <div class="sidebar-footer">
+    <div class="admin-user">
+      <div class="admin-avatar">👤</div>
+      <div>
+        <div class="admin-name">Admin</div>
+        <div class="admin-role">ShadiKhana Owner</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <span class="page-title" id="page-title">Dashboard <span>Overview</span></span>
+    </div>
+    <div class="topbar-actions">
+      <button class="notif-btn" onclick="alert('5 new notifications')">🔔<span class="notif-dot"></span></button>
+      <button class="btn-sm btn-sm-primary" onclick="alert('New member registration opened')">+ Add Member</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <div class="panel active" id="panel-dashboard">
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon">👥</div>
+      <div class="kpi-value" style="color:var(--burgundy)" id="kpi-total-members">—</div>
+      <div class="kpi-label">Total Members</div>
+      <div class="kpi-change" id="kpi-active-members">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-value" style="color:var(--gold)" id="kpi-total-revenue">—</div>
+      <div class="kpi-label">Total Revenue Collected</div>
+      <div class="kpi-change" id="kpi-pending-revenue">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">💍</div>
+      <div class="kpi-value" style="color:var(--green)" id="kpi-matches">—</div>
+      <div class="kpi-label">Confirmed Matches</div>
+      <div class="kpi-change up">All time</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">⏳</div>
+      <div class="kpi-value" style="color:var(--rose)" id="kpi-pending">—</div>
+      <div class="kpi-label">Pending Approvals</div>
+      <div class="kpi-change down" id="kpi-pending-note">Needs attention</div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Monthly Revenue (PKR)</span>
+        <button class="card-action" onclick="showPanel('reports')">View Report</button>
+      </div>
+      <div class="revenue-chart" id="revenue-chart">
+        <div style="text-align:center;padding:2rem;color:var(--mid);font-size:.84rem">Loading...</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Quick Stats</span></div>
+      <div class="quick-stats" id="quick-stats-list">
+        <div style="text-align:center;padding:1.5rem;color:var(--mid);font-size:.84rem">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Recent Registrations</span><button class="card-action" onclick="showPanel('members')">See All</button></div>
+      <table>
+        <thead><tr><th>Name</th><th>Package</th><th>City</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="recent-registrations-body">
+          <tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--mid)">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Platform Summary</span></div>
+      <div id="platform-summary">
+        <div style="text-align:center;padding:1.5rem;color:var(--mid);font-size:.84rem">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ MEMBERS ══════════ -->
+    <div class="panel" id="panel-members">
+  <div class="filter-bar">
+    <input class="filter-input" id="members-search" placeholder="🔍  Search by name, phone, city...">
+    <select class="filter-select" id="members-filter-package">
+      <option value="">All Packages</option><option value="executive">🌐 Executive</option><option value="premium">⭐ Premium</option><option value="basic">🌱 Basic</option>
+    </select>
+    <select class="filter-select" id="members-filter-gender">
+      <option value="">All Genders</option><option value="Male">Male</option><option value="Female">Female</option>
+    </select>
+    <select class="filter-select" id="members-filter-status">
+      <option value="">All Status</option><option value="active">Active</option><option value="pending">Pending</option><option value="matched">Matched</option><option value="suspended">Suspended</option>
+    </select>
+    <button class="btn-sm btn-sm-primary" onclick="loadMembersPanel(1)">Search</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Member</th><th>Contact</th><th>Package</th><th>City</th><th>Payment</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead>
+      <tbody id="members-table-body">
+        <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+    <div class="pagination" style="padding:1rem 1.2rem">
+      <span id="members-pagination-info">Loading...</span>
+      <div class="page-btns" id="members-pagination-btns"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ MATCHES ══════════ -->
+    <div class="panel" id="panel-matches">
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi-card"><div class="kpi-icon">💍</div><div class="kpi-value" style="color:var(--green)" id="matches-kpi-confirmed">—</div><div class="kpi-label">Total Confirmed Matches</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📋</div><div class="kpi-value" style="color:var(--burgundy)" id="matches-kpi-total">—</div><div class="kpi-label">Total Match Records</div></div>
+    <div class="kpi-card"><div class="kpi-icon">⏳</div><div class="kpi-value" style="color:var(--gold)" id="matches-kpi-pending">—</div><div class="kpi-label">Awaiting Confirmation</div></div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:1.2rem 1.5rem"><span class="card-title">All Matches</span></div>
+    <table>
+      <thead><tr><th>Member A</th><th>Member B</th><th>Packages</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+      <tbody id="matches-table-body">
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════ PAYMENTS ══════════ -->
+    <div class="panel" id="panel-payments">
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-icon">📥</div><div class="kpi-value" style="color:var(--green)" id="pay-kpi-reg">—</div><div class="kpi-label">Registration Fees Received</div></div>
+    <div class="kpi-card"><div class="kpi-icon">🏆</div><div class="kpi-value" style="color:var(--gold)" id="pay-kpi-success">—</div><div class="kpi-label">Success Fees Received</div></div>
+    <div class="kpi-card"><div class="kpi-icon">⏳</div><div class="kpi-value" style="color:var(--rose)" id="pay-kpi-pending">—</div><div class="kpi-label">Pending Payments</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-value" style="color:var(--burgundy)" id="pay-kpi-total">—</div><div class="kpi-label">Total Revenue</div></div>
+  </div>
+  <div class="filter-bar">
+    <input class="filter-input" id="payments-search" placeholder="🔍  Search by name...">
+    <select class="filter-select" id="payments-filter-status">
+      <option value="">All Status</option><option value="completed">Paid</option><option value="pending">Pending</option><option value="failed">Failed</option>
+    </select>
+    <button class="btn-sm btn-sm-primary" onclick="loadPaymentsPanel(1)">Filter</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Member</th><th>Type</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody id="payments-table-body">
+        <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+    <div class="pagination" style="padding:1rem 1.2rem">
+      <span id="payments-pagination-info">Loading...</span>
+      <div class="page-btns" id="payments-pagination-btns"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ PENDING APPROVALS ══════════ -->
+<div class="panel" id="panel-pending">
+  <div style="background:rgba(212,168,83,0.1);border:1.5px solid rgba(212,168,83,0.3);border-radius:12px;
+       padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.88rem;color:#8A6010" id="pending-summary-banner">
+    ⏳ Loading pending registrations...
+  </div>
+
+  <div style="display:flex;gap:.8rem;margin-bottom:1.2rem;align-items:center">
+    <input id="pending-search" class="filter-input" placeholder="🔍 Search by name, email, mobile..."
+           style="flex:1;padding:.6rem .9rem;border:1.5px solid var(--light);border-radius:10px;font-size:.84rem">
+    <button class="btn-sm btn-sm-primary" onclick="loadPendingPayments()"
+            style="background:var(--burgundy);color:#fff;border:none;border-radius:8px;padding:.6rem 1.2rem;
+                   font-size:.84rem;font-weight:600;cursor:pointer">Search</button>
+    <button class="btn-sm btn-sm-outline" onclick="loadPendingPayments()"
+            style="border:1.5px solid var(--light);background:#fff;color:var(--mid);border-radius:8px;
+                   padding:.6rem 1.2rem;font-size:.84rem;font-weight:600;cursor:pointer">🔄 Refresh</button>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead>
+        <tr><th>Member</th><th>Package</th><th>Amount Due</th><th>Submitted</th><th>Contact</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="pending-table-body">
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════ SUCCESS FEES ══════════ -->
+    <div class="panel" id="panel-successfee">
+  <div class="sf-card">
+    <div class="sf-card-title">💍 Success Fee Revenue</div>
+    <div class="sf-stats">
+      <div class="sf-stat"><strong id="sf-total-matches">—</strong><span>Total Confirmed Matches</span></div>
+      <div class="sf-stat"><strong id="sf-collected">—</strong><span>Success Fees Collected</span></div>
+      <div class="sf-stat"><strong id="sf-pending">—</strong><span>Pending Collection</span></div>
+    </div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:1.2rem 1.5rem"><span class="card-title">Outstanding Success Fees</span></div>
+    <table>
+      <thead><tr><th>Member</th><th>Package</th><th>Amount Due</th><th>Contact</th><th>Actions</th></tr></thead>
+      <tbody id="successfee-table-body">
+        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════ REPORTS ══════════ -->
+    <div class="panel" id="panel-reports">
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-icon">📅</div><div class="kpi-value" style="color:var(--burgundy)" id="rpt-current-month">—</div><div class="kpi-label">Current Month</div></div>
+    <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-value" style="color:var(--gold)" id="rpt-month-revenue">—</div><div class="kpi-label">Total Revenue</div></div>
+    <div class="kpi-card"><div class="kpi-icon">💍</div><div class="kpi-value" style="color:var(--green)" id="rpt-matches">—</div><div class="kpi-label">Total Confirmed Matches</div></div>
+    <div class="kpi-card"><div class="kpi-icon">📍</div><div class="kpi-value" style="color:var(--mid)" id="rpt-top-city-pct">—</div><div class="kpi-label" id="rpt-top-city-label">Top City</div></div>
+  </div>
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Revenue by Package</span></div>
+      <table>
+        <thead><tr><th>Package</th><th>Payments</th><th>Total Revenue</th></tr></thead>
+        <tbody id="rpt-package-table">
+          <tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--mid)">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Members by City</span></div>
+      <div class="quick-stats" id="rpt-city-list">
+        <div style="text-align:center;padding:1.5rem;color:var(--mid)">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ SETTINGS ══════════ -->
+    <div class="panel" id="panel-settings">
+      <div class="settings-grid">
+        <div class="settings-section">
+          <h3>💰 Pricing Configuration</h3>
+          <div class="form-group-sm">
+            <label>Basic Package Fee (PKR)</label>
+            <input type="number" value="10000">
+            <label>Premium Package Fee (PKR)</label>
+            <input type="number" value="30000">
+            <label>Executive / Overseas Package Fee (PKR)</label>
+            <input type="number" value="50000">
+            <label>Success Fee Policy</label>
+            <select>
+              <option>Equal to registration fee (current)</option>
+              <option>Fixed flat fee</option>
+              <option>Custom per member</option>
+            </select>
+          </div>
+          <button class="btn-sm btn-sm-primary" onclick="alert('Pricing saved!')">Save Pricing</button>
+        </div>
+        <div class="settings-section">
+          <h3>📱 Payment Gateway</h3>
+          <div class="form-group-sm">
+            <label>Meezan Bank IBAN</label>
+            <input type="text" value="PK00MEZN0001234567890">
+            <label>JazzCash Merchant ID</label>
+            <input type="text" placeholder="Your JazzCash merchant ID">
+            <label>EasyPaisa Store ID</label>
+            <input type="text" placeholder="Your EasyPaisa store ID">
+            <label>WhatsApp Support Number</label>
+            <input type="tel" value="+92 300 SHADI">
+          </div>
+          <button class="btn-sm btn-sm-primary" onclick="alert('Payment settings saved!')">Save</button>
+        </div>
+        <div class="settings-section">
+          <h3>⚙️ Platform Settings</h3>
+          <div class="setting-row"><div><div class="setting-label">Require admin approval</div><div class="setting-sub">All new profiles reviewed before going live</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">CNIC verification required</div><div class="setting-sub">Premium & VIP must verify identity</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">Urdu language option</div><div class="setting-sub">Show Urdu toggle on main site</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">WhatsApp notifications</div><div class="setting-sub">Send match alerts via WhatsApp</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">In-person service (Lahore)</div><div class="setting-sub">Show Lahore office option to VIP</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="settings-section">
+          <h3>👤 Admin Account</h3>
+          <div class="form-group-sm">
+            <label>Admin Name</label>
+            <input type="text" placeholder="Your name">
+            <label>Admin Email</label>
+            <input type="email" placeholder="admin@shadikhana.pk">
+            <label>Admin Phone</label>
+            <input type="tel" placeholder="+92 300 SHADI">
+            <label>New Password</label>
+            <input type="password" placeholder="Leave blank to keep current">
+          </div>
+          <button class="btn-sm btn-sm-primary" onclick="alert('Account updated!')">Update Account</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════ SMART MATCHING ENGINE ══════════ -->
+    <div class="panel" id="panel-matching">
+
+      <!-- Stats Row -->
+      <div class="kpi-grid" id="matching-kpis" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi-card"><div class="kpi-icon">🧠</div><div class="kpi-value" style="color:var(--burgundy)" id="mk-total">—</div><div class="kpi-label">Total Match Pairs</div></div>
+        <div class="kpi-card"><div class="kpi-icon">⭐⭐⭐</div><div class="kpi-value" style="color:var(--green)" id="mk-excellent">—</div><div class="kpi-label">Excellent Matches</div><div class="kpi-change up">Score ≥ 85%</div></div>
+        <div class="kpi-card"><div class="kpi-icon">⏳</div><div class="kpi-value" style="color:var(--gold)" id="mk-pending">—</div><div class="kpi-label">Pending Your Review</div></div>
+        <div class="kpi-card"><div class="kpi-icon">💌</div><div class="kpi-value" style="color:var(--rose)" id="mk-recommended">—</div><div class="kpi-label">Recommendations Sent</div></div>
+      </div>
+
+      <!-- Controls -->
+      <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center">
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;flex:1">
+          🔍 Match Results
+        </div>
+        <select id="mk-filter-tier" class="filter-select" onchange="loadMatchingPanel()">
+          <option value="">All Tiers</option>
+          <option value="excellent">⭐⭐⭐ Excellent (85%+)</option>
+          <option value="good">⭐⭐ Good (65–84%)</option>
+          <option value="fair">⭐ Fair (40–64%)</option>
+        </select>
+        <select id="mk-filter-reviewed" class="filter-select" onchange="loadMatchingPanel()">
+          <option value="">All</option>
+          <option value="0">⏳ Not Reviewed</option>
+          <option value="1">✅ Reviewed</option>
+        </select>
+        <input id="mk-filter-minscore" class="filter-input" type="number" value="40" min="1" max="100"
+               placeholder="Min score" style="width:110px" onchange="loadMatchingPanel()">
+        <button class="btn-sm btn-sm-primary" onclick="loadMatchingPanel()">Filter</button>
+        <button class="btn-sm" style="background:linear-gradient(135deg,#2196F3,#0D6EBE);color:#fff;padding:.55rem 1.2rem;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none"
+                onclick="triggerRescan()">🔄 Re-scan All Profiles</button>
+      </div>
+
+      <!-- Member lookup -->
+      <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.2rem;display:flex;gap:1rem;align-items:center">
+        <span style="font-weight:600;font-size:.9rem;white-space:nowrap">🔍 Matches for Member:</span>
+        <input id="mk-member-id" class="filter-input" placeholder="Enter Member ID..." style="max-width:200px">
+        <button class="btn-sm btn-sm-primary" onclick="loadMemberMatches()">Show Matches</button>
+        <span style="font-size:.8rem;color:var(--mid)">Shows all computed matches for a specific member</span>
+      </div>
+
+      <!-- Match Cards -->
+      <div id="matching-results">
+        <div style="text-align:center;padding:3rem;color:var(--mid)">
+          <div style="font-size:3rem;margin-bottom:1rem">🧠</div>
+          <div style="font-weight:600;margin-bottom:.5rem">Smart Matching Engine Ready</div>
+          <div style="font-size:.88rem">Click "Re-scan All Profiles" to compute matches, or use filters to browse existing results.</div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div id="mk-pagination" style="display:none" class="pagination" style="margin-top:1.5rem">
+        <span id="mk-page-info">Showing results</span>
+        <div class="page-btns">
+          <button class="page-btn" onclick="mkChangePage(-1)">← Prev</button>
+          <button class="page-btn" id="mk-page-num">1</button>
+          <button class="page-btn" onclick="mkChangePage(1)">Next →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+const pageTitles={
+  matching:'Smart Matching Engine <span>AI-Powered Match Recommendations</span>',
+  dashboard:'Dashboard <span>Overview</span>',
+  members:'Members <span>All Registered</span>',
+  matches:'Matches <span>All Confirmed</span>',
+  payments:'Payments <span>All Transactions</span>',
+  pending:'Pending Approvals <span>Requires Action</span>',
+  successfee:'Success Fees <span>Revenue Tracker</span>',
+  reports:'Reports <span>Analytics</span>',
+  settings:'Settings <span>Configuration</span>'
+};
+
+
+// ═══════════════════════════════════════════
+//  SMART MATCHING ENGINE — Admin JS
+// ═══════════════════════════════════════════
+const API = 'https://shadikhana-api.onrender.com/api'; // Update to your Render URL
+let mkCurrentPage = 1;
+
+function getAdminToken() {
+  return localStorage.getItem('sk_admin_token') || '';
+}
+
+async function adminAPI(endpoint, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: {
+      'Content-Type':  'application/json',
+      'Authorization': `Bearer ${getAdminToken()}`
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res  = await fetch(API + endpoint, opts);
+  return res.json();
+}
+
+// Load matching stats on panel open
+async function loadMatchingStats() {
+  try {
+    const data = await adminAPI('/admin/matching/stats');
+    if (!data.success) return;
+    const s = data.data.overview;
+    document.getElementById('mk-total').textContent       = s.total_matches?.toLocaleString() || 0;
+    document.getElementById('mk-excellent').textContent   = s.excellent_matches || 0;
+    document.getElementById('mk-pending').textContent     = s.pending_review || 0;
+    document.getElementById('mk-recommended').textContent = s.admin_recommended || 0;
+    document.getElementById('pending-badge').textContent  = s.pending_review || 0;
+  } catch(e) { console.error('Stats load failed:', e); }
+}
+
+// Load all matches with filters
+async function loadMatchingPanel() {
+  mkCurrentPage = 1;
+  await fetchMatchingResults();
+}
+
+async function fetchMatchingResults() {
+  const tier      = document.getElementById('mk-filter-tier')?.value || '';
+  const reviewed  = document.getElementById('mk-filter-reviewed')?.value;
+  const minScore  = document.getElementById('mk-filter-minscore')?.value || 40;
+
+  let url = `/admin/matching/all?page=${mkCurrentPage}&limit=15&min_score=${minScore}`;
+  if (tier)     url += `&tier=${tier}`;
+  if (reviewed !== '' && reviewed !== undefined) url += `&reviewed=${reviewed}`;
+
+  document.getElementById('matching-results').innerHTML =
+    '<div style="text-align:center;padding:2rem;color:var(--mid)">⏳ Loading matches...</div>';
+
+  try {
+    const data = await adminAPI(url);
+    if (!data.success) throw new Error(data.message);
+    renderMatchCards(data.data.matches, data.data.pagination);
+  } catch(e) {
+    document.getElementById('matching-results').innerHTML =
+      `<div style="text-align:center;padding:2rem;color:var(--rose)">❌ ${e.message}</div>`;
+  }
+}
+
+function renderMatchCards(matches, pagination) {
+  const container = document.getElementById('matching-results');
+
+  if (!matches.length) {
+    container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--mid)">No matches found for these filters.</div>';
+    document.getElementById('mk-pagination').style.display = 'none';
+    return;
+  }
+
+  const tierColors = {
+    excellent: { bg:'#E8F5F0', color:'#2D7A5F', label:'⭐⭐⭐ Excellent Match' },
+    good:      { bg:'rgba(123,29,58,0.08)', color:'#7B1D3A', label:'⭐⭐ Good Match' },
+    fair:      { bg:'#F3EFFF', color:'#5A5370', label:'⭐ Fair Match' },
+  };
+
+  container.innerHTML = matches.map(m => {
+    const tc = tierColors[m.tier] || tierColors.fair;
+    const bd = typeof m.breakdown === 'string' ? JSON.parse(m.breakdown) : (m.breakdown || {});
+
+    const breakdownHtml = Object.entries(bd)
+      .filter(([k, v]) => k !== 'failed' && v > 0)
+      .map(([k, v]) => `<span style="background:rgba(123,29,58,0.08);border-radius:6px;padding:2px 8px;font-size:.7rem;margin:2px;display:inline-block;color:var(--burgundy)">
+        ${k.replace(/_/g,' ')}: +${v}
+      </span>`).join('');
+
+    const failReason = bd.failed
+      ? `<div style="color:var(--rose);font-size:.78rem;margin-top:.5rem">⚠️ Hard filter: ${bd.failed.replace(/_/g,' ')}</div>` : '';
+
+    return `
+    <div style="background:#fff;border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1rem;
+                box-shadow:0 2px 12px rgba(0,0,0,0.06);border:1.5px solid ${m.admin_recommended ? '#2D7A5F' : 'var(--light)'}">
+      <div style="display:flex;align-items:flex-start;gap:1.5rem;flex-wrap:wrap">
+
+        <!-- Score Badge -->
+        <div style="text-align:center;min-width:80px">
+          <div style="font-size:2.2rem;font-weight:700;font-family:'Playfair Display',serif;
+                      color:${m.score>=85?'#2D7A5F':m.score>=65?'#7B1D3A':'#5A5370'}">${m.score}%</div>
+          <div style="background:${tc.bg};color:${tc.color};border-radius:8px;padding:3px 8px;
+                      font-size:.68rem;font-weight:700;margin-top:4px">${tc.label}</div>
+          ${m.admin_reviewed   ? '<div style="color:#2D7A5F;font-size:.7rem;margin-top:4px">✅ Reviewed</div>' : ''}
+          ${m.admin_recommended? '<div style="color:#2D7A5F;font-size:.7rem">💌 Recommended</div>' : ''}
+        </div>
+
+        <!-- Member A -->
+        <div style="flex:1;min-width:160px">
+          <div style="font-size:.68rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem">Profile A</div>
+          <div style="font-weight:700;font-size:.95rem">${m.a_name}</div>
+          <div style="font-size:.8rem;color:var(--mid);margin-top:3px">
+            ${m.a_gender} · ${m.a_age} yrs · ${m.a_city}<br>
+            ${m.a_religion||''} ${m.a_sect?'· '+m.a_sect:''}<br>
+            ${m.a_education||''} ${m.a_profession?'· '+m.a_profession:''}
+          </div>
+          <div style="margin-top:6px">
+            <span style="background:rgba(123,29,58,0.08);color:var(--burgundy);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600">${m.a_package?.toUpperCase()}</span>
+            ${m.a_verified?'<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600;margin-left:4px">✓ Verified</span>':''}
+          </div>
+        </div>
+
+        <!-- VS -->
+        <div style="font-size:1.5rem;align-self:center;color:var(--light)">💕</div>
+
+        <!-- Member B -->
+        <div style="flex:1;min-width:160px">
+          <div style="font-size:.68rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem">Profile B</div>
+          <div style="font-weight:700;font-size:.95rem">${m.b_name}</div>
+          <div style="font-size:.8rem;color:var(--mid);margin-top:3px">
+            ${m.b_gender} · ${m.b_age} yrs · ${m.b_city}<br>
+            ${m.b_religion||''} ${m.b_sect?'· '+m.b_sect:''}<br>
+            ${m.b_education||''} ${m.b_profession?'· '+m.b_profession:''}
+          </div>
+          <div style="margin-top:6px">
+            <span style="background:rgba(123,29,58,0.08);color:var(--burgundy);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600">${m.b_package?.toUpperCase()}</span>
+            ${m.b_verified?'<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600;margin-left:4px">✓ Verified</span>':''}
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;flex-direction:column;gap:.5rem;min-width:140px">
+          ${!m.admin_reviewed ? `
+          <button onclick="reviewMatch(${m.match_score_id})"
+                  style="background:var(--ivory);border:1.5px solid var(--light);border-radius:8px;
+                         padding:.5rem .8rem;font-size:.78rem;font-weight:600;cursor:pointer">
+            ✅ Mark Reviewed
+          </button>` : ''}
+          ${!m.admin_recommended ? `
+          <button onclick="openRecommendModal(${m.match_score_id}, '${m.a_name}', '${m.b_name}')"
+                  style="background:var(--burgundy);color:#fff;border:none;border-radius:8px;
+                         padding:.5rem .8rem;font-size:.78rem;font-weight:600;cursor:pointer">
+            💌 Recommend to Both
+          </button>` : `
+          <div style="background:#E8F5F0;border-radius:8px;padding:.5rem .8rem;font-size:.75rem;
+                      color:#2D7A5F;font-weight:600;text-align:center">
+            ✅ Recommendation Sent
+          </div>`}
+          <button onclick="loadMemberMatchesById(${m.a_id})"
+                  style="background:transparent;border:1.5px solid var(--light);border-radius:8px;
+                         padding:.4rem .8rem;font-size:.72rem;cursor:pointer;color:var(--mid)">
+            All matches for A
+          </button>
+        </div>
+      </div>
+
+      <!-- Score Breakdown -->
+      <div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--light)">
+        <span style="font-size:.72rem;color:var(--mid);font-weight:600">Score breakdown: </span>
+        ${breakdownHtml}
+        ${failReason}
+        ${m.admin_notes ? `<div style="margin-top:.4rem;font-size:.78rem;color:var(--mid)"><strong>Notes:</strong> ${m.admin_notes}</div>` : ''}
+        <span style="font-size:.68rem;color:var(--light);margin-left:8px">Computed: ${new Date(m.computed_at).toLocaleDateString()}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Pagination
+  const pg = document.getElementById('mk-pagination');
+  if (pagination && pagination.total_pages > 1) {
+    pg.style.display = 'flex';
+    document.getElementById('mk-page-info').textContent =
+      `Showing page ${pagination.page} of ${pagination.total_pages} (${pagination.total} total matches)`;
+    document.getElementById('mk-page-num').textContent = pagination.page;
+  } else {
+    pg.style.display = 'none';
+  }
+}
+
+function mkChangePage(dir) {
+  mkCurrentPage = Math.max(1, mkCurrentPage + dir);
+  fetchMatchingResults();
+}
+
+// Load matches for a specific member
+async function loadMemberMatches() {
+  const id = document.getElementById('mk-member-id').value.trim();
+  if (!id) return alert('Please enter a Member ID');
+  loadMemberMatchesById(id);
+}
+
+async function loadMemberMatchesById(id) {
+  document.getElementById('matching-results').innerHTML =
+    `<div style="text-align:center;padding:2rem">⏳ Loading matches for Member #${id}...</div>`;
+  try {
+    const data = await adminAPI(`/admin/matching/member/${id}`);
+    if (!data.success) throw new Error(data.message);
+    const m = data.data.member;
+    document.getElementById('matching-results').innerHTML =
+      `<div style="background:var(--ivory);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1rem;font-size:.88rem">
+        <strong>${m?.full_name}</strong> · ${m?.gender} · ${m?.age} yrs · ${m?.city} · ${m?.package?.toUpperCase()}
+        — <strong>${data.data.total}</strong> matches found
+      </div>` +
+      data.data.matches.map(match => `
+        <div style="background:#fff;border-radius:12px;padding:1.2rem;margin-bottom:.8rem;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+          <div style="font-size:1.8rem;font-weight:700;color:${match.score>=85?'#2D7A5F':match.score>=65?'#7B1D3A':'#5A5370'};
+                      font-family:'Playfair Display',serif;min-width:60px;text-align:center">${match.score}%</div>
+          <div style="flex:1">
+            <div style="font-weight:700">${match.full_name}</div>
+            <div style="font-size:.82rem;color:var(--mid)">${match.gender} · ${match.age} yrs · ${match.city} · ${match.profession||'—'}</div>
+            <div style="font-size:.78rem;color:var(--mid)">${match.religion||''} ${match.sect?'· '+match.sect:''} · ${match.marital_status||''}</div>
+          </div>
+          <span style="background:rgba(123,29,58,0.08);color:var(--burgundy);border-radius:6px;
+                       padding:3px 10px;font-size:.72rem;font-weight:700">${match.tier?.toUpperCase()}</span>
+          ${match.admin_recommended ?
+            '<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:3px 10px;font-size:.72rem;font-weight:700">💌 RECOMMENDED</span>' : ''}
+        </div>
+      `).join('');
+  } catch(e) {
+    document.getElementById('matching-results').innerHTML =
+      `<div style="text-align:center;padding:2rem;color:var(--rose)">❌ ${e.message}</div>`;
+  }
+}
+
+// Review a match
+async function reviewMatch(id) {
+  const notes = prompt('Add any notes for this match (optional):') || '';
+  try {
+    const data = await adminAPI(`/admin/matching/${id}/review`, 'PUT', { admin_notes: notes });
+    if (data.success) { alert('✅ Match marked as reviewed.'); fetchMatchingResults(); }
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+// Recommend modal
+let pendingRecommendId = null;
+function openRecommendModal(id, nameA, nameB) {
+  pendingRecommendId = id;
+  const notes = prompt(
+    `Send match recommendation to both members?
+
+` +
+    `👤 ${nameA}
+👤 ${nameB}
+
+` +
+    `Add a personal note from the matchmaker (optional, will be included in WhatsApp & email):`
+  );
+  if (notes === null) return; // Cancelled
+  sendRecommendation(id, notes);
+}
+
+async function sendRecommendation(id, notes) {
+  try {
+    const data = await adminAPI(`/admin/matching/${id}/recommend`, 'PUT', {
+      admin_notes: notes,
+      send_notification: true
+    });
+    if (data.success) {
+      alert('💌 ' + data.message);
+      fetchMatchingResults();
+      loadMatchingStats();
+    } else {
+      alert('Error: ' + data.message);
+    }
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+// Trigger full rescan
+async function triggerRescan() {
+  if (!confirm('Re-scan all profiles? This will recompute all match scores. Continue?')) return;
+  try {
+    const data = await adminAPI('/admin/matching/rescan', 'POST');
+    alert('🔄 ' + data.message);
+    // Reload stats after 5 seconds
+    setTimeout(loadMatchingStats, 5000);
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+function showPanel(id, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('page-title').innerHTML=pageTitles[id]||id;
+  document.querySelector('.sidebar').classList.remove('open');
+  // Load data for matching panel when opened
+  if(id === 'matching') { loadMatchingStats(); }
+}
+
+// Draw revenue chart
+const months=['Jan','Feb','Mar','Apr','May','Jun'];
+const values=[420,680,520,890,740,1200];
+const max=Math.max(...values);
+const chart=document.getElementById('revenue-chart');
+if(chart){
+  months.forEach((m,i)=>{
+    const pct=Math.round((values[i]/max)*100);
+    const color=i===5?'var(--burgundy)':'var(--light)';
+    const wrap=document.createElement('div');
+    wrap.className='bar-wrap';
+    wrap.innerHTML=`<div class="bar" style="width:100%;height:${pct}%;background:${color};min-height:8px" data-val="PKR ${values[i]}K"></div><span class="bar-label">${m}</span>`;
+    chart.appendChild(wrap);
+  });
+}
+
+
+// ══════════════════════════════════════════
+//  PENDING PAYMENTS / APPROVALS PANEL
+// ══════════════════════════════════════════
+var pkgAmounts = { basic: 10000, premium: 30000, executive: 50000 };
+
+async function loadPendingPayments() {
+  var tbody  = document.getElementById('pending-table-body');
+  var banner = document.getElementById('pending-summary-banner');
+  var search = document.getElementById('pending-search').value.trim();
+
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  var url = '/admin/members?status=pending&limit=50';
+  if (search) url += '&search=' + encodeURIComponent(search);
+
+  try {
+    var data = await adminAPI(url);
+    if (!data.success) throw new Error(data.message || 'Could not load pending members.');
+
+    var members = data.data.members;
+
+    if (!members.length) {
+      banner.innerHTML = '✅ No pending registrations right now. All caught up!';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">No pending registrations 🎉</td></tr>';
+      return;
+    }
+
+    banner.innerHTML = '⏳ <strong>' + members.length + ' registration' + (members.length > 1 ? 's' : '') +
+      '</strong> awaiting payment confirmation. Verify their payment screenshot on WhatsApp before approving.';
+
+    var rows = members.map(function(m) {
+      var amount = pkgAmounts[m.package] || 0;
+      var submittedDate = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+      var pkgBadgeClass = m.package === 'executive' ? 'status-vip' : m.package === 'premium' ? 'status-premium' : 'status-basic';
+      var pkgIcon = m.package === 'executive' ? '🌐' : m.package === 'premium' ? '⭐' : '🌱';
+
+      return '<tr>' +
+        '<td><strong>' + m.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' +
+          m.gender + ' · ' + (m.age || '—') + ' · ' + (m.city || '—') + '</span></td>' +
+        '<td><span class="status-badge ' + pkgBadgeClass + '">' + pkgIcon + ' ' + m.package.charAt(0).toUpperCase() + m.package.slice(1) + '</span></td>' +
+        '<td><strong>PKR ' + amount.toLocaleString() + '</strong><br>' +
+          '<span style="font-size:.72rem;color:' + (m.payment_status === 'completed' ? 'var(--green)' : 'var(--mid)') + '">' +
+          (m.payment_status === 'completed' ? '✓ Marked Paid' : '⏳ Awaiting confirmation') + '</span></td>' +
+        '<td style="font-size:.82rem">' + submittedDate + '</td>' +
+        '<td style="font-size:.78rem">' + m.mobile + '<br>' +
+          '<a href="https://wa.me/' + m.mobile.replace(/\D/g,'') + '" target="_blank" style="color:var(--green);font-weight:600">💬 WhatsApp</a></td>' +
+        '<td>' +
+          '<button class="action-btn action-approve" onclick="confirmPaymentAndActivate(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">✓ Confirm &amp; Activate</button> ' +
+          '<button class="action-btn action-view" onclick="viewPendingMemberDetail(' + m.id + ')">View</button> ' +
+          '<button class="action-btn action-delete" onclick="rejectPendingMember(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Reject</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+
+    tbody.innerHTML = rows;
+
+  } catch (err) {
+    banner.innerHTML = '⚠️ Could not load pending registrations: ' + err.message;
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--rose)">Error loading data</td></tr>';
+  }
+}
+
+// ── Confirm payment received and activate the member ──
+async function confirmPaymentAndActivate(memberId, memberName) {
+  var confirmed = confirm(
+    'Confirm payment for ' + memberName + '?\n\n' +
+    'This will:\n' +
+    '• Activate their profile (visible to other members)\n' +
+    '• Send them a WhatsApp confirmation\n' +
+    '• Trigger Smart Matching to find their compatible profiles\n\n' +
+    'Make sure you have verified their payment screenshot before confirming.'
+  );
+  if (!confirmed) return;
+
+  try {
+    var data = await adminAPI('/admin/members/' + memberId, 'PUT', { account_status: 'active' });
+    if (data.success) {
+      alert('✅ ' + memberName + ' has been activated! WhatsApp confirmation sent.');
+      loadPendingPayments();
+      if (typeof loadDashboardStats === 'function') loadDashboardStats();
+    } else {
+      alert('Error: ' + (data.message || 'Could not activate member.'));
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+// ── Reject a pending registration ──
+async function rejectPendingMember(memberId, memberName) {
+  var reason = prompt('Reason for rejecting ' + memberName + "'s registration (optional, for your own records):");
+  if (reason === null) return; // cancelled
+
+  var confirmed = confirm('Are you sure you want to reject and remove this registration? This cannot be undone.');
+  if (!confirmed) return;
+
+  try {
+    var data = await adminAPI('/admin/members/' + memberId, 'DELETE');
+    if (data.success) {
+      alert('Registration for ' + memberName + ' has been removed.');
+      loadPendingPayments();
+    } else {
+      alert('Error: ' + (data.message || 'Could not remove member.'));
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+// ── View full details of a pending member ──
+async function viewPendingMemberDetail(memberId) {
+  try {
+    var data = await adminAPI('/admin/members/' + memberId);
+    if (!data.success) { alert('Could not load member details.'); return; }
+
+    var m = data.data.member;
+    var payments = data.data.payments || [];
+
+    var details =
+      'NAME: ' + m.full_name + '\n' +
+      'EMAIL: ' + m.email + '\n' +
+      'MOBILE: ' + m.mobile + '\n' +
+      'GENDER: ' + m.gender + ' | AGE: ' + (m.age || '—') + '\n' +
+      'CITY: ' + (m.city || '—') + '\n' +
+      'PACKAGE: ' + m.package + '\n' +
+      'RELIGION/SECT: ' + (m.religion || '—') + ' / ' + (m.sect || '—') + '\n' +
+      'EDUCATION: ' + (m.education || '—') + '\n' +
+      'PROFESSION: ' + (m.profession || '—') + '\n\n' +
+      'PAYMENT RECORDS:\n' +
+      payments.map(function(p) {
+        return '  • ' + p.type + ' — PKR ' + p.amount + ' via ' + p.method + ' — ' + p.status;
+      }).join('\n');
+
+    alert(details);
+  } catch (err) {
+    alert('Error loading member details: ' + err.message);
+  }
+}
+
+
+
+
+// ══════════════════════════════════════════
+//  DASHBOARD HOME — LIVE DATA
+// ══════════════════════════════════════════
+async function loadDashboardStats() {
+  try {
+    var data = await adminAPI('/admin/dashboard');
+    if (!data.success) {
+      document.getElementById('kpi-total-members').textContent = 'Error';
+      return;
+    }
+
+    var d = data.data;
+
+    // KPI cards
+    document.getElementById('kpi-total-members').textContent = d.members.total.toLocaleString();
+    document.getElementById('kpi-active-members').innerHTML = '✓ ' + d.members.active + ' active';
+    document.getElementById('kpi-active-members').className = 'kpi-change up';
+
+    var totalRev = d.revenue.total || 0;
+    document.getElementById('kpi-total-revenue').textContent = formatPKR(totalRev);
+    var pendingRev = d.revenue.pending || 0;
+    document.getElementById('kpi-pending-revenue').innerHTML = pendingRev > 0
+      ? '⏳ ' + formatPKR(pendingRev) + ' pending'
+      : 'No pending payments';
+    document.getElementById('kpi-pending-revenue').className = pendingRev > 0 ? 'kpi-change down' : 'kpi-change up';
+
+    document.getElementById('kpi-matches').textContent = d.matches || 0;
+
+    document.getElementById('kpi-pending').textContent = d.members.pending;
+    document.getElementById('kpi-pending-note').textContent = d.members.pending > 0
+      ? 'Needs attention'
+      : 'All caught up ✓';
+
+    // Quick stats — package breakdown
+    var qs = document.getElementById('quick-stats-list');
+    qs.innerHTML =
+      qsItem('🌐', 'Executive / Overseas', d.packages.executive) +
+      qsItem('⭐', 'Premium Members', d.packages.premium) +
+      qsItem('🌱', 'Basic Members', d.packages.basic) +
+      qsItem('💌', 'Total Interests Sent', d.interactions.interests) +
+      qsItem('💬', 'Total Messages', d.interactions.messages) +
+      qsItem('💍', 'Matched Members', d.members.matched);
+
+    // Recent registrations table
+    var tbody = document.getElementById('recent-registrations-body');
+    if (!d.recent_members.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--mid)">No registrations yet</td></tr>';
+    } else {
+      tbody.innerHTML = d.recent_members.map(function(m) {
+        var statusClass = m.account_status === 'active' ? 'status-active' :
+                           m.account_status === 'pending' ? 'status-pending' : 'status-review';
+        var pkgClass = m.package === 'executive' ? 'status-vip' : m.package === 'premium' ? 'status-premium' : 'status-basic';
+        var pkgIcon  = m.package === 'executive' ? '🌐' : m.package === 'premium' ? '⭐' : '🌱';
+        var dateStr  = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
+        return '<tr>' +
+          '<td><strong>' + m.full_name + '</strong></td>' +
+          '<td><span class="status-badge ' + pkgClass + '">' + pkgIcon + ' ' + m.package.charAt(0).toUpperCase() + m.package.slice(1) + '</span></td>' +
+          '<td>' + (m.city || '—') + '</td>' +
+          '<td><span class="status-badge ' + statusClass + '">' + m.account_status.charAt(0).toUpperCase() + m.account_status.slice(1) + '</span></td>' +
+          '<td>' + dateStr + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    // Platform summary (replaces fake "Recent Activity")
+    var summary = document.getElementById('platform-summary');
+    summary.innerHTML =
+      qsItem('👥', 'Total Registered Members', d.members.total) +
+      qsItem('✅', 'Active Profiles', d.members.active) +
+      qsItem('⏳', 'Pending Review', d.members.pending) +
+      qsItem('💍', 'Successfully Matched', d.members.matched);
+
+    // Monthly revenue chart
+    var chart = document.getElementById('revenue-chart');
+    if (!d.monthly_revenue.length) {
+      chart.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--mid);font-size:.84rem">No revenue data yet</div>';
+    } else {
+      var maxRev = Math.max.apply(null, d.monthly_revenue.map(function(m) { return m.revenue; }));
+      chart.innerHTML = d.monthly_revenue.map(function(m, i) {
+        var pct = maxRev > 0 ? Math.round((m.revenue / maxRev) * 100) : 0;
+        var isLast = i === d.monthly_revenue.length - 1;
+        var color = isLast ? 'var(--burgundy)' : 'var(--light)';
+        return '<div class="bar-wrap"><div class="bar" style="width:100%;height:' + pct + '%;background:' + color + ';min-height:8px" data-val="' + formatPKR(m.revenue) + '"></div><span class="bar-label">' + m.month + '</span></div>';
+      }).join('');
+    }
+
+  } catch (err) {
+    console.log('Dashboard stats error:', err);
+  }
+}
+
+function qsItem(icon, label, value) {
+  return '<div class="qs-item"><div class="qs-left"><span class="qs-icon">' + icon + '</span>' +
+    '<span class="qs-label">' + label + '</span></div><span class="qs-value">' + value + '</span></div>';
+}
+
+function formatPKR(amount) {
+  if (amount >= 1000000) return 'PKR ' + (amount / 1000000).toFixed(1) + 'M';
+  if (amount >= 1000) return 'PKR ' + (amount / 1000).toFixed(0) + 'K';
+  return 'PKR ' + amount;
+}
+
+
+// ══════════════════════════════════════════
+//  MEMBERS PANEL — LIVE DATA
+// ══════════════════════════════════════════
+var membersCurrentPage = 1;
+
+async function loadMembersPanel(page) {
+  membersCurrentPage = page || membersCurrentPage;
+  var tbody = document.getElementById('members-table-body');
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  var search = document.getElementById('members-search').value.trim();
+  var pkg    = document.getElementById('members-filter-package').value;
+  var gender = document.getElementById('members-filter-gender').value;
+  var status = document.getElementById('members-filter-status').value;
+
+  var url = '/admin/members?page=' + membersCurrentPage + '&limit=15';
+  if (search) url += '&search=' + encodeURIComponent(search);
+  if (pkg)    url += '&package=' + pkg;
+  if (gender) url += '&gender=' + gender;
+  if (status) url += '&status=' + status;
+
+  try {
+    var data = await adminAPI(url);
+    if (!data.success) throw new Error(data.message);
+
+    var members = data.data.members;
+    var pag     = data.data.pagination;
+
+    if (!members.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--mid)">No members found</td></tr>';
+      document.getElementById('members-pagination-info').textContent = 'No results';
+      document.getElementById('members-pagination-btns').innerHTML = '';
+      return;
+    }
+
+    tbody.innerHTML = members.map(function(m) {
+      var pkgClass  = m.package === 'executive' ? 'status-vip' : m.package === 'premium' ? 'status-premium' : 'status-basic';
+      var pkgIcon   = m.package === 'executive' ? '🌐' : m.package === 'premium' ? '⭐' : '🌱';
+      var statusClass = m.account_status === 'active' ? 'status-active' :
+                         m.account_status === 'pending' ? 'status-pending' :
+                         m.account_status === 'matched' ? 'status-matched' : 'status-review';
+      var paidBadge = m.payment_status === 'completed'
+        ? '<span class="status-badge status-paid">✓ Paid</span>'
+        : '<span class="status-badge status-unpaid">✗ Pending</span>';
+      var amount = m.reg_amount ? 'PKR ' + Number(m.reg_amount).toLocaleString() : '—';
+      var dateStr = new Date(m.created_at).toLocaleDateString('en-GB', { month:'short', year:'numeric' });
+
+      return '<tr>' +
+        '<td><strong>' + m.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + m.gender + ' · ' + (m.age || '—') + '</span></td>' +
+        '<td>' + m.mobile + '<br><span style="font-size:.75rem;color:var(--mid)">' + m.email + '</span></td>' +
+        '<td><span class="status-badge ' + pkgClass + '">' + pkgIcon + ' ' + m.package.charAt(0).toUpperCase() + m.package.slice(1) + '</span></td>' +
+        '<td>' + (m.city || '—') + '</td>' +
+        '<td>' + paidBadge + '<br><span style="font-size:.72rem;color:var(--mid)">' + amount + '</span></td>' +
+        '<td><span class="status-badge ' + statusClass + '">' + m.account_status.charAt(0).toUpperCase() + m.account_status.slice(1) + '</span></td>' +
+        '<td>' + dateStr + '</td>' +
+        '<td>' +
+          (m.account_status === 'pending'
+            ? '<button class="action-btn action-approve" onclick="confirmPaymentAndActivate(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Approve</button> '
+            : '') +
+          '<button class="action-btn action-view" onclick="viewPendingMemberDetail(' + m.id + ')">View</button> ' +
+          '<button class="action-btn action-delete" onclick="deleteMemberConfirm(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Del</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+
+    document.getElementById('members-pagination-info').textContent =
+      'Showing ' + ((pag.page - 1) * pag.limit + 1) + '–' + Math.min(pag.page * pag.limit, pag.total) + ' of ' + pag.total + ' members';
+
+    var btns = '';
+    for (var i = 1; i <= pag.total_pages; i++) {
+      if (i === 1 || i === pag.total_pages || Math.abs(i - pag.page) <= 1) {
+        btns += '<button class="page-btn ' + (i === pag.page ? 'active' : '') + '" onclick="loadMembersPanel(' + i + ')">' + i + '</button>';
+      } else if (Math.abs(i - pag.page) === 2) {
+        btns += '<button class="page-btn" disabled>...</button>';
+      }
+    }
+    document.getElementById('members-pagination-btns').innerHTML = btns;
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function deleteMemberConfirm(memberId, memberName) {
+  if (!confirm('Permanently delete ' + memberName + "'s profile? This cannot be undone.")) return;
+  try {
+    var data = await adminAPI('/admin/members/' + memberId, 'DELETE');
+    if (data.success) {
+      alert(memberName + ' has been deleted.');
+      loadMembersPanel(membersCurrentPage);
+    } else {
+      alert('Error: ' + (data.message || 'Could not delete member.'));
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+
+// ══════════════════════════════════════════
+//  MATCHES PANEL — LIVE DATA
+// ══════════════════════════════════════════
+async function loadMatchesPanel() {
+  var tbody = document.getElementById('matches-table-body');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  try {
+    var data = await adminAPI('/admin/matches');
+    if (!data.success) throw new Error(data.message);
+
+    var matches = data.data;
+    var confirmed = matches.filter(function(m) { return m.status === 'confirmed'; }).length;
+    var pending   = matches.filter(function(m) { return m.status !== 'confirmed'; }).length;
+
+    document.getElementById('matches-kpi-confirmed').textContent = confirmed;
+    document.getElementById('matches-kpi-total').textContent = matches.length;
+    document.getElementById('matches-kpi-pending').textContent = pending;
+
+    if (!matches.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">No matches yet. Use Smart Matching to recommend matches to members.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = matches.map(function(m) {
+      var statusClass = m.status === 'confirmed' ? 'status-active' :
+                         m.status === 'mutual' ? 'status-matched' : 'status-pending';
+      var dateStr = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+      return '<tr>' +
+        '<td><strong>' + m.member_a_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (m.city_a || '—') + '</span></td>' +
+        '<td><strong>' + m.member_b_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (m.city_b || '—') + '</span></td>' +
+        '<td>' + m.package_a + ' + ' + m.package_b + '</td>' +
+        '<td><span class="status-badge ' + statusClass + '">' + m.status.charAt(0).toUpperCase() + m.status.slice(1) + '</span></td>' +
+        '<td>' + dateStr + '</td>' +
+        '<td>' + (m.status !== 'confirmed'
+          ? '<button class="action-btn action-approve" onclick="confirmMatchAction(' + m.id + ')">Confirm Match</button>'
+          : '<span style="font-size:.75rem;color:var(--green)">✓ Confirmed</span>') + '</td>' +
+      '</tr>';
+    }).join('');
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function confirmMatchAction(matchId) {
+  if (!confirm('Confirm this match? Both members will be notified and the success fee will be requested.')) return;
+  try {
+    var data = await adminAPI('/admin/matches/' + matchId + '/confirm', 'PUT');
+    if (data.success) {
+      alert('Match confirmed! Both members notified.');
+      loadMatchesPanel();
+    } else {
+      alert('Error: ' + (data.message || 'Could not confirm match.'));
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+// ══════════════════════════════════════════
+//  PAYMENTS PANEL — LIVE DATA
+// ══════════════════════════════════════════
+var paymentsCurrentPage = 1;
+
+async function loadPaymentsPanel(page) {
+  paymentsCurrentPage = page || paymentsCurrentPage;
+  var tbody = document.getElementById('payments-table-body');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  var status = document.getElementById('payments-filter-status').value;
+  var url = '/admin/payments?page=' + paymentsCurrentPage + '&limit=15';
+  if (status) url += '&status=' + status;
+
+  try {
+    var data = await adminAPI(url);
+    if (!data.success) throw new Error(data.message);
+
+    var payments = data.data.payments;
+    var pag      = data.data.pagination;
+
+    // KPI cards — compute from all completed payments (separate lightweight call would be ideal,
+    // but we reuse dashboard stats already loaded for consistency)
+    var dashData = await adminAPI('/admin/dashboard');
+    if (dashData.success) {
+      document.getElementById('pay-kpi-reg').textContent     = formatPKR(dashData.data.revenue.registration || 0);
+      document.getElementById('pay-kpi-success').textContent = formatPKR(dashData.data.revenue.success_fee || 0);
+      document.getElementById('pay-kpi-pending').textContent = formatPKR(dashData.data.revenue.pending || 0);
+      document.getElementById('pay-kpi-total').textContent   = formatPKR(dashData.data.revenue.total || 0);
+    }
+
+    if (!payments.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">No payment records found</td></tr>';
+      document.getElementById('payments-pagination-info').textContent = 'No results';
+      document.getElementById('payments-pagination-btns').innerHTML = '';
+      return;
+    }
+
+    var methodIcons = { jazzcash:'📱 JazzCash', easypaisa:'📲 EasyPaisa', bank_transfer:'🏦 Bank Transfer', card:'💳 Card' };
+
+    tbody.innerHTML = payments.map(function(p) {
+      var statusClass = p.status === 'completed' ? 'status-paid' : p.status === 'failed' ? 'status-unpaid' : 'status-pending';
+      var statusLabel = p.status === 'completed' ? '✓ Paid' : p.status === 'failed' ? '✗ Failed' : '⏳ Pending';
+      var dateStr = new Date(p.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+      var typeLabel = p.type === 'registration' ? 'Registration Fee' : 'Success Fee';
+
+      return '<tr>' +
+        '<td><strong>' + p.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (p.city || '—') + '</span></td>' +
+        '<td>' + typeLabel + '</td>' +
+        '<td style="font-weight:700;color:var(--burgundy)">PKR ' + Number(p.amount).toLocaleString() + '</td>' +
+        '<td><span class="payment-method-tag">' + (methodIcons[p.method] || p.method) + '</span></td>' +
+        '<td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>' +
+        '<td>' + dateStr + '</td>' +
+        '<td>' + (p.status === 'pending'
+          ? '<button class="action-btn action-approve" onclick="confirmPaymentRecord(\'' + p.uuid + '\')">Mark Paid</button>'
+          : '<button class="action-btn action-view" onclick="alert(\'Payment ID: ' + p.uuid + '\')">Details</button>') + '</td>' +
+      '</tr>';
+    }).join('');
+
+    document.getElementById('payments-pagination-info').textContent =
+      'Showing ' + ((pag.page - 1) * pag.limit + 1) + '–' + Math.min(pag.page * pag.limit, pag.total) + ' of ' + pag.total + ' transactions';
+
+    var btns = '';
+    for (var i = 1; i <= pag.total_pages; i++) {
+      btns += '<button class="page-btn ' + (i === pag.page ? 'active' : '') + '" onclick="loadPaymentsPanel(' + i + ')">' + i + '</button>';
+    }
+    document.getElementById('payments-pagination-btns').innerHTML = btns;
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function confirmPaymentRecord(paymentUuid) {
+  if (!confirm('Mark this payment as received? This will also activate the member if it is their registration fee.')) return;
+  try {
+    var data = await adminAPI('/admin/payments/' + paymentUuid + '/confirm', 'PUT');
+    if (data.success) {
+      alert('Payment confirmed!');
+      loadPaymentsPanel(paymentsCurrentPage);
+    } else {
+      alert('Error: ' + (data.message || 'Could not confirm payment.'));
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+
+// ══════════════════════════════════════════
+//  SUCCESS FEE PANEL — LIVE DATA
+// ══════════════════════════════════════════
+async function loadSuccessFeePanel() {
+  var tbody = document.getElementById('successfee-table-body');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  try {
+    var dashData = await adminAPI('/admin/dashboard');
+    var reportsData = await adminAPI('/admin/reports');
+
+    if (dashData.success) {
+      document.getElementById('sf-total-matches').textContent = dashData.data.matches || 0;
+      document.getElementById('sf-collected').textContent = formatPKR(dashData.data.revenue.success_fee || 0);
+    }
+
+    if (!reportsData.success) throw new Error(reportsData.message);
+
+    var outstanding = reportsData.data.success_fees_outstanding;
+    var pendingTotal = outstanding.reduce(function(sum, o) { return sum + Number(o.amount_due); }, 0);
+    document.getElementById('sf-pending').textContent = formatPKR(pendingTotal);
+
+    if (!outstanding.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">No outstanding success fees. All caught up! 🎉</td></tr>';
+      return;
+    }
+
+    var pkgClass = { basic:'status-basic', premium:'status-premium', executive:'status-vip' };
+    var pkgIcon  = { basic:'🌱', premium:'⭐', executive:'🌐' };
+
+    tbody.innerHTML = outstanding.map(function(o) {
+      return '<tr>' +
+        '<td><strong>' + o.full_name + '</strong></td>' +
+        '<td><span class="status-badge ' + (pkgClass[o.package] || '') + '">' + (pkgIcon[o.package] || '') + ' ' + o.package.charAt(0).toUpperCase() + o.package.slice(1) + '</span></td>' +
+        '<td style="font-weight:700">PKR ' + Number(o.amount_due).toLocaleString() + '</td>' +
+        '<td><a href="https://wa.me/' + o.mobile.replace(/\D/g,'') + '" target="_blank" style="color:var(--green);font-weight:600">💬 ' + o.mobile + '</a></td>' +
+        '<td><button class="action-btn" style="color:var(--rose)" onclick="window.open(\'https://wa.me/' + o.mobile.replace(/\D/g,'') + '\',\'_blank\')">Follow Up</button></td>' +
+      '</tr>';
+    }).join('');
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+// ══════════════════════════════════════════
+//  REPORTS PANEL — LIVE DATA
+// ══════════════════════════════════════════
+async function loadReportsPanel() {
+  try {
+    var dashData    = await adminAPI('/admin/dashboard');
+    var reportsData = await adminAPI('/admin/reports');
+
+    if (!reportsData.success) throw new Error(reportsData.message);
+    var r = reportsData.data;
+
+    document.getElementById('rpt-current-month').textContent =
+      new Date().toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+
+    if (dashData.success) {
+      document.getElementById('rpt-month-revenue').textContent = formatPKR(dashData.data.revenue.total || 0);
+      document.getElementById('rpt-matches').textContent = dashData.data.matches || 0;
+    }
+
+    if (r.members_by_city.length) {
+      var topCity = r.members_by_city[0];
+      var totalMembers = r.members_by_city.reduce(function(s, c) { return s + c.count; }, 0);
+      var pct = totalMembers > 0 ? Math.round((topCity.count / totalMembers) * 100) : 0;
+      document.getElementById('rpt-top-city-pct').textContent = pct + '%';
+      document.getElementById('rpt-top-city-label').textContent = topCity.city + ' Members';
+    } else {
+      document.getElementById('rpt-top-city-pct').textContent = '—';
+      document.getElementById('rpt-top-city-label').textContent = 'No city data yet';
+    }
+
+    // Revenue by package table
+    var pkgTable = document.getElementById('rpt-package-table');
+    if (!r.revenue_by_package.length) {
+      pkgTable.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--mid)">No revenue data yet</td></tr>';
+    } else {
+      var pkgIcon = { basic:'🌱', premium:'⭐', executive:'🌐' };
+      var pkgClass = { basic:'status-basic', premium:'status-premium', executive:'status-vip' };
+      pkgTable.innerHTML = r.revenue_by_package.map(function(p) {
+        return '<tr>' +
+          '<td><span class="status-badge ' + (pkgClass[p.package] || '') + '">' + (pkgIcon[p.package] || '') + ' ' + p.package.charAt(0).toUpperCase() + p.package.slice(1) + '</span></td>' +
+          '<td>' + p.count + '</td>' +
+          '<td style="font-weight:700">PKR ' + Number(p.total).toLocaleString() + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    // Members by city
+    var cityList = document.getElementById('rpt-city-list');
+    if (!r.members_by_city.length) {
+      cityList.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--mid)">No city data yet</div>';
+    } else {
+      var totalM = r.members_by_city.reduce(function(s, c) { return s + c.count; }, 0);
+      cityList.innerHTML = r.members_by_city.map(function(c) {
+        var pct = totalM > 0 ? Math.round((c.count / totalM) * 100) : 0;
+        return qsItem('📍', c.city, c.count + ' (' + pct + '%)');
+      }).join('');
+    }
+
+  } catch (err) {
+    console.log('Reports error:', err);
+  }
+}
+
+// Load live data when each panel is opened — single consolidated hook
+var originalShowPanel = showPanel;
+showPanel = function(id, btn) {
+  originalShowPanel(id, btn);
+  if (id === 'dashboard')   loadDashboardStats();
+  if (id === 'members')     loadMembersPanel(1);
+  if (id === 'matches')     loadMatchesPanel();
+  if (id === 'payments')    loadPaymentsPanel(1);
+  if (id === 'pending')     loadPendingPayments();
+  if (id === 'successfee')  loadSuccessFeePanel();
+  if (id === 'reports')     loadReportsPanel();
+};
+
+
+</script>
+</body>
+</html>
