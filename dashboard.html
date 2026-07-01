@@ -179,6 +179,35 @@ a{text-decoration:none;color:inherit}
 /* ── LOADING ── */
 .loading-spinner{text-align:center;padding:3rem;color:var(--mid);font-size:.9rem}
 
+/* ── MESSAGES ── */
+.msg-layout{display:flex;gap:1.2rem;height:calc(100vh - 220px);min-height:420px}
+.msg-conv-col{width:300px;flex-shrink:0;background:var(--white);border:1px solid var(--light);border-radius:14px;overflow-y:auto}
+.msg-conv-item{display:flex;align-items:center;gap:.7rem;padding:.85rem 1rem;cursor:pointer;border-bottom:1px solid var(--light);position:relative}
+.msg-conv-item:hover{background:var(--ivory)}
+.msg-conv-item.active{background:rgba(123,29,58,0.06)}
+.msg-conv-av{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#FEF3E2,#FAE5C0);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.msg-conv-info{flex:1;min-width:0}
+.msg-conv-name{font-weight:700;font-size:.86rem}
+.msg-conv-preview{font-size:.76rem;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.msg-conv-unread{background:var(--rose);color:#fff;font-size:.65rem;font-weight:700;border-radius:10px;padding:2px 7px;flex-shrink:0}
+.msg-section-label{padding:.7rem 1rem .3rem;font-size:.7rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em}
+.msg-thread-col{flex:1;background:var(--white);border:1px solid var(--light);border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
+.msg-thread-header{padding:1rem 1.3rem;border-bottom:1px solid var(--light);font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:.6rem}
+.msg-thread-body{flex:1;overflow-y:auto;padding:1.2rem;display:flex;flex-direction:column;gap:.6rem}
+.msg-bubble-row{display:flex}
+.msg-bubble-row.mine{justify-content:flex-end}
+.msg-bubble{max-width:65%;padding:.6rem .9rem;border-radius:14px;font-size:.86rem;line-height:1.4}
+.msg-bubble-row:not(.mine) .msg-bubble{background:var(--ivory);color:var(--charcoal);border-bottom-left-radius:4px}
+.msg-bubble-row.mine .msg-bubble{background:var(--burg);color:#fff;border-bottom-right-radius:4px}
+.msg-bubble-time{font-size:.65rem;color:var(--mid);margin-top:.3rem;text-align:right}
+.msg-bubble-row.mine .msg-bubble-time{color:rgba(255,255,255,0.7)}
+.msg-input-row{display:flex;gap:.7rem;padding:1rem;border-top:1px solid var(--light)}
+.msg-input-row input{flex:1;padding:.7rem 1rem;border:1.5px solid var(--light);border-radius:10px;font-family:inherit;font-size:.88rem}
+.msg-input-row button{background:var(--burg);color:#fff;border:none;border-radius:10px;padding:.7rem 1.3rem;font-weight:700;cursor:pointer;font-size:.86rem}
+.msg-input-row button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:820px){.msg-layout{flex-direction:column;height:auto}.msg-conv-col{width:100%;max-height:220px}.msg-thread-col{min-height:400px}}
+
 /* ── PROFILE DETAIL MODAL ── */
 .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);
   align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
@@ -247,6 +276,10 @@ a{text-decoration:none;color:inherit}
     <div class="nav-item" onclick="showPanel('interests', this)">
       <span class="nav-item-icon">💌</span>Interests
       <span class="nav-badge" id="interests-badge" style="display:none">0</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('messages', this)">
+      <span class="nav-item-icon">💬</span>Messages
+      <span class="nav-badge" id="messages-badge" style="display:none">0</span>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -430,6 +463,29 @@ a{text-decoration:none;color:inherit}
       </div>
     </div>
 
+    <!-- ══════════ MESSAGES ══════════ -->
+    <div class="panel" id="panel-messages">
+      <h1 class="page-title">Messages</h1>
+      <p class="page-sub">Chat with members you've mutually matched with</p>
+
+      <div class="msg-layout">
+        <div class="msg-conv-col" id="msg-conv-col">
+          <div class="loading-spinner">Loading...</div>
+        </div>
+        <div class="msg-thread-col">
+          <div class="msg-thread-header" id="msg-thread-header">Select a conversation</div>
+          <div class="msg-thread-body" id="msg-thread-body">
+            <div class="empty-state"><div class="ei">💬</div>Pick someone from the list to start chatting.</div>
+          </div>
+          <div class="msg-input-row" id="msg-input-row" style="display:none">
+            <input type="text" id="msg-input" placeholder="Type a message..." maxlength="2000"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMessage();}">
+            <button id="msg-send-btn" onclick="sendChatMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ══════════ NOTIFICATIONS ══════════ -->
     <div class="panel" id="panel-notifications">
       <h1 class="page-title">Notifications</h1>
@@ -480,6 +536,7 @@ async function initDashboard() {
   renderUserChip();
   renderDashboardHome();
   loadInterestsCount();
+  loadMessagesCount();
 }
 
 function renderUserChip() {
@@ -510,6 +567,7 @@ function showPanel(id, navEl) {
   if (id === 'browse')      loadBrowseProfiles(1);
   if (id === 'matches')     loadMyMatches();
   if (id === 'interests')   loadInterests();
+  if (id === 'messages')    loadMessagesPanel();
   if (id === 'notifications') loadNotifications();
 }
 
@@ -825,6 +883,11 @@ async function loadInterests() {
         '<button class="btn-accept" onclick="respondToInterest(' + i.id + ', \'accepted\')">Accept</button>' +
         '<button class="btn-reject" onclick="respondToInterest(' + i.id + ', \'rejected\')">Decline</button>' +
         '</div>';
+    } else if (i.status === 'accepted') {
+      html += '<div class="interest-action-btns">' +
+        '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
+        '<button class="btn-accept" onclick="startConversation(\'' + i.uuid + '\', ' + JSON.stringify(i.full_name) + ')">💬 Message</button>' +
+        '</div>';
     } else {
       html += '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>';
     }
@@ -841,6 +904,167 @@ async function respondToInterest(interestId, action) {
     loadInterestsCount();
   } else {
     alert(result.message || 'Could not process this interest.');
+  }
+}
+
+// ══════════════════════════════════════════
+//  MESSAGES
+// ══════════════════════════════════════════
+var currentChatUuid = null;
+var currentChatName = '';
+
+async function loadMessagesPanel() {
+  var col = document.getElementById('msg-conv-col');
+  col.innerHTML = '<div class="loading-spinner">Loading...</div>';
+
+  var convosResult   = await apiCall('/messages', 'GET');
+  var contactsResult = await apiCall('/messages/contacts', 'GET');
+
+  if (!convosResult.success || !contactsResult.success) {
+    col.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load messages.</div>';
+    return;
+  }
+
+  var convos   = convosResult.data;
+  var contacts = contactsResult.data;
+  var convoUuids = convos.map(function(c) { return c.uuid; });
+  var newContacts = contacts.filter(function(c) { return convoUuids.indexOf(c.uuid) === -1; });
+
+  if (!convos.length && !newContacts.length) {
+    col.innerHTML = '<div class="empty-state" style="padding:2rem 1rem"><div class="ei">💬</div>No conversations yet. Once you have a mutual match, you can start chatting here.</div>';
+    return;
+  }
+
+  var html = '';
+
+  if (convos.length) {
+    html += '<div class="msg-section-label">Conversations</div>';
+    convos.forEach(function(c) {
+      var name = c.display_name || c.full_name;
+      var unreadBadge = c.unread_count > 0 ? '<span class="msg-conv-unread">' + c.unread_count + '</span>' : '';
+      var preview = (c.last_message_sender_id === currentMember.id ? 'You: ' : '') + (c.last_message || '');
+      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" onclick="openConversation(\'' + c.uuid + '\', ' + JSON.stringify(name) + ', this)">' +
+        '<div class="msg-conv-av">👤</div>' +
+        '<div class="msg-conv-info">' +
+        '<div class="msg-conv-name">' + name + '</div>' +
+        '<div class="msg-conv-preview">' + preview + '</div>' +
+        '</div>' + unreadBadge +
+        '</div>';
+    });
+  }
+
+  if (newContacts.length) {
+    html += '<div class="msg-section-label">Start a Conversation</div>';
+    newContacts.forEach(function(c) {
+      var name = c.display_name || c.full_name;
+      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" onclick="openConversation(\'' + c.uuid + '\', ' + JSON.stringify(name) + ', this)">' +
+        '<div class="msg-conv-av">👤</div>' +
+        '<div class="msg-conv-info">' +
+        '<div class="msg-conv-name">' + name + '</div>' +
+        '<div class="msg-conv-preview">' + [c.city, c.profession].filter(Boolean).join(' · ') + '</div>' +
+        '</div>' +
+        '</div>';
+    });
+  }
+
+  col.innerHTML = html;
+
+  // If a conversation was requested (e.g. from the Interests "Message" button), open it now
+  if (currentChatUuid) {
+    var matchEl = col.querySelector('.msg-conv-item[data-uuid="' + currentChatUuid + '"]');
+    openConversation(currentChatUuid, currentChatName, matchEl);
+  }
+}
+
+function startConversation(uuid, name) {
+  currentChatUuid = uuid;
+  currentChatName = name;
+  var navEl = document.querySelector('.nav-item[onclick*="\'messages\'"]');
+  showPanel('messages', navEl);
+}
+
+async function openConversation(uuid, name, el) {
+  currentChatUuid = uuid;
+  currentChatName = name;
+
+  document.querySelectorAll('.msg-conv-item').forEach(function(i) { i.classList.remove('active'); });
+  if (el) el.classList.add('active');
+
+  document.getElementById('msg-thread-header').textContent = name;
+  document.getElementById('msg-input-row').style.display = 'flex';
+  var body = document.getElementById('msg-thread-body');
+  body.innerHTML = '<div class="loading-spinner">Loading...</div>';
+
+  var result = await apiCall('/messages/' + uuid, 'GET');
+  if (!result.success) {
+    body.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>' + (result.message || 'Could not load messages.') + '</div>';
+    document.getElementById('msg-input-row').style.display = 'none';
+    return;
+  }
+
+  renderThread(result.data);
+  loadMessagesCount();
+}
+
+function renderThread(msgs) {
+  var body = document.getElementById('msg-thread-body');
+  if (!msgs.length) {
+    body.innerHTML = '<div class="empty-state"><div class="ei">👋</div>Say hello! Start the conversation.</div>';
+    return;
+  }
+  var html = '';
+  msgs.forEach(function(m) {
+    var mine = m.sender_id === currentMember.id;
+    var time = new Date(m.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    html += '<div class="msg-bubble-row' + (mine ? ' mine' : '') + '">' +
+      '<div class="msg-bubble">' + escapeHtml(m.content) + '<div class="msg-bubble-time">' + time + '</div></div>' +
+      '</div>';
+  });
+  body.innerHTML = html;
+  body.scrollTop = body.scrollHeight;
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+async function sendChatMessage() {
+  var input = document.getElementById('msg-input');
+  var content = input.value.trim();
+  if (!content || !currentChatUuid) return;
+
+  var btn = document.getElementById('msg-send-btn');
+  btn.disabled = true;
+
+  var result = await apiCall('/messages/send', 'POST', { receiver_uuid: currentChatUuid, content: content });
+
+  btn.disabled = false;
+
+  if (result.success) {
+    input.value = '';
+    var reopenUuid = currentChatUuid, reopenName = currentChatName;
+    await loadMessagesPanel();
+    var matchEl = document.querySelector('.msg-conv-item[data-uuid="' + reopenUuid + '"]');
+    openConversation(reopenUuid, reopenName, matchEl);
+  } else {
+    alert(result.message || 'Could not send message.');
+  }
+}
+
+async function loadMessagesCount() {
+  var result = await apiCall('/messages', 'GET');
+  if (result.success) {
+    var totalUnread = result.data.reduce(function(sum, c) { return sum + (c.unread_count || 0); }, 0);
+    var badge = document.getElementById('messages-badge');
+    if (totalUnread > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = totalUnread;
+      document.getElementById('notif-indicator').style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
   }
 }
 
