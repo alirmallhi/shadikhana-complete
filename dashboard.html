@@ -390,11 +390,6 @@ a{text-decoration:none;color:inherit}
       <p class="page-sub">Find profiles that match your preferences</p>
 
       <div class="filter-bar">
-        <select class="filter-select" id="filter-gender">
-          <option value="">Any Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
         <input class="filter-input" id="filter-city" placeholder="City">
         <select class="filter-select" id="filter-religion">
           <option value="">Any Religion</option>
@@ -659,7 +654,6 @@ async function loadBrowseProfiles(page) {
   var filters = {
     page: page || 1,
     limit: 12,
-    gender: document.getElementById('filter-gender').value,
     city: document.getElementById('filter-city').value,
     age_min: document.getElementById('filter-age-min').value,
     age_max: document.getElementById('filter-age-max').value
