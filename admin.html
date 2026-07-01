@@ -295,9 +295,6 @@ function adminLogout() {
     <span class="nav-item-icon">👥</span>Members
     <span class="nav-badge">12</span>
   </button>
-  <button class="nav-item" onclick="showPanel('matches',this)">
-    <span class="nav-item-icon">💍</span>Matches
-  </button>
   <button class="nav-item" onclick="showPanel('matching',this)">
     <span class="nav-item-icon">🧠</span>Smart Matching
     <span class="nav-badge" id="pending-badge">—</span>
@@ -450,24 +447,6 @@ function adminLogout() {
 
 
 <!-- ══════════ MATCHES ══════════ -->
-    <div class="panel" id="panel-matches">
-  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
-    <div class="kpi-card"><div class="kpi-icon">💍</div><div class="kpi-value" style="color:var(--green)" id="matches-kpi-confirmed">—</div><div class="kpi-label">Total Confirmed Matches</div></div>
-    <div class="kpi-card"><div class="kpi-icon">📋</div><div class="kpi-value" style="color:var(--burgundy)" id="matches-kpi-total">—</div><div class="kpi-label">Total Match Records</div></div>
-    <div class="kpi-card"><div class="kpi-icon">⏳</div><div class="kpi-value" style="color:var(--gold)" id="matches-kpi-pending">—</div><div class="kpi-label">Awaiting Confirmation</div></div>
-  </div>
-  <div class="card" style="padding:0;overflow:hidden">
-    <div class="card-header" style="padding:1.2rem 1.5rem"><span class="card-title">All Matches</span></div>
-    <table>
-      <thead><tr><th>Member A</th><th>Member B</th><th>Packages</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
-      <tbody id="matches-table-body">
-        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-
 <!-- ══════════ PAYMENTS ══════════ -->
     <div class="panel" id="panel-payments">
   <div class="kpi-grid">
@@ -1383,67 +1362,6 @@ async function deleteMemberConfirm(memberId, memberName) {
 
 
 // ══════════════════════════════════════════
-//  MATCHES PANEL — LIVE DATA
-// ══════════════════════════════════════════
-async function loadMatchesPanel() {
-  var tbody = document.getElementById('matches-table-body');
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
-
-  try {
-    var data = await adminAPI('/admin/matches');
-    if (!data.success) throw new Error(data.message);
-
-    var matches = data.data;
-    var confirmed = matches.filter(function(m) { return m.status === 'confirmed'; }).length;
-    var pending   = matches.filter(function(m) { return m.status !== 'confirmed'; }).length;
-
-    document.getElementById('matches-kpi-confirmed').textContent = confirmed;
-    document.getElementById('matches-kpi-total').textContent = matches.length;
-    document.getElementById('matches-kpi-pending').textContent = pending;
-
-    if (!matches.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">No matches yet. Use Smart Matching to recommend matches to members.</td></tr>';
-      return;
-    }
-
-    tbody.innerHTML = matches.map(function(m) {
-      var statusClass = m.status === 'confirmed' ? 'status-active' :
-                         m.status === 'mutual' ? 'status-matched' : 'status-pending';
-      var dateStr = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-
-      return '<tr>' +
-        '<td><strong>' + m.member_a_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (m.city_a || '—') + '</span></td>' +
-        '<td><strong>' + m.member_b_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (m.city_b || '—') + '</span></td>' +
-        '<td>' + m.package_a + ' + ' + m.package_b + '</td>' +
-        '<td><span class="status-badge ' + statusClass + '">' + m.status.charAt(0).toUpperCase() + m.status.slice(1) + '</span></td>' +
-        '<td>' + dateStr + '</td>' +
-        '<td>' + (m.status !== 'confirmed'
-          ? '<button class="action-btn action-approve" onclick="confirmMatchAction(' + m.id + ')">Confirm Match</button>'
-          : '<span style="font-size:.75rem;color:var(--green)">✓ Confirmed</span>') + '</td>' +
-      '</tr>';
-    }).join('');
-
-  } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
-  }
-}
-
-async function confirmMatchAction(matchId) {
-  if (!confirm('Confirm this match? Both members will be notified and the success fee will be requested.')) return;
-  try {
-    var data = await adminAPI('/admin/matches/' + matchId + '/confirm', 'PUT');
-    if (data.success) {
-      alert('Match confirmed! Both members notified.');
-      loadMatchesPanel();
-    } else {
-      alert('Error: ' + (data.message || 'Could not confirm match.'));
-    }
-  } catch (err) {
-    alert('Error: ' + err.message);
-  }
-}
-
-// ══════════════════════════════════════════
 //  PAYMENTS PANEL — LIVE DATA
 // ══════════════════════════════════════════
 var paymentsCurrentPage = 1;
@@ -1784,7 +1702,6 @@ showPanel = function(id, btn) {
   originalShowPanel(id, btn);
   if (id === 'dashboard')   loadDashboardStats();
   if (id === 'members')     loadMembersPanel(1);
-  if (id === 'matches')     loadMatchesPanel();
   if (id === 'payments')    loadPaymentsPanel(1);
   if (id === 'pending')     loadPendingPayments();
   if (id === 'successfee')  loadSuccessFeePanel();
