@@ -323,7 +323,7 @@ function adminLogout() {
   <button class="nav-item" onclick="showPanel('settings',this)">
     <span class="nav-item-icon">⚙️</span>Settings
   </button>
-  <button class="nav-item" onclick="alert('Logging out...')">
+  <button class="nav-item" onclick="adminLogout()">
     <span class="nav-item-icon">🚪</span>Log Out
   </button>
 
@@ -586,55 +586,56 @@ function adminLogout() {
           <h3>💰 Pricing Configuration</h3>
           <div class="form-group-sm">
             <label>Basic Package Fee (PKR)</label>
-            <input type="number" value="10000">
+            <input type="number" id="set-basic-fee" value="10000">
             <label>Premium Package Fee (PKR)</label>
-            <input type="number" value="30000">
+            <input type="number" id="set-premium-fee" value="30000">
             <label>Executive / Overseas Package Fee (PKR)</label>
-            <input type="number" value="50000">
+            <input type="number" id="set-executive-fee" value="50000">
             <label>Success Fee Policy</label>
-            <select>
-              <option>Equal to registration fee (current)</option>
-              <option>Fixed flat fee</option>
-              <option>Custom per member</option>
+            <select id="set-success-fee-policy">
+              <option value="equal">Equal to registration fee (current)</option>
+              <option value="fixed">Fixed flat fee</option>
+              <option value="custom">Custom per member</option>
             </select>
           </div>
-          <button class="btn-sm btn-sm-primary" onclick="alert('Pricing saved!')">Save Pricing</button>
+          <button class="btn-sm btn-sm-primary" id="btn-save-pricing" onclick="saveSettingsSection('pricing')">Save Pricing</button>
         </div>
         <div class="settings-section">
           <h3>📱 Payment Gateway</h3>
           <div class="form-group-sm">
             <label>Meezan Bank IBAN</label>
-            <input type="text" value="PK00MEZN0001234567890">
+            <input type="text" id="set-meezan-iban" value="PK00MEZN0001234567890">
             <label>JazzCash Merchant ID</label>
-            <input type="text" placeholder="Your JazzCash merchant ID">
+            <input type="text" id="set-jazzcash-id" placeholder="Your JazzCash merchant ID">
             <label>EasyPaisa Store ID</label>
-            <input type="text" placeholder="Your EasyPaisa store ID">
+            <input type="text" id="set-easypaisa-id" placeholder="Your EasyPaisa store ID">
             <label>WhatsApp Support Number</label>
-            <input type="tel" value="+92 300 SHADI">
+            <input type="tel" id="set-whatsapp-support" value="+92 321 4133233">
           </div>
-          <button class="btn-sm btn-sm-primary" onclick="alert('Payment settings saved!')">Save</button>
+          <button class="btn-sm btn-sm-primary" id="btn-save-gateway" onclick="saveSettingsSection('payment_gateway')">Save</button>
         </div>
         <div class="settings-section">
           <h3>⚙️ Platform Settings</h3>
-          <div class="setting-row"><div><div class="setting-label">Require admin approval</div><div class="setting-sub">All new profiles reviewed before going live</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">CNIC verification required</div><div class="setting-sub">Premium & VIP must verify identity</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">Urdu language option</div><div class="setting-sub">Show Urdu toggle on main site</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">WhatsApp notifications</div><div class="setting-sub">Send match alerts via WhatsApp</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">In-person service (Lahore)</div><div class="setting-sub">Show Lahore office option to VIP</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">Require admin approval</div><div class="setting-sub">All new profiles reviewed before going live</div></div><label class="toggle"><input type="checkbox" id="tgl-require-approval" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">CNIC verification required</div><div class="setting-sub">Premium & VIP must verify identity</div></div><label class="toggle"><input type="checkbox" id="tgl-cnic-verification" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">Urdu language option</div><div class="setting-sub">Show Urdu toggle on main site</div></div><label class="toggle"><input type="checkbox" id="tgl-urdu-toggle" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">WhatsApp notifications</div><div class="setting-sub">Send match alerts via WhatsApp</div></div><label class="toggle"><input type="checkbox" id="tgl-whatsapp-notifications" checked><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div><div class="setting-label">In-person service (Lahore)</div><div class="setting-sub">Show Lahore office option to VIP</div></div><label class="toggle"><input type="checkbox" id="tgl-in-person-service" checked><span class="toggle-slider"></span></label></div>
+          <button class="btn-sm btn-sm-primary" id="btn-save-toggles" style="margin-top:1rem" onclick="saveSettingsSection('platform_toggles')">Save Platform Settings</button>
         </div>
         <div class="settings-section">
           <h3>👤 Admin Account</h3>
           <div class="form-group-sm">
             <label>Admin Name</label>
-            <input type="text" placeholder="Your name">
+            <input type="text" id="set-admin-name" placeholder="Your name">
             <label>Admin Email</label>
-            <input type="email" placeholder="admin@shadikhana.pk">
+            <input type="email" id="set-admin-email" placeholder="admin@shadikhana.pk">
             <label>Admin Phone</label>
-            <input type="tel" placeholder="+92 300 SHADI">
+            <input type="tel" id="set-admin-phone" placeholder="+92 300 SHADI">
             <label>New Password</label>
-            <input type="password" placeholder="Leave blank to keep current">
+            <input type="password" id="set-admin-password" placeholder="Leave blank to keep current">
           </div>
-          <button class="btn-sm btn-sm-primary" onclick="alert('Account updated!')">Update Account</button>
+          <button class="btn-sm btn-sm-primary" id="btn-save-account" onclick="saveAdminAccount()">Update Account</button>
         </div>
       </div>
     </div>
@@ -1639,6 +1640,144 @@ async function loadReportsPanel() {
   }
 }
 
+// ══════════════════════════════════════════
+//  SETTINGS PANEL
+// ══════════════════════════════════════════
+async function loadSettingsPanel() {
+  try {
+    var data = await adminAPI('/admin/settings');
+    if (!data.success) { console.log('Settings load error:', data.message); return; }
+    var d = data.data;
+
+    if (d.pricing) {
+      document.getElementById('set-basic-fee').value = d.pricing.basic_fee ?? 10000;
+      document.getElementById('set-premium-fee').value = d.pricing.premium_fee ?? 30000;
+      document.getElementById('set-executive-fee').value = d.pricing.executive_fee ?? 50000;
+      document.getElementById('set-success-fee-policy').value = d.pricing.success_fee_policy || 'equal';
+    }
+
+    if (d.payment_gateway) {
+      document.getElementById('set-meezan-iban').value = d.payment_gateway.meezan_iban || '';
+      document.getElementById('set-jazzcash-id').value = d.payment_gateway.jazzcash_merchant_id || '';
+      document.getElementById('set-easypaisa-id').value = d.payment_gateway.easypaisa_store_id || '';
+      document.getElementById('set-whatsapp-support').value = d.payment_gateway.whatsapp_support || '';
+    }
+
+    if (d.platform_toggles) {
+      document.getElementById('tgl-require-approval').checked = !!d.platform_toggles.require_approval;
+      document.getElementById('tgl-cnic-verification').checked = !!d.platform_toggles.cnic_verification;
+      document.getElementById('tgl-urdu-toggle').checked = !!d.platform_toggles.urdu_toggle;
+      document.getElementById('tgl-whatsapp-notifications').checked = !!d.platform_toggles.whatsapp_notifications;
+      document.getElementById('tgl-in-person-service').checked = !!d.platform_toggles.in_person_service;
+    }
+
+    if (d.admin) {
+      document.getElementById('set-admin-name').value = d.admin.name || '';
+      document.getElementById('set-admin-email').value = d.admin.email || '';
+      document.getElementById('set-admin-phone').value = d.admin.phone || '';
+    }
+  } catch (err) {
+    console.log('Settings load error:', err);
+  }
+}
+
+function readSettingsSection(section) {
+  if (section === 'pricing') {
+    return {
+      basic_fee: Number(document.getElementById('set-basic-fee').value) || 0,
+      premium_fee: Number(document.getElementById('set-premium-fee').value) || 0,
+      executive_fee: Number(document.getElementById('set-executive-fee').value) || 0,
+      success_fee_policy: document.getElementById('set-success-fee-policy').value
+    };
+  }
+  if (section === 'payment_gateway') {
+    return {
+      meezan_iban: document.getElementById('set-meezan-iban').value.trim(),
+      jazzcash_merchant_id: document.getElementById('set-jazzcash-id').value.trim(),
+      easypaisa_store_id: document.getElementById('set-easypaisa-id').value.trim(),
+      whatsapp_support: document.getElementById('set-whatsapp-support').value.trim()
+    };
+  }
+  if (section === 'platform_toggles') {
+    return {
+      require_approval: document.getElementById('tgl-require-approval').checked,
+      cnic_verification: document.getElementById('tgl-cnic-verification').checked,
+      urdu_toggle: document.getElementById('tgl-urdu-toggle').checked,
+      whatsapp_notifications: document.getElementById('tgl-whatsapp-notifications').checked,
+      in_person_service: document.getElementById('tgl-in-person-service').checked
+    };
+  }
+  return null;
+}
+
+var settingsButtonIds = {
+  pricing: 'btn-save-pricing',
+  payment_gateway: 'btn-save-gateway',
+  platform_toggles: 'btn-save-toggles'
+};
+
+async function saveSettingsSection(section) {
+  var btn = document.getElementById(settingsButtonIds[section]);
+  var originalText = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+  try {
+    var payload = readSettingsSection(section);
+    var data = await adminAPI('/admin/settings/' + section, 'PUT', payload);
+    if (data.success) {
+      if (btn) btn.textContent = 'Saved ✓';
+    } else {
+      alert(data.message || 'Could not save settings.');
+      if (btn) btn.textContent = originalText;
+    }
+  } catch (err) {
+    console.log('Save settings error:', err);
+    alert('Connection error. Please try again.');
+    if (btn) btn.textContent = originalText;
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      setTimeout(function() { btn.textContent = originalText; }, 1800);
+    }
+  }
+}
+
+async function saveAdminAccount() {
+  var btn = document.getElementById('btn-save-account');
+  var originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Updating...';
+
+  try {
+    var payload = {
+      name: document.getElementById('set-admin-name').value.trim(),
+      email: document.getElementById('set-admin-email').value.trim(),
+      phone: document.getElementById('set-admin-phone').value.trim(),
+      new_password: document.getElementById('set-admin-password').value
+    };
+    var data = await adminAPI('/admin/account', 'PUT', payload);
+    if (data.success) {
+      btn.textContent = 'Updated ✓';
+      document.getElementById('set-admin-password').value = '';
+      // Keep the sidebar/localStorage admin name in sync
+      var stored = JSON.parse(localStorage.getItem('sk_admin') || '{}');
+      stored.name = payload.name;
+      stored.email = payload.email;
+      localStorage.setItem('sk_admin', JSON.stringify(stored));
+    } else {
+      alert(data.message || 'Could not update account.');
+      btn.textContent = originalText;
+    }
+  } catch (err) {
+    console.log('Save account error:', err);
+    alert('Connection error. Please try again.');
+    btn.textContent = originalText;
+  } finally {
+    btn.disabled = false;
+    setTimeout(function() { btn.textContent = originalText; }, 1800);
+  }
+}
+
 // Load live data when each panel is opened — single consolidated hook
 var originalShowPanel = showPanel;
 showPanel = function(id, btn) {
@@ -1650,6 +1789,7 @@ showPanel = function(id, btn) {
   if (id === 'pending')     loadPendingPayments();
   if (id === 'successfee')  loadSuccessFeePanel();
   if (id === 'reports')     loadReportsPanel();
+  if (id === 'settings')    loadSettingsPanel();
 };
 
 
