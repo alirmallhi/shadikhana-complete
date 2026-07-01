@@ -886,7 +886,7 @@ async function loadInterests() {
     } else if (i.status === 'accepted') {
       html += '<div class="interest-action-btns">' +
         '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
-        '<button class="btn-accept" onclick="startConversation(\'' + i.uuid + '\', ' + JSON.stringify(i.full_name) + ')">💬 Message</button>' +
+        '<button class="btn-accept" data-uuid="' + i.uuid + '" data-name="' + escapeHtml(i.full_name) + '" onclick="startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>' +
         '</div>';
     } else {
       html += '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>';
@@ -943,7 +943,7 @@ async function loadMessagesPanel() {
       var name = c.display_name || c.full_name;
       var unreadBadge = c.unread_count > 0 ? '<span class="msg-conv-unread">' + c.unread_count + '</span>' : '';
       var preview = (c.last_message_sender_id === currentMember.id ? 'You: ' : '') + (c.last_message || '');
-      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" onclick="openConversation(\'' + c.uuid + '\', ' + JSON.stringify(name) + ', this)">' +
+      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)">' +
         '<div class="msg-conv-av">👤</div>' +
         '<div class="msg-conv-info">' +
         '<div class="msg-conv-name">' + name + '</div>' +
@@ -957,7 +957,7 @@ async function loadMessagesPanel() {
     html += '<div class="msg-section-label">Start a Conversation</div>';
     newContacts.forEach(function(c) {
       var name = c.display_name || c.full_name;
-      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" onclick="openConversation(\'' + c.uuid + '\', ' + JSON.stringify(name) + ', this)">' +
+      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)">' +
         '<div class="msg-conv-av">👤</div>' +
         '<div class="msg-conv-info">' +
         '<div class="msg-conv-name">' + name + '</div>' +
