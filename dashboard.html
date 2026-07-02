@@ -122,6 +122,17 @@ a{text-decoration:none;color:inherit}
 .photo-upload-btn{background:var(--white);border:1.5px solid var(--light);border-radius:8px;
   padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;cursor:pointer}
 .photo-upload-btn:hover{border-color:var(--burg);color:var(--burg)}
+.photo-privacy-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1rem 1.2rem;background:var(--ivory);border-radius:14px;margin-bottom:1.5rem}
+.photo-privacy-label{font-weight:700;font-size:.88rem}
+.photo-privacy-sub{font-size:.78rem;color:var(--mid);margin-top:.2rem;max-width:420px}
+.pp-switch{position:relative;width:50px;height:27px;flex-shrink:0}
+.pp-switch input{opacity:0;width:0;height:0}
+.pp-switch-slider{position:absolute;inset:0;border-radius:27px;background:var(--light);cursor:pointer;transition:.25s}
+.pp-switch-slider::before{content:'';position:absolute;width:21px;height:21px;border-radius:50%;background:#fff;
+  left:3px;top:3px;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.pp-switch input:checked+.pp-switch-slider{background:var(--burg)}
+.pp-switch input:checked+.pp-switch-slider::before{transform:translateX(23px)}
 
 /* ── BROWSE PROFILES ── */
 .filter-bar{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
@@ -370,6 +381,17 @@ a{text-decoration:none;color:inherit}
             <button class="photo-upload-btn" onclick="document.getElementById('photo-upload-input').click()">📷 Change Photo</button>
             <p style="font-size:.75rem;color:var(--mid);margin-top:.5rem">JPG or PNG, max 5MB</p>
           </div>
+        </div>
+
+        <div class="photo-privacy-row">
+          <div>
+            <div class="photo-privacy-label">🔒 Blur My Photo</div>
+            <div class="photo-privacy-sub">When ON, your photo stays hidden from everyone — it only unlocks automatically for a member once you've both accepted each other's interest.</div>
+          </div>
+          <label class="pp-switch">
+            <input type="checkbox" id="p-priv_photo" onchange="savePhotoPrivacy(this.checked)">
+            <span class="pp-switch-slider"></span>
+          </label>
         </div>
 
         <form id="profile-form">
@@ -648,6 +670,20 @@ function loadProfileForm() {
   var photoPreview = document.getElementById('profile-photo-preview');
   if (currentMember.photo_url) {
     photoPreview.innerHTML = '<img src="' + currentMember.photo_url + '" alt="Profile photo">';
+  }
+
+  var privPhotoEl = document.getElementById('p-priv_photo');
+  if (privPhotoEl) privPhotoEl.checked = !!currentMember.priv_photo;
+}
+
+async function savePhotoPrivacy(isChecked) {
+  var result = await apiCall('/member/profile', 'PUT', { priv_photo: isChecked });
+  if (result.success) {
+    currentMember.priv_photo = isChecked ? 1 : 0;
+    localStorage.setItem('sk_member', JSON.stringify(currentMember));
+  } else {
+    alert(result.message || 'Could not update photo privacy. Please try again.');
+    document.getElementById('p-priv_photo').checked = !isChecked;
   }
 }
 
