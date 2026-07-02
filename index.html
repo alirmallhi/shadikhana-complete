@@ -774,139 +774,11 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <h2 class="section-title">Browse Recent Profiles</h2>
     <p class="section-sub">Genuine, family-vetted profiles from across Pakistan and the overseas community. Register to unlock full details.</p>
   </div>
-  <div class="profiles-grid">
-    <div class="profile-card fade-in">
-      <div class="profile-card-top pc1" style="position:relative">
-        <span>👩</span>
-        <span class="profile-verified-badge">✓ Verified</span>
-        <div class="privacy-shield">🔓 Open Profile</div>
-      </div>
-      <div class="profile-card-body">
-        <div class="profile-name">Ayesha Raza</div>
-        <div class="profile-details">26 yrs · Lahore · MBA Finance<br>Sunni (Barelvi) · 5'4" · Never Married</div>
-        <div class="profile-tags"><span class="tag">Lahore</span><span class="tag">Working</span><span class="tag">Doctor's Family</span></div>
-        <div class="contact-badge direct">📱 Open to Direct Contact</div>
-        <div class="profile-actions">
-          <button class="btn-interest" onclick="openModal('register')" style="flex:1">Send Interest</button>
-          <button class="btn-msg"  onclick="openContactModal('Ayesha Raza','whatsapp','03001234567')" title="WhatsApp">💬</button>
-          <button class="btn-call" onclick="openContactModal('Ayesha Raza','call','03001234567')"    title="Call">📞</button>
-          <button class="btn-save">🤍</button>
-        </div>
-      </div>
-    </div>
-    <div class="profile-card fade-in">
-      <div class="profile-card-top pc2" style="position:relative">
-        <div class="photo-blurred">
-          <span class="photo-blur-icon">👨</span>
-          <span>Photo Hidden</span>
-          <button class="unlock-info-btn" onclick="openModal('register')">🔒 Unlock after Interest</button>
-        </div>
-        <span class="profile-featured-badge">👑 VIP</span>
-        <div class="privacy-shield">🔒 Standard Privacy</div>
-      </div>
-      <div class="profile-card-body">
-        <div class="profile-name">Ahmed Khan</div>
-        <div class="profile-details">30 yrs · Karachi · Software Engineer<br>Sunni (Deobandi) · 5'10" · Never Married</div>
-        <div style="font-size:.78rem;color:var(--mid);margin-bottom:.5rem">
-          <span onclick="openPrivacyLocked('contact')" style="cursor:pointer;text-decoration:underline;color:var(--mid)">📱 Contact: 🔒 Hidden</span> ·
-          <span onclick="openPrivacyLocked('family')"  style="cursor:pointer;text-decoration:underline;color:var(--mid)">👨‍👩‍👧 Family: 🔒 Hidden</span>
-        </div>
-        <div class="profile-tags"><span class="tag">Karachi</span><span class="tag">UK Based</span><span class="tag">Urdu Speaking</span></div>
-        <div class="contact-badge via-us">🔒 Contact via ShadiKhana</div>
-        <div class="profile-actions">
-          <button class="btn-via-us" onclick="openViaUsModal('Ahmed Khan')">📋 Request via ShadiKhana</button>
-          <button class="btn-save">🤍</button>
-        </div>
-      </div>
-    </div>
-    <div class="profile-card fade-in">
-      <div class="profile-card-top pc3" style="position:relative">
-        <span>👩</span>
-        <span class="profile-verified-badge">⭐ Premium</span>
-        <div class="privacy-shield">🔓 Open Profile</div>
-      </div>
-      <div class="profile-card-body">
-        <div class="profile-name">Fatima Siddiqui</div>
-        <div class="profile-details">24 yrs · Islamabad · MBBS Doctor<br>Shia · 5'3" · Never Married</div>
-        <div class="profile-tags"><span class="tag">Islamabad</span><span class="tag">Professional</span><span class="tag">Business Family</span></div>
-        <div class="contact-badge direct">📱 Open to Direct Contact</div>
-        <div class="profile-actions">
-          <button class="btn-interest" onclick="openModal('register')" style="flex:1">Send Interest</button>
-          <button class="btn-msg"  onclick="openContactModal('Fatima Siddiqui','whatsapp','03211234567')" title="WhatsApp">💬</button>
-          <button class="btn-save">🤍</button>
-        </div>
-      </div>
-    </div>
-    <div class="profile-card fade-in">
-      <div class="profile-card-top pc4" style="position:relative">
-        <div class="photo-blurred">
-          <span class="photo-blur-icon">👨</span>
-          <span>Strict Privacy</span>
-          <button class="unlock-info-btn" onclick="openModal('register')">🛡️ Info via ShadiKhana</button>
-        </div>
-        <div class="privacy-shield">🛡️ Strict Privacy</div>
-      </div>
-      <div class="profile-card-body">
-        <div class="profile-name">Bilal Chaudhry</div>
-        <div class="profile-details">33 yrs · Faisalabad · <span onclick="openPrivacyLocked('strict')" style="cursor:pointer;color:var(--mid);text-decoration:underline">🛡️ Profession Hidden</span><br>Sunni · <span onclick="openPrivacyLocked('strict')" style="cursor:pointer;color:var(--mid);text-decoration:underline">Height Hidden</span> · Marital status hidden</div>
-        <div style="font-size:.78rem;background:rgba(21,101,192,0.07);border-radius:8px;padding:5px 8px;margin-bottom:.5rem;color:#1565C0;cursor:pointer"
-             onclick="openPrivacyLocked('strict')">
-          🛡️ Strict Privacy — most info hidden. Contact via ShadiKhana to learn more.
-        </div>
-        <div class="profile-tags"><span class="tag">Faisalabad</span><span class="tag" style="filter:blur(4px);user-select:none">██████</span></div>
-        <div class="contact-badge via-us">🔒 Contact via ShadiKhana</div>
-        <div class="profile-actions">
-          <button class="btn-via-us" onclick="openViaUsModal('Bilal Chaudhry')">📋 Request via ShadiKhana</button>
-          <button class="btn-save">🤍</button>
-        </div>
-      </div>
-    </div>
-    <div class="profile-card fade-in">
-      <div class="profile-card-top pc5" style="position:relative">
-        <div class="photo-blurred">
-          <span class="photo-blur-icon">👩</span>
-          <span>Photo Hidden</span>
-          <button class="unlock-info-btn" onclick="openModal('register')">🔒 Unlock after Interest</button>
-        </div>
-        <span class="profile-featured-badge">👑 VIP</span>
-        <div class="privacy-shield">🔒 Standard Privacy</div>
-      </div>
-      <div class="profile-card-body">
-        <div class="profile-name">Sana Mirza</div>
-        <div class="profile-details">28 yrs · Rawalpindi · Civil Servant<br>Sunni · 5'5" · Never Married</div>
-        <div style="font-size:.78rem;color:var(--mid);margin-bottom:.5rem">
-          <span onclick="openPrivacyLocked('family')" style="cursor:pointer;text-decoration:underline;color:var(--mid)">👨‍👩‍👧 Family info: 🔒 After mutual interest</span>
-        </div>
-        <div class="profile-tags"><span class="tag">Twin Cities</span><span class="tag">Govt. Officer</span><span class="tag">Educated</span></div>
-        <div class="contact-badge direct">📱 Open to Direct Contact</div>
-        <div class="profile-actions">
-          <button class="btn-interest" onclick="openModal('register')" style="flex:1">Send Interest</button>
-          <button class="btn-msg"  onclick="openContactModal('Sana Mirza','whatsapp','03331234567')"  title="WhatsApp">💬</button>
-          <button class="btn-call" onclick="openContactModal('Sana Mirza','call','03331234567')"     title="Call">📞</button>
-          <button class="btn-save">🤍</button>
-        </div>
-      </div>
-    </div>
-    <div class="profile-card fade-in">
-      <div class="profile-card-top pc6" style="position:relative">
-        <span>👨</span>
-        <span class="profile-verified-badge">✓ Verified</span>
-        <div class="privacy-shield">🔓 Open Profile</div>
-      </div>
-      <div class="profile-card-body">
-        <div class="profile-name">Usman Malik</div>
-        <div class="profile-details">29 yrs · Multan · Civil Engineer<br>Sunni · 6'0" · Never Married</div>
-        <div class="profile-tags"><span class="tag">Multan</span><span class="tag">UAE Based</span><span class="tag">Saraiki</span></div>
-        <div class="contact-badge via-us">🔒 Contact via ShadiKhana</div>
-        <div class="profile-actions">
-          <button class="btn-via-us" onclick="openViaUsModal('Usman Malik')">📋 Request via ShadiKhana</button>
-          <button class="btn-save">🤍</button>
-        </div>
-      </div>
-    </div>
+  <div class="profiles-grid" id="showcase-profiles-grid">
+    <div class="fade-in" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--mid);font-family:var(--font-mono);font-size:.85rem">Loading live profiles…</div>
   </div>
   <div style="text-align:center;margin-top:3rem">
-    <a href="#" class="btn-primary" onclick="openModal('register');return false">View All 85,000+ Profiles</a>
+    <a href="#" class="btn-primary" onclick="openModal('register');return false">Register to View All Profiles</a>
   </div>
 </section>
 
@@ -2472,7 +2344,69 @@ document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); })
 // Initialise privacy preset on load
 document.addEventListener('DOMContentLoaded', function() {
   setPrivacyPreset('open');
+  loadShowcaseProfiles();
 });
+
+// ══════════════════════════════════════════
+//  LIVE PROFILE SHOWCASE — real members, never real photo/contact for anonymous visitors
+// ══════════════════════════════════════════
+function privacyShieldFor(preset) {
+  if (preset === 'strict') return { label: '🛡️ Strict Privacy', cls: 'strict' };
+  if (preset === 'open')   return { label: '🔓 Open Profile', cls: 'open' };
+  return { label: '🔒 Standard Privacy', cls: 'standard' };
+}
+
+function showcaseCardHtml(p) {
+  var icon = p.gender === 'Male' ? '👨' : '👩';
+  var shield = privacyShieldFor(p.privacy_preset);
+  var badge = p.is_verified
+    ? '<span class="profile-verified-badge">✓ Verified</span>'
+    : (['premium','executive'].indexOf(p.package) > -1 ? '<span class="profile-featured-badge">⭐ Premium</span>' : '');
+
+  var isStrict = p.privacy_preset === 'strict';
+  var detailsLine2 = isStrict
+    ? 'Details available after registration'
+    : [p.religion, p.sect].filter(Boolean).join(' · ') + (p.marital_status ? ' · ' + p.marital_status : '');
+  var midLine = isStrict ? '' : [p.education, p.profession].filter(Boolean).join(' · ');
+
+  return '' +
+    '<div class="profile-card fade-in visible">' +
+      '<div class="profile-card-top" style="position:relative">' +
+        '<div class="photo-blurred">' +
+          '<span class="photo-blur-icon">' + icon + '</span>' +
+          '<span>Photo Hidden</span>' +
+          '<button class="unlock-info-btn" onclick="openModal(\'register\')">🔒 Register to View</button>' +
+        '</div>' +
+        badge +
+        '<div class="privacy-shield">' + shield.label + '</div>' +
+      '</div>' +
+      '<div class="profile-card-body">' +
+        '<div class="profile-name">' + p.name + '</div>' +
+        '<div class="profile-details">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + (midLine ? '<br>' + midLine : '') + '</div>' +
+        (detailsLine2 ? '<div style="font-size:.78rem;color:var(--mid);margin-bottom:.5rem">' + detailsLine2 + '</div>' : '') +
+        '<div class="contact-badge via-us">🔒 Contact via ShadiKhana</div>' +
+        '<div class="profile-actions">' +
+          '<button class="btn-via-us" onclick="openModal(\'register\')" style="flex:1">Register to Connect</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+async function loadShowcaseProfiles() {
+  var grid = document.getElementById('showcase-profiles-grid');
+  if (!grid || typeof apiCall !== 'function') return;
+
+  try {
+    var result = await apiCall('/public/showcase-profiles?limit=6', 'GET');
+    if (!result.success || !result.data.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--mid)">New profiles are being added — check back soon.</div>';
+      return;
+    }
+    grid.innerHTML = result.data.map(showcaseCardHtml).join('');
+  } catch (err) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--mid)">New profiles are being added — check back soon.</div>';
+  }
+}
 
 // Pre-select Silver radio in payment modal
 var silverRadio = document.querySelector('input[value="silver"]');
