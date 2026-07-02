@@ -799,6 +799,11 @@ async function viewProfileDetail(uuid) {
     detailField('Profession', p.profession || '—') +
     detailField('Height', p.height || '—') +
     detailField('Caste', p.caste || '—') +
+    (p.area ? detailField('Area', p.area) : '') +
+    (p.children ? detailField('Children', p.children) : '') +
+    (p.father_occupation ? detailField("Father's Occupation", p.father_occupation) : '') +
+    (p.mother_occupation ? detailField("Mother's Occupation", p.mother_occupation) : '') +
+    (p.family_description ? detailField('Family', p.family_description) : '') +
     (p.monthly_income_safe ? detailField('Monthly Income', p.monthly_income_safe) : '') +
     (p.employer_safe ? detailField('Employer', p.employer_safe) : '') +
     (p.mobile ? detailField('Mobile', p.mobile) : '') +
@@ -886,7 +891,7 @@ async function loadInterests() {
     html += '<div class="interest-row">' +
       '<div class="interest-av">👤</div>' +
       '<div class="interest-info">' +
-      '<div class="interest-name">' + i.full_name + '</div>' +
+      '<div class="interest-name">' + (i.display_name || i.full_name) + '</div>' +
       '<div class="interest-meta">' + (i.age || '—') + ' yrs · ' + (i.city || '—') + ' · ' + (i.profession || '—') + '</div>' +
       '</div>';
 
@@ -898,7 +903,7 @@ async function loadInterests() {
     } else if (i.status === 'accepted') {
       html += '<div class="interest-action-btns">' +
         '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
-        '<button class="btn-accept" data-uuid="' + i.uuid + '" data-name="' + escapeHtml(i.full_name) + '" onclick="startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>' +
+        '<button class="btn-accept" data-uuid="' + i.uuid + '" data-name="' + escapeHtml(i.display_name || i.full_name) + '" onclick="startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>' +
         '</div>';
     } else {
       html += '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>';
