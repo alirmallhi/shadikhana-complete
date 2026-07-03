@@ -236,7 +236,7 @@ section{padding:96px 5%}
 .testi-quote{font-size:2rem;color:var(--rose);line-height:1;margin-bottom:.8rem}
 .testi-text{font-size:.88rem;color:var(--mid);line-height:1.7;margin-bottom:1.2rem}
 .testi-author{display:flex;align-items:center;gap:.8rem}
-.testi-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.testi-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:linear-gradient(135deg,#FDE8EF,#FAD0DE)}
 .ta1{background:linear-gradient(135deg,#FDE8EF,#FAD0DE)}
 .ta2{background:linear-gradient(135deg,#E8F0FD,#D0DCFA)}
 .ta3{background:linear-gradient(135deg,#E8F5F0,#C8EAE0)}
@@ -918,40 +918,12 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="testimonials">
+<section class="testimonials" id="success-stories-section" style="display:none">
   <div class="section-header fade-in" style="text-align:center">
     <div class="section-label">Success Stories</div>
     <h2 class="section-title">Families Who Found Their Rishta</h2>
   </div>
-  <div class="testi-grid">
-    <div class="testi-card fade-in">
-      <div class="testi-stars">★★★★★</div>
-      <div class="testi-quote">"</div>
-      <p class="testi-text">We registered with the Premium package and found each other within six weeks. The matchmaker kept us updated throughout. Our nikkah was in March — Alhamdulillah.</p>
-      <div class="testi-author">
-        <div class="testi-avatar ta1">👩</div>
-        <div><div class="testi-author-name">Mariam & Faisal</div><div class="testi-author-loc">Lahore — Married March 2025</div></div>
-      </div>
-    </div>
-    <div class="testi-card fade-in">
-      <div class="testi-stars">★★★★★</div>
-      <div class="testi-quote">"</div>
-      <p class="testi-text">As a parent I was nervous about online rishtas. The in-person visit at their Lahore office changed everything. Very respectful, very family-oriented. My son is now happily married.</p>
-      <div class="testi-author">
-        <div class="testi-avatar ta2">🧓</div>
-        <div><div class="testi-author-name">Rana Sahib (VIP Member)</div><div class="testi-author-loc">Lahore — Son married 2024</div></div>
-      </div>
-    </div>
-    <div class="testi-card fade-in">
-      <div class="testi-stars">★★★★★</div>
-      <div class="testi-quote">"</div>
-      <p class="testi-text">I was based in Birmingham and struggling to find a match back home. ShadiKhana's overseas filter was exactly what I needed. Wonderful partner from Islamabad. Worth every rupee.</p>
-      <div class="testi-author">
-        <div class="testi-avatar ta3">👨</div>
-        <div><div class="testi-author-name">Zafar Ahmed (Premium)</div><div class="testi-author-loc">Birmingham UK — Married 2025</div></div>
-      </div>
-    </div>
-  </div>
+  <div class="testi-grid" id="testi-grid-container"></div>
 </section>
 
 <!-- APP -->
@@ -2368,6 +2340,7 @@ document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); })
 document.addEventListener('DOMContentLoaded', function() {
   setPrivacyPreset('open');
   loadShowcaseProfiles();
+  loadSuccessStories();
 });
 
 // ══════════════════════════════════════════
@@ -2428,6 +2401,42 @@ async function loadShowcaseProfiles() {
     grid.innerHTML = result.data.map(showcaseCardHtml).join('');
   } catch (err) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--mid)">New profiles are being added — check back soon.</div>';
+  }
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+async function loadSuccessStories() {
+  var section = document.getElementById('success-stories-section');
+  var container = document.getElementById('testi-grid-container');
+  if (!section || !container || typeof apiCall !== 'function') return;
+
+  try {
+    var result = await apiCall('/public/success-stories', 'GET');
+    if (!result.success || !result.data.length) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = 'block';
+    container.innerHTML = result.data.map(function(s) {
+      var locLine = [s.location, s.married_date ? 'Married ' + s.married_date : ''].filter(Boolean).join(' — ');
+      return '<div class="testi-card fade-in visible">' +
+        '<div class="testi-stars">★★★★★</div>' +
+        '<div class="testi-quote">"</div>' +
+        '<p class="testi-text">' + escapeHtml(s.story) + '</p>' +
+        '<div class="testi-author">' +
+        '<div class="testi-avatar">' + (s.avatar_emoji || '💑') + '</div>' +
+        '<div><div class="testi-author-name">' + escapeHtml(s.couple_names) + (s.package ? ' (' + s.package.charAt(0).toUpperCase() + s.package.slice(1) + ')' : '') + '</div>' +
+        '<div class="testi-author-loc">' + escapeHtml(locLine) + '</div></div>' +
+        '</div></div>';
+    }).join('');
+  } catch (err) {
+    section.style.display = 'none';
   }
 }
 
