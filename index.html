@@ -1068,9 +1068,13 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
       <div class="form-section-label">Profile Is For</div>
       <div class="tabs" style="margin-bottom:1rem">
-        <button class="tab-btn active" onclick="setTab(this)">Myself — Man 👨</button>
-        <button class="tab-btn" onclick="setTab(this)">Myself — Woman 👩</button>
-        <button class="tab-btn" onclick="setTab(this)">My Son / Daughter 🤲</button>
+        <button class="tab-btn active" onclick="setProfileFor('self_male', this)">Myself — Man 👨</button>
+        <button class="tab-btn" onclick="setProfileFor('self_female', this)">Myself — Woman 👩</button>
+        <button class="tab-btn" onclick="setProfileFor('guardian', this)">My Son / Daughter 🤲</button>
+      </div>
+      <div class="form-group" id="guardian-name-group" style="display:none;margin-bottom:1rem">
+        <label>Your Name (Parent/Guardian)<span class="required-star">*</span></label>
+        <input type="text" id="f-guardianname" placeholder="So we know who's managing this profile">
       </div>
 
       <div class="form-section-label">Contact Information</div>
@@ -2184,6 +2188,25 @@ document.querySelectorAll('.modal-overlay').forEach(function(o) {
 function setTab(btn) {
   btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
+}
+
+var selectedProfileFor = 'self_male';
+
+function setProfileFor(value, btn) {
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  selectedProfileFor = value;
+
+  var guardianGroup = document.getElementById('guardian-name-group');
+  var genderEl = document.getElementById('f-gender');
+
+  if (value === 'guardian') {
+    guardianGroup.style.display = 'block';
+  } else {
+    guardianGroup.style.display = 'none';
+    // Pre-fill Step 2's gender dropdown to match, so it's not asked twice
+    if (genderEl) genderEl.value = value === 'self_male' ? 'Male' : 'Female';
+  }
 }
 
 // ══════════════════════════════════════════
