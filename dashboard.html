@@ -186,6 +186,9 @@ a{text-decoration:none;color:inherit}
   font-size:.78rem;font-weight:600;cursor:pointer}
 .btn-reject{background:transparent;border:1.5px solid var(--light);color:var(--mid);border-radius:8px;
   padding:.4rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer}
+.btn-outline-sm{background:var(--white);border:1.5px solid var(--burg);color:var(--burg);border-radius:8px;
+  padding:.4rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer}
+.btn-outline-sm:hover{background:var(--burg);color:#fff}
 
 /* ── LOADING ── */
 .loading-spinner{text-align:center;padding:3rem;color:var(--mid);font-size:.9rem}
@@ -243,6 +246,8 @@ a{text-decoration:none;color:inherit}
   .form-row{grid-template-columns:1fr}
 }
 @media(max-width:600px){
+  .interest-row{flex-wrap:wrap}
+  .interest-action-btns{flex-wrap:wrap;width:100%;justify-content:flex-end}
   .stats-grid{grid-template-columns:1fr}
   .profiles-grid{grid-template-columns:1fr}
   .content{padding:1.5rem 4%}
@@ -925,24 +930,29 @@ async function loadInterests() {
     var statusLabel = i.status.charAt(0).toUpperCase() + i.status.slice(1);
 
     html += '<div class="interest-row">' +
-      '<div class="interest-av">👤</div>' +
-      '<div class="interest-info">' +
+      '<div class="interest-av" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">👤</div>' +
+      '<div class="interest-info" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">' +
       '<div class="interest-name">' + (i.display_name || i.full_name) + '</div>' +
       '<div class="interest-meta">' + (i.age || '—') + ' yrs · ' + (i.city || '—') + ' · ' + (i.profession || '—') + '</div>' +
       '</div>';
 
     if (currentInterestTab === 'received' && i.status === 'sent') {
       html += '<div class="interest-action-btns">' +
+        '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + i.uuid + '\')">View Profile</button>' +
         '<button class="btn-accept" onclick="respondToInterest(' + i.id + ', \'accepted\')">Accept</button>' +
         '<button class="btn-reject" onclick="respondToInterest(' + i.id + ', \'rejected\')">Decline</button>' +
         '</div>';
     } else if (i.status === 'accepted') {
       html += '<div class="interest-action-btns">' +
         '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
+        '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + i.uuid + '\')">View Profile</button>' +
         '<button class="btn-accept" data-uuid="' + i.uuid + '" data-name="' + escapeHtml(i.display_name || i.full_name) + '" onclick="startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>' +
         '</div>';
     } else {
-      html += '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>';
+      html += '<div class="interest-action-btns">' +
+        '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
+        '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + i.uuid + '\')">View Profile</button>' +
+        '</div>';
     }
     html += '</div>';
   });
