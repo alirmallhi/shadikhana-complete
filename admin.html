@@ -316,6 +316,9 @@ function adminLogout() {
     <span class="nav-item-icon">🚩</span>Flagged Members
     <span class="nav-badge" id="flagged-badge" style="display:none">—</span>
   </button>
+  <button class="nav-item" onclick="showPanel('stories',this)">
+    <span class="nav-item-icon">📖</span>Success Stories
+  </button>
   <button class="nav-item" onclick="showPanel('reports',this)">
     <span class="nav-item-icon">📈</span>Reports
   </button>
@@ -549,6 +552,44 @@ function adminLogout() {
       <thead><tr><th>Reported Member</th><th>Reported By</th><th>Reason</th><th>Details</th><th>Date</th><th>Actions</th></tr></thead>
       <tbody id="flagged-table-body">
         <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════ SUCCESS STORIES ══════════ -->
+    <div class="panel" id="panel-stories">
+  <div class="card" style="margin-bottom:1.2rem">
+    <div class="card-header" style="padding:1.2rem 1.5rem"><span class="card-title">Add a Success Story</span></div>
+    <div style="padding:0 1.5rem 1.5rem">
+      <div class="form-row">
+        <div class="form-group"><label>Couple Names</label><input type="text" id="story-couple" placeholder="e.g. Mariam & Faisal"></div>
+        <div class="form-group"><label>Avatar Emoji</label><input type="text" id="story-emoji" placeholder="💑" maxlength="4"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Location</label><input type="text" id="story-location" placeholder="e.g. Lahore"></div>
+        <div class="form-group"><label>Married Date</label><input type="text" id="story-date" placeholder="e.g. March 2025"></div>
+      </div>
+      <div class="form-group"><label>Package</label>
+        <select id="story-package">
+          <option value="">—</option>
+          <option value="basic">Basic</option>
+          <option value="premium">Premium</option>
+          <option value="executive">Executive</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Their Story</label><textarea id="story-text" placeholder="A few sentences about how they matched and married" style="min-height:90px"></textarea></div>
+      <button class="btn-sm btn-sm-primary" onclick="createStory()">Add Story</button>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:1.2rem 1.5rem"><span class="card-title">All Success Stories</span></div>
+    <table>
+      <thead><tr><th>Couple</th><th>Location / Date</th><th>Story</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="stories-table-body">
+        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
       </tbody>
     </table>
   </div>
@@ -1531,6 +1572,94 @@ var REPORT_REASON_LABELS = {
   other: '❓ Other'
 };
 
+// ══════════════════════════════════════════
+//  SUCCESS STORIES PANEL — LIVE DATA
+// ══════════════════════════════════════════
+async function loadStoriesPanel() {
+  var tbody = document.getElementById('stories-table-body');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  try {
+    var data = await adminAPI('/admin/success-stories');
+    if (!data.success) throw new Error(data.message);
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">No success stories yet. Add one above.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(function(s) {
+      var statusBadge = s.is_published
+        ? '<span style="color:var(--green);font-weight:600;font-size:.8rem">✓ Published</span>'
+        : '<span style="color:var(--mid);font-size:.8rem">Draft</span>';
+      var toggleLabel = s.is_published ? 'Unpublish' : 'Publish';
+      return '<tr>' +
+        '<td><strong>' + s.avatar_emoji + ' ' + s.couple_names + '</strong></td>' +
+        '<td style="font-size:.82rem;color:var(--mid)">' + [s.location, s.married_date].filter(Boolean).join(' · ') + '</td>' +
+        '<td style="max-width:260px;font-size:.82rem;color:var(--mid)">' + s.story.slice(0, 100) + (s.story.length > 100 ? '…' : '') + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' +
+        '<button class="action-btn" onclick="toggleStoryPublish(' + s.id + ', ' + !!s.is_published + ')">' + toggleLabel + '</button> ' +
+        '<button class="action-btn" style="color:var(--rose)" onclick="deleteStoryAction(' + s.id + ')">Delete</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function createStory() {
+  var coupleNames = document.getElementById('story-couple').value.trim();
+  var story = document.getElementById('story-text').value.trim();
+
+  if (!coupleNames || !story) {
+    alert('Couple names and story are required.');
+    return;
+  }
+
+  var result = await adminAPI('/admin/success-stories', 'POST', {
+    couple_names: coupleNames,
+    story: story,
+    location: document.getElementById('story-location').value.trim(),
+    married_date: document.getElementById('story-date').value.trim(),
+    package: document.getElementById('story-package').value,
+    avatar_emoji: document.getElementById('story-emoji').value.trim() || '💑'
+  });
+
+  if (result.success) {
+    document.getElementById('story-couple').value = '';
+    document.getElementById('story-text').value = '';
+    document.getElementById('story-location').value = '';
+    document.getElementById('story-date').value = '';
+    document.getElementById('story-emoji').value = '';
+    document.getElementById('story-package').value = '';
+    loadStoriesPanel();
+  } else {
+    alert(result.message || 'Could not create story.');
+  }
+}
+
+async function toggleStoryPublish(id, currentlyPublished) {
+  var result = await adminAPI('/admin/success-stories/' + id, 'PUT', { is_published: !currentlyPublished });
+  if (result.success) {
+    loadStoriesPanel();
+  } else {
+    alert(result.message || 'Could not update story.');
+  }
+}
+
+async function deleteStoryAction(id) {
+  if (!confirm('Delete this success story permanently?')) return;
+  var result = await adminAPI('/admin/success-stories/' + id, 'DELETE');
+  if (result.success) {
+    loadStoriesPanel();
+  } else {
+    alert(result.message || 'Could not delete story.');
+  }
+}
+
 async function loadFlaggedPanel() {
   var tbody = document.getElementById('flagged-table-body');
   var status = document.getElementById('flagged-status-filter').value;
@@ -1803,6 +1932,7 @@ showPanel = function(id, btn) {
   if (id === 'pending')     loadPendingPayments();
   if (id === 'successfee')  loadSuccessFeePanel();
   if (id === 'flagged')     loadFlaggedPanel();
+  if (id === 'stories')     loadStoriesPanel();
   if (id === 'reports')     loadReportsPanel();
   if (id === 'settings')    loadSettingsPanel();
 };
