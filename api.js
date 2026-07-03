@@ -74,6 +74,8 @@ async function submitRegistration() {
     whatsapp:            gv('f-whatsapp'),
     email:               gv('f-email'),
     password:            document.getElementById('f-password') ? document.getElementById('f-password').value : '',
+    profile_for:         (typeof selectedProfileFor !== 'undefined' ? selectedProfileFor : 'self_male'),
+    guardian_name:       gv('f-guardianname'),
     gender:              gv('f-gender'),
     date_of_birth:       gv('f-dob'),
     marital_status:      gv('f-marital'),
