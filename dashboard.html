@@ -150,6 +150,10 @@ a{text-decoration:none;color:inherit}
   background:linear-gradient(135deg,#FDE8EF,#FAD0DE);position:relative}
 .pc-badge{position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;
   padding:3px 8px;border-radius:10px;background:#E8F5F0;color:var(--green)}
+.pc-save-btn{position:absolute;top:8px;left:8px;width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,0.9);border:none;cursor:pointer;font-size:1.05rem;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.12)}
+.pc-save-btn:hover{transform:scale(1.08)}
 .pc-body{padding:1rem 1.1rem}
 .pc-name{font-weight:700;font-size:.94rem;margin-bottom:.2rem}
 .pc-meta{font-size:.78rem;color:var(--mid);line-height:1.5;margin-bottom:.7rem}
@@ -234,7 +238,7 @@ a{text-decoration:none;color:inherit}
 .detail-close{position:absolute;top:1.1rem;right:1.1rem;background:var(--light);border:none;
   border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem}
 .detail-photo{width:100%;height:200px;border-radius:14px;background:linear-gradient(135deg,#FDE8EF,#FAD0DE);
-  display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:1.2rem}
+  display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:1.2rem;position:relative}
 .detail-name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:.2rem}
 .detail-meta{color:var(--mid);font-size:.86rem;margin-bottom:1.2rem}
 .detail-field{display:flex;padding:.5rem 0;border-bottom:1px solid var(--light);font-size:.84rem}
@@ -292,6 +296,9 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="nav-item" onclick="showPanel('matches', this)">
       <span class="nav-item-icon">💍</span>My Matches
+    </div>
+    <div class="nav-item" onclick="showPanel('saved', this)">
+      <span class="nav-item-icon">🤍</span>Saved
     </div>
     <div class="nav-item" onclick="showPanel('interests', this)">
       <span class="nav-item-icon">💌</span>Interests
@@ -486,6 +493,16 @@ a{text-decoration:none;color:inherit}
       </div>
     </div>
 
+    <!-- ══════════ SAVED ══════════ -->
+    <div class="panel" id="panel-saved">
+      <h1 class="page-title">Saved Profiles</h1>
+      <p class="page-sub">Profiles you've shortlisted to consider later</p>
+
+      <div id="saved-results">
+        <div class="loading-spinner">Loading saved profiles...</div>
+      </div>
+    </div>
+
     <!-- ══════════ INTERESTS ══════════ -->
     <div class="panel" id="panel-interests">
       <h1 class="page-title">Interests</h1>
@@ -634,6 +651,7 @@ function showPanel(id, navEl) {
   if (id === 'profile')     { loadProfileForm(); loadBlockedMembers(); }
   if (id === 'browse')      loadBrowseProfiles(1);
   if (id === 'matches')     loadMyMatches();
+  if (id === 'saved')       loadSavedProfiles();
   if (id === 'interests')   loadInterests();
   if (id === 'messages')    loadMessagesPanel();
   if (id === 'notifications') loadNotifications();
@@ -871,9 +889,12 @@ async function loadBrowseProfiles(page) {
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var activity = formatLastActive(p.last_active_at);
+    var saveIcon = p.is_saved ? '❤️' : '🤍';
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + verifiedBadge + '</div>' +
+      '<div class="pc-top">' + photo + verifiedBadge +
+      '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
+      '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-name">' + (p.display_name || p.full_name) + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
@@ -885,6 +906,21 @@ async function loadBrowseProfiles(page) {
   html += '</div>';
 
   container.innerHTML = html;
+}
+
+async function toggleSaveProfile(uuid, isSaved, el) {
+  var endpoint = isSaved ? '/member/unsave' : '/member/save';
+  var result = await apiCall(endpoint, 'POST', { saved_uuid: uuid });
+  if (result.success) {
+    var newState = !isSaved;
+    el.textContent = newState ? '❤️' : '🤍';
+    el.setAttribute('onclick', "event.stopPropagation();toggleSaveProfile('" + uuid + "', " + newState + ", this)");
+    if (typeof loadSavedProfiles === 'function' && document.getElementById('panel-saved') && document.getElementById('panel-saved').classList.contains('active')) {
+      loadSavedProfiles();
+    }
+  } else {
+    alert(result.message || 'Could not update saved list.');
+  }
 }
 
 async function sendInterestTo(uuid, btnEl) {
@@ -912,6 +948,8 @@ async function viewProfileDetail(uuid) {
   var p = result.data;
   var initial = p.gender === 'Male' ? '👨' : '👩';
   var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : initial;
+  var saveIcon = p.is_saved ? '❤️' : '🤍';
+  var saveBtn = '<button class="pc-save-btn" onclick="toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>';
 
   var matchBadge = p.is_mutual_match
     ? '<div style="text-align:center;margin-bottom:.8rem"><span class="interest-status is-accepted">✓ Mutual Match — full profile unlocked</span></div>'
@@ -923,7 +961,7 @@ async function viewProfileDetail(uuid) {
 
   var html =
     matchBadge +
-    '<div class="detail-photo">' + photo + '</div>' +
+    '<div class="detail-photo">' + photo + saveBtn + '</div>' +
     '<div class="detail-name">' + (p.display_name || p.full_name) + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
     (formatLastActive(p.last_active_at).label ? '<div class="detail-meta" style="margin-top:-.9rem">' + formatLastActive(p.last_active_at).dot + formatLastActive(p.last_active_at).label + '</div>' : '') +
@@ -1038,15 +1076,51 @@ async function loadMyMatches() {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
     var activity = formatLastActive(p.last_active_at);
+    var saveIcon = p.is_saved ? '❤️' : '🤍';
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + '</div>' +
+      '<div class="pc-top">' + photo +
+      '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
+      '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
       '<div class="pc-name">' + (p.display_name || p.full_name) + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       (p.admin_notes ? '<div class="pc-meta" style="font-style:italic;color:var(--burg)">"' + p.admin_notes + '"</div>' : '') +
+      '<div class="pc-actions">' +
+      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      '</div></div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+async function loadSavedProfiles() {
+  var container = document.getElementById('saved-results');
+  container.innerHTML = '<div class="loading-spinner">Loading saved profiles...</div>';
+
+  var result = await apiCall('/member/saved', 'GET');
+  if (!result.success || !result.data.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">🤍</div>You haven\'t saved any profiles yet. Tap the heart icon on any profile to shortlist it here.</div>';
+    return;
+  }
+
+  var html = '<div class="profiles-grid">';
+  result.data.forEach(function(p) {
+    var initial = p.gender === 'Male' ? '👨' : '👩';
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var activity = formatLastActive(p.last_active_at);
+    html +=
+      '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
+      '<div class="pc-top">' + photo + verifiedBadge +
+      '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', true, this)">❤️</button>' +
+      '</div>' +
+      '<div class="pc-body">' +
+      '<div class="pc-name">' + (p.display_name || p.full_name) + '</div>' +
+      '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
+      (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
       '</div></div></div>';
