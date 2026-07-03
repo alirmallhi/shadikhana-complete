@@ -312,6 +312,10 @@ function adminLogout() {
   <button class="nav-item" onclick="showPanel('successfee',this)">
     <span class="nav-item-icon">🏆</span>Success Fees
   </button>
+  <button class="nav-item" onclick="showPanel('flagged',this)">
+    <span class="nav-item-icon">🚩</span>Flagged Members
+    <span class="nav-badge" id="flagged-badge" style="display:none">—</span>
+  </button>
   <button class="nav-item" onclick="showPanel('reports',this)">
     <span class="nav-item-icon">📈</span>Reports
   </button>
@@ -524,6 +528,27 @@ function adminLogout() {
       <thead><tr><th>Member</th><th>Package</th><th>Amount Due</th><th>Contact</th><th>Actions</th></tr></thead>
       <tbody id="successfee-table-body">
         <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ FLAGGED MEMBERS (member reports) ══════════ -->
+    <div class="panel" id="panel-flagged">
+  <div class="filter-bar" style="margin-bottom:1.2rem">
+    <select class="filter-select" id="flagged-status-filter" onchange="loadFlaggedPanel()">
+      <option value="pending">Pending Review</option>
+      <option value="reviewed">Reviewed</option>
+      <option value="actioned">Actioned</option>
+      <option value="dismissed">Dismissed</option>
+    </select>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:1.2rem 1.5rem"><span class="card-title">Member Reports</span></div>
+    <table>
+      <thead><tr><th>Reported Member</th><th>Reported By</th><th>Reason</th><th>Details</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody id="flagged-table-body">
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
       </tbody>
     </table>
   </div>
@@ -1496,8 +1521,80 @@ async function loadSuccessFeePanel() {
 }
 
 // ══════════════════════════════════════════
-//  REPORTS PANEL — LIVE DATA
+//  FLAGGED MEMBERS PANEL (member reports) — LIVE DATA
 // ══════════════════════════════════════════
+var REPORT_REASON_LABELS = {
+  fake_profile: '🎭 Fake profile',
+  inappropriate_behavior: '⚠️ Inappropriate behavior',
+  already_married: '💍 Already married',
+  spam_scam: '🚨 Spam / scam',
+  other: '❓ Other'
+};
+
+async function loadFlaggedPanel() {
+  var tbody = document.getElementById('flagged-table-body');
+  var status = document.getElementById('flagged-status-filter').value;
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  try {
+    var data = await adminAPI('/admin/member-reports?status=' + status);
+    if (!data.success) throw new Error(data.message);
+
+    var badge = document.getElementById('flagged-badge');
+    if (status === 'pending' && data.data.length > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = data.data.length;
+    } else if (status === 'pending') {
+      badge.style.display = 'none';
+    }
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">No reports in this category.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(function(r) {
+      var reasonLabel = REPORT_REASON_LABELS[r.reason] || r.reason;
+      var date = new Date(r.created_at).toLocaleDateString();
+      var actions = '';
+      if (r.status === 'pending' || r.status === 'reviewed') {
+        actions =
+          '<button class="action-btn" onclick="handleReportAction(' + r.id + ', \'dismissed\', false)">Dismiss</button> ' +
+          '<button class="action-btn" style="color:var(--rose)" onclick="handleReportAction(' + r.id + ', \'actioned\', true)">Suspend Member</button>';
+      } else {
+        actions = '<span style="color:var(--mid);font-size:.8rem">' + r.status + '</span>';
+      }
+      return '<tr>' +
+        '<td><strong>' + r.reported_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + r.reported_account_status + '</span></td>' +
+        '<td>' + r.reporter_name + '</td>' +
+        '<td>' + reasonLabel + '</td>' +
+        '<td style="max-width:220px;font-size:.82rem;color:var(--mid)">' + (r.details || '—') + '</td>' +
+        '<td>' + date + '</td>' +
+        '<td>' + actions + '</td>' +
+      '</tr>';
+    }).join('');
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function handleReportAction(reportId, status, suspend) {
+  if (suspend && !confirm('This will suspend the reported member\'s account immediately. Continue?')) return;
+
+  var result = await adminAPI('/admin/member-reports/' + reportId, 'PUT', {
+    status: status,
+    suspend_reported: suspend
+  });
+
+  if (result.success) {
+    loadFlaggedPanel();
+  } else {
+    alert(result.message || 'Could not update report.');
+  }
+}
+
+
 async function loadReportsPanel() {
   try {
     var dashData    = await adminAPI('/admin/dashboard');
@@ -1705,6 +1802,7 @@ showPanel = function(id, btn) {
   if (id === 'payments')    loadPaymentsPanel(1);
   if (id === 'pending')     loadPendingPayments();
   if (id === 'successfee')  loadSuccessFeePanel();
+  if (id === 'flagged')     loadFlaggedPanel();
   if (id === 'reports')     loadReportsPanel();
   if (id === 'settings')    loadSettingsPanel();
 };
