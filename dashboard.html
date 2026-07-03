@@ -441,6 +441,13 @@ a{text-decoration:none;color:inherit}
           <button type="button" class="btn-save" onclick="saveProfile()">Save Changes</button>
           <span id="profile-save-status" style="margin-left:1rem;font-size:.84rem;color:var(--green);display:none">✅ Saved successfully!</span>
         </form>
+
+        <div style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--light)">
+          <div class="form-section-label">🚫 Blocked Members</div>
+          <div id="blocked-members-list" style="margin-top:.8rem">
+            <div style="font-size:.84rem;color:var(--mid)">Loading...</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -534,6 +541,36 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
+<!-- REPORT MODAL -->
+<div class="overlay" id="overlay-report">
+  <div class="detail-modal" style="max-width:420px">
+    <button class="detail-close" onclick="closeReportModal()">✕</button>
+    <div style="padding:.5rem 0 1rem">
+      <h3 style="font-size:1.1rem;margin-bottom:.3rem">🚩 Report <span id="report-target-name"></span></h3>
+      <p style="font-size:.82rem;color:var(--mid);margin-bottom:1.2rem">Our team reviews every report. This won't notify the member.</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem">
+        <label style="display:flex;align-items:center;gap:.6rem;font-size:.86rem;cursor:pointer">
+          <input type="radio" name="report-reason" value="fake_profile"> Fake or fraudulent profile
+        </label>
+        <label style="display:flex;align-items:center;gap:.6rem;font-size:.86rem;cursor:pointer">
+          <input type="radio" name="report-reason" value="inappropriate_behavior"> Inappropriate behavior
+        </label>
+        <label style="display:flex;align-items:center;gap:.6rem;font-size:.86rem;cursor:pointer">
+          <input type="radio" name="report-reason" value="already_married"> Already married / not seeking rishta
+        </label>
+        <label style="display:flex;align-items:center;gap:.6rem;font-size:.86rem;cursor:pointer">
+          <input type="radio" name="report-reason" value="spam_scam"> Spam or scam
+        </label>
+        <label style="display:flex;align-items:center;gap:.6rem;font-size:.86rem;cursor:pointer">
+          <input type="radio" name="report-reason" value="other"> Other
+        </label>
+      </div>
+      <textarea id="report-details" placeholder="Additional details (optional)" style="width:100%;min-height:70px;padding:.7rem;border:1.5px solid var(--light);border-radius:8px;font-family:inherit;font-size:.85rem;margin-bottom:1rem"></textarea>
+      <button class="btn-save" id="report-submit-btn" style="width:100%" onclick="submitReport()">Submit Report</button>
+    </div>
+  </div>
+</div>
+
 <script src="/api.js"></script>
 <script>
 // ══════════════════════════════════════════
@@ -590,7 +627,7 @@ function showPanel(id, navEl) {
   }
 
   if (id === 'home')        renderDashboardHome();
-  if (id === 'profile')     loadProfileForm();
+  if (id === 'profile')     { loadProfileForm(); loadBlockedMembers(); }
   if (id === 'browse')      loadBrowseProfiles(1);
   if (id === 'matches')     loadMyMatches();
   if (id === 'interests')   loadInterests();
@@ -689,6 +726,40 @@ async function savePhotoPrivacy(isChecked) {
   } else {
     alert(result.message || 'Could not update photo privacy. Please try again.');
     document.getElementById('p-priv_photo').checked = !isChecked;
+  }
+}
+
+async function loadBlockedMembers() {
+  var container = document.getElementById('blocked-members-list');
+  if (!container) return;
+
+  var result = await apiCall('/member/blocked', 'GET');
+  if (!result.success) {
+    container.innerHTML = '<div style="font-size:.84rem;color:var(--mid)">Could not load blocked members.</div>';
+    return;
+  }
+
+  if (!result.data.length) {
+    container.innerHTML = '<div style="font-size:.84rem;color:var(--mid)">You haven\'t blocked anyone.</div>';
+    return;
+  }
+
+  container.innerHTML = result.data.map(function(m) {
+    var name = m.display_name || m.full_name || 'Member';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--light);font-size:.86rem">' +
+      '<span>' + name + '</span>' +
+      '<button class="btn-outline-sm" data-uuid="' + m.uuid + '" data-name="' + escapeHtml(name) + '" onclick="unblockMemberAction(this.dataset.uuid, this.dataset.name)">Unblock</button>' +
+      '</div>';
+  }).join('');
+}
+
+async function unblockMemberAction(uuid, name) {
+  if (!confirm('Unblock ' + name + '?')) return;
+  var result = await apiCall('/member/unblock', 'POST', { blocked_uuid: uuid });
+  if (result.success) {
+    loadBlockedMembers();
+  } else {
+    alert(result.message || 'Could not unblock member.');
   }
 }
 
@@ -850,7 +921,11 @@ async function viewProfileDetail(uuid) {
     (p.mobile ? detailField('Mobile', p.mobile) : '') +
     (p.whatsapp ? detailField('WhatsApp', '<a href="https://wa.me/' + p.whatsapp.replace(/[^0-9]/g,'') + '" target="_blank" style="color:var(--wa);font-weight:700">' + p.whatsapp + '</a>') : '') +
     (p.about_me ? detailField('About', p.about_me) : '') +
-    actionBtn;
+    actionBtn +
+    '<div style="display:flex;gap:1rem;justify-content:center;margin-top:1rem">' +
+    '<button style="background:none;border:none;color:var(--mid);font-size:.78rem;cursor:pointer;text-decoration:underline" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name) + '" onclick="blockMemberAction(this.dataset.uuid, this.dataset.name)">🚫 Block</button>' +
+    '<button style="background:none;border:none;color:var(--mid);font-size:.78rem;cursor:pointer;text-decoration:underline" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name) + '" onclick="openReportModal(this.dataset.uuid, this.dataset.name)">🚩 Report</button>' +
+    '</div>';
 
   document.getElementById('detail-content').innerHTML = html;
   document.getElementById('overlay-detail').classList.add('open');
@@ -862,6 +937,66 @@ function detailField(label, value) {
 
 function closeDetailModal() {
   document.getElementById('overlay-detail').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+//  BLOCK / REPORT
+// ══════════════════════════════════════════
+var reportTargetUuid = null;
+
+async function blockMemberAction(uuid, name) {
+  if (!confirm('Block ' + name + '? You will no longer see each other\'s profiles, and neither of you can send interest or messages.')) {
+    return;
+  }
+  var result = await apiCall('/member/block', 'POST', { blocked_uuid: uuid });
+  if (result.success) {
+    alert(name + ' has been blocked.');
+    closeDetailModal();
+    if (typeof loadBrowseProfiles === 'function') loadBrowseProfiles(1);
+  } else {
+    alert(result.message || 'Could not block member.');
+  }
+}
+
+function openReportModal(uuid, name) {
+  reportTargetUuid = uuid;
+  document.getElementById('report-target-name').textContent = name;
+  document.getElementById('report-details').value = '';
+  document.querySelectorAll('input[name="report-reason"]').forEach(function(el) { el.checked = false; });
+  document.getElementById('overlay-report').classList.add('open');
+}
+
+function closeReportModal() {
+  document.getElementById('overlay-report').classList.remove('open');
+  reportTargetUuid = null;
+}
+
+async function submitReport() {
+  var selected = document.querySelector('input[name="report-reason"]:checked');
+  if (!selected) {
+    alert('Please select a reason.');
+    return;
+  }
+  var btn = document.getElementById('report-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  var result = await apiCall('/member/report', 'POST', {
+    reported_uuid: reportTargetUuid,
+    reason: selected.value,
+    details: document.getElementById('report-details').value
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Submit Report';
+
+  if (result.success) {
+    alert('Report submitted. Thank you for helping keep ShadiKhana safe.');
+    closeReportModal();
+    closeDetailModal();
+  } else {
+    alert(result.message || 'Could not submit report.');
+  }
 }
 
 // ══════════════════════════════════════════
