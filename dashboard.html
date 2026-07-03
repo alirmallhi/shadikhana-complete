@@ -168,6 +168,10 @@ a{text-decoration:none;color:inherit}
   padding:.5rem;font-size:.78rem;font-weight:600;cursor:pointer}
 .btn-interest-sm:hover{background:var(--rose)}
 .btn-interest-sm:disabled{background:var(--light);color:var(--mid);cursor:not-allowed}
+.btn-compliment-sm{background:var(--white);border:1.5px solid var(--gold);color:#8A6A2E;border-radius:8px;
+  padding:.5rem .6rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-compliment-sm:hover{background:var(--gold);color:#fff}
+.btn-compliment-sm:disabled{background:var(--light);border-color:var(--light);color:var(--mid);cursor:not-allowed}
 
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--mid)}
 .empty-state .ei{font-size:2.5rem;margin-bottom:.8rem}
@@ -299,6 +303,10 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="nav-item" onclick="showPanel('saved', this)">
       <span class="nav-item-icon">🤍</span>Saved
+    </div>
+    <div class="nav-item" onclick="showPanel('compliments', this)">
+      <span class="nav-item-icon">😊</span>Compliments
+      <span class="nav-badge" id="compliments-badge" style="display:none">0</span>
     </div>
     <div class="nav-item" onclick="showPanel('interests', this)">
       <span class="nav-item-icon">💌</span>Interests
@@ -503,6 +511,16 @@ a{text-decoration:none;color:inherit}
       </div>
     </div>
 
+    <!-- ══════════ COMPLIMENTS ══════════ -->
+    <div class="panel" id="panel-compliments">
+      <h1 class="page-title">Compliments Received</h1>
+      <p class="page-sub">People who've sent you a friendly icebreaker</p>
+
+      <div id="compliments-results">
+        <div class="loading-spinner">Loading compliments...</div>
+      </div>
+    </div>
+
     <!-- ══════════ INTERESTS ══════════ -->
     <div class="panel" id="panel-interests">
       <h1 class="page-title">Interests</h1>
@@ -592,6 +610,20 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
+<!-- COMPLIMENT MODAL -->
+<div class="overlay" id="overlay-compliment">
+  <div class="detail-modal" style="max-width:420px">
+    <button class="detail-close" onclick="closeComplimentModal()">✕</button>
+    <div style="padding:.5rem 0 1rem">
+      <h3 style="font-size:1.1rem;margin-bottom:.3rem">😊 Send a Compliment to <span id="compliment-target-name"></span></h3>
+      <p style="font-size:.82rem;color:var(--mid);margin-bottom:1.2rem">A friendly way to break the ice — one compliment per profile.</p>
+      <div id="compliment-presets" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem"></div>
+      <textarea id="compliment-custom" placeholder="Or write your own (150 characters max)" maxlength="150" style="width:100%;min-height:60px;padding:.7rem;border:1.5px solid var(--light);border-radius:8px;font-family:inherit;font-size:.85rem;margin-bottom:1rem"></textarea>
+      <button class="btn-save" id="compliment-submit-btn" style="width:100%" onclick="submitCompliment()">Send Compliment</button>
+    </div>
+  </div>
+</div>
+
 <script src="/api.js"></script>
 <script>
 // ══════════════════════════════════════════
@@ -622,6 +654,7 @@ async function initDashboard() {
   renderDashboardHome();
   loadInterestsCount();
   loadMessagesCount();
+  loadComplimentsBadgeCount();
 }
 
 function renderUserChip() {
@@ -652,6 +685,7 @@ function showPanel(id, navEl) {
   if (id === 'browse')      loadBrowseProfiles(1);
   if (id === 'matches')     loadMyMatches();
   if (id === 'saved')       loadSavedProfiles();
+  if (id === 'compliments') loadCompliments();
   if (id === 'interests')   loadInterests();
   if (id === 'messages')    loadMessagesPanel();
   if (id === 'notifications') loadNotifications();
@@ -901,6 +935,9 @@ async function loadBrowseProfiles(page) {
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      (p.has_complimented
+        ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
+        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -957,7 +994,10 @@ async function viewProfileDetail(uuid) {
 
   var actionBtn = p.is_mutual_match
     ? '<button class="btn-save" style="width:100%;margin-top:1.2rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="closeDetailModal();startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>'
-    : '<button class="btn-save" style="width:100%;margin-top:1.2rem" onclick="sendInterestTo(\'' + p.uuid + '\', this);this.textContent=\'Sending...\'">Send Interest</button>';
+    : '<button class="btn-save" style="width:100%;margin-top:1.2rem" onclick="sendInterestTo(\'' + p.uuid + '\', this);this.textContent=\'Sending...\'">Send Interest</button>' +
+      (p.has_complimented
+        ? '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" disabled>✓ Compliment Sent</button>'
+        : '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="openComplimentModal(this.dataset.uuid, this.dataset.name)">😊 Send a Compliment</button>');
 
   var html =
     matchBadge +
@@ -1059,6 +1099,69 @@ async function submitReport() {
 }
 
 // ══════════════════════════════════════════
+//  COMPLIMENTS (icebreaker)
+// ══════════════════════════════════════════
+var complimentTargetUuid = null;
+var complimentPresetsCache = null;
+
+async function openComplimentModal(uuid, name) {
+  complimentTargetUuid = uuid;
+  document.getElementById('compliment-target-name').textContent = name;
+  document.getElementById('compliment-custom').value = '';
+
+  var presetsContainer = document.getElementById('compliment-presets');
+  presetsContainer.innerHTML = '<div style="font-size:.82rem;color:var(--mid)">Loading...</div>';
+  document.getElementById('overlay-compliment').classList.add('open');
+
+  if (!complimentPresetsCache) {
+    var result = await apiCall('/compliment-presets', 'GET');
+    complimentPresetsCache = result.success ? result.data : [];
+  }
+
+  presetsContainer.innerHTML = complimentPresetsCache.map(function(preset, i) {
+    return '<label style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;cursor:pointer;padding:.5rem;border:1.5px solid var(--light);border-radius:8px">' +
+      '<input type="radio" name="compliment-preset" value="' + escapeHtml(preset) + '"> ' + preset +
+      '</label>';
+  }).join('');
+}
+
+function closeComplimentModal() {
+  document.getElementById('overlay-compliment').classList.remove('open');
+  complimentTargetUuid = null;
+}
+
+async function submitCompliment() {
+  var selected = document.querySelector('input[name="compliment-preset"]:checked');
+  var customText = document.getElementById('compliment-custom').value.trim();
+  var message = customText || (selected ? selected.value : '');
+
+  if (!message) {
+    alert('Please choose a compliment or write your own.');
+    return;
+  }
+
+  var btn = document.getElementById('compliment-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  var result = await apiCall('/member/compliment', 'POST', {
+    receiver_uuid: complimentTargetUuid,
+    message: message
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Send Compliment';
+
+  if (result.success) {
+    alert('Compliment sent! 😊');
+    closeComplimentModal();
+    closeDetailModal();
+  } else {
+    alert(result.message || 'Could not send compliment.');
+  }
+}
+
+// ══════════════════════════════════════════
 //  MY MATCHES
 // ══════════════════════════════════════════
 async function loadMyMatches() {
@@ -1090,6 +1193,9 @@ async function loadMyMatches() {
       (p.admin_notes ? '<div class="pc-meta" style="font-style:italic;color:var(--burg)">"' + p.admin_notes + '"</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      (p.has_complimented
+        ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
+        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -1123,9 +1229,57 @@ async function loadSavedProfiles() {
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      (p.has_complimented
+        ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
+        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
+  container.innerHTML = html;
+}
+
+async function loadComplimentsBadgeCount() {
+  var result = await apiCall('/member/compliments/unread-count', 'GET');
+  var badge = document.getElementById('compliments-badge');
+  if (result.success && result.data.count > 0) {
+    badge.style.display = 'inline-block';
+    badge.textContent = result.data.count;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+async function loadCompliments() {
+  var container = document.getElementById('compliments-results');
+  container.innerHTML = '<div class="loading-spinner">Loading compliments...</div>';
+
+  var result = await apiCall('/member/compliments', 'GET');
+  if (!result.success || !result.data.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">😊</div>No compliments yet. When someone sends you one, it\'ll show up here.</div>';
+    document.getElementById('compliments-badge').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('compliments-badge').style.display = 'none';
+
+  var html = result.data.map(function(c) {
+    var initial = '👤';
+    var photo = c.photo_url ? '<img src="' + c.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px">' : initial;
+    var name = c.display_name || c.full_name || 'ShadiKhana Member';
+    var date = new Date(c.created_at).toLocaleDateString();
+    return '<div class="interest-row">' +
+      '<div class="interest-av" style="cursor:pointer" onclick="viewProfileDetail(\'' + c.uuid + '\')">' + photo + '</div>' +
+      '<div class="interest-info" style="cursor:pointer" onclick="viewProfileDetail(\'' + c.uuid + '\')">' +
+      '<div class="interest-name">' + name + '</div>' +
+      '<div class="interest-meta">' + (c.age || '—') + ' yrs · ' + (c.city || '—') + '</div>' +
+      '<div style="font-size:.84rem;color:var(--burg);font-style:italic;margin-top:.3rem">"' + escapeHtml(c.message) + '"</div>' +
+      '<div style="font-size:.72rem;color:var(--mid);margin-top:.2rem">' + date + '</div>' +
+      '</div>' +
+      '<div class="interest-action-btns">' +
+      '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + c.uuid + '\')">View Profile</button>' +
+      '</div>' +
+      '</div>';
+  }).join('');
   container.innerHTML = html;
 }
 
@@ -1379,7 +1533,7 @@ async function loadNotifications() {
   var html = '';
   result.data.forEach(function(n) {
     html += '<div class="interest-row">' +
-      '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : '🔔') + '</div>' +
+      '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'compliment' ? '😊' : '🔔') + '</div>' +
       '<div class="interest-info">' +
       '<div class="interest-name">' + n.title + '</div>' +
       '<div class="interest-meta">' + n.body + '</div>' +
