@@ -153,6 +153,10 @@ a{text-decoration:none;color:inherit}
 .pc-body{padding:1rem 1.1rem}
 .pc-name{font-weight:700;font-size:.94rem;margin-bottom:.2rem}
 .pc-meta{font-size:.78rem;color:var(--mid);line-height:1.5;margin-bottom:.7rem}
+.pc-activity{display:flex;align-items:center;gap:6px;font-weight:600}
+.active-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.active-dot.online{background:#2DBE60;box-shadow:0 0 5px rgba(45,190,96,0.6)}
+.active-dot.today{background:var(--gold)}
 .pc-score{display:inline-block;background:rgba(123,29,58,0.08);color:var(--burg);
   font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:8px;margin-bottom:.6rem}
 .pc-actions{display:flex;gap:.5rem}
@@ -817,6 +821,20 @@ async function handlePhotoUpload(input) {
 // ══════════════════════════════════════════
 //  BROWSE PROFILES
 // ══════════════════════════════════════════
+function formatLastActive(timestamp) {
+  if (!timestamp) return { label: '', dot: '' };
+  var diffMs = Date.now() - new Date(timestamp).getTime();
+  var diffMins = Math.floor(diffMs / 60000);
+  var diffHours = Math.floor(diffMins / 60);
+  var diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 15)  return { label: 'Online now', dot: '<span class="active-dot online"></span>' };
+  if (diffHours < 24) return { label: 'Active today', dot: '<span class="active-dot today"></span>' };
+  if (diffDays < 7)   return { label: 'Active ' + diffDays + 'd ago', dot: '' };
+  if (diffDays < 30)  return { label: 'Active ' + Math.floor(diffDays / 7) + 'w ago', dot: '' };
+  return { label: '', dot: '' };
+}
+
 async function loadBrowseProfiles(page) {
   var container = document.getElementById('browse-results');
   container.innerHTML = '<div class="loading-spinner">Loading profiles...</div>';
@@ -852,12 +870,14 @@ async function loadBrowseProfiles(page) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var activity = formatLastActive(p.last_active_at);
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
       '<div class="pc-top">' + photo + verifiedBadge + '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-name">' + (p.display_name || p.full_name) + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
+      (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
       '</div></div></div>';
@@ -906,6 +926,7 @@ async function viewProfileDetail(uuid) {
     '<div class="detail-photo">' + photo + '</div>' +
     '<div class="detail-name">' + (p.display_name || p.full_name) + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
+    (formatLastActive(p.last_active_at).label ? '<div class="detail-meta" style="margin-top:-.9rem">' + formatLastActive(p.last_active_at).dot + formatLastActive(p.last_active_at).label + '</div>' : '') +
     detailField('Religion / Sect', (p.religion || '—') + ' / ' + (p.sect || '—')) +
     detailField('Education', p.education || '—') +
     detailField('Profession', p.profession || '—') +
@@ -1016,6 +1037,7 @@ async function loadMyMatches() {
   result.data.forEach(function(p) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var activity = formatLastActive(p.last_active_at);
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
       '<div class="pc-top">' + photo + '</div>' +
@@ -1023,6 +1045,7 @@ async function loadMyMatches() {
       '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
       '<div class="pc-name">' + (p.display_name || p.full_name) + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
+      (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       (p.admin_notes ? '<div class="pc-meta" style="font-style:italic;color:var(--burg)">"' + p.admin_notes + '"</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
