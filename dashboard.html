@@ -373,6 +373,11 @@ a{text-decoration:none;color:inherit}
         </div>
       </div>
 
+      <div class="card" id="todays-picks-card" style="display:none">
+        <div class="card-header"><span class="card-title">✨ Today's Picks</span></div>
+        <div id="todays-picks-results" style="padding:1.2rem 1.5rem 1.5rem"></div>
+      </div>
+
       <div class="card">
         <div class="card-header"><span class="card-title">Quick Actions</span></div>
         <div class="quick-actions">
@@ -655,6 +660,7 @@ async function initDashboard() {
   loadInterestsCount();
   loadMessagesCount();
   loadComplimentsBadgeCount();
+  loadTodaysPicks();
 }
 
 function renderUserChip() {
@@ -1164,6 +1170,39 @@ async function submitCompliment() {
 // ══════════════════════════════════════════
 //  MY MATCHES
 // ══════════════════════════════════════════
+async function loadTodaysPicks() {
+  var card = document.getElementById('todays-picks-card');
+  var container = document.getElementById('todays-picks-results');
+  if (!card || !container) return;
+
+  var result = await apiCall('/matches/today', 'GET');
+  if (!result.success || !result.data.length) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'block';
+  var html = '<div class="profiles-grid">';
+  result.data.forEach(function(p) {
+    var initial = p.gender === 'Male' ? '👨' : '👩';
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var activity = formatLastActive(p.last_active_at);
+    html +=
+      '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
+      '<div class="pc-top">' + photo + '</div>' +
+      '<div class="pc-body">' +
+      '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
+      '<div class="pc-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
+      (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
+      '<div class="pc-actions">' +
+      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      '</div></div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 async function loadMyMatches() {
   var container = document.getElementById('matches-results');
   container.innerHTML = '<div class="loading-spinner">Loading your matches...</div>';
