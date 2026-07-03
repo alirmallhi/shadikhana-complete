@@ -998,6 +998,10 @@ async function viewProfileDetail(uuid) {
     ? '<div style="text-align:center;margin-bottom:.8rem"><span class="interest-status is-accepted">✓ Mutual Match — full profile unlocked</span></div>'
     : '';
 
+  var guardianBadge = (p.profile_for === 'guardian')
+    ? '<div style="text-align:center;margin-bottom:.8rem"><span class="interest-status is-sent">🤲 Profile managed by ' + (p.guardian_name ? escapeHtml(p.guardian_name) + ' (parent/guardian)' : 'a parent/guardian') + '</span></div>'
+    : '';
+
   var actionBtn = p.is_mutual_match
     ? '<button class="btn-save" style="width:100%;margin-top:1.2rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="closeDetailModal();startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>'
     : '<button class="btn-save" style="width:100%;margin-top:1.2rem" onclick="sendInterestTo(\'' + p.uuid + '\', this);this.textContent=\'Sending...\'">Send Interest</button>' +
@@ -1007,6 +1011,7 @@ async function viewProfileDetail(uuid) {
 
   var html =
     matchBadge +
+    guardianBadge +
     '<div class="detail-photo">' + photo + saveBtn + '</div>' +
     '<div class="detail-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
