@@ -293,7 +293,7 @@ function adminLogout() {
   </button>
   <button class="nav-item" onclick="showPanel('members',this)">
     <span class="nav-item-icon">👥</span>Members
-    <span class="nav-badge">12</span>
+    <span class="nav-badge" id="members-badge">—</span>
   </button>
   <button class="nav-item" onclick="showPanel('matching',this)">
     <span class="nav-item-icon">🧠</span>Smart Matching
@@ -301,13 +301,13 @@ function adminLogout() {
   </button>
   <button class="nav-item" onclick="showPanel('payments',this)">
     <span class="nav-item-icon">💰</span>Payments
-    <span class="nav-badge">5</span>
+    <span class="nav-badge" id="payments-badge">—</span>
   </button>
 
   <div class="sidebar-section">Management</div>
   <button class="nav-item" onclick="showPanel('pending',this)">
     <span class="nav-item-icon">⏳</span>Pending Approvals
-    <span class="nav-badge">8</span>
+    <span class="nav-badge" id="pending-approvals-badge">—</span>
   </button>
   <button class="nav-item" onclick="showPanel('successfee',this)">
     <span class="nav-item-icon">🏆</span>Success Fees
@@ -1257,6 +1257,26 @@ async function loadDashboardStats() {
     document.getElementById('kpi-pending-note').textContent = d.members.pending > 0
       ? 'Needs attention'
       : 'All caught up ✓';
+
+    // Sidebar badges — real counts, not hardcoded placeholders
+    document.getElementById('members-badge').textContent = d.members.total;
+
+    var pendingApprovalsBadge = document.getElementById('pending-approvals-badge');
+    if (d.members.pending > 0) {
+      pendingApprovalsBadge.style.display = 'inline-block';
+      pendingApprovalsBadge.textContent = d.members.pending;
+    } else {
+      pendingApprovalsBadge.style.display = 'none';
+    }
+
+    var paymentsBadge = document.getElementById('payments-badge');
+    var pendingPaymentsCount = d.revenue.pending_count || 0;
+    if (pendingPaymentsCount > 0) {
+      paymentsBadge.style.display = 'inline-block';
+      paymentsBadge.textContent = pendingPaymentsCount;
+    } else {
+      paymentsBadge.style.display = 'none';
+    }
 
     // Quick stats — package breakdown
     var qs = document.getElementById('quick-stats-list');
