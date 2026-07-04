@@ -143,17 +143,7 @@ section{padding:96px 5%}
 
 /* PRICING */
 .plans{background:var(--ivory)}
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;align-items:start;max-width:1100px;margin:0 auto}
-.plan-card.executive{border-color:#1565C0;border-width:1.5px;background:linear-gradient(160deg,#F0F7FF 0%,#E8F2FF 60%,#F0F7FF 100%);color:#0D2B5E;box-shadow:0 20px 60px rgba(21,101,192,0.14)}
-.plan-card.executive .plan-name{color:#1565C0}
-.plan-card.executive .plan-price{color:#0D47A1}
-.plan-card.executive .plan-sub{color:#4A7FBF}
-.plan-card.executive .plan-success-fee{background:rgba(21,101,192,0.08);border-color:rgba(21,101,192,0.25);color:#1565C0}
-.plan-card.executive .plan-features li{color:#1A3560}
-.plan-card.executive .plan-features li::before{color:#1565C0}
-.plan-card.executive .btn-plan{background:#0D2B5E;color:#fff;font-weight:700;box-shadow:0 4px 16px rgba(21,101,192,0.35)}
-.plan-card.executive .btn-plan:hover{background:#1565C0}
-.exec-badge{position:absolute;top:0;right:20px;background:#0D2B5E;color:#fff;font-size:.65rem;font-weight:600;font-family:var(--font-mono);padding:5px 13px;border-radius:0 0 8px 8px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.plans-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem;align-items:start;max-width:800px;margin:0 auto}
 .plan-card{border-radius:16px;padding:2.2rem 1.8rem;position:relative;overflow:hidden;border:1.5px solid var(--hairline);background:var(--white);transition:transform .2s,box-shadow .2s}
 .plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(26,18,37,0.1)}
 .plan-card.featured{border-color:var(--ink);background:linear-gradient(160deg,var(--ink) 0%,#132B44 100%);color:#fff;transform:scale(1.04);box-shadow:0 24px 60px rgba(8,27,46,0.35)}
@@ -582,7 +572,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
             <div>
               <div class="pcard-name">Ahmed K., 30</div>
               <div class="pcard-meta">Karachi · Engineer · Sunni</div>
-              <div class="pcard-badge badge-featured">⭐ VIP Member</div>
+              <div class="pcard-badge badge-featured">⭐ Premium Member</div>
             </div>
           </div>
           <div class="pcard">
@@ -657,7 +647,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="step-num">1</div>
       <div class="step-icon">📝</div>
       <h3>Register & Choose Package</h3>
-      <p>Create your profile and pay a one-time registration fee. Basic, Premium, or VIP — your choice determines your features.</p>
+      <p>Create your profile and pay a one-time registration fee. Basic or Premium — your choice determines your features.</p>
       <div class="step-connector">→</div>
     </div>
     <div class="step fade-in">
@@ -678,7 +668,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="step-num">4</div>
       <div class="step-icon">💍</div>
       <h3>Finalise the Rishta</h3>
-      <p>When your rishta is confirmed, a one-time success fee applies — PKR 40,000 (Basic), PKR 70,000 (Premium), or PKR 1,00,000 (Executive). No match, no fee.</p>
+      <p>When your rishta is confirmed, a one-time success fee applies — PKR 40,000 (Basic) or PKR 1,10,000 (Premium). No match, no fee.</p>
     </div>
   </div>
 </section>
@@ -719,7 +709,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   <div class="section-header fade-in" style="text-align:center">
     <div class="section-label">Membership Packages</div>
     <h2 class="section-title">One-Time Registration. No Monthly Fees.</h2>
-    <p class="section-sub" style="max-width:620px;margin:0 auto">Pay once to register. No monthly charges — ever. A one-time success fee applies only when your rishta is successfully finalised. Our <strong style="color:var(--gold)">Executive / Overseas</strong> tier offers full white-glove service including family verification, background checks, and personal family meet-ups.</p>
+    <p class="section-sub" style="max-width:620px;margin:0 auto">Pay once to register. No monthly charges — ever. A one-time success fee applies only when your rishta is successfully finalised. Our <strong style="color:var(--gold)">Premium</strong> tier adds a dedicated matchmaker who personally arranges family meet-ups and office visits on your behalf.</p>
   </div>
   <div class="plans-grid">
     <!-- Basic -->
@@ -746,49 +736,25 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     </div>
     <!-- Premium -->
     <div class="plan-card featured fade-in">
-      <div class="plan-badge">Most Popular</div>
+      <div class="plan-badge">Full-Service</div>
       <div class="plan-icon">⭐</div>
       <div class="plan-name">Premium</div>
-      <div class="plan-price">PKR 30,000</div>
+      <div class="plan-price">PKR 40,000</div>
       <div class="plan-sub">One-time registration · No monthly charges</div>
-      <div class="plan-success-fee">💍 Success fee: PKR 70,000 (on confirmed match only)</div>
+      <div class="plan-success-fee">💍 Success fee: PKR 1,10,000 (on confirmed match only)</div>
       <ul class="plan-features">
-        <li>Everything in Basic</li>
+        <li>Everything in Basic, plus a dedicated human matchmaker</li>
         <li>Featured profile placement</li>
         <li>CNIC verification badge</li>
         <li>Priority in search results</li>
         <li>Unlimited messaging</li>
         <li>View full contact details</li>
-        <li>Dedicated online matchmaker</li>
-        <li>WhatsApp concierge support</li>
-        <li>In-person consultation — Lahore office</li>
-        <li>Home visit by matchmaker (Lahore)</li>
+        <li>Personal family meet-ups arranged by our team</li>
+        <li>In-person office consultation — Lahore</li>
+        <li>Home visits by your matchmaker</li>
+        <li>WhatsApp &amp; call concierge support</li>
       </ul>
-      <button class="btn-plan" onclick="openModal('register')">Register – Premium · PKR 30,000</button>
-    </div>
-    <!-- Executive / Overseas -->
-    <div class="plan-card executive fade-in">
-      <div class="exec-badge">👑 Business &amp; Overseas Elite</div>
-      <div class="plan-icon">🌐</div>
-      <div class="plan-name">Executive / Overseas</div>
-      <div class="plan-price">PKR 50,000</div>
-      <div class="plan-sub">One-time registration · Exclusively for business-class &amp; overseas families</div>
-      <div class="plan-success-fee">💍 Success fee: PKR 1,00,000 (on confirmed match only)</div>
-      <ul class="plan-features">
-        <li>Everything in Premium, plus full white-glove service</li>
-        <li>Exclusively for business-class &amp; overseas Pakistani families</li>
-        <li>Complete family background verification</li>
-        <li>CNIC, business &amp; social status verification</li>
-        <li>Personal one-on-one family meet-up arranged by ShadiKhana</li>
-        <li>Senior matchmaker attends initial family meeting</li>
-        <li>Home visit &amp; family assessment (Lahore &amp; nearby)</li>
-        <li>Overseas family liaison — coordinate across countries</li>
-        <li>Private, approval-only profile visibility</li>
-        <li>Dedicated senior relationship manager</li>
-        <li>Concierge WhatsApp &amp; video call support</li>
-        <li>Priority placement — top of all search results</li>
-      </ul>
-      <button class="btn-plan" onclick="openModal('register')">Register – Executive · PKR 50,000</button>
+      <button class="btn-plan" onclick="openModal('register')">Register – Premium · PKR 40,000</button>
     </div>
   </div>
 
@@ -796,7 +762,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <div class="sfn-icon">💡</div>
     <div>
       <div class="sfn-title">How Our Success Fee Works</div>
-      <p class="sfn-desc">We believe in earning only when you succeed. Your one-time registration gives full platform access with no time limit and no recurring charges. A one-time success fee applies only when your rishta is confirmed — <strong>PKR 40,000 for Basic</strong>, <strong>PKR 70,000 for Premium</strong>, and <strong>PKR 1,00,000 for Executive / Overseas</strong> members. For our Executive tier, the success fee covers the complete end-to-end service including family meetings, verifications, and matchmaker attendance — all included. <strong>If no match is made, no success fee is ever charged.</strong></p>
+      <p class="sfn-desc">We believe in earning only when you succeed. Your one-time registration gives full platform access with no time limit and no recurring charges. A one-time success fee applies only when your rishta is confirmed — <strong>PKR 40,000 for Basic</strong> and <strong>PKR 1,10,000 for Premium</strong> members. For Premium, that fee covers the complete personal service — family meet-ups, office and home visits, and your dedicated matchmaker's involvement throughout. <strong>If no match is made, no success fee is ever charged.</strong></p>
     </div>
   </div>
 
@@ -843,11 +809,11 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         </div>
         <div class="feature-item fade-in">
           <div class="feature-icon fi3">✅</div>
-          <div><h4>CNIC-Based Verification</h4><p>Available for Premium & VIP. A verified badge gives families the confidence that your profile is real and trustworthy.</p></div>
+          <div><h4>CNIC-Based Verification</h4><p>Available for Premium members. A verified badge gives families the confidence that your profile is real and trustworthy.</p></div>
         </div>
         <div class="feature-item fade-in">
           <div class="feature-icon fi4">📍</div>
-          <div><h4>In-Person &amp; Family Meet-Up Service</h4><p>Premium members get in-person consultations at our Lahore office. Executive / Overseas members receive a fully arranged family meet-up, with a senior ShadiKhana matchmaker present, plus home visits and overseas liaison support.</p></div>
+          <div><h4>In-Person &amp; Family Meet-Up Service</h4><p>Premium members get in-person consultations at our Lahore office, plus fully arranged family meet-ups with a senior ShadiKhana matchmaker present and home visits included.</p></div>
         </div>
         <div class="feature-item fade-in">
           <div class="feature-icon fi5">🔍</div>
@@ -888,7 +854,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 </section>
 
 
-<!-- EXECUTIVE SHOWCASE -->
+<!-- PREMIUM SHOWCASE -->
 <section style="background:linear-gradient(160deg,#03162A 0%,#072444 45%,#03162A 100%);padding:90px 5%;color:#fff;position:relative;overflow:hidden">
   <!-- decorative circles -->
   <div style="position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(184,147,74,0.12),transparent 70%);pointer-events:none"></div>
@@ -897,13 +863,13 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   <div style="max-width:1100px;margin:0 auto">
     <div style="text-align:center;margin-bottom:3.5rem">
       <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(33,150,243,0.15);border:1px solid rgba(33,150,243,0.35);color:#5BC4F5;padding:.35rem 1.1rem;border-radius:20px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.2rem">
-        🌐 Executive / Overseas Tier
+        ⭐ Premium Tier
       </div>
       <h2 style="font-family:var(--font-display);font-size:clamp(1.9rem,3.5vw,3rem);font-weight:700;line-height:1.2;margin-bottom:1rem">
-        Pakistan's Most Exclusive<br><span style="color:#5BC4F5">Matrimonial White-Glove Service</span>
+        A Dedicated Matchmaker,<br><span style="color:#5BC4F5">Personally Managing Your Search</span>
       </h2>
       <p style="font-size:1rem;color:rgba(255,255,255,0.65);max-width:580px;margin:0 auto;line-height:1.7">
-        Designed exclusively for business-class families, senior executives, and overseas Pakistanis — where privacy, discretion, and a personal touch matter most.
+        Everything on the platform, plus a real person arranging introductions, meetings, and every detail in between — for families who want a personal touch alongside the technology.
       </p>
     </div>
 
@@ -913,37 +879,37 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
         <div style="font-size:2.2rem;margin-bottom:1rem">🔍</div>
         <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Complete Family Background Verification</h3>
-        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">We conduct thorough family background checks — including CNIC verification, business standing, social reputation, and residential confirmation — so you engage only with verified, credible families.</p>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">We conduct thorough family background checks — including CNIC verification, and residential confirmation — so you engage only with verified, credible families.</p>
       </div>
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
         <div style="font-size:2.2rem;margin-bottom:1rem">🤝</div>
         <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Personal Family Meet-Up — Arranged by Us</h3>
-        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">Our senior matchmaker personally facilitates and attends the first family meeting — at your home, our Lahore office, or a neutral venue of your choosing. We handle all logistics so families can focus on what matters.</p>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">Your matchmaker personally facilitates and attends the first family meeting — at your home, our Lahore office, or a neutral venue of your choosing. We handle all logistics so families can focus on what matters.</p>
       </div>
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
         <div style="font-size:2.2rem;margin-bottom:1rem">🌍</div>
         <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Overseas Family Coordination</h3>
-        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">For UK, UAE, USA, and other diaspora families, we bridge the distance — coordinating with families in Pakistan on your behalf, arranging video introductions, and scheduling in-person meetings during visits.</p>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">For diaspora families abroad, we bridge the distance — coordinating with families in Pakistan on your behalf, arranging video introductions, and scheduling in-person meetings during visits.</p>
       </div>
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
         <div style="font-size:2.2rem;margin-bottom:1rem">🛡️</div>
         <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Strict Privacy &amp; Controlled Visibility</h3>
-        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">Your profile is never publicly visible. It is shown only to handpicked, verified families who meet your criteria — approved by our team first. Your privacy is treated as non-negotiable.</p>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">Your privacy settings are always respected. Full details are shown only once you've both mutually agreed to connect — never before.</p>
       </div>
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
         <div style="font-size:2.2rem;margin-bottom:1rem">👤</div>
-        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Dedicated Senior Relationship Manager</h3>
-        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">You are assigned a named, senior relationship manager who knows your profile, preferences, and family expectations inside out. Every update, every match, every meeting is handled personally by them.</p>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Dedicated Matchmaker</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">You're assigned a named matchmaker who knows your profile, preferences, and family expectations. Every update, every match, every meeting is handled personally by them.</p>
       </div>
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
         <div style="font-size:2.2rem;margin-bottom:1rem">📋</div>
-        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Curated, Handpicked Match Profiles Only</h3>
-        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">No endless browsing. Our senior matchmakers personally curate and present only the most suitable, verified profiles — saving your time and ensuring quality over quantity at every step.</p>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Curated, Handpicked Match Profiles</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">Your matchmaker personally curates and presents suitable, verified profiles — saving your time and ensuring quality over quantity at every step.</p>
       </div>
 
     </div>
@@ -951,11 +917,11 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <!-- CTA strip -->
     <div style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.3);border-radius:18px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
       <div>
-        <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Executive / Overseas Registration</div>
-        <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 50,000 one-time registration &nbsp;·&nbsp; PKR 1,00,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
+        <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Premium Registration</div>
+        <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 40,000 one-time registration &nbsp;·&nbsp; PKR 1,10,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
       </div>
       <a href="#" class="btn-primary" onclick="openModal('register');return false" style="background:linear-gradient(135deg,#2196F3,#0D6EBE);color:#fff;font-weight:700;white-space:nowrap;flex-shrink:0">
-        Register Executive →
+        Register Premium →
       </a>
     </div>
   </div>
@@ -1461,7 +1427,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div id="contact-direct-details" style="display:none">
         <div style="background:rgba(45,122,95,0.06);border:1.5px solid rgba(45,122,95,0.2);
                     border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:.84rem;color:#1A5C45">
-          <strong>✅ Direct contact enabled.</strong> Your mobile and WhatsApp will be shown to Premium & Executive members only.
+          <strong>✅ Direct contact enabled.</strong> Your mobile and WhatsApp will be shown to Premium members only.
           Basic members will still need to contact you through ShadiKhana.
         </div>
         <div class="form-row">
@@ -1565,7 +1531,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
           <div class="privacy-toggle-row">
             <div class="ptog-left">
               <div class="ptog-label">Income & Employer <span class="ptog-badge premium">Premium+ Only</span></div>
-              <div class="ptog-sub">Monthly income and employer name visible to Premium & Executive only</div>
+              <div class="ptog-sub">Monthly income and employer name visible to Premium only</div>
             </div>
             <label class="privacy-mini-toggle">
               <input type="checkbox" id="priv-income" onchange="updatePrivacySummary()">
@@ -1740,19 +1706,10 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <input type="radio" name="pkg" value="premium">
         <div class="psc-info">
           <div class="psc-name">⭐ Premium</div>
-          <div class="psc-price">PKR 30,000</div>
-          <div class="psc-desc">All features + Matchmaker + Lahore in-person · Success fee: PKR 70,000</div>
+          <div class="psc-price">PKR 40,000</div>
+          <div class="psc-desc">All features + dedicated matchmaker + family meet-ups arranged · Success fee: PKR 1,10,000</div>
         </div>
-        <span class="psc-badge" style="background:rgba(107,21,48,0.1);color:var(--burgundy)">Popular</span>
-      </div>
-      <div onclick="selectPlan(this,'executive')" class="plan-select-card">
-        <input type="radio" name="pkg" value="executive">
-        <div class="psc-info">
-          <div class="psc-name">🌐 Executive / Overseas</div>
-          <div class="psc-price" style="color:var(--gold)">PKR 50,000</div>
-          <div class="psc-desc">Business-class &amp; overseas families · Full family verification · Personal meet-up arranged · Success fee: PKR 1,00,000</div>
-        </div>
-        <span class="psc-badge" style="background:rgba(33,150,243,0.15);color:#1565C0">👑 Elite</span>
+        <span class="psc-badge" style="background:rgba(107,21,48,0.1);color:var(--burgundy)">Full-Service</span>
       </div>
 
       <div style="background:rgba(184,147,74,0.08);border:1px solid rgba(184,147,74,0.25);border-radius:10px;padding:.85rem 1rem;margin-top:1rem;font-size:.8rem;color:#8A6010;line-height:1.6">
@@ -2102,7 +2059,7 @@ function toggleContactPref(checkbox) {
   if (checkbox.checked) {
     if (box)       box.className       = 'contact-pref-box direct';
     if (title)     title.textContent   = '📱 Allow Direct Contact';
-    if (desc)      desc.textContent    = 'Other members can contact you directly via WhatsApp or phone call. Your number will be visible to Premium & Executive members.';
+    if (desc)      desc.textContent    = 'Other members can contact you directly via WhatsApp or phone call. Your number will be visible to Premium members.';
     if (statusTag) { statusTag.className = 'pref-status-tag pref-status-direct'; statusTag.textContent = '📱 Direct Contact Enabled'; }
     if (details)   details.style.display = 'block';
   } else {
@@ -2269,8 +2226,7 @@ var currentStep = 1;
 var totalSteps  = 6;
 var planNames = {
   basic:     'Basic – PKR 10,000  ·  Success fee on match: PKR 40,000',
-  premium:   'Premium – PKR 30,000  ·  Success fee on match: PKR 70,000',
-  executive: 'Executive / Overseas – PKR 50,000  ·  Success fee on match: PKR 1,00,000'
+  premium:   'Premium – PKR 40,000  ·  Success fee on match: PKR 1,10,000'
 };
 var selectedPlan = 'basic';
 
@@ -2438,7 +2394,7 @@ function showcaseCardHtml(p) {
   var shield = privacyShieldFor(p.privacy_preset);
   var badge = p.is_verified
     ? '<span class="profile-verified-badge">✓ Verified</span>'
-    : (['premium','executive'].indexOf(p.package) > -1 ? '<span class="profile-featured-badge">⭐ Premium</span>' : '');
+    : (p.package === 'premium' ? '<span class="profile-featured-badge">⭐ Premium</span>' : '');
 
   var isStrict = p.privacy_preset === 'strict';
   var detailsLine2 = isStrict
