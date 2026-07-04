@@ -76,6 +76,7 @@ async function submitRegistration() {
     password:            document.getElementById('f-password') ? document.getElementById('f-password').value : '',
     profile_for:         (typeof selectedProfileFor !== 'undefined' ? selectedProfileFor : 'self_male'),
     guardian_name:       gv('f-guardianname'),
+    guardian_declaration: document.getElementById('f-guardian-declaration') ? document.getElementById('f-guardian-declaration').checked : false,
     gender:              gv('f-gender'),
     date_of_birth:       gv('f-dob'),
     marital_status:      gv('f-marital'),
@@ -139,6 +140,10 @@ async function submitRegistration() {
   if (!payload.mobile)    { alert('Please enter your mobile number.'); return; }
   if (!payload.password || payload.password.length < 6) {
     alert('Password must be at least 6 characters.');
+    return;
+  }
+  if (!payload.guardian_declaration) {
+    alert('Please confirm the registration declaration before continuing.');
     return;
   }
 
