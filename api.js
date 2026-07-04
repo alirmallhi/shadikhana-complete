@@ -154,6 +154,24 @@ async function submitRegistration() {
       localStorage.setItem('sk_token', result.data.token);
       localStorage.setItem('sk_member', JSON.stringify(result.data.member));
 
+      // If a photo was selected during registration, upload it now that we
+      // have a real member account/token to attach it to
+      if (typeof selectedRegPhoto !== 'undefined' && selectedRegPhoto) {
+        try {
+          var photoForm = new FormData();
+          photoForm.append('photo', selectedRegPhoto);
+          await fetch(API_BASE + '/member/photo', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + result.data.token },
+            body: photoForm
+          });
+        } catch (photoErr) {
+          console.error('Registration photo upload error (non-fatal):', photoErr);
+          // Registration itself already succeeded — don't block on this.
+          // The member can always add/change their photo later from the dashboard.
+        }
+      }
+
       // Automatically notify WhatsApp in the background — no extra click
       autoNotifyWhatsApp(payload);
 
