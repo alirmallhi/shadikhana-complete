@@ -134,6 +134,12 @@ a{text-decoration:none;color:inherit}
 .pp-switch input:checked+.pp-switch-slider{background:var(--burg)}
 .pp-switch input:checked+.pp-switch-slider::before{transform:translateX(23px)}
 
+.photo-privacy-option{display:flex;align-items:center;gap:.5rem;padding:.6rem .9rem;
+  background:var(--white);border:1.5px solid var(--light);border-radius:10px;
+  cursor:pointer;font-size:.82rem;font-weight:600;transition:border-color .15s,background .15s}
+.photo-privacy-option input{accent-color:var(--burg)}
+.photo-privacy-option:has(input:checked){border-color:var(--burg);background:rgba(123,29,58,0.06)}
+
 /* ── BROWSE PROFILES ── */
 .filter-bar{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
 .filter-select,.filter-input{padding:.6rem .9rem;border:1.5px solid var(--light);border-radius:10px;
@@ -412,15 +418,25 @@ a{text-decoration:none;color:inherit}
           </div>
         </div>
 
-        <div class="photo-privacy-row">
+        <div class="photo-privacy-row" style="flex-direction:column;align-items:stretch;gap:.8rem">
           <div>
-            <div class="photo-privacy-label">🔒 Blur My Photo</div>
-            <div class="photo-privacy-sub">When ON, your photo stays hidden from everyone — it only unlocks automatically for a member once you've both accepted each other's interest.</div>
+            <div class="photo-privacy-label">🔒 Photo Visibility</div>
+            <div class="photo-privacy-sub">Choose how your photo appears to members you haven't matched with yet. Once you both accept each other's interest, your full photo always unlocks — regardless of this setting.</div>
           </div>
-          <label class="pp-switch">
-            <input type="checkbox" id="p-priv_photo" onchange="savePhotoPrivacy(this.checked)">
-            <span class="pp-switch-slider"></span>
-          </label>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <label class="photo-privacy-option">
+              <input type="radio" name="photo_privacy" value="show" onchange="savePhotoPrivacyOption('show')">
+              <span>👁️ Show — everyone sees it clearly</span>
+            </label>
+            <label class="photo-privacy-option">
+              <input type="radio" name="photo_privacy" value="blur" onchange="savePhotoPrivacyOption('blur')">
+              <span>🌫️ Blur — a soft preview, not fully clear</span>
+            </label>
+            <label class="photo-privacy-option">
+              <input type="radio" name="photo_privacy" value="hide" onchange="savePhotoPrivacyOption('hide')">
+              <span>🚫 Hide — nothing shown at all</span>
+            </label>
+          </div>
         </div>
 
         <form id="profile-form">
@@ -776,18 +792,21 @@ function loadProfileForm() {
     photoPreview.innerHTML = '<img src="' + currentMember.photo_url + '" alt="Profile photo">';
   }
 
-  var privPhotoEl = document.getElementById('p-priv_photo');
-  if (privPhotoEl) privPhotoEl.checked = !!currentMember.priv_photo;
+  var currentPrivacy = currentMember.photo_privacy || 'show';
+  var radioEl = document.querySelector('input[name="photo_privacy"][value="' + currentPrivacy + '"]');
+  if (radioEl) radioEl.checked = true;
 }
 
-async function savePhotoPrivacy(isChecked) {
-  var result = await apiCall('/member/profile', 'PUT', { priv_photo: isChecked });
+async function savePhotoPrivacyOption(value) {
+  var previous = currentMember.photo_privacy || 'show';
+  var result = await apiCall('/member/profile', 'PUT', { photo_privacy: value });
   if (result.success) {
-    currentMember.priv_photo = isChecked ? 1 : 0;
+    currentMember.photo_privacy = value;
     localStorage.setItem('sk_member', JSON.stringify(currentMember));
   } else {
     alert(result.message || 'Could not update photo privacy. Please try again.');
-    document.getElementById('p-priv_photo').checked = !isChecked;
+    var revertEl = document.querySelector('input[name="photo_privacy"][value="' + previous + '"]');
+    if (revertEl) revertEl.checked = true;
   }
 }
 
