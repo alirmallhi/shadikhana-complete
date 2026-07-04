@@ -428,7 +428,7 @@ function adminLogout() {
   <div class="filter-bar">
     <input class="filter-input" id="members-search" placeholder="🔍  Search by name, phone, city...">
     <select class="filter-select" id="members-filter-package">
-      <option value="">All Packages</option><option value="executive">🌐 Executive</option><option value="premium">⭐ Premium</option><option value="basic">🌱 Basic</option>
+      <option value="">All Packages</option><option value="premium">⭐ Premium</option><option value="basic">🌱 Basic</option>
     </select>
     <select class="filter-select" id="members-filter-gender">
       <option value="">All Genders</option><option value="Male">Male</option><option value="Female">Female</option>
@@ -576,7 +576,6 @@ function adminLogout() {
           <option value="">—</option>
           <option value="basic">Basic</option>
           <option value="premium">Premium</option>
-          <option value="executive">Executive</option>
         </select>
       </div>
       <div class="form-group"><label>Their Story</label><textarea id="story-text" placeholder="A few sentences about how they matched and married" style="min-height:90px"></textarea></div>
@@ -633,9 +632,7 @@ function adminLogout() {
             <label>Basic Package Fee (PKR)</label>
             <input type="number" id="set-basic-fee" value="10000">
             <label>Premium Package Fee (PKR)</label>
-            <input type="number" id="set-premium-fee" value="30000">
-            <label>Executive / Overseas Package Fee (PKR)</label>
-            <input type="number" id="set-executive-fee" value="50000">
+            <input type="number" id="set-premium-fee" value="40000">
             <label>Success Fee Policy</label>
             <select id="set-success-fee-policy">
               <option value="equal">Equal to registration fee (current)</option>
@@ -1086,7 +1083,7 @@ if(chart){
 // ══════════════════════════════════════════
 //  PENDING PAYMENTS / APPROVALS PANEL
 // ══════════════════════════════════════════
-var pkgAmounts = { basic: 10000, premium: 30000, executive: 50000 };
+var pkgAmounts = { basic: 10000, premium: 40000 };
 
 async function loadPendingPayments() {
   var tbody  = document.getElementById('pending-table-body');
@@ -1121,8 +1118,8 @@ async function loadPendingPayments() {
     var rows = members.map(function(m) {
       var amount = pkgAmounts[m.package] || 0;
       var submittedDate = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-      var pkgBadgeClass = m.package === 'executive' ? 'status-vip' : m.package === 'premium' ? 'status-premium' : 'status-basic';
-      var pkgIcon = m.package === 'executive' ? '🌐' : m.package === 'premium' ? '⭐' : '🌱';
+      var pkgBadgeClass = m.package === 'premium' ? 'status-premium' : 'status-basic';
+      var pkgIcon = m.package === 'premium' ? '⭐' : '🌱';
 
       var duplicateWarning = '';
       if (m.guardian_duplicate_count > 0) {
@@ -1294,7 +1291,6 @@ async function loadDashboardStats() {
     // Quick stats — package breakdown
     var qs = document.getElementById('quick-stats-list');
     qs.innerHTML =
-      qsItem('🌐', 'Executive / Overseas', d.packages.executive) +
       qsItem('⭐', 'Premium Members', d.packages.premium) +
       qsItem('🌱', 'Basic Members', d.packages.basic) +
       qsItem('💌', 'Total Interests Sent', d.interactions.interests) +
@@ -1309,8 +1305,8 @@ async function loadDashboardStats() {
       tbody.innerHTML = d.recent_members.map(function(m) {
         var statusClass = m.account_status === 'active' ? 'status-active' :
                            m.account_status === 'pending' ? 'status-pending' : 'status-review';
-        var pkgClass = m.package === 'executive' ? 'status-vip' : m.package === 'premium' ? 'status-premium' : 'status-basic';
-        var pkgIcon  = m.package === 'executive' ? '🌐' : m.package === 'premium' ? '⭐' : '🌱';
+        var pkgClass = m.package === 'premium' ? 'status-premium' : 'status-basic';
+        var pkgIcon  = m.package === 'premium' ? '⭐' : '🌱';
         var dateStr  = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
         return '<tr>' +
           '<td><strong>' + m.full_name + '</strong></td>' +
@@ -1397,8 +1393,8 @@ async function loadMembersPanel(page) {
     }
 
     tbody.innerHTML = members.map(function(m) {
-      var pkgClass  = m.package === 'executive' ? 'status-vip' : m.package === 'premium' ? 'status-premium' : 'status-basic';
-      var pkgIcon   = m.package === 'executive' ? '🌐' : m.package === 'premium' ? '⭐' : '🌱';
+      var pkgClass  = m.package === 'premium' ? 'status-premium' : 'status-basic';
+      var pkgIcon   = m.package === 'premium' ? '⭐' : '🌱';
       var statusClass = m.account_status === 'active' ? 'status-active' :
                          m.account_status === 'pending' ? 'status-pending' :
                          m.account_status === 'matched' ? 'status-matched' : 'status-review';
@@ -1576,8 +1572,8 @@ async function loadSuccessFeePanel() {
       return;
     }
 
-    var pkgClass = { basic:'status-basic', premium:'status-premium', executive:'status-vip' };
-    var pkgIcon  = { basic:'🌱', premium:'⭐', executive:'🌐' };
+    var pkgClass = { basic:'status-basic', premium:'status-premium' };
+    var pkgIcon  = { basic:'🌱', premium:'⭐' };
 
     tbody.innerHTML = outstanding.map(function(o) {
       return '<tr>' +
@@ -1789,8 +1785,8 @@ async function loadReportsPanel() {
     if (!r.revenue_by_package.length) {
       pkgTable.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--mid)">No revenue data yet</td></tr>';
     } else {
-      var pkgIcon = { basic:'🌱', premium:'⭐', executive:'🌐' };
-      var pkgClass = { basic:'status-basic', premium:'status-premium', executive:'status-vip' };
+      var pkgIcon = { basic:'🌱', premium:'⭐' };
+      var pkgClass = { basic:'status-basic', premium:'status-premium' };
       pkgTable.innerHTML = r.revenue_by_package.map(function(p) {
         return '<tr>' +
           '<td><span class="status-badge ' + (pkgClass[p.package] || '') + '">' + (pkgIcon[p.package] || '') + ' ' + p.package.charAt(0).toUpperCase() + p.package.slice(1) + '</span></td>' +
@@ -1828,8 +1824,7 @@ async function loadSettingsPanel() {
 
     if (d.pricing) {
       document.getElementById('set-basic-fee').value = d.pricing.basic_fee ?? 10000;
-      document.getElementById('set-premium-fee').value = d.pricing.premium_fee ?? 30000;
-      document.getElementById('set-executive-fee').value = d.pricing.executive_fee ?? 50000;
+      document.getElementById('set-premium-fee').value = d.pricing.premium_fee ?? 40000;
       document.getElementById('set-success-fee-policy').value = d.pricing.success_fee_policy || 'equal';
     }
 
@@ -1863,7 +1858,6 @@ function readSettingsSection(section) {
     return {
       basic_fee: Number(document.getElementById('set-basic-fee').value) || 0,
       premium_fee: Number(document.getElementById('set-premium-fee').value) || 0,
-      executive_fee: Number(document.getElementById('set-executive-fee').value) || 0,
       success_fee_policy: document.getElementById('set-success-fee-policy').value
     };
   }
