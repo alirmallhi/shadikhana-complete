@@ -1113,15 +1113,28 @@ async function loadPendingPayments() {
     banner.innerHTML = '⏳ <strong>' + members.length + ' registration' + (members.length > 1 ? 's' : '') +
       '</strong> awaiting payment confirmation. Verify their payment screenshot on WhatsApp before approving.';
 
+    var flaggedCount = members.filter(function(m) { return m.guardian_duplicate_count > 0 || m.ip_duplicate_count > 0; }).length;
+    if (flaggedCount > 0) {
+      banner.innerHTML += '<br>🚩 <strong>' + flaggedCount + ' of these</strong> share a guardian name or device/network with another profile — worth a closer look before approving, in case a matchmaker or bureau is registering multiple clients.';
+    }
+
     var rows = members.map(function(m) {
       var amount = pkgAmounts[m.package] || 0;
       var submittedDate = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
       var pkgBadgeClass = m.package === 'executive' ? 'status-vip' : m.package === 'premium' ? 'status-premium' : 'status-basic';
       var pkgIcon = m.package === 'executive' ? '🌐' : m.package === 'premium' ? '⭐' : '🌱';
 
+      var duplicateWarning = '';
+      if (m.guardian_duplicate_count > 0) {
+        duplicateWarning += '<div style="background:#FDECEC;color:#B42318;font-size:.72rem;font-weight:600;padding:3px 7px;border-radius:6px;margin-top:4px;display:inline-block">⚠️ Same guardian on ' + m.guardian_duplicate_count + ' other profile' + (m.guardian_duplicate_count > 1 ? 's' : '') + '</div><br>';
+      }
+      if (m.ip_duplicate_count > 0) {
+        duplicateWarning += '<div style="background:#FDECEC;color:#B42318;font-size:.72rem;font-weight:600;padding:3px 7px;border-radius:6px;margin-top:4px;display:inline-block">⚠️ Same device/network as ' + m.ip_duplicate_count + ' other profile' + (m.ip_duplicate_count > 1 ? 's' : '') + '</div><br>';
+      }
+
       return '<tr>' +
         '<td><strong>' + m.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' +
-          m.gender + ' · ' + (m.age || '—') + ' · ' + (m.city || '—') + '</span></td>' +
+          m.gender + ' · ' + (m.age || '—') + ' · ' + (m.city || '—') + '</span><br>' + duplicateWarning + '</td>' +
         '<td><span class="status-badge ' + pkgBadgeClass + '">' + pkgIcon + ' ' + m.package.charAt(0).toUpperCase() + m.package.slice(1) + '</span></td>' +
         '<td><strong>PKR ' + amount.toLocaleString() + '</strong><br>' +
           '<span style="font-size:.72rem;color:' + (m.payment_status === 'completed' ? 'var(--green)' : 'var(--mid)') + '">' +
