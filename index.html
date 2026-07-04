@@ -1138,9 +1138,10 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       </div>
 
       <div class="form-section-label">Profile Photo</div>
-      <div class="photo-upload-area" onclick="alert('Photo upload will open here')">
-        <div class="photo-upload-icon">📷</div>
-        <div class="photo-upload-text">Click to upload your profile photo</div>
+      <input type="file" id="reg-photo-input" accept="image/*" style="display:none" onchange="handleRegPhotoSelect(this)">
+      <div class="photo-upload-area" id="reg-photo-area" onclick="document.getElementById('reg-photo-input').click()">
+        <div class="photo-upload-icon" id="reg-photo-icon">📷</div>
+        <div class="photo-upload-text" id="reg-photo-text">Click to upload your profile photo</div>
         <div class="photo-upload-sub">JPG or PNG · Max 5MB · Photo visible only to approved members</div>
       </div>
 
@@ -2163,6 +2164,35 @@ function setTab(btn) {
 }
 
 var selectedProfileFor = 'self_male';
+
+var selectedRegPhoto = null;
+
+function handleRegPhotoSelect(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+
+  if (!/^image\/(jpeg|jpg|png)$/i.test(file.type)) {
+    alert('Please choose a JPG or PNG image.');
+    input.value = '';
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Photo must be under 5MB.');
+    input.value = '';
+    return;
+  }
+
+  selectedRegPhoto = file;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('reg-photo-area').innerHTML =
+      '<img src="' + e.target.result + '" style="width:100px;height:100px;border-radius:12px;object-fit:cover;margin-bottom:.6rem">' +
+      '<div class="photo-upload-text">' + file.name + '</div>' +
+      '<div class="photo-upload-sub">Click to choose a different photo</div>';
+  };
+  reader.readAsDataURL(file);
+}
 
 function setProfileFor(value, btn) {
   btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
