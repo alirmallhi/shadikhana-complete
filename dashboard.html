@@ -677,6 +677,26 @@ async function initDashboard() {
   loadMessagesCount();
   loadComplimentsBadgeCount();
   loadTodaysPicks();
+
+  // Keep unread counts live while the member is on the dashboard, rather
+  // than only checking once at login. A message/interest/compliment that
+  // arrives while they're already browsing should still show up without
+  // needing a manual refresh.
+  if (!window._skPollingStarted) {
+    window._skPollingStarted = true;
+    setInterval(function() {
+      loadMessagesCount();
+      loadInterestsCount();
+      loadComplimentsBadgeCount();
+      // If the member currently has the Messages panel open, also refresh
+      // the conversation list itself so a new message appears without
+      // them needing to click away and back
+      var messagesPanel = document.getElementById('panel-messages');
+      if (messagesPanel && messagesPanel.classList.contains('active') && typeof loadMessagesPanel === 'function') {
+        loadMessagesPanel();
+      }
+    }, 20000); // every 20 seconds
+  }
 }
 
 function renderUserChip() {
