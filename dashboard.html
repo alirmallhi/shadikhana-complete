@@ -478,6 +478,13 @@ a{text-decoration:none;color:inherit}
           <div class="form-group"><label>About Me</label><textarea id="p-about_me"></textarea></div>
           <div class="form-group"><label>Family Description</label><textarea id="p-family_description"></textarea></div>
 
+          <div class="form-section-label">Family Involvement (Optional)</div>
+          <p style="font-size:.82rem;color:var(--mid);margin-bottom:.8rem;max-width:520px">If you'd like a trusted family member kept in the loop, add their details below. They'll receive a WhatsApp message from us whenever you have a new mutual match — nothing more, and nothing without your match happening first.</p>
+          <div class="form-row">
+            <div class="form-group"><label>Wali / Family Member's Name</label><input type="text" id="p-wali_name" placeholder="e.g. Your father, brother, or mother"></div>
+            <div class="form-group"><label>Their WhatsApp Number</label><input type="tel" id="p-wali_mobile" placeholder="+92 3XX XXXXXXX"></div>
+          </div>
+
           <button type="button" class="btn-save" onclick="saveProfile()">Save Changes</button>
           <span id="profile-save-status" style="margin-left:1rem;font-size:.84rem;color:var(--green);display:none">✅ Saved successfully!</span>
         </form>
@@ -801,7 +808,7 @@ function loadProfileForm() {
   var fields = ['full_name','display_name','height','weight','complexion','body_type',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education',
-                'about_me','family_description'];
+                'about_me','family_description','wali_name','wali_mobile'];
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
     if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
@@ -868,7 +875,7 @@ async function saveProfile() {
   var fields = ['display_name','height','weight','complexion','body_type',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education',
-                'about_me','family_description'];
+                'about_me','family_description','wali_name','wali_mobile'];
   var updates = {};
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
