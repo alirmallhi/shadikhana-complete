@@ -1056,7 +1056,7 @@ async function viewProfileDetail(uuid) {
   var saveBtn = '<button class="pc-save-btn" onclick="toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>';
 
   var photoRevealBtn = '';
-  if (!p.photo_url && !p.is_mutual_match) {
+  if (p.photo_locked) {
     if (p.photo_reveal_status === 'pending') {
       photoRevealBtn = '<div style="text-align:center;margin-top:.6rem"><span class="interest-status is-sent">⏳ Photo request sent</span></div>';
     } else {
