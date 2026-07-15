@@ -683,6 +683,7 @@ async function initDashboard() {
   loadInterestsCount();
   loadMessagesCount();
   loadComplimentsBadgeCount();
+  checkPendingPhotoRequests();
   loadTodaysPicks();
 
   // Keep unread counts live while the member is on the dashboard, rather
@@ -695,6 +696,7 @@ async function initDashboard() {
       loadMessagesCount();
       loadInterestsCount();
       loadComplimentsBadgeCount();
+      checkPendingPhotoRequests();
       // If the member currently has the Messages panel open, also refresh
       // the conversation list itself so a new message appears without
       // them needing to click away and back
@@ -1614,6 +1616,13 @@ async function sendChatMessage() {
     openConversation(reopenUuid, reopenName, matchEl);
   } else {
     alert(result.message || 'Could not send message.');
+  }
+}
+
+async function checkPendingPhotoRequests() {
+  var result = await apiCall('/member/photo-reveal/pending', 'GET');
+  if (result.success && result.data.length > 0) {
+    document.getElementById('notif-indicator').style.display = 'block';
   }
 }
 
