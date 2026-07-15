@@ -997,6 +997,21 @@ async function loadBrowseProfiles(page) {
   container.innerHTML = html;
 }
 
+async function requestPhotoRevealAction(uuid, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  var result = await apiCall('/member/photo-reveal/request', 'POST', { owner_uuid: uuid });
+
+  if (result.success) {
+    btn.outerHTML = '<span class="interest-status is-sent">⏳ Photo request sent</span>';
+  } else {
+    alert(result.message || 'Could not send request.');
+    btn.disabled = false;
+    btn.textContent = '🔓 Request to See Photo';
+  }
+}
+
 async function toggleSaveProfile(uuid, isSaved, el) {
   var endpoint = isSaved ? '/member/unsave' : '/member/save';
   var result = await apiCall(endpoint, 'POST', { saved_uuid: uuid });
@@ -1040,6 +1055,15 @@ async function viewProfileDetail(uuid) {
   var saveIcon = p.is_saved ? '❤️' : '🤍';
   var saveBtn = '<button class="pc-save-btn" onclick="toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>';
 
+  var photoRevealBtn = '';
+  if (!p.photo_url && !p.is_mutual_match) {
+    if (p.photo_reveal_status === 'pending') {
+      photoRevealBtn = '<div style="text-align:center;margin-top:.6rem"><span class="interest-status is-sent">⏳ Photo request sent</span></div>';
+    } else {
+      photoRevealBtn = '<div style="text-align:center;margin-top:.6rem"><button class="btn-outline-sm" data-uuid="' + p.uuid + '" onclick="requestPhotoRevealAction(this.dataset.uuid, this)">🔓 Request to See Photo</button></div>';
+    }
+  }
+
   var matchBadge = p.is_mutual_match
     ? '<div style="text-align:center;margin-bottom:.8rem"><span class="interest-status is-accepted">✓ Mutual Match — full profile unlocked</span></div>'
     : '';
@@ -1059,6 +1083,7 @@ async function viewProfileDetail(uuid) {
     matchBadge +
     guardianBadge +
     '<div class="detail-photo">' + photo + saveBtn + '</div>' +
+    photoRevealBtn +
     '<div class="detail-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
     (formatLastActive(p.last_active_at).label ? '<div class="detail-meta" style="margin-top:-.9rem">' + formatLastActive(p.last_active_at).dot + formatLastActive(p.last_active_at).label + '</div>' : '') +
@@ -1614,23 +1639,58 @@ async function loadNotifications() {
   var container = document.getElementById('notifications-results');
   container.innerHTML = '<div class="loading-spinner">Loading notifications...</div>';
 
-  var result = await apiCall('/notifications', 'GET');
-  if (!result.success || !result.data.length) {
-    container.innerHTML = '<div class="empty-state"><div class="ei">🔔</div>No notifications yet.</div>';
-    return;
-  }
+  var pendingResult = await apiCall('/member/photo-reveal/pending', 'GET');
+  var notifResult = await apiCall('/notifications', 'GET');
 
   var html = '';
-  result.data.forEach(function(n) {
-    html += '<div class="interest-row">' +
-      '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'compliment' ? '😊' : '🔔') + '</div>' +
-      '<div class="interest-info">' +
-      '<div class="interest-name">' + n.title + '</div>' +
-      '<div class="interest-meta">' + n.body + '</div>' +
-      '</div></div>';
-  });
+
+  if (pendingResult.success && pendingResult.data.length) {
+    html += '<div class="msg-section-label">Photo Requests Awaiting Your Response</div>';
+    pendingResult.data.forEach(function(r) {
+      var name = r.display_name || r.full_name || 'ShadiKhana Member';
+      html += '<div class="interest-row">' +
+        '<div class="interest-av">🔓</div>' +
+        '<div class="interest-info">' +
+        '<div class="interest-name">' + escapeHtml(name) + '</div>' +
+        '<div class="interest-meta">' + (r.age || '—') + ' yrs · ' + (r.city || '—') + ' · wants to see your photo</div>' +
+        '</div>' +
+        '<div class="interest-action-btns">' +
+        '<button class="btn-accept" onclick="respondPhotoRevealAction(' + r.id + ', \'approved\', this)">Approve</button>' +
+        '<button class="btn-reject" onclick="respondPhotoRevealAction(' + r.id + ', \'denied\', this)">Deny</button>' +
+        '</div></div>';
+    });
+  }
+
+  if (!notifResult.success || !notifResult.data.length) {
+    if (!html) {
+      container.innerHTML = '<div class="empty-state"><div class="ei">🔔</div>No notifications yet.</div>';
+      return;
+    }
+  } else {
+    if (html) html += '<div class="msg-section-label">Notifications</div>';
+    notifResult.data.forEach(function(n) {
+      html += '<div class="interest-row">' +
+        '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'compliment' ? '😊' : n.type === 'photo_reveal' ? '🔓' : '🔔') + '</div>' +
+        '<div class="interest-info">' +
+        '<div class="interest-name">' + n.title + '</div>' +
+        '<div class="interest-meta">' + n.body + '</div>' +
+        '</div></div>';
+    });
+  }
+
   container.innerHTML = html;
   document.getElementById('notif-indicator').style.display = 'none';
+}
+
+async function respondPhotoRevealAction(requestId, action, btn) {
+  var row = btn.closest('.interest-row');
+  var result = await apiCall('/member/photo-reveal/respond', 'PUT', { request_id: requestId, action: action });
+  if (result.success) {
+    row.style.opacity = '0.5';
+    row.innerHTML = '<div class="interest-info"><div class="interest-meta">' + (action === 'approved' ? '✓ Approved' : 'Denied') + '</div></div>';
+  } else {
+    alert(result.message || 'Could not update request.');
+  }
 }
 
 // ══════════════════════════════════════════
