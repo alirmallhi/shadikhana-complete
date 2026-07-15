@@ -158,6 +158,7 @@ async function submitRegistration() {
     if (result.success) {
       localStorage.setItem('sk_token', result.data.token);
       localStorage.setItem('sk_member', JSON.stringify(result.data.member));
+      if (typeof skMirrorSession === 'function') skMirrorSession(true);
 
       // If a photo was selected during registration, upload it now that we
       // have a real member account/token to attach it to
@@ -222,6 +223,7 @@ async function loginMember(email, password) {
   if (result.success) {
     localStorage.setItem('sk_token', result.data.token);
     localStorage.setItem('sk_member', JSON.stringify(result.data.member));
+    if (typeof skMirrorSession === 'function') skMirrorSession(true);
     return result;
   }
   return result;
@@ -283,6 +285,8 @@ function getCurrentMember() {
 }
 
 function logout() {
+  if (typeof skUnregisterPush === 'function') skUnregisterPush();
+  if (typeof skMirrorSession === 'function') skMirrorSession(false);
   localStorage.removeItem('sk_token');
   localStorage.removeItem('sk_member');
   window.location.href = '/';
