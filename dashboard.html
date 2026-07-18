@@ -252,14 +252,15 @@ a{text-decoration:none;color:inherit}
 .detail-name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:.2rem}
 .detail-meta{color:var(--mid);font-size:.86rem;margin-bottom:1.2rem}
 .detail-field{display:flex;padding:.5rem 0;border-bottom:1px solid var(--light);font-size:.84rem}
-.detail-field-label{font-weight:700;min-width:140px;color:var(--mid)}
+.detail-field-label{font-weight:600;min-width:140px;color:var(--mid);font-size:.7rem;text-transform:uppercase;letter-spacing:.04em}
+.detail-field-value{color:var(--charcoal);font-weight:600}
 .detail-section-label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--burg);margin:1.3rem 0 .5rem;display:block}
 .detail-narrative{font-size:.88rem;line-height:1.65;color:var(--charcoal);background:var(--ivory);border-radius:10px;padding:.9rem 1rem;margin-bottom:.3rem;white-space:pre-wrap}
 .detail-preferences{font-size:.86rem;line-height:1.6;color:var(--charcoal);background:var(--cream);border:1px solid var(--light);border-radius:10px;padding:.8rem 1rem;margin-bottom:.3rem}
 .detail-locked{font-size:.82rem;line-height:1.6;color:var(--mid);background:var(--light);border:1px dashed #C9BBA0;border-radius:10px;padding:.9rem 1rem;margin-bottom:.3rem;text-align:center}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.detail-grid .detail-field{flex-direction:column;gap:.15rem}
-.detail-grid .detail-field-label{min-width:0;font-size:.72rem}
+.detail-grid .detail-field{flex-direction:column;gap:.2rem}
+.detail-grid .detail-field-label{min-width:0}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
@@ -1117,7 +1118,6 @@ async function viewProfileDetail(uuid) {
     detailField('Height', p.height || '—') +
     detailField('Caste', p.caste || '—') +
     (p.area ? detailField('Area', p.area) : '') +
-    (p.children ? detailField('Children', p.children) : '') +
     (p.father_occupation ? detailField("Father's Occupation", p.father_occupation) : '') +
     (p.mother_occupation ? detailField("Mother's Occupation", p.mother_occupation) : '') +
     '</div>';
@@ -1150,7 +1150,7 @@ async function viewProfileDetail(uuid) {
 }
 
 function detailField(label, value) {
-  return '<div class="detail-field"><span class="detail-field-label">' + label + '</span><span>' + value + '</span></div>';
+  return '<div class="detail-field"><span class="detail-field-label">' + label + '</span><span class="detail-field-value">' + value + '</span></div>';
 }
 
 function closeDetailModal() {
