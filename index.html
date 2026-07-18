@@ -44,9 +44,9 @@ body.urdu-mode .urdu-only{display:inline}
 body.urdu-mode .eng-only{display:none}
 
 /* HERO */
-.hero{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;padding:0 5%;padding-top:72px;background:linear-gradient(135deg,var(--cream) 40%,#FDE4D8 75%,#FBD9E8 100%);position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-60px;right:-80px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(168,24,81,0.06),transparent 70%);pointer-events:none}
-.hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(26,18,37,0.05) 1px,transparent 1px);background-size:28px 28px;-webkit-mask-image:linear-gradient(180deg,transparent,rgba(0,0,0,.4) 40%,transparent 75%);mask-image:linear-gradient(180deg,transparent,rgba(0,0,0,.4) 40%,transparent 75%);pointer-events:none}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;padding:0 5%;padding-top:72px;background:linear-gradient(135deg,var(--cream) 30%,#FBD0B8 65%,#F6B8D4 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-80px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(240,168,48,0.14),transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(168,24,81,0.09) 1.5px,transparent 1.5px);background-size:26px 26px;-webkit-mask-image:linear-gradient(180deg,transparent,rgba(0,0,0,.5) 35%,rgba(0,0,0,.5) 75%,transparent);mask-image:linear-gradient(180deg,transparent,rgba(0,0,0,.5) 35%,rgba(0,0,0,.5) 75%,transparent);pointer-events:none}
 .hero-text{max-width:560px;position:relative;z-index:1}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--gold);padding:.4rem 1rem;border-radius:20px;font-size:.72rem;font-weight:600;letter-spacing:.09em;margin-bottom:1.6rem;text-transform:uppercase;font-family:var(--font-mono)}
 .urdu-tag{font-family:'Noto Nastaliq Urdu',serif;font-size:1rem;color:var(--gold)}
@@ -63,7 +63,20 @@ body.urdu-mode .eng-only{display:none}
 .hero-stat span{font-size:.8rem;color:var(--mid)}
 .lahore-badge{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--green);border:1px solid rgba(15,162,107,0.3);border-radius:20px;padding:.32rem .9rem;font-size:.76rem;font-weight:600;margin-top:1.5rem;font-family:var(--font-mono)}
 
-/* PHONE MOCKUP */
+/* MATRIMONIAL MOTIF ILLUSTRATION */
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center}
+.motif-wrap{position:relative;width:440px;height:440px;max-width:100%}
+.motif-glow{position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle,rgba(240,168,48,0.28) 0%,rgba(230,59,110,0.16) 45%,transparent 72%);filter:blur(6px)}
+.motif-svg{position:relative;width:100%;height:100%;animation:motif-breathe 7s ease-in-out infinite}
+@keyframes motif-breathe{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.015) rotate(.4deg)}}
+.motif-badge{position:absolute;background:var(--white);border-radius:14px;padding:.8rem 1.1rem;box-shadow:0 16px 40px rgba(168,24,81,0.16);display:flex;align-items:center;gap:.6rem;animation:float 6s ease-in-out infinite;border:1px solid var(--hairline)}
+.motif-badge-1{top:6%;right:-4%;animation-delay:0s}
+.motif-badge-2{bottom:10%;left:-8%;animation-delay:1.2s}
+.motif-badge-icon{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--burgundy),var(--rose));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.motif-badge-text strong{display:block;font-size:.82rem;font-weight:700;color:var(--charcoal)}
+.motif-badge-text span{font-size:.7rem;color:var(--mid)}
+
+/* legacy phone-mockup styles below are unused after the hero redesign but left in place */
 .hero-visual{position:relative;display:flex;justify-content:center;align-items:center;animation:float 6s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .phone-mockup{width:265px;height:545px;background:var(--charcoal);border-radius:40px;box-shadow:0 30px 80px rgba(28,28,46,0.35),0 0 0 8px rgba(28,28,46,0.08);position:relative;overflow:hidden;border:2px solid rgba(255,255,255,0.1)}
@@ -114,7 +127,7 @@ section{padding:96px 5%}
 .ledger-value small{font-size:.7rem;color:rgba(255,255,255,0.5);font-weight:400;margin-left:2px}
 
 /* HOW IT WORKS */
-.how{background:var(--white)}
+.how{background:linear-gradient(180deg,var(--white) 0%,#FFF6EC 100%);position:relative}
 .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
 .step{text-align:center;padding:2rem 1.2rem;border-radius:14px;border:1.5px solid var(--hairline);position:relative;transition:transform .2s,box-shadow .2s,border-color .2s}
 .step:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(26,18,37,0.08);border-color:transparent}
@@ -144,7 +157,7 @@ section{padding:96px 5%}
 /* PRICING */
 .plans{background:var(--ivory)}
 .plans-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem;align-items:start;max-width:800px;margin:0 auto}
-.plan-card{border-radius:16px;padding:2.2rem 1.8rem;position:relative;overflow:hidden;border:1.5px solid var(--hairline);background:var(--white);transition:transform .2s,box-shadow .2s}
+.plan-card{border-radius:16px;padding:2.2rem 1.8rem;position:relative;overflow:hidden;border:1.5px solid var(--hairline);background:linear-gradient(160deg,var(--white) 0%,#FFF8EF 100%);transition:transform .2s,box-shadow .2s}
 .plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(26,18,37,0.1)}
 .plan-card.featured{border-color:var(--ink);background:linear-gradient(160deg,var(--ink) 0%,#132B44 100%);color:#fff;transform:scale(1.04);box-shadow:0 24px 60px rgba(8,27,46,0.35)}
 .plan-badge{position:absolute;top:0;right:20px;background:var(--gold);color:var(--ink);font-size:.65rem;font-weight:600;font-family:var(--font-mono);padding:4px 12px;border-radius:0 0 8px 8px;letter-spacing:.06em;text-transform:uppercase}
@@ -207,7 +220,7 @@ section{padding:96px 5%}
 .btn-save:hover{border-color:var(--rose)}
 
 /* FEATURES */
-.features{background:var(--white)}
+.features{background:linear-gradient(180deg,#FFF6EC 0%,var(--white) 100%)}
 .features-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
 .features-list{display:flex;flex-direction:column;gap:1.5rem}
 .feature-item{display:flex;gap:1.2rem;align-items:flex-start}
@@ -545,59 +558,71 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     </div>
   </div>
   <div class="hero-visual">
-    <div class="floating-card float-match">
-      <div class="match-pct">94%</div>
-      <div style="font-size:.72rem;color:var(--mid)">Match Score</div>
-    </div>
-    <div class="phone-mockup">
-      <div class="phone-screen">
-        <div class="phone-header">
-          <div class="phone-header-top">
-            <span class="phone-logo">💍 ShadiKhana</span>
-            <span class="phone-notif">3 New</span>
-          </div>
-          <div class="phone-search">🔍 Search by city, sect, profession...</div>
-        </div>
-        <div class="phone-cards">
-          <div class="pcard">
-            <div class="pcard-avatar" style="background:linear-gradient(135deg,#FDE8EF,#FAD0DE)">👩</div>
-            <div>
-              <div class="pcard-name">Ayesha R., 26</div>
-              <div class="pcard-meta">Lahore · MBA · Sunni</div>
-              <div class="pcard-badge badge-verified">✓ Verified</div>
-            </div>
-          </div>
-          <div class="pcard">
-            <div class="pcard-avatar" style="background:linear-gradient(135deg,#FEF3E2,#FAE5C0)">👨</div>
-            <div>
-              <div class="pcard-name">Ahmed K., 30</div>
-              <div class="pcard-meta">Karachi · Engineer · Sunni</div>
-              <div class="pcard-badge badge-featured">⭐ Premium Member</div>
-            </div>
-          </div>
-          <div class="pcard">
-            <div class="pcard-avatar" style="background:linear-gradient(135deg,#E8F5F0,#C8EAE0)">👩</div>
-            <div>
-              <div class="pcard-name">Fatima S., 24</div>
-              <div class="pcard-meta">Islamabad · Doctor · Shia</div>
-              <div class="pcard-badge badge-verified">✓ Premium</div>
-            </div>
-          </div>
-        </div>
-        <div class="phone-bottom-nav">
-          <div class="pnav-item active"><span>🏠</span><span>Home</span></div>
-          <div class="pnav-item"><span>🔍</span><span>Search</span></div>
-          <div class="pnav-item"><span>💬</span><span>Messages</span></div>
-          <div class="pnav-item"><span>👤</span><span>Profile</span></div>
-        </div>
+    <div class="motif-wrap">
+      <div class="motif-glow"></div>
+      <svg class="motif-svg" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F6C670"/>
+            <stop offset="100%" stop-color="#C9820F"/>
+          </linearGradient>
+          <g id="mehndi-flower">
+            <circle cx="0" cy="0" r="6" fill="currentColor"/>
+            <circle cx="13" cy="0" r="7" fill="currentColor" opacity="0.82"/>
+            <circle cx="6.5" cy="11.26" r="7" fill="currentColor" opacity="0.82"/>
+            <circle cx="-6.5" cy="11.26" r="7" fill="currentColor" opacity="0.82"/>
+            <circle cx="-13" cy="0" r="7" fill="currentColor" opacity="0.82"/>
+            <circle cx="-6.5" cy="-11.26" r="7" fill="currentColor" opacity="0.82"/>
+            <circle cx="6.5" cy="-11.26" r="7" fill="currentColor" opacity="0.82"/>
+          </g>
+        </defs>
+
+        <!-- outer scalloped frame -->
+        <circle cx="220" cy="220" r="197" fill="none" stroke="#A81851" stroke-opacity="0.14" stroke-width="2" stroke-dasharray="1 13" stroke-linecap="round"/>
+
+        <!-- garland connector arcs between flowers -->
+        <path d="M220,55 Q290,75 350,130" fill="none" stroke="#F0A830" stroke-opacity="0.3" stroke-width="2"/>
+        <path d="M350,130 Q380,215 350,310" fill="none" stroke="#F0A830" stroke-opacity="0.3" stroke-width="2"/>
+        <path d="M350,310 Q290,365 220,385" fill="none" stroke="#F0A830" stroke-opacity="0.3" stroke-width="2"/>
+        <path d="M220,385 Q150,365 90,310" fill="none" stroke="#F0A830" stroke-opacity="0.3" stroke-width="2"/>
+        <path d="M90,310 Q60,215 90,130" fill="none" stroke="#F0A830" stroke-opacity="0.3" stroke-width="2"/>
+        <path d="M90,130 Q150,75 220,55" fill="none" stroke="#F0A830" stroke-opacity="0.3" stroke-width="2"/>
+
+        <!-- mehndi flower garland -->
+        <g transform="translate(220,55)" fill="#F0A830"><use href="#mehndi-flower"/></g>
+        <g transform="translate(350,130) scale(0.82)" fill="#E63B6E"><use href="#mehndi-flower"/></g>
+        <g transform="translate(350,310) scale(0.82)" fill="#F0A830"><use href="#mehndi-flower"/></g>
+        <g transform="translate(220,385)" fill="#E63B6E"><use href="#mehndi-flower"/></g>
+        <g transform="translate(90,310) scale(0.82)" fill="#F0A830"><use href="#mehndi-flower"/></g>
+        <g transform="translate(90,130) scale(0.82)" fill="#E63B6E"><use href="#mehndi-flower"/></g>
+
+        <!-- scattered mehndi dots -->
+        <circle cx="285" cy="90" r="3.5" fill="#A81851" opacity="0.4"/>
+        <circle cx="155" cy="90" r="3.5" fill="#F0A830" opacity="0.4"/>
+        <circle cx="395" cy="220" r="3.5" fill="#A81851" opacity="0.4"/>
+        <circle cx="45" cy="220" r="3.5" fill="#F0A830" opacity="0.4"/>
+        <circle cx="285" cy="350" r="3.5" fill="#A81851" opacity="0.4"/>
+        <circle cx="155" cy="350" r="3.5" fill="#F0A830" opacity="0.4"/>
+
+        <!-- soft backdrop behind the rings -->
+        <circle cx="220" cy="220" r="86" fill="#FFFCF6" opacity="0.75"/>
+
+        <!-- interlocking rings — the union at the center -->
+        <circle cx="198" cy="228" r="40" fill="none" stroke="url(#ringGrad)" stroke-width="8"/>
+        <circle cx="244" cy="214" r="40" fill="none" stroke="url(#ringGrad)" stroke-width="8"/>
+
+        <!-- sparkle accents -->
+        <path d="M296,168 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 l10,-4 Z" fill="#F0A830"/>
+        <path d="M160,270 l3,7 l7,3 l-7,3 l-3,7 l-3,-7 l-7,-3 l7,-3 Z" fill="#E63B6E" opacity="0.85"/>
+      </svg>
+      <div class="motif-badge motif-badge-1">
+        <div class="motif-badge-icon">✓</div>
+        <div class="motif-badge-text"><strong>CNIC Verified</strong><span>Profiles you can trust</span></div>
       </div>
-    </div>
-    <div class="floating-card float-notif">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span class="notif-dot"></span>
-        <span style="font-weight:600;font-size:.75rem">New Interest!</span>
+      <div class="motif-badge motif-badge-2">
+        <div class="motif-badge-icon">🤲</div>
+        <div class="motif-badge-text"><strong>Admin-Reviewed</strong><span>Every match, checked by us</span></div>
       </div>
-      <div style="font-size:.72rem;color:var(--mid)">Ahmed sent you a request</div>
     </div>
   </div>
 </section>
