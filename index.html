@@ -1448,13 +1448,13 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
       <!-- Preset Cards -->
       <div class="privacy-preset-grid">
-        <div class="privacy-preset-card selected-open" id="preset-open" onclick="setPrivacyPreset('open')">
+        <div class="privacy-preset-card" id="preset-open" onclick="setPrivacyPreset('open')">
           <div class="privacy-check-mark">✓</div>
           <div class="privacy-preset-icon">🔓</div>
           <div class="privacy-preset-name" style="color:#2D7A5F">Open</div>
           <div class="privacy-preset-desc">All information visible to active members</div>
         </div>
-        <div class="privacy-preset-card" id="preset-standard-card" onclick="setPrivacyPreset('standard')">
+        <div class="privacy-preset-card selected" id="preset-standard-card" onclick="setPrivacyPreset('standard')">
           <div class="privacy-check-mark">✓</div>
           <div class="privacy-preset-icon">🔒</div>
           <div class="privacy-preset-name">Standard</div>
@@ -1469,7 +1469,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       </div>
 
       <!-- Hidden field to store chosen preset -->
-      <input type="hidden" id="f-privacy-preset" value="open">
+      <input type="hidden" id="f-privacy-preset" value="standard">
 
       <!-- Advanced Custom Toggles -->
       <div id="privacy-custom-panel" style="display:none">
@@ -1947,11 +1947,11 @@ const PRIVACY_PRESETS = {
 };
 const PRIVACY_SUMMARIES = {
   open:     '🔓 <strong>Open:</strong> All your profile information is visible to all active members.',
-  standard: '🔒 <strong>Standard:</strong> Basic info visible to all. Photo, contact, family & marital history shown only after mutual interest. Income shown to Premium+ only.',
+  standard: '🔒 <strong>Standard:</strong> Basic info visible to all. Photo, contact, family, income & marital history shown only after mutual interest.',
   strict:   '🛡️ <strong>Strict:</strong> Only name/alias, age, city, religion & education are visible. Everything else hidden.',
   custom:   '⚙️ <strong>Custom:</strong> Your own mix of privacy settings applied.'
 };
-let currentPrivacyPreset = 'open';
+let currentPrivacyPreset = 'standard';
 let customPrivacyOpen = false;
 
 function setPrivacyPreset(preset) {
@@ -2000,7 +2000,7 @@ function resetPrivacyToPreset() { setPrivacyPreset(currentPrivacyPreset); }
 
 function getPrivacySettings() {
   return {
-    privacy_preset: document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'open',
+    privacy_preset: document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'standard',
     priv_photo:     !!(document.getElementById('priv-photo')    && document.getElementById('priv-photo').checked),
     priv_contact:   !!(document.getElementById('priv-contact')  && document.getElementById('priv-contact').checked),
     priv_family:    !!(document.getElementById('priv-family')   && document.getElementById('priv-family').checked),
@@ -2361,7 +2361,7 @@ document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); })
 
 // Initialise privacy preset on load
 document.addEventListener('DOMContentLoaded', function() {
-  setPrivacyPreset('open');
+  setPrivacyPreset('standard');
   loadShowcaseProfiles();
   loadSuccessStories();
 });
