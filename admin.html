@@ -632,7 +632,7 @@ function adminLogout() {
             <label>Basic Package Fee (PKR)</label>
             <input type="number" id="set-basic-fee" value="10000">
             <label>Premium Package Fee (PKR)</label>
-            <input type="number" id="set-premium-fee" value="40000">
+            <input type="number" id="set-premium-fee" value="30000">
             <label>Success Fee Policy</label>
             <select id="set-success-fee-policy">
               <option value="equal">Equal to registration fee (current)</option>
@@ -1083,7 +1083,7 @@ if(chart){
 // ══════════════════════════════════════════
 //  PENDING PAYMENTS / APPROVALS PANEL
 // ══════════════════════════════════════════
-var pkgAmounts = { basic: 10000, premium: 40000 };
+var pkgAmounts = { basic: 10000, premium: 30000 };
 
 async function loadPendingPayments() {
   var tbody  = document.getElementById('pending-table-body');
@@ -1824,7 +1824,7 @@ async function loadSettingsPanel() {
 
     if (d.pricing) {
       document.getElementById('set-basic-fee').value = d.pricing.basic_fee ?? 10000;
-      document.getElementById('set-premium-fee').value = d.pricing.premium_fee ?? 40000;
+      document.getElementById('set-premium-fee').value = d.pricing.premium_fee ?? 30000;
       document.getElementById('set-success-fee-policy').value = d.pricing.success_fee_policy || 'equal';
     }
 
