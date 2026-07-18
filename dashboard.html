@@ -481,6 +481,11 @@ a{text-decoration:none;color:inherit}
             <div class="form-group"><label>Preferred City</label><input type="text" id="p-partner_city"></div>
             <div class="form-group"><label>Preferred Education</label><input type="text" id="p-partner_education"></div>
           </div>
+          <div class="form-group">
+            <label>Describe Your Ideal Partner</label>
+            <textarea id="p-partner_description" placeholder="What kind of person are you looking for? What qualities matter most to you — their values, personality, how they'd fit with your family, what a life together would look like?" style="min-height:90px"></textarea>
+            <p style="font-size:.76rem;color:var(--mid);margin-top:.35rem">This carries more weight than any other single factor in your match recommendations — it's compared against what other members write about themselves and their families.</p>
+          </div>
 
           <div class="form-section-label">About</div>
           <div class="form-group"><label>About Me</label><textarea id="p-about_me"></textarea></div>
@@ -818,7 +823,7 @@ function loadProfileForm() {
   if (!currentMember) return;
   var fields = ['full_name','display_name','height','weight','complexion','body_type',
                 'profession','employer','monthly_income','area',
-                'partner_age_min','partner_age_max','partner_city','partner_education',
+                'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile'];
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
@@ -885,7 +890,7 @@ async function unblockMemberAction(uuid, name) {
 async function saveProfile() {
   var fields = ['display_name','height','weight','complexion','body_type',
                 'profession','employer','monthly_income','area',
-                'partner_age_min','partner_age_max','partner_city','partner_education',
+                'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile'];
   var updates = {};
   fields.forEach(function(f) {
@@ -1090,15 +1095,21 @@ async function viewProfileDetail(uuid) {
         ? '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" disabled>✓ Compliment Sent</button>'
         : '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="openComplimentModal(this.dataset.uuid, this.dataset.name)">😊 Send a Compliment</button>');
 
-  // Partner preferences — collected at registration but never shown until now
+  // Partner preferences — age/city are supplementary; the written
+  // description is the single highest-weighted factor in the matching
+  // engine, so it leads and gets the same visual prominence as About Me
   var prefParts = [];
   if (p.partner_age_min && p.partner_age_max) prefParts.push(p.partner_age_min + '–' + p.partner_age_max + ' years old');
   else if (p.partner_age_min) prefParts.push(p.partner_age_min + '+ years old');
   else if (p.partner_age_max) prefParts.push('up to ' + p.partner_age_max + ' years old');
   if (p.partner_city) prefParts.push('based in ' + p.partner_city);
-  var partnerPrefsHtml = prefParts.length
-    ? '<span class="detail-section-label">Looking For</span><div class="detail-preferences">' + escapeHtml(prefParts.join(' · ')) + '</div>'
-    : '';
+
+  var partnerPrefsHtml = '';
+  if (p.partner_description || prefParts.length) {
+    partnerPrefsHtml = '<span class="detail-section-label">Looking For</span>' +
+      (p.partner_description ? '<div class="detail-narrative">' + escapeHtml(p.partner_description) + '</div>' : '') +
+      (prefParts.length ? '<div class="detail-preferences">' + escapeHtml(prefParts.join(' · ')) + '</div>' : '');
+  }
 
   // Family — either the real description, an honest "locked" teaser if it's
   // privacy-gated, or nothing at all if this member simply never wrote one
