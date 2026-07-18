@@ -72,6 +72,8 @@ body.urdu-mode .eng-only{display:none}
 .motif-badge{position:absolute;background:var(--white);border-radius:14px;padding:.8rem 1.1rem;box-shadow:0 16px 40px rgba(168,24,81,0.16);display:flex;align-items:center;gap:.6rem;animation:float 6s ease-in-out infinite;border:1px solid var(--hairline)}
 .motif-badge-1{top:6%;right:-4%;animation-delay:0s}
 .motif-badge-2{bottom:10%;left:-8%;animation-delay:1.2s}
+.motif-badge-3{top:8%;left:-9%;animation-delay:.6s}
+.motif-badge-4{bottom:6%;right:-7%;animation-delay:1.8s}
 .motif-badge-icon{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--burgundy),var(--rose));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .motif-badge-text strong{display:block;font-size:.82rem;font-weight:700;color:var(--charcoal)}
 .motif-badge-text span{font-size:.7rem;color:var(--mid)}
@@ -332,6 +334,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   .hero-actions,.hero-stats{justify-content:center}
   .hero-visual{margin-top:2rem}
   .float-match,.float-notif{display:none}
+  .motif-badge-3,.motif-badge-4{display:none}
   .steps-grid{grid-template-columns:1fr 1fr}
   .step-connector{display:none}
   .profiles-grid{grid-template-columns:1fr 1fr}
@@ -616,12 +619,20 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <path d="M160,270 l3,7 l7,3 l-7,3 l-3,7 l-3,-7 l-7,-3 l7,-3 Z" fill="#E63B6E" opacity="0.85"/>
       </svg>
       <div class="motif-badge motif-badge-1">
-        <div class="motif-badge-icon">✓</div>
-        <div class="motif-badge-text"><strong>CNIC Verified</strong><span>Profiles you can trust</span></div>
+        <div class="motif-badge-icon">🔒</div>
+        <div class="motif-badge-text"><strong>Privacy Controls</strong><span>You choose what's shared</span></div>
       </div>
       <div class="motif-badge motif-badge-2">
         <div class="motif-badge-icon">🤲</div>
         <div class="motif-badge-text"><strong>Admin-Reviewed</strong><span>Every match, checked by us</span></div>
+      </div>
+      <div class="motif-badge motif-badge-3">
+        <div class="motif-badge-icon">💯</div>
+        <div class="motif-badge-text"><strong>No Subscriptions</strong><span>Pay once, that's it</span></div>
+      </div>
+      <div class="motif-badge motif-badge-4">
+        <div class="motif-badge-icon">🇵🇰</div>
+        <div class="motif-badge-text"><strong>All 4 Provinces</strong><span>Nationwide, plus diaspora</span></div>
       </div>
     </div>
   </div>
@@ -639,8 +650,8 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="ledger-value">7-Point Control</div>
     </div>
     <div class="ledger-item">
-      <div class="ledger-label">✅ ID Verification</div>
-      <div class="ledger-value">CNIC-Backed</div>
+      <div class="ledger-label">🛡️ Safety Tools</div>
+      <div class="ledger-value">Block &amp; Report Built-In</div>
     </div>
     <div class="ledger-item">
       <div class="ledger-label">🇵🇰 Coverage</div>
@@ -755,7 +766,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <li>Smart Match suggestions, reviewed by our team</li>
         <li>Online support</li>
         <li class="disabled">Featured profile placement</li>
-        <li class="disabled">CNIC verification badge</li>
         <li class="disabled">Dedicated matchmaker</li>
         <li class="disabled">In-person consultation &amp; arranged meet-ups</li>
       </ul>
@@ -773,7 +783,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <ul class="plan-features">
         <li>Everything in Basic, plus a dedicated human matchmaker</li>
         <li>Featured profile placement</li>
-        <li>CNIC verification badge</li>
         <li>Priority in search results</li>
         <li>Unlimited messaging</li>
         <li>View full contact details</li>
@@ -839,8 +848,8 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
           <div><h4>Wali / Guardian Mode</h4><p>A parent or guardian can manage the profile on behalf of their son or daughter — fully supported and encouraged.</p></div>
         </div>
         <div class="feature-item fade-in">
-          <div class="feature-icon fi3">✅</div>
-          <div><h4>CNIC-Based Verification</h4><p>Available for Premium members. A verified badge gives families the confidence that your profile is real and trustworthy.</p></div>
+          <div class="feature-icon fi3">🛡️</div>
+          <div><h4>Block &amp; Report Tools</h4><p>Uncomfortable with a profile? Block them instantly — it hides you from each other everywhere on the platform. Report anything that looks fake or inappropriate for our team to review.</p></div>
         </div>
         <div class="feature-item fade-in">
           <div class="feature-icon fi4">📍</div>
@@ -892,9 +901,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3rem">
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
-        <div style="font-size:2.2rem;margin-bottom:1rem">🔍</div>
-        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">Complete Family Background Verification</h3>
-        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">We conduct thorough family background checks — including CNIC verification, and residential confirmation — so you engage only with verified, credible families.</p>
+        <div style="font-size:2.2rem;margin-bottom:1rem">👤</div>
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:.6rem;color:#fff">A Dedicated Matchmaker, Not Just an App</h3>
+        <p style="font-size:.86rem;color:rgba(255,255,255,0.6);line-height:1.65">A senior ShadiKhana matchmaker is personally assigned to your profile — reviewing matches, answering your questions, and staying involved from registration through to your rishta being confirmed.</p>
       </div>
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
