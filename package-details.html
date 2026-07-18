@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Packages — ShadiKhana</title>
+<meta name="description" content="Compare ShadiKhana's Basic and Premium membership packages in detail — pricing, services, and who each is built for.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --burgundy:#A81851; --rose:#E63B6E; --gold:#F0A830;
+    --cream:#FFFAF3; --ivory:#FCF0DE; --charcoal:#1A1225;
+    --mid:#6B6478; --light:#EEDFC4; --white:#FFFFFF; --green:#0FA26B;
+    --ink:#081B2E; --ink-2:#0F2C47; --hairline:#F0DCB8;
+    --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'IBM Plex Mono',monospace;
+  }
+  body{font-family:var(--font-body);background:var(--cream);color:var(--charcoal);overflow-x:hidden}
+  a{color:inherit}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:72px;background:rgba(250,246,238,0.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--hairline)}
+  .nav-logo{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-size:1.5rem;font-weight:600;color:var(--burgundy);text-decoration:none;letter-spacing:-.01em}
+  .logo-icon{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;color:var(--gold)}
+  .back-link{font-size:.86rem;font-weight:600;color:var(--mid);text-decoration:none;display:flex;align-items:center;gap:.4rem}
+  .back-link:hover{color:var(--burgundy)}
+
+  .pd-hero{padding:150px 5% 60px;text-align:center;max-width:760px;margin:0 auto}
+  .pd-label{display:inline-block;background:var(--ink);color:var(--gold);padding:.4rem 1rem;border-radius:20px;font-size:.72rem;font-weight:600;letter-spacing:.09em;margin-bottom:1.3rem;text-transform:uppercase;font-family:var(--font-mono)}
+  .pd-hero h1{font-family:var(--font-display);font-size:clamp(2rem,3.6vw,2.9rem);font-weight:600;line-height:1.15;margin-bottom:1rem}
+  .pd-hero h1 em{color:var(--burgundy);font-style:italic;font-weight:500}
+  .pd-hero p{color:var(--mid);font-size:1.02rem;line-height:1.7}
+
+  .pd-compare{max-width:920px;margin:0 auto;padding:0 5% 60px;display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+  .pd-card{background:var(--white);border-radius:18px;padding:2.2rem 1.9rem;border:1.5px solid var(--hairline)}
+  .pd-card.premium{background:linear-gradient(160deg,var(--ink) 0%,#132B44 100%);color:#fff;border-color:var(--ink)}
+  .pd-badge{display:inline-block;font-size:.65rem;font-weight:600;font-family:var(--font-mono);padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:1rem;background:var(--charcoal);color:#fff}
+  .pd-card.premium .pd-badge{background:var(--gold);color:var(--ink)}
+  .pd-card h2{font-family:var(--font-display);font-size:1.7rem;margin-bottom:.3rem}
+  .pd-card:not(.premium) h2{color:var(--burgundy)}
+  .pd-card.premium h2{color:var(--gold)}
+  .pd-price{font-family:var(--font-display);font-size:2.1rem;font-weight:600;margin:.6rem 0 .1rem}
+  .pd-price-note{font-size:.82rem;color:var(--mid);margin-bottom:.3rem}
+  .pd-card.premium .pd-price-note{color:rgba(255,255,255,0.55)}
+  .pd-success{font-size:.9rem;font-weight:600;margin-bottom:1.2rem}
+  .pd-card:not(.premium) .pd-success{color:var(--burgundy)}
+  .pd-card.premium .pd-success{color:var(--gold)}
+  .pd-who{font-size:.88rem;line-height:1.65;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--light)}
+  .pd-card.premium .pd-who{border-bottom-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.8)}
+  .pd-card:not(.premium) .pd-who{color:var(--mid)}
+  .pd-section-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:.7rem}
+  .pd-card:not(.premium) .pd-section-label{color:var(--mid)}
+  .pd-card.premium .pd-section-label{color:rgba(255,255,255,0.5)}
+  .pd-list{list-style:none}
+  .pd-list li{padding:.45rem 0;font-size:.9rem;display:flex;align-items:flex-start;gap:.6rem;line-height:1.5}
+  .pd-list li::before{content:'✓';flex-shrink:0;font-weight:700}
+  .pd-card:not(.premium) .pd-list li::before{color:var(--green)}
+  .pd-card.premium .pd-list li::before{color:var(--gold)}
+  .pd-list li.no::before{content:'✕';color:var(--mid)!important}
+  .pd-list li.no{opacity:.45}
+  .pd-cta{display:block;text-align:center;margin-top:1.8rem;padding:.9rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none}
+  .pd-card:not(.premium) .pd-cta{background:var(--ink);color:#fff}
+  .pd-card.premium .pd-cta{background:var(--gold);color:var(--ink)}
+
+  .pd-note{max-width:720px;margin:0 auto 90px;padding:1.6rem 2rem;background:var(--ivory);border-radius:14px;border:1px solid var(--hairline);font-size:.88rem;line-height:1.7;color:var(--charcoal)}
+  .pd-note strong{color:var(--burgundy)}
+
+  footer{background:var(--ink);color:rgba(255,255,255,0.6);text-align:center;padding:2.5rem 5%;font-size:.82rem}
+  footer a{color:var(--gold);text-decoration:none}
+
+  @media(max-width:760px){ .pd-compare{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="nav-logo"><div class="logo-icon">💍</div>ShadiKhana</a>
+  <a href="/index.html#plans" class="back-link">← Back to Pricing</a>
+</nav>
+
+<div class="pd-hero">
+  <div class="pd-label">Membership Packages</div>
+  <h1>Two Ways to Find Your <em>Perfect Rishta</em></h1>
+  <p>Both packages give you full access to browse, connect, and message on ShadiKhana. The difference is how much of the search we personally get involved in — and how you're supported along the way.</p>
+</div>
+
+<div class="pd-compare">
+
+  <!-- BASIC -->
+  <div class="pd-card">
+    <div class="pd-badge">Self-Service</div>
+    <h2>Basic</h2>
+    <div class="pd-price">PKR 10,000</div>
+    <div class="pd-price-note">One-time registration · No monthly charges</div>
+    <div class="pd-success">💍 Success fee: PKR 65,000 — only if matched</div>
+    <div class="pd-who"><strong>Best for:</strong> members who are comfortable browsing profiles, filtering by their own criteria, and reaching out directly — and want the lowest-cost way to access the full platform. You're in the driver's seat, with Smart Match suggestions and admin-reviewed recommendations from our team helping point you in the right direction along the way.</div>
+    <div class="pd-section-label">What's Included</div>
+    <ul class="pd-list">
+      <li>Full profile creation &amp; privacy controls</li>
+      <li>Unlimited profile browsing</li>
+      <li>Filter by city, sect, age, education, profession</li>
+      <li>Send &amp; receive interest requests</li>
+      <li>Messaging with mutual matches</li>
+      <li>Smart Match suggestions, reviewed by our team</li>
+      <li>Online support (WhatsApp / email)</li>
+      <li class="no">Dedicated personal matchmaker</li>
+      <li class="no">In-person office consultation</li>
+      <li class="no">Family meet-ups arranged by our team</li>
+      <li class="no">Home visits</li>
+      <li class="no">CNIC verification badge</li>
+      <li class="no">Featured / priority placement</li>
+    </ul>
+    <a href="/index.html#plans" class="pd-cta">Register — Basic · PKR 10,000</a>
+  </div>
+
+  <!-- PREMIUM -->
+  <div class="pd-card premium">
+    <div class="pd-badge">Full-Service · Dedicated Matchmaker</div>
+    <h2>Premium</h2>
+    <div class="pd-price">PKR 30,000</div>
+    <div class="pd-price-note">One-time registration · No monthly charges</div>
+    <div class="pd-success">💍 Success fee: PKR 1,20,000 — only if matched</div>
+    <div class="pd-who"><strong>Best for:</strong> members who want us personally, hands-on involved — a dedicated matchmaker who knows your profile, arranges family meet-ups, and represents you in consultations. A natural fit for busy professionals, business families, and overseas Pakistanis who'd rather have dedicated support than manage the search entirely on their own.</div>
+    <div class="pd-section-label">Everything in Basic, Plus</div>
+    <ul class="pd-list">
+      <li>A dedicated human matchmaker assigned to you</li>
+      <li>CNIC verification badge</li>
+      <li>Featured profile placement &amp; priority in search results</li>
+      <li>Unlimited messaging, full contact details visible on match</li>
+      <li>Personal family meet-ups arranged by our team</li>
+      <li>In-person office consultation — Lahore</li>
+      <li>Home visits by your matchmaker</li>
+      <li>WhatsApp &amp; call concierge support</li>
+    </ul>
+    <a href="/index.html#plans" class="pd-cta">Register — Premium · PKR 30,000</a>
+  </div>
+
+</div>
+
+<div class="pd-note">
+  💡 <strong>Both packages share the same success-fee promise:</strong> you only pay the success fee once your rishta is actually confirmed. No match, no success fee — ever. The registration fee is what's different upfront, and it reflects how much of the matchmaking work our team does directly on your behalf versus how much you drive yourself.
+</div>
+
+<footer>
+  ShadiKhana — Pakistan's Trusted Matrimony Platform &nbsp;·&nbsp; <a href="/index.html">Back to Home</a>
+</footer>
+
+</body>
+</html>
