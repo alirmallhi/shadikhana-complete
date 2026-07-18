@@ -659,7 +659,6 @@ function adminLogout() {
         <div class="settings-section">
           <h3>⚙️ Platform Settings</h3>
           <div class="setting-row"><div><div class="setting-label">Require admin approval</div><div class="setting-sub">All new profiles reviewed before going live</div></div><label class="toggle"><input type="checkbox" id="tgl-require-approval" checked><span class="toggle-slider"></span></label></div>
-          <div class="setting-row"><div><div class="setting-label">CNIC verification required</div><div class="setting-sub">Premium & VIP must verify identity</div></div><label class="toggle"><input type="checkbox" id="tgl-cnic-verification" checked><span class="toggle-slider"></span></label></div>
           <div class="setting-row"><div><div class="setting-label">Urdu language option</div><div class="setting-sub">Show Urdu toggle on main site</div></div><label class="toggle"><input type="checkbox" id="tgl-urdu-toggle" checked><span class="toggle-slider"></span></label></div>
           <div class="setting-row"><div><div class="setting-label">WhatsApp notifications</div><div class="setting-sub">Send match alerts via WhatsApp</div></div><label class="toggle"><input type="checkbox" id="tgl-whatsapp-notifications" checked><span class="toggle-slider"></span></label></div>
           <div class="setting-row"><div><div class="setting-label">In-person service (Lahore)</div><div class="setting-sub">Show Lahore office option to VIP</div></div><label class="toggle"><input type="checkbox" id="tgl-in-person-service" checked><span class="toggle-slider"></span></label></div>
@@ -1837,7 +1836,6 @@ async function loadSettingsPanel() {
 
     if (d.platform_toggles) {
       document.getElementById('tgl-require-approval').checked = !!d.platform_toggles.require_approval;
-      document.getElementById('tgl-cnic-verification').checked = !!d.platform_toggles.cnic_verification;
       document.getElementById('tgl-urdu-toggle').checked = !!d.platform_toggles.urdu_toggle;
       document.getElementById('tgl-whatsapp-notifications').checked = !!d.platform_toggles.whatsapp_notifications;
       document.getElementById('tgl-in-person-service').checked = !!d.platform_toggles.in_person_service;
@@ -1872,7 +1870,6 @@ function readSettingsSection(section) {
   if (section === 'platform_toggles') {
     return {
       require_approval: document.getElementById('tgl-require-approval').checked,
-      cnic_verification: document.getElementById('tgl-cnic-verification').checked,
       urdu_toggle: document.getElementById('tgl-urdu-toggle').checked,
       whatsapp_notifications: document.getElementById('tgl-whatsapp-notifications').checked,
       in_person_service: document.getElementById('tgl-in-person-service').checked
