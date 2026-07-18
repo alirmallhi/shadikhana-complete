@@ -198,7 +198,7 @@ async function submitRegistration() {
       }
       var pkgDisplay = document.getElementById('success-package-display');
       if (pkgDisplay) {
-        var pkgAmounts = { basic: '10,000', premium: '40,000' };
+        var pkgAmounts = { basic: '10,000', premium: '30,000' };
         pkgDisplay.textContent = 'PKR ' + (pkgAmounts[payload.package] || '10,000');
       }
 
