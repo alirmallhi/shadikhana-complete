@@ -191,11 +191,19 @@ section{padding:96px 5%}
 .sfn-icon{font-size:2.2rem;flex-shrink:0}
 .sfn-title{font-weight:700;font-size:1rem;margin-bottom:.4rem}
 .sfn-desc{font-size:.88rem;color:var(--mid);line-height:1.6}
-.payment-methods{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--hairline);justify-content:center}
+.payment-methods{display:flex;flex-direction:column;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--hairline)}
 .pm-label{font-size:.82rem;color:var(--mid);font-weight:600;font-family:var(--font-body)}
-.pm-badge{display:inline-flex;align-items:center;gap:.6rem;background:var(--white);border:1.5px solid var(--hairline);border-radius:14px;padding:.55rem 1.1rem .55rem .55rem;font-size:.86rem;font-weight:600;color:var(--charcoal);font-family:var(--font-body);box-shadow:0 3px 10px rgba(168,24,81,0.06);transition:transform .18s,box-shadow .18s}
-.pm-badge:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(168,24,81,0.14)}
-.pm-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.pm-section-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);text-align:center;margin-bottom:1.2rem}
+.pm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;max-width:760px;margin:0 auto}
+.pm-card{background:var(--white);border:1.5px solid var(--hairline);border-radius:16px;padding:1.4rem 1.2rem;text-align:center;box-shadow:0 3px 10px rgba(168,24,81,0.05);transition:transform .18s,box-shadow .18s}
+.pm-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(168,24,81,0.12)}
+.pm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;margin:0 auto .7rem}
+.pm-card-name{font-weight:700;font-size:.95rem;color:var(--charcoal);margin-bottom:.5rem}
+.pm-card-detail{font-size:.78rem;color:var(--mid);line-height:1.6;margin-bottom:.7rem;min-height:56px}
+.pm-card-detail strong{color:var(--charcoal)}
+.pm-copy-btn{background:var(--ivory);border:1px solid var(--light);border-radius:8px;padding:.4rem .8rem;font-size:.72rem;font-weight:700;color:var(--burgundy);cursor:pointer;font-family:var(--font-body);transition:background .15s}
+.pm-copy-btn:hover{background:var(--light)}
+@media(max-width:700px){.pm-grid{grid-template-columns:1fr}}
 
 /* PROFILES */
 .profiles-section{background:var(--cream)}
@@ -810,11 +818,27 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
   <!-- Payment Methods -->
   <div class="payment-methods">
-    <span class="pm-label">Pay via:</span>
-    <span class="pm-badge"><span class="pm-icon" style="background:#FDECEC;color:#D32F2F">📱</span>JazzCash</span>
-    <span class="pm-badge"><span class="pm-icon" style="background:#E8F5E9;color:#0FA26B">📲</span>EasyPaisa</span>
-    <span class="pm-badge"><span class="pm-icon" style="background:#E8F0FE;color:#1565C0">🏦</span>Bank Transfer</span>
-    <span class="pm-badge"><span class="pm-icon" style="background:#F3E8FD;color:#7B1FA2">💳</span>Visa / Mastercard</span>
+    <div class="pm-section-label">Pay via any of these methods</div>
+    <div class="pm-grid">
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#E8F0FE;color:#1565C0">🏦</div>
+        <div class="pm-card-name">Bank Transfer</div>
+        <div class="pm-card-detail">Meezan Bank<br>Title: ShadiKhana (Pvt)<br>IBAN: <strong id="pm-bank">PK00MEZN0001234567890</strong></div>
+        <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-bank', this)">Copy IBAN</button>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#FDECEC;color:#D32F2F">📱</div>
+        <div class="pm-card-name">JazzCash</div>
+        <div class="pm-card-detail">Title: ShadiKhana<br>Number:<br><strong id="pm-jazzcash">0321-4133233</strong></div>
+        <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-jazzcash', this)">Copy Number</button>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#E8F5E9;color:#0FA26B">📲</div>
+        <div class="pm-card-name">EasyPaisa</div>
+        <div class="pm-card-detail">Title: ShadiKhana<br>Number:<br><strong id="pm-easypaisa">0321-4133233</strong></div>
+        <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-easypaisa', this)">Copy Number</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1727,10 +1751,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
       <div class="form-group"><label>Payment Method<span class="required-star">*</span></label>
         <select id="payment-method" onchange="updatePaymentFields()">
+          <option value="meezan">🏦 Bank Transfer</option>
           <option value="jazzcash">📱 JazzCash</option>
           <option value="easypaisa">📱 EasyPaisa</option>
-          <option value="meezan">🏦 Bank Transfer</option>
-          <option value="card">💳 Visa / Mastercard</option>
         </select>
       </div>
       <div id="payment-fields">
@@ -1914,11 +1937,11 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <div style="background:var(--ivory);border-radius:14px;padding:1.2rem;margin-bottom:1rem;text-align:left">
       <div style="font-size:.78rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem">Pay via any of these methods</div>
       <div style="font-size:.86rem;line-height:1.9">
-        📱 <strong>JazzCash:</strong> 0321-4133233 (ShadiKhana)<br>
-        📲 <strong>EasyPaisa:</strong> 0321-4133233 (ShadiKhana)<br>
         🏦 <strong>Bank Transfer:</strong> Meezan Bank<br>
         &nbsp;&nbsp;&nbsp;IBAN: PK00MEZN0001234567890<br>
-        &nbsp;&nbsp;&nbsp;Title: ShadiKhana (Pvt)
+        &nbsp;&nbsp;&nbsp;Title: ShadiKhana (Pvt)<br>
+        📱 <strong>JazzCash:</strong> 0321-4133233 (ShadiKhana)<br>
+        📲 <strong>EasyPaisa:</strong> 0321-4133233 (ShadiKhana)
       </div>
     </div>
 
@@ -2277,6 +2300,20 @@ function gv(id) {
   if (!el) return '—';
   var val = el.value ? el.value.trim() : '';
   return val || '—';
+}
+
+// ══════════════════════════════════════════
+//  COPY PAYMENT DETAIL TO CLIPBOARD
+// ══════════════════════════════════════════
+function copyPaymentDetail(elId, btn) {
+  var text = document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var original = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(function() { btn.textContent = original; }, 1800);
+  }).catch(function() {
+    alert('Copy this manually: ' + text);
+  });
 }
 
 // ══════════════════════════════════════════
