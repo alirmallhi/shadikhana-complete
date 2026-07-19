@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --burgundy:#7B1D3A;--rose:#C94070;--gold:#D4A853;
+  --burgundy:var(--charcoal);--rose:#B8975A;--gold:#B8975A;
   --cream:#FDF6EE;--ivory:#FAF3E8;--charcoal:#1C1C2E;
   --mid:#5A5370;--light:#EDE3D6;--white:#FFFFFF;
   --green:#2D7A5F;--sidebar:#12101E;--sidebar2:#1C1930;
@@ -77,15 +77,15 @@ tr:hover td{background:var(--cream)}
 .status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700}
 .status-active{background:#E8F5F0;color:var(--green)}
 .status-pending{background:#FEF3E2;color:#B8820A}
-.status-vip{background:rgba(123,29,58,0.1);color:var(--burgundy)}
-.status-premium{background:rgba(212,168,83,0.15);color:#A07020}
+.status-vip{background:rgba(28,28,46,0.1);color:var(--burgundy)}
+.status-premium{background:rgba(184,151,90,0.15);color:#A07020}
 .status-basic{background:rgba(90,83,112,0.1);color:var(--mid)}
 .status-matched{background:rgba(45,122,95,0.12);color:var(--green)}
 .status-paid{background:#E8F5F0;color:var(--green)}
 .status-unpaid{background:#FDE8EF;color:var(--rose)}
 .status-review{background:#FEF3E2;color:#B8820A}
 .action-btn{border:none;background:none;cursor:pointer;font-size:.8rem;font-weight:600;padding:.3rem .7rem;border-radius:6px;transition:background .15s}
-.action-edit{color:var(--burgundy)}.action-edit:hover{background:rgba(123,29,58,0.08)}
+.action-edit{color:var(--burgundy)}.action-edit:hover{background:rgba(28,28,46,0.08)}
 .action-view{color:var(--mid)}.action-view:hover{background:var(--light)}
 .action-approve{color:var(--green)}.action-approve:hover{background:#E8F5F0}
 .action-delete{color:var(--rose)}.action-delete:hover{background:#FDE8EF}
@@ -108,9 +108,9 @@ tr:hover td{background:var(--cream)}
 .activity-item{display:flex;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--light)}
 .activity-item:last-child{border-bottom:none}
 .act-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.act-reg{background:rgba(123,29,58,0.1)}
+.act-reg{background:rgba(28,28,46,0.1)}
 .act-pay{background:rgba(45,122,95,0.1)}
-.act-match{background:rgba(212,168,83,0.12)}
+.act-match{background:rgba(184,151,90,0.12)}
 .act-time{font-size:.72rem;color:var(--mid);margin-top:2px}
 .act-text{font-size:.84rem;font-weight:500}
 
@@ -180,11 +180,11 @@ tr:hover td{background:var(--cream)}
 <body>
 
 <!-- ══════════ ADMIN LOGIN GATE ══════════ -->
-<div id="admin-login-gate" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#7B1D3A,#1C1C2E);
+<div id="admin-login-gate" style="position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1C1C2E,#1C1C2E);
      display:flex;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#fff;border-radius:20px;padding:2.5rem;max-width:380px;width:100%">
     <div style="text-align:center;margin-bottom:1.5rem">
-      <div style="width:56px;height:56px;background:linear-gradient(135deg,#7B1D3A,#C94070);border-radius:50%;
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,#1C1C2E,#B8975A);border-radius:50%;
            display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto .8rem">💍</div>
       <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#1C1C2E">ShadiKhana Admin</h2>
       <p style="font-size:.84rem;color:#5A5370;margin-top:.2rem">Sign in to manage your platform</p>
@@ -199,9 +199,9 @@ tr:hover td{background:var(--cream)}
       <input type="password" id="admin-login-password" placeholder="Your password"
              style="width:100%;padding:.7rem .9rem;border:1.5px solid #EDE3D6;border-radius:10px;font-size:.87rem">
     </div>
-    <p id="admin-login-error" style="display:none;color:#C94070;font-size:.82rem;margin-bottom:.8rem"></p>
+    <p id="admin-login-error" style="display:none;color:#B8975A;font-size:.82rem;margin-bottom:.8rem"></p>
     <button id="admin-login-btn" onclick="handleAdminLogin()"
-            style="width:100%;padding:.85rem;background:linear-gradient(135deg,#7B1D3A,#C94070);color:#fff;
+            style="width:100%;padding:.85rem;background:linear-gradient(135deg,#1C1C2E,#B8975A);color:#fff;
                    border:none;border-radius:10px;font-weight:700;font-size:.92rem;cursor:pointer">
       Sign In
     </button>
@@ -486,7 +486,7 @@ function adminLogout() {
 
 <!-- ══════════ PENDING APPROVALS ══════════ -->
 <div class="panel" id="panel-pending">
-  <div style="background:rgba(212,168,83,0.1);border:1.5px solid rgba(212,168,83,0.3);border-radius:12px;
+  <div style="background:rgba(184,151,90,0.1);border:1.5px solid rgba(184,151,90,0.3);border-radius:12px;
        padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.88rem;color:#8A6010" id="pending-summary-banner">
     ⏳ Loading pending registrations...
   </div>
@@ -837,7 +837,7 @@ function renderMatchCards(matches, pagination) {
 
   const tierColors = {
     excellent: { bg:'#E8F5F0', color:'#2D7A5F', label:'⭐⭐⭐ Excellent Match' },
-    good:      { bg:'rgba(123,29,58,0.08)', color:'#7B1D3A', label:'⭐⭐ Good Match' },
+    good:      { bg:'rgba(28,28,46,0.08)', color:'#1C1C2E', label:'⭐⭐ Good Match' },
     fair:      { bg:'#F3EFFF', color:'#5A5370', label:'⭐ Fair Match' },
   };
 
@@ -847,7 +847,7 @@ function renderMatchCards(matches, pagination) {
 
     const breakdownHtml = Object.entries(bd)
       .filter(([k, v]) => k !== 'failed' && v > 0)
-      .map(([k, v]) => `<span style="background:rgba(123,29,58,0.08);border-radius:6px;padding:2px 8px;font-size:.7rem;margin:2px;display:inline-block;color:var(--burgundy)">
+      .map(([k, v]) => `<span style="background:rgba(28,28,46,0.08);border-radius:6px;padding:2px 8px;font-size:.7rem;margin:2px;display:inline-block;color:var(--burgundy)">
         ${k.replace(/_/g,' ')}: +${v}
       </span>`).join('');
 
@@ -862,7 +862,7 @@ function renderMatchCards(matches, pagination) {
         <!-- Score Badge -->
         <div style="text-align:center;min-width:80px">
           <div style="font-size:2.2rem;font-weight:700;font-family:'Playfair Display',serif;
-                      color:${m.score>=85?'#2D7A5F':m.score>=65?'#7B1D3A':'#5A5370'}">${m.score}%</div>
+                      color:${m.score>=85?'#2D7A5F':m.score>=65?'#1C1C2E':'#5A5370'}">${m.score}%</div>
           <div style="background:${tc.bg};color:${tc.color};border-radius:8px;padding:3px 8px;
                       font-size:.68rem;font-weight:700;margin-top:4px">${tc.label}</div>
           ${m.admin_reviewed   ? '<div style="color:#2D7A5F;font-size:.7rem;margin-top:4px">✅ Reviewed</div>' : ''}
@@ -879,7 +879,7 @@ function renderMatchCards(matches, pagination) {
             ${m.a_education||''} ${m.a_profession?'· '+m.a_profession:''}
           </div>
           <div style="margin-top:6px">
-            <span style="background:rgba(123,29,58,0.08);color:var(--burgundy);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600">${m.a_package?.toUpperCase()}</span>
+            <span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600">${m.a_package?.toUpperCase()}</span>
             ${m.a_verified?'<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600;margin-left:4px">✓ Verified</span>':''}
           </div>
         </div>
@@ -897,7 +897,7 @@ function renderMatchCards(matches, pagination) {
             ${m.b_education||''} ${m.b_profession?'· '+m.b_profession:''}
           </div>
           <div style="margin-top:6px">
-            <span style="background:rgba(123,29,58,0.08);color:var(--burgundy);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600">${m.b_package?.toUpperCase()}</span>
+            <span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600">${m.b_package?.toUpperCase()}</span>
             ${m.b_verified?'<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600;margin-left:4px">✓ Verified</span>':''}
           </div>
         </div>
@@ -978,14 +978,14 @@ async function loadMemberMatchesById(id) {
       data.data.matches.map(match => `
         <div style="background:#fff;border-radius:12px;padding:1.2rem;margin-bottom:.8rem;
                     box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
-          <div style="font-size:1.8rem;font-weight:700;color:${match.score>=85?'#2D7A5F':match.score>=65?'#7B1D3A':'#5A5370'};
+          <div style="font-size:1.8rem;font-weight:700;color:${match.score>=85?'#2D7A5F':match.score>=65?'#1C1C2E':'#5A5370'};
                       font-family:'Playfair Display',serif;min-width:60px;text-align:center">${match.score}%</div>
           <div style="flex:1">
             <div style="font-weight:700">${match.full_name}</div>
             <div style="font-size:.82rem;color:var(--mid)">${match.gender} · ${match.age} yrs · ${match.city} · ${match.profession||'—'}</div>
             <div style="font-size:.78rem;color:var(--mid)">${match.religion||''} ${match.sect?'· '+match.sect:''} · ${match.marital_status||''}</div>
           </div>
-          <span style="background:rgba(123,29,58,0.08);color:var(--burgundy);border-radius:6px;
+          <span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;
                        padding:3px 10px;font-size:.72rem;font-weight:700">${match.tier?.toUpperCase()}</span>
           ${match.admin_recommended ?
             '<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:3px 10px;font-size:.72rem;font-weight:700">💌 RECOMMENDED</span>' : ''}
