@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --burg:#7B1D3A; --rose:#C94070; --gold:#D4A853;
+  --burg:var(--charcoal); --rose:#B8975A; --gold:#B8975A;
   --cream:#FDF6EE; --ivory:#FAF3E8; --mid:#5A5370;
   --light:#EDE3D6; --green:#2D7A5F; --white:#fff; --charcoal:#1C1C2E;
   --wa:#25D366; --wa-dark:#128C7E;
@@ -45,7 +45,7 @@ a{text-decoration:none;color:inherit}
 .nav-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.4rem;color:var(--mid);
   font-size:.88rem;font-weight:500;cursor:pointer;border-left:3px solid transparent;transition:all .15s}
 .nav-item:hover{background:var(--ivory);color:var(--burg)}
-.nav-item.active{background:rgba(123,29,58,0.06);color:var(--burg);border-left-color:var(--burg);font-weight:700}
+.nav-item.active{background:rgba(28,28,46,0.06);color:var(--burg);border-left-color:var(--burg);font-weight:700}
 .nav-item-icon{font-size:1.1rem;width:22px;text-align:center}
 .nav-badge{margin-left:auto;background:var(--rose);color:#fff;font-size:.65rem;font-weight:700;
   padding:1px 7px;border-radius:10px}
@@ -78,7 +78,7 @@ a{text-decoration:none;color:inherit}
 
 .status-banner{border-radius:14px;padding:1rem 1.3rem;margin-bottom:1.5rem;font-size:.86rem;
   display:flex;align-items:center;gap:.7rem}
-.status-pending{background:#FEF3E2;color:#8A6010;border:1.5px solid rgba(212,168,83,0.3)}
+.status-pending{background:#FEF3E2;color:#8A6010;border:1.5px solid rgba(184,151,90,0.3)}
 .status-active{background:#E8F5F0;color:var(--green);border:1.5px solid rgba(45,122,95,0.25)}
 
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:1.5rem}
@@ -138,7 +138,7 @@ a{text-decoration:none;color:inherit}
   background:var(--white);border:1.5px solid var(--light);border-radius:10px;
   cursor:pointer;font-size:.82rem;font-weight:600;transition:border-color .15s,background .15s}
 .photo-privacy-option input{accent-color:var(--burg)}
-.photo-privacy-option:has(input:checked){border-color:var(--burg);background:rgba(123,29,58,0.06)}
+.photo-privacy-option:has(input:checked){border-color:var(--burg);background:rgba(28,28,46,0.06)}
 
 /* ── BROWSE PROFILES ── */
 .filter-bar{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
@@ -151,7 +151,7 @@ a{text-decoration:none;color:inherit}
 .profiles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem}
 .profile-card{background:var(--white);border-radius:16px;overflow:hidden;
   box-shadow:0 2px 14px rgba(0,0,0,0.06);transition:transform .2s,box-shadow .2s;cursor:pointer}
-.profile-card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(123,29,58,0.12)}
+.profile-card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(28,28,46,0.12)}
 .pc-top{height:140px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;
   background:linear-gradient(135deg,#FDE8EF,#FAD0DE);position:relative}
 .pc-badge{position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;
@@ -167,7 +167,7 @@ a{text-decoration:none;color:inherit}
 .active-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
 .active-dot.online{background:#2DBE60;box-shadow:0 0 5px rgba(45,190,96,0.6)}
 .active-dot.today{background:var(--gold)}
-.pc-score{display:inline-block;background:rgba(123,29,58,0.08);color:var(--burg);
+.pc-score{display:inline-block;background:rgba(28,28,46,0.08);color:var(--burg);
   font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:8px;margin-bottom:.6rem}
 .pc-actions{display:flex;gap:.5rem}
 .btn-interest-sm{flex:1;background:var(--burg);color:#fff;border:none;border-radius:8px;
@@ -216,7 +216,7 @@ a{text-decoration:none;color:inherit}
 .msg-conv-col{width:300px;flex-shrink:0;background:var(--white);border:1px solid var(--light);border-radius:14px;overflow-y:auto}
 .msg-conv-item{display:flex;align-items:center;gap:.7rem;padding:.85rem 1rem;cursor:pointer;border-bottom:1px solid var(--light);position:relative}
 .msg-conv-item:hover{background:var(--ivory)}
-.msg-conv-item.active{background:rgba(123,29,58,0.06)}
+.msg-conv-item.active{background:rgba(28,28,46,0.06)}
 .msg-conv-av{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#FEF3E2,#FAE5C0);
   display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
 .msg-conv-info{flex:1;min-width:0}
