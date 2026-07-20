@@ -175,6 +175,19 @@ tr:hover td{background:var(--cream)}
 @media(max-width:600px){
   .kpi-grid{grid-template-columns:1fr}
 }
+/* ADMIN PROFILE DETAIL MODAL */
+.admin-modal-overlay{display:none;position:fixed;inset:0;background:rgba(18,16,30,0.6);z-index:9999;align-items:flex-start;justify-content:center;padding:3rem 1rem;overflow-y:auto}
+.admin-modal-overlay.open{display:flex}
+.admin-modal-box{background:#fff;border-radius:16px;max-width:640px;width:100%;padding:2rem;position:relative;box-shadow:0 30px 70px rgba(0,0,0,0.3)}
+.admin-modal-close{position:absolute;top:1rem;right:1rem;background:var(--light);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;line-height:1}
+.amd-section-label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--burgundy);margin:1.2rem 0 .5rem;display:block}
+.amd-narrative{font-size:.88rem;line-height:1.65;color:var(--charcoal);background:var(--ivory);border-radius:10px;padding:.9rem 1rem;white-space:pre-wrap}
+.amd-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
+.amd-field{padding:.4rem 0;border-bottom:1px solid var(--light)}
+.amd-field-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mid);font-weight:600;display:block}
+.amd-field-value{font-size:.85rem;color:var(--charcoal);font-weight:600}
+.amd-clickable{cursor:pointer;transition:opacity .15s}
+.amd-clickable:hover{opacity:.72}
 </style>
 </head>
 <body>
@@ -870,9 +883,9 @@ function renderMatchCards(matches, pagination) {
         </div>
 
         <!-- Member A -->
-        <div style="flex:1;min-width:160px">
+        <div class="amd-clickable" onclick="viewAdminMemberDetail(${m.a_id})" style="flex:1;min-width:160px">
           <div style="font-size:.68rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem">Profile A</div>
-          <div style="font-weight:700;font-size:.95rem">${m.a_name}</div>
+          <div style="font-weight:700;font-size:.95rem;text-decoration:underline;text-decoration-color:var(--light)">${m.a_name}</div>
           <div style="font-size:.8rem;color:var(--mid);margin-top:3px">
             ${m.a_gender} · ${m.a_age} yrs · ${m.a_city}<br>
             ${m.a_religion||''} ${m.a_sect?'· '+m.a_sect:''}<br>
@@ -888,9 +901,9 @@ function renderMatchCards(matches, pagination) {
         <div style="font-size:1.5rem;align-self:center;color:var(--light)">💕</div>
 
         <!-- Member B -->
-        <div style="flex:1;min-width:160px">
+        <div class="amd-clickable" onclick="viewAdminMemberDetail(${m.b_id})" style="flex:1;min-width:160px">
           <div style="font-size:.68rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem">Profile B</div>
-          <div style="font-weight:700;font-size:.95rem">${m.b_name}</div>
+          <div style="font-weight:700;font-size:.95rem;text-decoration:underline;text-decoration-color:var(--light)">${m.b_name}</div>
           <div style="font-size:.8rem;color:var(--mid);margin-top:3px">
             ${m.b_gender} · ${m.b_age} yrs · ${m.b_city}<br>
             ${m.b_religion||''} ${m.b_sect?'· '+m.b_sect:''}<br>
@@ -1210,33 +1223,101 @@ async function rejectPendingMember(memberId, memberName) {
 }
 
 // ── View full details of a pending member ──
-async function viewPendingMemberDetail(memberId) {
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str == null ? '' : str;
+  return div.innerHTML;
+}
+
+function closeAdminProfileModal() {
+  document.getElementById('admin-profile-overlay').classList.remove('open');
+}
+
+// Full, unrestricted profile view for admin use — no privacy locks, since
+// admin needs the complete picture to judge whether a match genuinely makes
+// sense. Used both from Smart Matching cards and Pending Approvals.
+async function viewAdminMemberDetail(memberId) {
+  document.getElementById('admin-profile-overlay').classList.add('open');
+  document.getElementById('admin-profile-content').innerHTML =
+    '<div style="text-align:center;padding:3rem;color:var(--mid)">Loading...</div>';
+
   try {
     var data = await adminAPI('/admin/members/' + memberId);
-    if (!data.success) { alert('Could not load member details.'); return; }
-
+    if (!data.success) {
+      document.getElementById('admin-profile-content').innerHTML =
+        '<div style="color:var(--rose)">Could not load member details.</div>';
+      return;
+    }
     var m = data.data.member;
     var payments = data.data.payments || [];
 
-    var details =
-      'NAME: ' + m.full_name + '\n' +
-      'EMAIL: ' + m.email + '\n' +
-      'MOBILE: ' + m.mobile + '\n' +
-      'GENDER: ' + m.gender + ' | AGE: ' + (m.age || '—') + '\n' +
-      'CITY: ' + (m.city || '—') + '\n' +
-      'PACKAGE: ' + m.package + '\n' +
-      'RELIGION/SECT: ' + (m.religion || '—') + ' / ' + (m.sect || '—') + '\n' +
-      'EDUCATION: ' + (m.education || '—') + '\n' +
-      'PROFESSION: ' + (m.profession || '—') + '\n\n' +
-      'PAYMENT RECORDS:\n' +
-      payments.map(function(p) {
-        return '  • ' + p.type + ' — PKR ' + p.amount + ' via ' + p.method + ' — ' + p.status;
-      }).join('\n');
+    function field(label, value) {
+      return '<div class="amd-field"><span class="amd-field-label">' + label + '</span>' +
+             '<span class="amd-field-value">' + (escapeHtml(value) || '—') + '</span></div>';
+    }
 
-    alert(details);
+    var html = '';
+
+    html += '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:.3rem">';
+    if (m.photo_url) {
+      html += '<img src="' + m.photo_url + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0">';
+    }
+    html += '<div><div style="font-family:\'Playfair Display\',serif;font-size:1.3rem;font-weight:700">' + escapeHtml(m.full_name) + '</div>' +
+            '<div style="font-size:.82rem;color:var(--mid)">' + (m.age || '—') + ' yrs · ' + escapeHtml(m.city) + ' · ' + escapeHtml(m.gender) + '</div></div>';
+    html += '</div>';
+
+    html += '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.7rem 0 1rem">';
+    html += '<span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.package || '').toUpperCase() + '</span>';
+    html += '<span style="background:' + (m.account_status === 'active' ? '#E8F5F0' : '#FEF3E2') + ';color:' + (m.account_status === 'active' ? '#2D7A5F' : '#8A6010') + ';border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.account_status || '').toUpperCase() + '</span>';
+    if (m.is_verified) html += '<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">✓ VERIFIED</span>';
+    html += '</div>';
+
+    if (m.about_me) html += '<span class="amd-section-label">About</span><div class="amd-narrative">' + escapeHtml(m.about_me) + '</div>';
+    if (m.partner_description) html += '<span class="amd-section-label">Looking For</span><div class="amd-narrative">' + escapeHtml(m.partner_description) + '</div>';
+    if (m.family_description) html += '<span class="amd-section-label">Family</span><div class="amd-narrative">' + escapeHtml(m.family_description) + '</div>';
+
+    html += '<span class="amd-section-label">Profile Details</span><div class="amd-grid">';
+    html += field('Religion / Sect', (m.religion || '—') + ' / ' + (m.sect || '—'));
+    html += field('Education', m.education);
+    html += field('Profession', m.profession);
+    html += field('Height', m.height);
+    html += field('Caste', m.caste);
+    html += field('Marital Status', m.marital_status);
+    html += field('Area', m.area);
+    html += field('Monthly Income', m.monthly_income);
+    html += field('Employer', m.employer);
+    html += field("Father's Occupation", m.father_occupation);
+    html += field("Mother's Occupation", m.mother_occupation);
+    html += '</div>';
+
+    html += '<span class="amd-section-label">Contact</span><div class="amd-grid">';
+    html += field('Email', m.email);
+    html += field('Mobile', m.mobile);
+    html += field('WhatsApp', m.whatsapp);
+    html += '</div>';
+
+    if (m.wali_name) {
+      html += '<span class="amd-section-label">Wali / Guardian</span><div class="amd-grid">';
+      html += field('Name', m.wali_name);
+      html += field('WhatsApp', m.wali_mobile);
+      html += '</div>';
+    }
+
+    html += '<span class="amd-section-label">Payment History</span>';
+    html += payments.length
+      ? '<div style="font-size:.82rem;line-height:1.85">' + payments.map(function(p) {
+          return '• ' + escapeHtml(p.type) + ' — PKR ' + Number(p.amount).toLocaleString() + ' via ' + escapeHtml(p.method) + ' — <strong>' + escapeHtml(p.status) + '</strong>';
+        }).join('<br>') + '</div>'
+      : '<div style="font-size:.82rem;color:var(--mid)">No payment records.</div>';
+
+    document.getElementById('admin-profile-content').innerHTML = html;
   } catch (err) {
-    alert('Error loading member details: ' + err.message);
+    document.getElementById('admin-profile-content').innerHTML = '<div style="color:var(--rose)">Error: ' + err.message + '</div>';
   }
+}
+
+async function viewPendingMemberDetail(memberId) {
+  viewAdminMemberDetail(memberId);
 }
 
 
@@ -1971,5 +2052,14 @@ showPanel = function(id, btn) {
 
 
 </script>
+
+<!-- ADMIN PROFILE DETAIL MODAL -->
+<div id="admin-profile-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeAdminProfileModal()">
+  <div class="admin-modal-box">
+    <button class="admin-modal-close" onclick="closeAdminProfileModal()">✕</button>
+    <div id="admin-profile-content"></div>
+  </div>
+</div>
+
 </body>
 </html>
