@@ -1045,9 +1045,17 @@ async function triggerRescan() {
   if (!confirm('Re-scan all profiles? This will recompute all match scores. Continue?')) return;
   try {
     const data = await adminAPI('/admin/matching/rescan', 'POST');
-    alert('🔄 ' + data.message);
-    // Reload stats after 5 seconds
-    setTimeout(loadMatchingStats, 5000);
+    document.getElementById('matching-results').innerHTML =
+      '<div style="text-align:center;padding:2rem;color:var(--mid)">🔄 Rescanning all profiles — this takes 30–60 seconds depending on how many members you have. Results will refresh automatically, or click Filter below once it\'s done to check sooner.</div>';
+    // Real rescans take much longer than a few seconds — this is a best-effort
+    // auto-refresh, not a guarantee. The backend runs the rescan in the
+    // background and doesn't report back when it's actually finished, so if
+    // your member count grows a lot, this delay may need to grow with it —
+    // the Filter button always fetches current results regardless of timing.
+    setTimeout(function() {
+      loadMatchingStats();
+      loadMatchingPanel();
+    }, 35000);
   } catch(e) { alert('Error: ' + e.message); }
 }
 
@@ -1059,7 +1067,7 @@ function showPanel(id, btn){
   document.getElementById('page-title').innerHTML=pageTitles[id]||id;
   document.querySelector('.sidebar').classList.remove('open');
   // Load data for matching panel when opened
-  if(id === 'matching') { loadMatchingStats(); }
+  if(id === 'matching') { loadMatchingStats(); loadMatchingPanel(); }
 }
 
 // Draw revenue chart
