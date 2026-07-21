@@ -154,8 +154,15 @@ a{text-decoration:none;color:inherit}
 .profile-card:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(28,28,46,0.12)}
 .pc-top{height:140px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;
   background:linear-gradient(135deg,#FDE8EF,#FAD0DE);position:relative}
-.pc-badge{position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:700;
+.pc-badges-top{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;
+  align-items:flex-end;gap:5px}
+.pc-badge{font-size:.62rem;font-weight:700;
   padding:3px 8px;border-radius:10px;background:#E8F5F0;color:var(--green)}
+.pc-match-badge{font-size:.78rem;font-weight:800;letter-spacing:.01em;
+  padding:5px 11px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.18);white-space:nowrap}
+.pc-match-high{background:var(--green);color:#fff}
+.pc-match-mid{background:#B8860B;color:#fff}
+.pc-match-low{background:var(--light);color:var(--mid);box-shadow:none}
 .pc-save-btn{position:absolute;top:8px;left:8px;width:32px;height:32px;border-radius:50%;
   background:rgba(255,255,255,0.9);border:none;cursor:pointer;font-size:1.05rem;
   display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.12)}
@@ -1065,6 +1072,13 @@ async function handlePhotoUpload(input) {
 // ══════════════════════════════════════════
 //  BROWSE PROFILES
 // ══════════════════════════════════════════
+function matchBadgeHtml(score) {
+  if (score == null) return '';
+  var tier = score >= 85 ? 'pc-match-high' : (score >= 65 ? 'pc-match-mid' : 'pc-match-low');
+  var icon = score >= 85 ? '🔥' : (score >= 65 ? '⭐' : '');
+  return '<span class="pc-match-badge ' + tier + '">' + (icon ? icon + ' ' : '') + score + '% Match</span>';
+}
+
 function formatLastActive(timestamp) {
   if (!timestamp) return { label: '', dot: '' };
   var diffMs = Date.now() - new Date(timestamp).getTime();
@@ -1116,16 +1130,12 @@ async function loadBrowseProfiles(page) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
-    var compatBadge = '';
-    if (p.compatibility_score != null) {
-      var cColor = p.compatibility_score >= 85 ? '#2D7A5F' : (p.compatibility_score >= 65 ? '#1C1C2E' : '#8A6010');
-      compatBadge = '<span class="pc-badge" style="background:' + cColor + ';color:#fff">' + p.compatibility_score + '% Match</span>';
-    }
+    var compatBadge = matchBadgeHtml(p.compatibility_score);
     var activity = formatLastActive(p.last_active_at);
     var saveIcon = p.is_saved ? '❤️' : '🤍';
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + verifiedBadge + compatBadge +
+      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + compatBadge + '</div>' +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
       '</div>' +
       '<div class="pc-body">' +
@@ -1215,6 +1225,10 @@ async function viewProfileDetail(uuid) {
     ? '<div style="text-align:center;margin-bottom:.8rem"><span class="interest-status is-accepted">✓ Mutual Match — full profile unlocked</span></div>'
     : '';
 
+  var compatScoreBadge = p.compatibility_score != null
+    ? '<div style="text-align:center;margin-bottom:.8rem">' + matchBadgeHtml(p.compatibility_score) + '</div>'
+    : '';
+
   var guardianBadge = (p.profile_for === 'guardian')
     ? '<div style="text-align:center;margin-bottom:.8rem"><span class="interest-status is-sent">🤲 Profile managed by ' + (p.guardian_name ? escapeHtml(p.guardian_name) + ' (parent/guardian)' : 'a parent/guardian') + '</span></div>'
     : '';
@@ -1265,6 +1279,7 @@ async function viewProfileDetail(uuid) {
     '</div>';
 
   var html =
+    compatScoreBadge +
     matchBadge +
     guardianBadge +
     '<div class="detail-photo">' + photo + saveBtn + '</div>' +
