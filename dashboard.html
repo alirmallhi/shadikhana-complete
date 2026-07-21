@@ -366,6 +366,8 @@ a{text-decoration:none;color:inherit}
 
       <div class="status-banner" id="status-banner" style="display:none"></div>
 
+      <div id="whats-new-banner" style="display:none"></div>
+
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">💌</div>
@@ -388,6 +390,11 @@ a{text-decoration:none;color:inherit}
           <div class="stat-label">Profile Complete</div>
           <div class="completion-bar-track"><div class="completion-bar-fill" id="completion-bar" style="width:0%"></div></div>
         </div>
+      </div>
+
+      <div class="card" id="completion-checklist-card" style="display:none">
+        <div class="card-header"><span class="card-title">📋 Complete Your Profile</span></div>
+        <div id="completion-checklist" style="padding:.6rem 1.5rem 1.5rem"></div>
       </div>
 
       <div class="card" id="todays-picks-card" style="display:none">
@@ -445,6 +452,7 @@ a{text-decoration:none;color:inherit}
     <div class="panel" id="panel-profile">
       <h1 class="page-title">My Profile</h1>
       <p class="page-sub">Keep your profile up to date for better matches</p>
+      <button class="btn-filter" style="margin-bottom:1.2rem" onclick="previewMyProfile()">👁️ Preview How Others See My Profile</button>
 
       <div class="card">
         <div class="photo-section">
@@ -835,13 +843,41 @@ async function renderDashboardHome() {
     statusEl.style.display = 'none';
   }
 
-  // Profile completion
-  var fields = ['full_name','gender','date_of_birth','city','religion','sect','education',
-                'profession','about_me','height','marital_status'];
-  var filled = fields.filter(function(f) { return currentMember[f] && currentMember[f] !== '—'; }).length;
-  var pct = Math.round((filled / fields.length) * 100);
+  // Profile completion — checklist, not just a bare percentage. Only includes
+  // fields actually editable from this dashboard (checked against the
+  // allowed-fields list in authController.js) so every item has a real fix,
+  // not a dead link to a field that doesn't exist here.
+  var checklistItems = [
+    { field: 'photo_url',            label: 'Add a profile photo',                 jump: 'photo-upload-btn' },
+    { field: 'about_me',             label: 'Write your "About Me"',               jump: 'p-about_me' },
+    { field: 'partner_description',  label: 'Describe your ideal partner — this carries the most weight in your matches', jump: 'p-partner_description' },
+    { field: 'area',                 label: 'Add your area/neighbourhood',         jump: 'p-area' },
+    { field: 'profession',           label: 'Add your profession',                 jump: 'p-profession' },
+    { field: 'height',               label: 'Add your height',                     jump: 'p-height' }
+  ];
+  var filled = checklistItems.filter(function(i) { return currentMember[i.field] && currentMember[i.field] !== '—'; }).length;
+  var pct = Math.round((filled / checklistItems.length) * 100);
   document.getElementById('stat-completion').textContent = pct + '%';
   document.getElementById('completion-bar').style.width = pct + '%';
+
+  var missing = checklistItems.filter(function(i) { return !currentMember[i.field] || currentMember[i.field] === '—'; });
+  var checklistCard = document.getElementById('completion-checklist-card');
+  if (missing.length) {
+    checklistCard.style.display = 'block';
+    document.getElementById('completion-checklist').innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:.7rem">' +
+      missing.map(function(i) {
+        return '<div style="display:flex;align-items:center;gap:.7rem;cursor:pointer" onclick="jumpToProfileField(\'' + i.jump + '\')">' +
+          '<span style="color:var(--mid)">⬜</span>' +
+          '<span style="font-size:.86rem;text-decoration:underline;text-decoration-color:var(--light)">' + i.label + '</span>' +
+          '</div>';
+      }).join('') +
+      '</div>';
+  } else {
+    checklistCard.style.display = 'none';
+  }
+
+  checkWhatsNew();
 
   // Load interests stats
   var interestsResult = await apiCall('/interests', 'GET');
@@ -855,6 +891,40 @@ async function renderDashboardHome() {
   if (matchesResult.success) {
     document.getElementById('stat-matches').textContent = matchesResult.data.length;
   }
+}
+
+function jumpToProfileField(fieldId) {
+  showPanel('profile');
+  setTimeout(function() {
+    var el = document.getElementById(fieldId);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (typeof el.focus === 'function') el.focus();
+  }, 150);
+}
+
+async function checkWhatsNew() {
+  var since = localStorage.getItem('sk_previous_login_at');
+  var banner = document.getElementById('whats-new-banner');
+  if (!since) { banner.style.display = 'none'; return; }
+
+  var result = await apiCall('/member/whats-new?since=' + encodeURIComponent(since), 'GET');
+  if (!result.success) { banner.style.display = 'none'; return; }
+
+  var d = result.data;
+  var parts = [];
+  if (d.new_matches)   parts.push(d.new_matches + ' new match' + (d.new_matches === 1 ? '' : 'es'));
+  if (d.new_interests) parts.push(d.new_interests + ' new interest' + (d.new_interests === 1 ? '' : 's'));
+
+  if (!parts.length) { banner.style.display = 'none'; return; }
+
+  banner.style.display = 'block';
+  banner.innerHTML =
+    '<div class="card" style="background:var(--ivory);margin-bottom:1.2rem">' +
+    '<div style="padding:1rem 1.4rem;font-size:.9rem">' +
+    '✨ <strong>Since your last visit:</strong> ' + escapeHtml(parts.join(' and ')) + '. ' +
+    '<a href="javascript:void(0)" onclick="showPanel(\'matches\')" style="color:var(--burg);font-weight:700;text-decoration:underline">Take a look</a>' +
+    '</div></div>';
 }
 
 async function loadInterestsCount() {
@@ -1223,6 +1293,74 @@ async function viewProfileDetail(uuid) {
 
 function detailField(label, value) {
   return '<div class="detail-field"><span class="detail-field-label">' + label + '</span><span class="detail-field-value">' + value + '</span></div>';
+}
+
+async function previewMyProfile() {
+  var result = await apiCall('/member/preview-profile', 'GET');
+  if (!result.success) {
+    alert('Could not load your profile preview.');
+    return;
+  }
+  var p = result.data;
+  var initial = p.gender === 'Male' ? '👨' : '👩';
+  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : initial;
+
+  var prefParts = [];
+  if (p.partner_age_min && p.partner_age_max) prefParts.push(p.partner_age_min + '–' + p.partner_age_max + ' years old');
+  else if (p.partner_age_min) prefParts.push(p.partner_age_min + '+ years old');
+  else if (p.partner_age_max) prefParts.push('up to ' + p.partner_age_max + ' years old');
+  if (p.partner_city) prefParts.push('based in ' + p.partner_city);
+
+  var partnerPrefsHtml = '';
+  if (p.partner_description || prefParts.length) {
+    partnerPrefsHtml = '<span class="detail-section-label">Looking For</span>' +
+      (p.partner_description ? '<div class="detail-narrative">' + escapeHtml(p.partner_description) + '</div>' : '') +
+      (prefParts.length ? '<div class="detail-preferences">' + escapeHtml(prefParts.join(' · ')) + '</div>' : '');
+  }
+
+  var familyHtml = '';
+  if (p.family_description) {
+    familyHtml = '<span class="detail-section-label">About Their Family</span><div class="detail-narrative">' + escapeHtml(p.family_description) + '</div>';
+  } else if (p.family_locked) {
+    familyHtml = '<span class="detail-section-label">About Their Family</span><div class="detail-locked">🔒 Hidden until you\'re a mutual match with someone — this is what a stranger sees right now.</div>';
+  }
+
+  var detailsGridHtml =
+    '<span class="detail-section-label">Profile Details</span><div class="detail-grid">' +
+    detailField('Religion / Sect', (p.religion || '—') + ' / ' + (p.sect || '—')) +
+    detailField('Education', p.education || '—') +
+    detailField('Profession', p.profession || '—') +
+    detailField('Height', p.height || '—') +
+    detailField('Caste', p.caste || '—') +
+    (p.area ? detailField('Area', p.area) : '') +
+    (p.father_occupation ? detailField("Father's Occupation", p.father_occupation) : '') +
+    (p.mother_occupation ? detailField("Mother's Occupation", p.mother_occupation) : '') +
+    '</div>';
+
+  var photoNote = p.photo_locked
+    ? '<div style="text-align:center;margin-top:.6rem"><span class="interest-status is-sent">🔒 Your photo is hidden until someone becomes a mutual match</span></div>'
+    : '';
+
+  var html =
+    '<div style="background:var(--ivory);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.85rem;line-height:1.6">' +
+    '👁️ <strong>This is exactly what an unmatched member sees</strong> when they view your profile — nothing more, nothing less. It respects your current privacy settings.' +
+    '</div>' +
+    '<div class="detail-photo">' + photo + '</div>' +
+    photoNote +
+    '<div class="detail-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+    '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
+    (p.about_me ? '<span class="detail-section-label">About ' + escapeHtml(p.display_name || 'You') + '</span><div class="detail-narrative">' + escapeHtml(p.about_me) + '</div>' : '') +
+    partnerPrefsHtml +
+    familyHtml +
+    detailsGridHtml +
+    (p.monthly_income_safe ? detailField('Monthly Income', p.monthly_income_safe) : '') +
+    (p.employer_safe ? detailField('Employer', p.employer_safe) : '') +
+    (p.mobile ? detailField('Mobile', p.mobile) : '') +
+    (p.whatsapp ? detailField('WhatsApp', p.whatsapp) : '') +
+    '<button class="btn-save" style="width:100%;margin-top:1.2rem" onclick="closeDetailModal();showPanel(\'profile\')">✏️ Edit My Profile</button>';
+
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('overlay-detail').classList.add('open');
 }
 
 function closeDetailModal() {
