@@ -108,6 +108,7 @@ async function submitRegistration() {
     partner_city:        gv('f-partnercity'),
     partner_education:   gv('f-partneredu'),
     partner_divorced_ok: gv('f-partnerdivorced'),
+    partner_description: gv('f-partnerdesc'),
     about_me:            gv('f-aboutme'),
     family_description:  gv('f-familydesc'),
     father_name:         gv('f-fathername'),
@@ -120,7 +121,7 @@ async function submitRegistration() {
     siblings_count:      gv('f-siblings'),
     package:             selectedPlan || 'basic',
     payment_method:      gv('payment-method') || 'bank_transfer',
-    privacy_preset:      document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'open',
+    privacy_preset:      document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'standard',
     priv_photo:          document.getElementById('priv-photo') ? document.getElementById('priv-photo').checked : false,
     priv_contact:        document.getElementById('priv-contact') ? document.getElementById('priv-contact').checked : false,
     priv_family:         document.getElementById('priv-family') ? document.getElementById('priv-family').checked : false,
@@ -223,6 +224,12 @@ async function loginMember(email, password) {
   if (result.success) {
     localStorage.setItem('sk_token', result.data.token);
     localStorage.setItem('sk_member', JSON.stringify(result.data.member));
+    // Used by the dashboard to show what's new since this member's last visit
+    if (result.data.previous_login_at) {
+      localStorage.setItem('sk_previous_login_at', result.data.previous_login_at);
+    } else {
+      localStorage.removeItem('sk_previous_login_at');
+    }
     if (typeof skMirrorSession === 'function') skMirrorSession(true);
     return result;
   }
