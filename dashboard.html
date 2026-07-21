@@ -409,6 +409,33 @@ a{text-decoration:none;color:inherit}
           </div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">💡 Finding the Right Match</span></div>
+        <div style="padding:1.2rem 1.5rem 1.5rem">
+          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1rem">
+            <li style="display:flex;gap:.8rem">
+              <span style="flex-shrink:0">🎯</span>
+              <span style="font-size:.88rem;line-height:1.6"><strong>Look past the checklist.</strong> Height, income, and education matter less long-term than shared values, communication style, and how someone treats their family.</span>
+            </li>
+            <li style="display:flex;gap:.8rem">
+              <span style="flex-shrink:0">✍️</span>
+              <span style="font-size:.88rem;line-height:1.6"><strong>Write a real "Describe Your Ideal Partner."</strong> It carries more weight than any other single factor in your match recommendations — a thoughtful answer genuinely brings better matches, not just a nicer profile.</span>
+            </li>
+            <li style="display:flex;gap:.8rem">
+              <span style="flex-shrink:0">👨‍👩‍👧</span>
+              <span style="font-size:.88rem;line-height:1.6"><strong>Involve your family early, not just at the end.</strong> A trusted second opinion — like the Wali feature on your profile — often catches things you might miss on your own.</span>
+            </li>
+            <li style="display:flex;gap:.8rem">
+              <span style="flex-shrink:0">🔍</span>
+              <span style="font-size:.88rem;line-height:1.6"><strong>Ask direct questions if something feels vague.</strong> A short bio isn't a red flag by itself — but answers that stay vague even after you ask are worth paying attention to.</span>
+            </li>
+            <li style="display:flex;gap:.8rem">
+              <span style="flex-shrink:0">☕</span>
+              <span style="font-size:.88rem;line-height:1.6"><strong>Take the first meeting seriously before deciding.</strong> Messages can be curated — a real conversation tells you more in twenty minutes than a week of texting.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- ══════════ MY PROFILE ══════════ -->
@@ -517,6 +544,7 @@ a{text-decoration:none;color:inherit}
       <p class="page-sub">Find profiles that match your preferences</p>
 
       <div class="filter-bar">
+        <input class="filter-input" id="filter-name" placeholder="Search by name..." onkeydown="if(event.key==='Enter') loadBrowseProfiles(1)">
         <input class="filter-input" id="filter-city" placeholder="City">
         <select class="filter-select" id="filter-religion">
           <option value="">Any Religion</option>
@@ -962,7 +990,9 @@ async function loadBrowseProfiles(page) {
   var filters = {
     page: page || 1,
     limit: 12,
+    name: document.getElementById('filter-name').value,
     city: document.getElementById('filter-city').value,
+    religion: document.getElementById('filter-religion').value,
     age_min: document.getElementById('filter-age-min').value,
     age_max: document.getElementById('filter-age-max').value
   };
