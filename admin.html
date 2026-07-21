@@ -179,6 +179,11 @@ tr:hover td{background:var(--cream)}
 .admin-modal-overlay{display:none;position:fixed;inset:0;background:rgba(18,16,30,0.6);z-index:9999;align-items:flex-start;justify-content:center;padding:3rem 1rem;overflow-y:auto}
 .admin-modal-overlay.open{display:flex}
 .admin-modal-box{background:#fff;border-radius:16px;max-width:640px;width:100%;padding:2rem;position:relative;box-shadow:0 30px 70px rgba(0,0,0,0.3)}
+.admin-modal-box.wide{max-width:1120px}
+.amd-pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.amd-pair-col{min-width:0}
+.amd-pair-divider{grid-column:1/-1;border:none;border-top:1.5px dashed var(--light);margin:0}
+@media(max-width:820px){.amd-pair-grid{grid-template-columns:1fr}}
 .admin-modal-close{position:absolute;top:1rem;right:1rem;background:var(--light);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;line-height:1}
 .amd-section-label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--burgundy);margin:1.2rem 0 .5rem;display:block}
 .amd-narrative{font-size:.88rem;line-height:1.65;color:var(--charcoal);background:var(--ivory);border-radius:10px;padding:.9rem 1rem;white-space:pre-wrap}
@@ -938,6 +943,11 @@ function renderMatchCards(matches, pagination) {
                          padding:.4rem .8rem;font-size:.72rem;cursor:pointer;color:var(--mid)">
             All matches for A
           </button>
+          <button onclick="viewMatchPairDetail(${m.a_id}, ${m.b_id})"
+                  style="background:transparent;border:1.5px solid var(--light);border-radius:8px;
+                         padding:.4rem .8rem;font-size:.72rem;cursor:pointer;color:var(--mid)">
+            👥 Compare Both
+          </button>
         </div>
       </div>
 
@@ -1230,13 +1240,77 @@ function escapeHtml(str) {
 }
 
 function closeAdminProfileModal() {
-  document.getElementById('admin-profile-overlay').classList.remove('open');
+  document.getElementById('admin-profile-overlay').classList.remove('open', 'wide');
 }
 
 // Full, unrestricted profile view for admin use — no privacy locks, since
 // admin needs the complete picture to judge whether a match genuinely makes
 // sense. Used both from Smart Matching cards and Pending Approvals.
+function buildMemberProfileHtml(m, payments) {
+  function field(label, value) {
+    return '<div class="amd-field"><span class="amd-field-label">' + label + '</span>' +
+           '<span class="amd-field-value">' + (escapeHtml(value) || '—') + '</span></div>';
+  }
+
+  var html = '';
+
+  html += '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:.3rem">';
+  if (m.photo_url) {
+    html += '<img src="' + m.photo_url + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0">';
+  }
+  html += '<div><div style="font-family:\'Playfair Display\',serif;font-size:1.3rem;font-weight:700">' + escapeHtml(m.full_name) + '</div>' +
+          '<div style="font-size:.82rem;color:var(--mid)">' + (m.age || '—') + ' yrs · ' + escapeHtml(m.city) + ' · ' + escapeHtml(m.gender) + '</div></div>';
+  html += '</div>';
+
+  html += '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.7rem 0 1rem">';
+  html += '<span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.package || '').toUpperCase() + '</span>';
+  html += '<span style="background:' + (m.account_status === 'active' ? '#E8F5F0' : '#FEF3E2') + ';color:' + (m.account_status === 'active' ? '#2D7A5F' : '#8A6010') + ';border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.account_status || '').toUpperCase() + '</span>';
+  if (m.is_verified) html += '<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">✓ VERIFIED</span>';
+  html += '</div>';
+
+  if (m.about_me) html += '<span class="amd-section-label">About</span><div class="amd-narrative">' + escapeHtml(m.about_me) + '</div>';
+  if (m.partner_description) html += '<span class="amd-section-label">Looking For</span><div class="amd-narrative">' + escapeHtml(m.partner_description) + '</div>';
+  if (m.family_description) html += '<span class="amd-section-label">Family</span><div class="amd-narrative">' + escapeHtml(m.family_description) + '</div>';
+
+  html += '<span class="amd-section-label">Profile Details</span><div class="amd-grid">';
+  html += field('Religion / Sect', (m.religion || '—') + ' / ' + (m.sect || '—'));
+  html += field('Education', m.education);
+  html += field('Profession', m.profession);
+  html += field('Height', m.height);
+  html += field('Caste', m.caste);
+  html += field('Marital Status', m.marital_status);
+  html += field('Area', m.area);
+  html += field('Monthly Income', m.monthly_income);
+  html += field('Employer', m.employer);
+  html += field("Father's Occupation", m.father_occupation);
+  html += field("Mother's Occupation", m.mother_occupation);
+  html += '</div>';
+
+  html += '<span class="amd-section-label">Contact</span><div class="amd-grid">';
+  html += field('Email', m.email);
+  html += field('Mobile', m.mobile);
+  html += field('WhatsApp', m.whatsapp);
+  html += '</div>';
+
+  if (m.wali_name) {
+    html += '<span class="amd-section-label">Wali / Guardian</span><div class="amd-grid">';
+    html += field('Name', m.wali_name);
+    html += field('WhatsApp', m.wali_mobile);
+    html += '</div>';
+  }
+
+  html += '<span class="amd-section-label">Payment History</span>';
+  html += payments.length
+    ? '<div style="font-size:.82rem;line-height:1.85">' + payments.map(function(p) {
+        return '• ' + escapeHtml(p.type) + ' — PKR ' + Number(p.amount).toLocaleString() + ' via ' + escapeHtml(p.method) + ' — <strong>' + escapeHtml(p.status) + '</strong>';
+      }).join('<br>') + '</div>'
+    : '<div style="font-size:.82rem;color:var(--mid)">No payment records.</div>';
+
+  return html;
+}
+
 async function viewAdminMemberDetail(memberId) {
+  document.getElementById('admin-profile-overlay').classList.remove('wide');
   document.getElementById('admin-profile-overlay').classList.add('open');
   document.getElementById('admin-profile-content').innerHTML =
     '<div style="text-align:center;padding:3rem;color:var(--mid)">Loading...</div>';
@@ -1248,67 +1322,37 @@ async function viewAdminMemberDetail(memberId) {
         '<div style="color:var(--rose)">Could not load member details.</div>';
       return;
     }
-    var m = data.data.member;
-    var payments = data.data.payments || [];
+    document.getElementById('admin-profile-content').innerHTML =
+      buildMemberProfileHtml(data.data.member, data.data.payments || []);
+  } catch (err) {
+    document.getElementById('admin-profile-content').innerHTML = '<div style="color:var(--rose)">Error: ' + err.message + '</div>';
+  }
+}
 
-    function field(label, value) {
-      return '<div class="amd-field"><span class="amd-field-label">' + label + '</span>' +
-             '<span class="amd-field-value">' + (escapeHtml(value) || '—') + '</span></div>';
+// Side-by-side view of both members in a match — same underlying profile
+// renderer as the single view, just two columns fetched in parallel so
+// admin can compare without closing and reopening.
+async function viewMatchPairDetail(idA, idB) {
+  document.getElementById('admin-profile-overlay').classList.add('open', 'wide');
+  document.getElementById('admin-profile-content').innerHTML =
+    '<div style="text-align:center;padding:3rem;color:var(--mid)">Loading both profiles...</div>';
+
+  try {
+    var results = await Promise.all([
+      adminAPI('/admin/members/' + idA),
+      adminAPI('/admin/members/' + idB)
+    ]);
+
+    if (!results[0].success || !results[1].success) {
+      document.getElementById('admin-profile-content').innerHTML =
+        '<div style="color:var(--rose)">Could not load one or both profiles.</div>';
+      return;
     }
 
-    var html = '';
-
-    html += '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:.3rem">';
-    if (m.photo_url) {
-      html += '<img src="' + m.photo_url + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0">';
-    }
-    html += '<div><div style="font-family:\'Playfair Display\',serif;font-size:1.3rem;font-weight:700">' + escapeHtml(m.full_name) + '</div>' +
-            '<div style="font-size:.82rem;color:var(--mid)">' + (m.age || '—') + ' yrs · ' + escapeHtml(m.city) + ' · ' + escapeHtml(m.gender) + '</div></div>';
+    var html = '<div class="amd-pair-grid">';
+    html += '<div class="amd-pair-col">' + buildMemberProfileHtml(results[0].data.member, results[0].data.payments || []) + '</div>';
+    html += '<div class="amd-pair-col">' + buildMemberProfileHtml(results[1].data.member, results[1].data.payments || []) + '</div>';
     html += '</div>';
-
-    html += '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.7rem 0 1rem">';
-    html += '<span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.package || '').toUpperCase() + '</span>';
-    html += '<span style="background:' + (m.account_status === 'active' ? '#E8F5F0' : '#FEF3E2') + ';color:' + (m.account_status === 'active' ? '#2D7A5F' : '#8A6010') + ';border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.account_status || '').toUpperCase() + '</span>';
-    if (m.is_verified) html += '<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">✓ VERIFIED</span>';
-    html += '</div>';
-
-    if (m.about_me) html += '<span class="amd-section-label">About</span><div class="amd-narrative">' + escapeHtml(m.about_me) + '</div>';
-    if (m.partner_description) html += '<span class="amd-section-label">Looking For</span><div class="amd-narrative">' + escapeHtml(m.partner_description) + '</div>';
-    if (m.family_description) html += '<span class="amd-section-label">Family</span><div class="amd-narrative">' + escapeHtml(m.family_description) + '</div>';
-
-    html += '<span class="amd-section-label">Profile Details</span><div class="amd-grid">';
-    html += field('Religion / Sect', (m.religion || '—') + ' / ' + (m.sect || '—'));
-    html += field('Education', m.education);
-    html += field('Profession', m.profession);
-    html += field('Height', m.height);
-    html += field('Caste', m.caste);
-    html += field('Marital Status', m.marital_status);
-    html += field('Area', m.area);
-    html += field('Monthly Income', m.monthly_income);
-    html += field('Employer', m.employer);
-    html += field("Father's Occupation", m.father_occupation);
-    html += field("Mother's Occupation", m.mother_occupation);
-    html += '</div>';
-
-    html += '<span class="amd-section-label">Contact</span><div class="amd-grid">';
-    html += field('Email', m.email);
-    html += field('Mobile', m.mobile);
-    html += field('WhatsApp', m.whatsapp);
-    html += '</div>';
-
-    if (m.wali_name) {
-      html += '<span class="amd-section-label">Wali / Guardian</span><div class="amd-grid">';
-      html += field('Name', m.wali_name);
-      html += field('WhatsApp', m.wali_mobile);
-      html += '</div>';
-    }
-
-    html += '<span class="amd-section-label">Payment History</span>';
-    html += payments.length
-      ? '<div style="font-size:.82rem;line-height:1.85">' + payments.map(function(p) {
-          return '• ' + escapeHtml(p.type) + ' — PKR ' + Number(p.amount).toLocaleString() + ' via ' + escapeHtml(p.method) + ' — <strong>' + escapeHtml(p.status) + '</strong>';
-        }).join('<br>') + '</div>'
-      : '<div style="font-size:.82rem;color:var(--mid)">No payment records.</div>';
 
     document.getElementById('admin-profile-content').innerHTML = html;
   } catch (err) {
@@ -1591,7 +1635,7 @@ async function loadPaymentsPanel(page) {
       var typeLabel = p.type === 'registration' ? 'Registration Fee' : 'Success Fee';
 
       return '<tr>' +
-        '<td><strong>' + p.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (p.city || '—') + '</span></td>' +
+        '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + p.member_id + ')"><strong style="text-decoration:underline;text-decoration-color:var(--light)">' + p.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (p.city || '—') + '</span></td>' +
         '<td>' + typeLabel + '</td>' +
         '<td style="font-weight:700;color:var(--burgundy)">PKR ' + Number(p.amount).toLocaleString() + '</td>' +
         '<td><span class="payment-method-tag">' + (methodIcons[p.method] || p.method) + '</span></td>' +
@@ -1599,7 +1643,7 @@ async function loadPaymentsPanel(page) {
         '<td>' + dateStr + '</td>' +
         '<td>' + (p.status === 'pending'
           ? '<button class="action-btn action-approve" onclick="confirmPaymentRecord(\'' + p.uuid + '\')">Mark Paid</button>'
-          : '<button class="action-btn action-view" onclick="alert(\'Payment ID: ' + p.uuid + '\')">Details</button>') + '</td>' +
+          : '<button class="action-btn action-view" onclick="viewAdminMemberDetail(' + p.member_id + ')">View Profile</button>') + '</td>' +
       '</tr>';
     }).join('');
 
@@ -1665,7 +1709,7 @@ async function loadSuccessFeePanel() {
 
     tbody.innerHTML = outstanding.map(function(o) {
       return '<tr>' +
-        '<td><strong>' + o.full_name + '</strong></td>' +
+        '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + o.id + ')"><strong style="text-decoration:underline;text-decoration-color:var(--light)">' + o.full_name + '</strong></td>' +
         '<td><span class="status-badge ' + (pkgClass[o.package] || '') + '">' + (pkgIcon[o.package] || '') + ' ' + o.package.charAt(0).toUpperCase() + o.package.slice(1) + '</span></td>' +
         '<td style="font-weight:700">PKR ' + Number(o.amount_due).toLocaleString() + '</td>' +
         '<td><a href="https://wa.me/' + o.mobile.replace(/\D/g,'') + '" target="_blank" style="color:var(--green);font-weight:600">💬 ' + o.mobile + '</a></td>' +
@@ -1811,8 +1855,8 @@ async function loadFlaggedPanel() {
         actions = '<span style="color:var(--mid);font-size:.8rem">' + r.status + '</span>';
       }
       return '<tr>' +
-        '<td><strong>' + r.reported_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + r.reported_account_status + '</span></td>' +
-        '<td>' + r.reporter_name + '</td>' +
+        '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + r.reported_member_id + ')"><strong style="text-decoration:underline;text-decoration-color:var(--light)">' + r.reported_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + r.reported_account_status + '</span></td>' +
+        '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + r.reporter_member_id + ')" style="text-decoration:underline;text-decoration-color:var(--light)">' + r.reporter_name + '</td>' +
         '<td>' + reasonLabel + '</td>' +
         '<td style="max-width:220px;font-size:.82rem;color:var(--mid)">' + (r.details || '—') + '</td>' +
         '<td>' + date + '</td>' +
