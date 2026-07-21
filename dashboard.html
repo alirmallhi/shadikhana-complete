@@ -1233,7 +1233,7 @@ async function viewProfileDetail(uuid) {
   if (p.partner_age_min && p.partner_age_max) prefParts.push(p.partner_age_min + '–' + p.partner_age_max + ' years old');
   else if (p.partner_age_min) prefParts.push(p.partner_age_min + '+ years old');
   else if (p.partner_age_max) prefParts.push('up to ' + p.partner_age_max + ' years old');
-  if (p.partner_city) prefParts.push('based in ' + p.partner_city);
+  if (p.partner_city && p.partner_city !== 'No Preference') prefParts.push('based in ' + p.partner_city);
 
   var partnerPrefsHtml = '';
   if (p.partner_description || prefParts.length) {
@@ -1309,7 +1309,7 @@ async function previewMyProfile() {
   if (p.partner_age_min && p.partner_age_max) prefParts.push(p.partner_age_min + '–' + p.partner_age_max + ' years old');
   else if (p.partner_age_min) prefParts.push(p.partner_age_min + '+ years old');
   else if (p.partner_age_max) prefParts.push('up to ' + p.partner_age_max + ' years old');
-  if (p.partner_city) prefParts.push('based in ' + p.partner_city);
+  if (p.partner_city && p.partner_city !== 'No Preference') prefParts.push('based in ' + p.partner_city);
 
   var partnerPrefsHtml = '';
   if (p.partner_description || prefParts.length) {
