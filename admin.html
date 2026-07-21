@@ -179,7 +179,7 @@ tr:hover td{background:var(--cream)}
 .admin-modal-overlay{display:none;position:fixed;inset:0;background:rgba(18,16,30,0.6);z-index:9999;align-items:flex-start;justify-content:center;padding:3rem 1rem;overflow-y:auto}
 .admin-modal-overlay.open{display:flex}
 .admin-modal-box{background:#fff;border-radius:16px;max-width:640px;width:100%;padding:2rem;position:relative;box-shadow:0 30px 70px rgba(0,0,0,0.3)}
-.admin-modal-box.wide{max-width:1120px}
+.admin-modal-box.wide{max-width:1320px}
 .amd-pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
 .amd-pair-col{min-width:0}
 .amd-pair-divider{grid-column:1/-1;border:none;border-top:1.5px dashed var(--light);margin:0}
@@ -922,12 +922,11 @@ function renderMatchCards(matches, pagination) {
 
         <!-- Actions -->
         <div style="display:flex;flex-direction:column;gap:.5rem;min-width:140px">
-          ${!m.admin_reviewed ? `
-          <button onclick="reviewMatch(${m.match_score_id})"
-                  style="background:var(--ivory);border:1.5px solid var(--light);border-radius:8px;
+          <button onclick="viewMatchPairDetail(${m.a_id}, ${m.b_id})"
+                  style="background:var(--burgundy);color:#fff;border:none;border-radius:8px;
                          padding:.5rem .8rem;font-size:.78rem;font-weight:600;cursor:pointer">
-            ✅ Mark Reviewed
-          </button>` : ''}
+            👥 Compare Both
+          </button>
           ${!m.admin_recommended ? `
           <button onclick="openRecommendModal(${m.match_score_id}, '${m.a_name}', '${m.b_name}')"
                   style="background:var(--burgundy);color:#fff;border:none;border-radius:8px;
@@ -943,11 +942,12 @@ function renderMatchCards(matches, pagination) {
                          padding:.4rem .8rem;font-size:.72rem;cursor:pointer;color:var(--mid)">
             All matches for A
           </button>
-          <button onclick="viewMatchPairDetail(${m.a_id}, ${m.b_id})"
-                  style="background:transparent;border:1.5px solid var(--light);border-radius:8px;
-                         padding:.4rem .8rem;font-size:.72rem;cursor:pointer;color:var(--mid)">
-            👥 Compare Both
-          </button>
+          ${!m.admin_reviewed ? `
+          <button onclick="reviewMatch(${m.match_score_id})"
+                  style="background:var(--ivory);border:1.5px solid var(--light);border-radius:8px;
+                         padding:.5rem .8rem;font-size:.78rem;font-weight:600;cursor:pointer">
+            ✅ Mark Reviewed
+          </button>` : ''}
         </div>
       </div>
 
