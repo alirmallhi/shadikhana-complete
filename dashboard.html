@@ -1074,8 +1074,8 @@ async function handlePhotoUpload(input) {
 // ══════════════════════════════════════════
 function matchBadgeHtml(score) {
   if (score == null) return '';
-  var tier = score >= 85 ? 'pc-match-high' : (score >= 65 ? 'pc-match-mid' : 'pc-match-low');
-  var icon = score >= 85 ? '🔥' : (score >= 65 ? '⭐' : '');
+  var tier = score >= 80 ? 'pc-match-high' : (score >= 65 ? 'pc-match-mid' : 'pc-match-low');
+  var icon = score >= 80 ? '🔥' : (score >= 65 ? '⭐' : '');
   return '<span class="pc-match-badge ' + tier + '">' + (icon ? icon + ' ' : '') + score + '% Match</span>';
 }
 
