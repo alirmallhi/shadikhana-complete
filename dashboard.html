@@ -318,6 +318,12 @@ a{text-decoration:none;color:inherit}
     <div class="nav-item" onclick="showPanel('saved', this)">
       <span class="nav-item-icon">🤍</span>Saved
     </div>
+    <div class="nav-item" onclick="showPanel('viewers', this)">
+      <span class="nav-item-icon">👁️</span>Profile Views
+    </div>
+    <div class="nav-item" onclick="showPanel('alerts', this)">
+      <span class="nav-item-icon">🔔</span>Saved Searches
+    </div>
     <div class="nav-item" onclick="showPanel('compliments', this)">
       <span class="nav-item-icon">😊</span>Compliments
       <span class="nav-badge" id="compliments-badge" style="display:none">0</span>
@@ -553,6 +559,7 @@ a{text-decoration:none;color:inherit}
         <input class="filter-input" id="filter-age-min" type="number" placeholder="Min Age" style="max-width:100px">
         <input class="filter-input" id="filter-age-max" type="number" placeholder="Max Age" style="max-width:100px">
         <button class="btn-filter" onclick="loadBrowseProfiles(1)">Search</button>
+        <button class="btn-filter" style="background:var(--gold);color:var(--charcoal)" onclick="saveCurrentSearch()">💾 Save This Search</button>
       </div>
 
       <div id="browse-results">
@@ -577,6 +584,26 @@ a{text-decoration:none;color:inherit}
 
       <div id="saved-results">
         <div class="loading-spinner">Loading saved profiles...</div>
+      </div>
+    </div>
+
+    <!-- ══════════ PROFILE VIEWERS ══════════ -->
+    <div class="panel" id="panel-viewers">
+      <h1 class="page-title">Who Viewed Your Profile</h1>
+      <p class="page-sub">Members who've recently looked at your profile</p>
+
+      <div id="viewers-results">
+        <div class="loading-spinner">Loading...</div>
+      </div>
+    </div>
+
+    <!-- ══════════ SAVED SEARCHES ══════════ -->
+    <div class="panel" id="panel-alerts">
+      <h1 class="page-title">Saved Searches</h1>
+      <p class="page-sub">Get notified when a new profile matches criteria you care about — save a search from the Browse page</p>
+
+      <div id="alerts-results">
+        <div class="loading-spinner">Loading...</div>
       </div>
     </div>
 
@@ -778,6 +805,8 @@ function showPanel(id, navEl) {
   if (id === 'browse')      loadBrowseProfiles(1);
   if (id === 'matches')     loadMyMatches();
   if (id === 'saved')       loadSavedProfiles();
+  if (id === 'viewers')     loadProfileViewers();
+  if (id === 'alerts')      loadSavedSearches();
   if (id === 'compliments') loadCompliments();
   if (id === 'interests')   loadInterests();
   if (id === 'messages')    loadMessagesPanel();
@@ -1020,11 +1049,16 @@ async function loadBrowseProfiles(page) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var compatBadge = '';
+    if (p.compatibility_score != null) {
+      var cColor = p.compatibility_score >= 85 ? '#2D7A5F' : (p.compatibility_score >= 65 ? '#1C1C2E' : '#8A6010');
+      compatBadge = '<span class="pc-badge" style="background:' + cColor + ';color:#fff">' + p.compatibility_score + '% Match</span>';
+    }
     var activity = formatLastActive(p.last_active_at);
     var saveIcon = p.is_saved ? '❤️' : '🤍';
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + verifiedBadge +
+      '<div class="pc-top">' + photo + verifiedBadge + compatBadge +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
       '</div>' +
       '<div class="pc-body">' +
@@ -1429,6 +1463,131 @@ async function loadSavedProfiles() {
   });
   html += '</div>';
   container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+//  WHO VIEWED YOUR PROFILE
+// ══════════════════════════════════════════
+async function loadProfileViewers() {
+  var container = document.getElementById('viewers-results');
+  container.innerHTML = '<div class="loading-spinner">Loading...</div>';
+
+  var result = await apiCall('/member/profile-viewers', 'GET');
+  if (!result.success) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load your profile views.</div>';
+    return;
+  }
+
+  var viewers = result.data.viewers;
+  if (!viewers.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">👁️</div>No one has viewed your profile yet. A complete profile with a real photo and a thoughtful "About Me" gets noticed more.</div>';
+    return;
+  }
+
+  var html = '<div class="profiles-grid">';
+  viewers.forEach(function(p) {
+    var initial = p.gender === 'Male' ? '👨' : '👩';
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var activity = formatLastActive(p.last_viewed_at);
+    html +=
+      '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
+      '<div class="pc-top">' + photo + verifiedBadge + '</div>' +
+      '<div class="pc-body">' +
+      '<div class="pc-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
+      '<div class="pc-meta pc-activity">👁️ Viewed ' + (activity.label || 'recently') + '</div>' +
+      '<div class="pc-actions">' +
+      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      '</div></div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+//  SAVED SEARCHES / ALERTS
+// ══════════════════════════════════════════
+async function saveCurrentSearch() {
+  var name_filter = document.getElementById('filter-name').value;
+  var city = document.getElementById('filter-city').value;
+  var religion = document.getElementById('filter-religion').value;
+  var age_min = document.getElementById('filter-age-min').value;
+  var age_max = document.getElementById('filter-age-max').value;
+
+  if (!name_filter && !city && !religion && !age_min && !age_max) {
+    alert('Set at least one search filter above before saving.');
+    return;
+  }
+
+  var label = prompt('Give this saved search a short label (optional):', '');
+  if (label === null) return; // cancelled
+
+  var result = await apiCall('/member/saved-searches', 'POST', {
+    label: label, name_filter: name_filter, city: city, religion: religion,
+    age_min: age_min, age_max: age_max
+  });
+
+  if (result.success) {
+    alert('✅ Search saved — you\'ll get notified when a new profile matches it.');
+  } else {
+    alert('⚠️ ' + (result.message || 'Could not save this search.'));
+  }
+}
+
+async function loadSavedSearches() {
+  var container = document.getElementById('alerts-results');
+  container.innerHTML = '<div class="loading-spinner">Loading...</div>';
+
+  var result = await apiCall('/member/saved-searches', 'GET');
+  if (!result.success) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load your saved searches.</div>';
+    return;
+  }
+
+  var searches = result.data.searches;
+  if (!searches.length) {
+    container.innerHTML = '<div class="empty-state"><div class="ei">🔔</div>No saved searches yet. Set filters on the Browse Profiles page and tap "Save This Search" to get notified about new matches automatically.</div>';
+    return;
+  }
+
+  var html = '';
+  searches.forEach(function(s) {
+    var parts = [];
+    if (s.name_filter) parts.push('Name: "' + s.name_filter + '"');
+    if (s.city)        parts.push('City: ' + s.city);
+    if (s.religion)    parts.push('Religion: ' + s.religion);
+    if (s.age_min || s.age_max) parts.push('Age: ' + (s.age_min || 'any') + '–' + (s.age_max || 'any'));
+
+    html +=
+      '<div class="card" style="margin-bottom:1rem">' +
+      '<div style="padding:1.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">' +
+      '<div>' +
+      '<div style="font-weight:700;font-size:.95rem">' + escapeHtml(s.label || 'Saved Search') + '</div>' +
+      '<div style="font-size:.82rem;color:var(--mid);margin-top:.3rem">' + escapeHtml(parts.join(' · ') || 'All profiles') + '</div>' +
+      (s.last_notified_at ? '<div style="font-size:.74rem;color:var(--mid);margin-top:.3rem">Last alert: ' + new Date(s.last_notified_at).toLocaleDateString() + '</div>' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:.6rem;flex-shrink:0">' +
+      '<button class="btn-filter" onclick=\'runSavedSearch(' + JSON.stringify(s).replace(/'/g, "&#39;") + ')\'>Run Search</button>' +
+      '<button class="btn-filter" style="background:transparent;border:1.5px solid var(--light);color:var(--mid)" onclick="deleteSavedSearchById(' + s.id + ')">Delete</button>' +
+      '</div></div></div>';
+  });
+  container.innerHTML = html;
+}
+
+async function deleteSavedSearchById(id) {
+  if (!confirm('Delete this saved search?')) return;
+  await apiCall('/member/saved-searches/' + id, 'DELETE');
+  loadSavedSearches();
+}
+
+function runSavedSearch(s) {
+  document.getElementById('filter-name').value = s.name_filter || '';
+  document.getElementById('filter-city').value = s.city || '';
+  document.getElementById('filter-religion').value = s.religion || '';
+  document.getElementById('filter-age-min').value = s.age_min || '';
+  document.getElementById('filter-age-max').value = s.age_max || '';
+  showPanel('browse'); // its own auto-load will now pick up the filters set above
 }
 
 async function loadComplimentsBadgeCount() {
