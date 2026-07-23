@@ -577,6 +577,7 @@ a{text-decoration:none;color:inherit}
       <div id="browse-results">
         <div class="loading-spinner">Loading profiles...</div>
       </div>
+      <div id="browse-load-more" style="text-align:center;margin-top:1.5rem"></div>
     </div>
 
     <!-- ══════════ MY MATCHES ══════════ -->
@@ -1094,11 +1095,17 @@ function formatLastActive(timestamp) {
 }
 
 async function loadBrowseProfiles(page) {
-  var container = document.getElementById('browse-results');
-  container.innerHTML = '<div class="loading-spinner">Loading profiles...</div>';
+  page = page || 1;
+  var container    = document.getElementById('browse-results');
+  var loadMoreArea = document.getElementById('browse-load-more');
+
+  if (page === 1) {
+    container.innerHTML = '<div class="loading-spinner">Loading profiles...</div>';
+    if (loadMoreArea) loadMoreArea.innerHTML = '';
+  }
 
   var filters = {
-    page: page || 1,
+    page: page,
     limit: 12,
     name: document.getElementById('filter-name').value,
     city: document.getElementById('filter-city').value,
@@ -1121,19 +1128,21 @@ async function loadBrowseProfiles(page) {
 
   var profiles = result.data.profiles;
   if (!profiles.length) {
-    container.innerHTML = '<div class="empty-state"><div class="ei">🔍</div>No profiles found matching your filters.</div>';
+    if (page === 1) {
+      container.innerHTML = '<div class="empty-state"><div class="ei">🔍</div>No profiles found matching your filters.</div>';
+    }
+    if (loadMoreArea) loadMoreArea.innerHTML = '';
     return;
   }
 
-  var html = '<div class="profiles-grid">';
-  profiles.forEach(function(p) {
+  var cardsHtml = profiles.map(function(p) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var compatBadge = matchBadgeHtml(p.compatibility_score);
     var activity = formatLastActive(p.last_active_at);
     var saveIcon = p.is_saved ? '❤️' : '🤍';
-    html +=
+    return (
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
       '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + compatBadge + '</div>' +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
@@ -1147,11 +1156,25 @@ async function loadBrowseProfiles(page) {
       (p.has_complimented
         ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
         : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
-      '</div></div></div>';
-  });
-  html += '</div>';
+      '</div></div></div>'
+    );
+  }).join('');
 
-  container.innerHTML = html;
+  if (page === 1) {
+    container.innerHTML = '<div class="profiles-grid">' + cardsHtml + '</div>';
+  } else {
+    var grid = container.querySelector('.profiles-grid');
+    if (grid) grid.insertAdjacentHTML('beforeend', cardsHtml);
+  }
+
+  if (loadMoreArea) {
+    var pagination = result.data.pagination;
+    if (pagination && pagination.page < pagination.total_pages) {
+      loadMoreArea.innerHTML = '<button class="btn-filter" onclick="loadBrowseProfiles(' + (pagination.page + 1) + ')">Load More Profiles</button>';
+    } else {
+      loadMoreArea.innerHTML = '';
+    }
+  }
 }
 
 async function requestPhotoRevealAction(uuid, btn) {
