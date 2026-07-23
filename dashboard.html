@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Dashboard – ShadiKhana</title>
+<title>My Dashboard – Rishta Square</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -291,7 +291,7 @@ a{text-decoration:none;color:inherit}
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <a href="/" class="logo"><div class="logo-dot">💍</div>ShadiKhana</a>
+  <a href="/" class="logo"><div class="logo-dot">💍</div>Rishta Square</a>
   <div class="topbar-right">
     <button class="notif-btn" onclick="showPanel('notifications')">🔔<span class="notif-dot" id="notif-indicator"></span></button>
     <div class="user-chip" onclick="showPanel('profile')">
@@ -358,7 +358,7 @@ a{text-decoration:none;color:inherit}
     <!-- ══════════ DASHBOARD HOME ══════════ -->
     <div class="panel active" id="panel-home">
       <h1 class="page-title">Welcome to Your Dashboard</h1>
-      <p class="page-sub">Here's a quick overview of your ShadiKhana profile</p>
+      <p class="page-sub">Here's a quick overview of your Rishta Square profile</p>
 
       <div class="welcome-banner">
         <div class="welcome-text">
@@ -670,7 +670,7 @@ a{text-decoration:none;color:inherit}
     <!-- ══════════ NOTIFICATIONS ══════════ -->
     <div class="panel" id="panel-notifications">
       <h1 class="page-title">Notifications</h1>
-      <p class="page-sub">Stay updated on your ShadiKhana activity</p>
+      <p class="page-sub">Stay updated on your Rishta Square activity</p>
 
       <div id="notifications-results">
         <div class="loading-spinner">Loading notifications...</div>
@@ -1139,14 +1139,14 @@ async function loadBrowseProfiles(page) {
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
       '</div>' +
       '<div class="pc-body">' +
-      '<div class="pc-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
-        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
+        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -1234,11 +1234,11 @@ async function viewProfileDetail(uuid) {
     : '';
 
   var actionBtn = p.is_mutual_match
-    ? '<button class="btn-save" style="width:100%;margin-top:1.2rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="closeDetailModal();startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>'
+    ? '<button class="btn-save" style="width:100%;margin-top:1.2rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="closeDetailModal();startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>'
     : '<button class="btn-save" style="width:100%;margin-top:1.2rem" onclick="sendInterestTo(\'' + p.uuid + '\', this);this.textContent=\'Sending...\'">Send Interest</button>' +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" disabled>✓ Compliment Sent</button>'
-        : '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="openComplimentModal(this.dataset.uuid, this.dataset.name)">😊 Send a Compliment</button>');
+        : '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="openComplimentModal(this.dataset.uuid, this.dataset.name)">😊 Send a Compliment</button>');
 
   // Partner preferences — age/city are supplementary; the written
   // description is the single highest-weighted factor in the matching
@@ -1284,7 +1284,7 @@ async function viewProfileDetail(uuid) {
     guardianBadge +
     '<div class="detail-photo">' + photo + saveBtn + '</div>' +
     photoRevealBtn +
-    '<div class="detail-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+    '<div class="detail-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
     (formatLastActive(p.last_active_at).label ? '<div class="detail-meta" style="margin-top:-.9rem">' + formatLastActive(p.last_active_at).dot + formatLastActive(p.last_active_at).label + '</div>' : '') +
     (p.about_me ? '<span class="detail-section-label">About ' + (p.display_name ? escapeHtml(p.display_name) : 'Them') + '</span><div class="detail-narrative">' + escapeHtml(p.about_me) + '</div>' : '') +
@@ -1297,8 +1297,8 @@ async function viewProfileDetail(uuid) {
     (p.whatsapp ? detailField('WhatsApp', '<a href="https://wa.me/' + p.whatsapp.replace(/[^0-9]/g,'') + '" target="_blank" style="color:var(--wa);font-weight:700">' + p.whatsapp + '</a>') : '') +
     actionBtn +
     '<div style="display:flex;gap:1rem;justify-content:center;margin-top:1rem">' +
-    '<button style="background:none;border:none;color:var(--mid);font-size:.78rem;cursor:pointer;text-decoration:underline" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="blockMemberAction(this.dataset.uuid, this.dataset.name)">🚫 Block</button>' +
-    '<button style="background:none;border:none;color:var(--mid);font-size:.78rem;cursor:pointer;text-decoration:underline" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="openReportModal(this.dataset.uuid, this.dataset.name)">🚩 Report</button>' +
+    '<button style="background:none;border:none;color:var(--mid);font-size:.78rem;cursor:pointer;text-decoration:underline" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="blockMemberAction(this.dataset.uuid, this.dataset.name)">🚫 Block</button>' +
+    '<button style="background:none;border:none;color:var(--mid);font-size:.78rem;cursor:pointer;text-decoration:underline" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="openReportModal(this.dataset.uuid, this.dataset.name)">🚩 Report</button>' +
     '</div>';
 
 
@@ -1362,7 +1362,7 @@ async function previewMyProfile() {
     '</div>' +
     '<div class="detail-photo">' + photo + '</div>' +
     photoNote +
-    '<div class="detail-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+    '<div class="detail-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
     (p.about_me ? '<span class="detail-section-label">About ' + escapeHtml(p.display_name || 'You') + '</span><div class="detail-narrative">' + escapeHtml(p.about_me) + '</div>' : '') +
     partnerPrefsHtml +
@@ -1434,7 +1434,7 @@ async function submitReport() {
   btn.textContent = 'Submit Report';
 
   if (result.success) {
-    alert('Report submitted. Thank you for helping keep ShadiKhana safe.');
+    alert('Report submitted. Thank you for helping keep Rishta Square safe.');
     closeReportModal();
     closeDetailModal();
   } else {
@@ -1530,7 +1530,7 @@ async function loadTodaysPicks() {
       '<div class="pc-top">' + photo + '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
-      '<div class="pc-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
@@ -1564,7 +1564,7 @@ async function loadMyMatches() {
       '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
-      '<div class="pc-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       (p.admin_notes ? '<div class="pc-meta" style="font-style:italic;color:var(--burg)">"' + p.admin_notes + '"</div>' : '') +
@@ -1572,7 +1572,7 @@ async function loadMyMatches() {
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
-        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
+        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -1601,14 +1601,14 @@ async function loadSavedProfiles() {
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', true, this)">❤️</button>' +
       '</div>' +
       '<div class="pc-body">' +
-      '<div class="pc-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
-        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'ShadiKhana Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
+        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -1644,7 +1644,7 @@ async function loadProfileViewers() {
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
       '<div class="pc-top">' + photo + verifiedBadge + '</div>' +
       '<div class="pc-body">' +
-      '<div class="pc-name">' + (p.display_name || p.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       '<div class="pc-meta pc-activity">👁️ Viewed ' + (activity.label || 'recently') + '</div>' +
       '<div class="pc-actions">' +
@@ -1767,7 +1767,7 @@ async function loadCompliments() {
   var html = result.data.map(function(c) {
     var initial = '👤';
     var photo = c.photo_url ? '<img src="' + c.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px">' : initial;
-    var name = c.display_name || c.full_name || 'ShadiKhana Member';
+    var name = c.display_name || c.full_name || 'Rishta Square Member';
     var date = new Date(c.created_at).toLocaleDateString();
     return '<div class="interest-row">' +
       '<div class="interest-av" style="cursor:pointer" onclick="viewProfileDetail(\'' + c.uuid + '\')">' + photo + '</div>' +
@@ -1820,7 +1820,7 @@ async function loadInterests() {
     html += '<div class="interest-row">' +
       '<div class="interest-av" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">👤</div>' +
       '<div class="interest-info" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">' +
-      '<div class="interest-name">' + (i.display_name || i.full_name || 'ShadiKhana Member') + '</div>' +
+      '<div class="interest-name">' + (i.display_name || i.full_name || 'Rishta Square Member') + '</div>' +
       '<div class="interest-meta">' + (i.age || '—') + ' yrs · ' + (i.city || '—') + ' · ' + (i.profession || '—') + '</div>' +
       '</div>';
 
@@ -1834,7 +1834,7 @@ async function loadInterests() {
       html += '<div class="interest-action-btns">' +
         '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
         '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + i.uuid + '\')">View Profile</button>' +
-        '<button class="btn-accept" data-uuid="' + i.uuid + '" data-name="' + escapeHtml(i.display_name || i.full_name || 'ShadiKhana Member') + '" onclick="startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>' +
+        '<button class="btn-accept" data-uuid="' + i.uuid + '" data-name="' + escapeHtml(i.display_name || i.full_name || 'Rishta Square Member') + '" onclick="startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>' +
         '</div>';
     } else {
       html += '<div class="interest-action-btns">' +
@@ -1891,7 +1891,7 @@ async function loadMessagesPanel() {
   if (convos.length) {
     html += '<div class="msg-section-label">Conversations</div>';
     convos.forEach(function(c) {
-      var name = c.display_name || c.full_name || 'ShadiKhana Member';
+      var name = c.display_name || c.full_name || 'Rishta Square Member';
       var unreadBadge = c.unread_count > 0 ? '<span class="msg-conv-unread">' + c.unread_count + '</span>' : '';
       var preview = (c.last_message_sender_id === currentMember.id ? 'You: ' : '') + (c.last_message || '');
       html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)">' +
@@ -1907,7 +1907,7 @@ async function loadMessagesPanel() {
   if (newContacts.length) {
     html += '<div class="msg-section-label">Start a Conversation</div>';
     newContacts.forEach(function(c) {
-      var name = c.display_name || c.full_name || 'ShadiKhana Member';
+      var name = c.display_name || c.full_name || 'Rishta Square Member';
       html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)">' +
         '<div class="msg-conv-av">👤</div>' +
         '<div class="msg-conv-info">' +
@@ -2041,7 +2041,7 @@ async function loadNotifications() {
   if (pendingResult.success && pendingResult.data.length) {
     html += '<div class="msg-section-label">Photo Requests Awaiting Your Response</div>';
     pendingResult.data.forEach(function(r) {
-      var name = r.display_name || r.full_name || 'ShadiKhana Member';
+      var name = r.display_name || r.full_name || 'Rishta Square Member';
       html += '<div class="interest-row">' +
         '<div class="interest-av">🔓</div>' +
         '<div class="interest-info">' +

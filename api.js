@@ -30,7 +30,7 @@ function gv(id) {
 // Called right after a successful database save — no extra click needed
 function autoNotifyWhatsApp(payload) {
   var msg =
-    'SHADIKHANA - NEW PROFILE REGISTRATION\n' +
+    'RISHTA SQUARE - NEW PROFILE REGISTRATION\n' +
     '========================================\n' +
     'Name: '             + (payload.full_name || '-')   + '\n' +
     'Gender: '           + (payload.gender || '-')       + '\n' +
@@ -45,7 +45,7 @@ function autoNotifyWhatsApp(payload) {
     'Height: '           + (payload.height || '-')        + '\n' +
     "Father's Job: "     + (payload.father_occupation || '-') + '\n' +
     "Mother's Job: "     + (payload.mother_occupation || '-') + '\n' +
-    'Contact Pref: '     + (payload.contact_preference === 'direct' ? 'Direct Contact Allowed' : 'Via ShadiKhana Only') + '\n' +
+    'Contact Pref: '     + (payload.contact_preference === 'direct' ? 'Direct Contact Allowed' : 'Via Rishta Square Only') + '\n' +
     '----------------------------------------\n' +
     'Package: ' + (payload.package || '-') + '\n' +
     'Payment Method: ' + (payload.payment_method || '-') + '\n' +
