@@ -807,19 +807,19 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="pm-card">
         <div class="pm-icon" style="background:#E8F0FE;color:#1565C0">🏦</div>
         <div class="pm-card-name">Bank Transfer</div>
-        <div class="pm-card-detail">Meezan Bank<br>Title: ShadiKhana (Pvt)<br>IBAN: <strong id="pm-bank">PK00MEZN0001234567890</strong></div>
+        <div class="pm-card-detail">Meezan Bank<br>Title: AR Designs<br>Acc No: 02510104608941<br>IBAN: <strong id="pm-bank">PK42MEZN0002510104608941</strong><br>Branch: DHA Phase VI Br-Lahore</div>
         <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-bank', this)">Copy IBAN</button>
       </div>
       <div class="pm-card">
         <div class="pm-icon" style="background:#FDECEC;color:#D32F2F">📱</div>
         <div class="pm-card-name">JazzCash</div>
-        <div class="pm-card-detail">Title: ShadiKhana<br>Number:<br><strong id="pm-jazzcash">0321-4133233</strong></div>
+        <div class="pm-card-detail">Number:<br><strong id="pm-jazzcash">0321-4133233</strong></div>
         <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-jazzcash', this)">Copy Number</button>
       </div>
       <div class="pm-card">
         <div class="pm-icon" style="background:#E8F5E9;color:#0FA26B">📲</div>
         <div class="pm-card-name">EasyPaisa</div>
-        <div class="pm-card-detail">Title: ShadiKhana<br>Number:<br><strong id="pm-easypaisa">0321-4133233</strong></div>
+        <div class="pm-card-detail">Number:<br><strong id="pm-easypaisa">0321-4133233</strong></div>
         <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-easypaisa', this)">Copy Number</button>
       </div>
     </div>
@@ -1920,10 +1920,12 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div style="font-size:.78rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem">Pay via any of these methods</div>
       <div style="font-size:.86rem;line-height:1.9">
         🏦 <strong>Bank Transfer:</strong> Meezan Bank<br>
-        &nbsp;&nbsp;&nbsp;IBAN: PK00MEZN0001234567890<br>
-        &nbsp;&nbsp;&nbsp;Title: ShadiKhana (Pvt)<br>
-        📱 <strong>JazzCash:</strong> 0321-4133233 (ShadiKhana)<br>
-        📲 <strong>EasyPaisa:</strong> 0321-4133233 (ShadiKhana)
+        &nbsp;&nbsp;&nbsp;Title: AR Designs<br>
+        &nbsp;&nbsp;&nbsp;Acc No: 02510104608941<br>
+        &nbsp;&nbsp;&nbsp;IBAN: PK42MEZN0002510104608941<br>
+        &nbsp;&nbsp;&nbsp;Branch: DHA Phase VI Br-Lahore<br>
+        📱 <strong>JazzCash:</strong> 0321-4133233<br>
+        📲 <strong>EasyPaisa:</strong> 0321-4133233
       </div>
     </div>
 
@@ -2268,7 +2270,7 @@ function updatePaymentFields() {
   } else if (val === 'easypaisa') {
     fields.innerHTML = '<div class="form-group"><label>EasyPaisa Mobile Number</label><input type="tel" placeholder="03xx-xxxxxxx"></div>';
   } else if (val === 'meezan' || val === 'bank_transfer') {
-    fields.innerHTML = '<div class="form-group"><label>Bank Transfer Details</label><div style="background:var(--ivory);border-radius:10px;padding:.8rem 1rem;font-size:.84rem;color:var(--mid);border:1.5px solid var(--light)">Transfer to:<br><strong style="color:var(--charcoal)">Bank Transfer · ShadiKhana</strong><br>IBAN: PK00MEZN0001234567890<br><br>Send screenshot to WhatsApp: <strong>+92 321 4133233</strong></div></div>';
+    fields.innerHTML = '<div class="form-group"><label>Bank Transfer Details</label><div style="background:var(--ivory);border-radius:10px;padding:.8rem 1rem;font-size:.84rem;color:var(--mid);border:1.5px solid var(--light)">Transfer to:<br><strong style="color:var(--charcoal)">Meezan Bank</strong><br>Title: AR Designs<br>Acc No: 02510104608941<br>IBAN: PK42MEZN0002510104608941<br>Branch: DHA Phase VI Br-Lahore<br><br>Send screenshot to WhatsApp: <strong>+92 321 4133233</strong></div></div>';
   } else {
     fields.innerHTML = '<div class="form-group"><label>Card Number</label><input type="text" placeholder="1234 5678 9012 3456"></div><div class="form-row"><div class="form-group"><label>Expiry</label><input type="text" placeholder="MM/YY"></div><div class="form-group"><label>CVV</label><input type="text" placeholder="123"></div></div>';
   }
