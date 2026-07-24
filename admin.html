@@ -257,7 +257,10 @@ async function handleAdminLogin() {
     if (data.success) {
       localStorage.setItem('sk_admin_token', data.data.token);
       localStorage.setItem('sk_admin', JSON.stringify(data.data.admin));
+      localStorage.setItem('sk_admin_permissions', JSON.stringify(data.data.permissions || {}));
+      localStorage.setItem('sk_admin_is_master', JSON.stringify(!!data.data.is_master));
       document.getElementById('admin-login-gate').style.display = 'none';
+      applyPermissionVisibility();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
     } else {
       errorEl.textContent = data.message || 'Invalid email or password.';
@@ -278,8 +281,11 @@ async function handleAdminLogin() {
   if (token) {
     var gate = document.getElementById('admin-login-gate');
     if (gate) gate.style.display = 'none';
-    // Wait for the rest of the page's scripts to load, then fetch live dashboard data
+    // Deferred until 'load' — this script runs before the sidebar markup
+    // further down the page has been parsed into the DOM, so nav items
+    // don't exist yet to hide at this point.
     window.addEventListener('load', function() {
+      applyPermissionVisibility();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
     });
   }
@@ -288,7 +294,50 @@ async function handleAdminLogin() {
 function adminLogout() {
   localStorage.removeItem('sk_admin_token');
   localStorage.removeItem('sk_admin');
+  localStorage.removeItem('sk_admin_permissions');
+  localStorage.removeItem('sk_admin_is_master');
   window.location.reload();
+}
+
+// ══════════════════════════════════════════
+//  PERMISSION-BASED SIDEBAR VISIBILITY
+// ══════════════════════════════════════════
+// UX only — the real enforcement is server-side (every /admin/* route
+// checks the relevant permission itself). This just keeps a staff admin
+// from seeing nav items for sections they can't open anyway.
+function isAdminMaster() {
+  try { return !!JSON.parse(localStorage.getItem('sk_admin_is_master') || 'false'); }
+  catch (e) { return false; }
+}
+
+function getAdminPermissions() {
+  try { return JSON.parse(localStorage.getItem('sk_admin_permissions') || '{}'); }
+  catch (e) { return {}; }
+}
+
+function applyPermissionVisibility() {
+  var isMaster = isAdminMaster();
+  var perms = getAdminPermissions();
+
+  document.querySelectorAll('.nav-item[data-perm]').forEach(function(el) {
+    var key = el.getAttribute('data-perm');
+    if (!isMaster && perms[key] !== true) el.remove();
+  });
+
+  var manageAdminsItem = document.getElementById('nav-manage-admins');
+  if (isMaster && !manageAdminsItem) {
+    var logoutBtn = document.querySelector('.nav-item[onclick="adminLogout()"]');
+    if (logoutBtn) {
+      var item = document.createElement('button');
+      item.className = 'nav-item';
+      item.id = 'nav-manage-admins';
+      item.setAttribute('onclick', "showPanel('manageAdmins',this)");
+      item.innerHTML = '<span class="nav-item-icon">🛡️</span>Manage Admins';
+      logoutBtn.parentNode.insertBefore(item, logoutBtn);
+    }
+  } else if (!isMaster && manageAdminsItem) {
+    manageAdminsItem.remove();
+  }
 }
 </script>
 
@@ -309,40 +358,40 @@ function adminLogout() {
   <button class="nav-item active" onclick="showPanel('dashboard',this)">
     <span class="nav-item-icon">📊</span>Dashboard
   </button>
-  <button class="nav-item" onclick="showPanel('members',this)">
+  <button class="nav-item" data-perm="members" onclick="showPanel('members',this)">
     <span class="nav-item-icon">👥</span>Members
     <span class="nav-badge" id="members-badge">—</span>
   </button>
-  <button class="nav-item" onclick="showPanel('matching',this)">
+  <button class="nav-item" data-perm="smart_matching" onclick="showPanel('matching',this)">
     <span class="nav-item-icon">🧠</span>Smart Matching
     <span class="nav-badge" id="pending-badge">—</span>
   </button>
-  <button class="nav-item" onclick="showPanel('payments',this)">
+  <button class="nav-item" data-perm="payments" onclick="showPanel('payments',this)">
     <span class="nav-item-icon">💰</span>Payments
     <span class="nav-badge" id="payments-badge">—</span>
   </button>
 
   <div class="sidebar-section">Management</div>
-  <button class="nav-item" onclick="showPanel('pending',this)">
+  <button class="nav-item" data-perm="members" onclick="showPanel('pending',this)">
     <span class="nav-item-icon">⏳</span>Pending Approvals
     <span class="nav-badge" id="pending-approvals-badge">—</span>
   </button>
-  <button class="nav-item" onclick="showPanel('successfee',this)">
+  <button class="nav-item" data-perm="success_fees" onclick="showPanel('successfee',this)">
     <span class="nav-item-icon">🏆</span>Success Fees
   </button>
-  <button class="nav-item" onclick="showPanel('flagged',this)">
+  <button class="nav-item" data-perm="flagged_members" onclick="showPanel('flagged',this)">
     <span class="nav-item-icon">🚩</span>Flagged Members
     <span class="nav-badge" id="flagged-badge" style="display:none">—</span>
   </button>
-  <button class="nav-item" onclick="showPanel('stories',this)">
+  <button class="nav-item" data-perm="success_stories" onclick="showPanel('stories',this)">
     <span class="nav-item-icon">📖</span>Success Stories
   </button>
-  <button class="nav-item" onclick="showPanel('reports',this)">
+  <button class="nav-item" data-perm="reports" onclick="showPanel('reports',this)">
     <span class="nav-item-icon">📈</span>Reports
   </button>
 
   <div class="sidebar-section">System</div>
-  <button class="nav-item" onclick="showPanel('settings',this)">
+  <button class="nav-item" data-perm="settings" onclick="showPanel('settings',this)">
     <span class="nav-item-icon">⚙️</span>Settings
   </button>
   <button class="nav-item" onclick="adminLogout()">
@@ -762,6 +811,21 @@ function adminLogout() {
       </div>
     </div>
 
+    <!-- ══════════ MANAGE ADMINS (master only) ══════════ -->
+    <div class="panel" id="panel-manageAdmins">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1.2rem">
+        <button class="btn-sm btn-sm-primary" onclick="openAddAdminModal()">+ Add Staff Admin</button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Permissions</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>
+          <tbody id="admins-table-body">
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </main>
 
@@ -775,7 +839,8 @@ const pageTitles={
   pending:'Pending Approvals <span>Requires Action</span>',
   successfee:'Success Fees <span>Revenue Tracker</span>',
   reports:'Reports <span>Analytics</span>',
-  settings:'Settings <span>Configuration</span>'
+  settings:'Settings <span>Configuration</span>',
+  manageAdmins:'Manage Admins <span>Staff Accounts &amp; Permissions</span>'
 };
 
 
@@ -1704,16 +1769,16 @@ async function loadSuccessFeePanel() {
 
   try {
     var dashData = await adminAPI('/admin/dashboard');
-    var reportsData = await adminAPI('/admin/reports');
+    var sfData = await adminAPI('/admin/success-fees-outstanding');
 
     if (dashData.success) {
       document.getElementById('sf-total-matches').textContent = dashData.data.matches || 0;
       document.getElementById('sf-collected').textContent = formatPKR(dashData.data.revenue.success_fee || 0);
     }
 
-    if (!reportsData.success) throw new Error(reportsData.message);
+    if (!sfData.success) throw new Error(sfData.message);
 
-    var outstanding = reportsData.data.success_fees_outstanding;
+    var outstanding = sfData.data.success_fees_outstanding;
     var pendingTotal = outstanding.reduce(function(sum, o) { return sum + Number(o.amount_due); }, 0);
     document.getElementById('sf-pending').textContent = formatPKR(pendingTotal);
 
@@ -2110,7 +2175,199 @@ showPanel = function(id, btn) {
   if (id === 'stories')     loadStoriesPanel();
   if (id === 'reports')     loadReportsPanel();
   if (id === 'settings')    loadSettingsPanel();
+  if (id === 'manageAdmins') loadManageAdminsPanel();
 };
+
+// ══════════════════════════════════════════
+//  MANAGE ADMINS (master only) — LIVE DATA
+// ══════════════════════════════════════════
+var ADMIN_PERMISSION_LABELS = {
+  members:          'Members',
+  payments:         'Payments',
+  settings:         'Settings',
+  reports:          'Reports',
+  flagged_members:  'Flagged Members',
+  success_stories:  'Success Stories',
+  smart_matching:   'Smart Matching',
+  broadcast:        'Broadcast',
+  success_fees:     'Success Fees'
+};
+
+async function loadManageAdminsPanel() {
+  var tbody = document.getElementById('admins-table-body');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  try {
+    var data = await adminAPI('/admin/admins');
+    if (!data.success) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--rose)">' + escapeHtml(data.message || 'You do not have permission to view this.') + '</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(function(a) {
+      var permsSummary = Object.keys(ADMIN_PERMISSION_LABELS)
+        .filter(function(k) { return a.permissions && a.permissions[k] === true; })
+        .map(function(k) { return ADMIN_PERMISSION_LABELS[k]; })
+        .join(', ') || '—';
+
+      var statusBadge = a.is_master
+        ? '<span class="status-badge status-premium">🛡️ Master</span>'
+        : (a.is_active
+            ? '<span class="status-badge status-active">Active</span>'
+            : '<span class="status-badge status-review">Deactivated</span>');
+
+      var lastLogin = a.last_login ? new Date(a.last_login).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) : 'Never';
+
+      var actions = a.is_master
+        ? '<span style="color:var(--mid);font-size:.78rem">—</span>'
+        : '<button class="action-btn action-view" onclick="openEditAdminModal(' + a.id + ')">Edit</button> ' +
+          '<button class="action-btn ' + (a.is_active ? 'action-delete' : 'action-approve') + '" onclick="toggleAdminActive(' + a.id + ', ' + !!a.is_active + ')">' + (a.is_active ? 'Deactivate' : 'Activate') + '</button> ' +
+          '<button class="action-btn action-delete" onclick="deleteAdminAccount(' + a.id + ', \'' + a.name.replace(/'/g, "\\'") + '\')">Del</button>';
+
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(a.name) + '</strong></td>' +
+        '<td>' + escapeHtml(a.email) + '</td>' +
+        '<td>' + (a.is_master ? 'Master' : 'Staff') + '</td>' +
+        '<td style="font-size:.8rem;color:var(--mid)">' + (a.is_master ? 'Full access' : escapeHtml(permsSummary)) + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' + lastLogin + '</td>' +
+        '<td>' + actions + '</td>' +
+      '</tr>';
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+function buildPermissionCheckboxes(checkedPerms) {
+  var grid = document.getElementById('staff-permissions-grid');
+  grid.innerHTML = Object.keys(ADMIN_PERMISSION_LABELS).map(function(key) {
+    var checked = checkedPerms && checkedPerms[key] === true ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:.4rem;font-size:.84rem;cursor:pointer">' +
+      '<input type="checkbox" class="staff-perm-checkbox" value="' + key + '" ' + checked + '> ' + ADMIN_PERMISSION_LABELS[key] +
+      '</label>';
+  }).join('');
+}
+
+function openAddAdminModal() {
+  document.getElementById('staff-modal-title').textContent = 'Add Staff Admin';
+  document.getElementById('staff-id').value = '';
+  document.getElementById('staff-name').value = '';
+  document.getElementById('staff-email').value = '';
+  document.getElementById('staff-email').disabled = false;
+  document.getElementById('staff-password').value = '';
+  document.getElementById('staff-password').placeholder = 'At least 8 characters';
+  document.getElementById('staff-password-label').textContent = 'Password';
+  document.getElementById('staff-modal-error').style.display = 'none';
+  buildPermissionCheckboxes({});
+  document.getElementById('admin-staff-overlay').classList.add('open');
+}
+
+async function openEditAdminModal(id) {
+  var data = await adminAPI('/admin/admins');
+  if (!data.success) { alert(data.message || 'Could not load admin.'); return; }
+  var admin = data.data.find(function(a) { return a.id === id; });
+  if (!admin) { alert('Admin not found.'); return; }
+
+  document.getElementById('staff-modal-title').textContent = 'Edit Staff Admin';
+  document.getElementById('staff-id').value = admin.id;
+  document.getElementById('staff-name').value = admin.name;
+  document.getElementById('staff-email').value = admin.email;
+  document.getElementById('staff-email').disabled = false;
+  document.getElementById('staff-password').value = '';
+  document.getElementById('staff-password').placeholder = 'Leave blank to keep current password';
+  document.getElementById('staff-password-label').textContent = 'New Password (optional)';
+  document.getElementById('staff-modal-error').style.display = 'none';
+  buildPermissionCheckboxes(admin.permissions);
+  document.getElementById('admin-staff-overlay').classList.add('open');
+}
+
+function closeAdminStaffModal() {
+  document.getElementById('admin-staff-overlay').classList.remove('open');
+}
+
+async function saveAdminStaff() {
+  var id       = document.getElementById('staff-id').value;
+  var name     = document.getElementById('staff-name').value.trim();
+  var email    = document.getElementById('staff-email').value.trim();
+  var password = document.getElementById('staff-password').value;
+  var errorEl  = document.getElementById('staff-modal-error');
+  var btn      = document.getElementById('staff-modal-save-btn');
+
+  errorEl.style.display = 'none';
+
+  if (!name || !email) {
+    errorEl.textContent = 'Name and email are required.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (!id && (!password || password.length < 8)) {
+    errorEl.textContent = 'Password must be at least 8 characters.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var permissions = {};
+  document.querySelectorAll('.staff-perm-checkbox').forEach(function(cb) {
+    permissions[cb.value] = cb.checked;
+  });
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    var body = { name: name, email: email, permissions: permissions };
+    var data;
+    if (id) {
+      if (password) body.new_password = password;
+      data = await adminAPI('/admin/admins/' + id, 'PUT', body);
+    } else {
+      body.password = password;
+      data = await adminAPI('/admin/admins', 'POST', body);
+    }
+
+    if (data.success) {
+      closeAdminStaffModal();
+      loadManageAdminsPanel();
+    } else {
+      errorEl.textContent = data.message || 'Could not save admin.';
+      errorEl.style.display = 'block';
+    }
+  } catch (err) {
+    errorEl.textContent = 'Error: ' + err.message;
+    errorEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save';
+  }
+}
+
+async function toggleAdminActive(id, currentlyActive) {
+  try {
+    var data = await adminAPI('/admin/admins/' + id, 'PUT', { is_active: !currentlyActive });
+    if (data.success) {
+      loadManageAdminsPanel();
+    } else {
+      alert(data.message || 'Could not update admin status.');
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+async function deleteAdminAccount(id, name) {
+  if (!confirm('Permanently delete admin "' + name + '"? This cannot be undone.')) return;
+  try {
+    var data = await adminAPI('/admin/admins/' + id, 'DELETE');
+    if (data.success) {
+      loadManageAdminsPanel();
+    } else {
+      alert(data.message || 'Could not delete admin.');
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
 
 
 </script>
@@ -2120,6 +2377,28 @@ showPanel = function(id, btn) {
   <div class="admin-modal-box">
     <button class="admin-modal-close" onclick="closeAdminProfileModal()">✕</button>
     <div id="admin-profile-content"></div>
+  </div>
+</div>
+
+<div id="admin-staff-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeAdminStaffModal()">
+  <div class="admin-modal-box" style="max-width:480px">
+    <button class="admin-modal-close" onclick="closeAdminStaffModal()">✕</button>
+    <h3 id="staff-modal-title" style="font-family:'Playfair Display',serif;margin-bottom:1rem">Add Staff Admin</h3>
+    <input type="hidden" id="staff-id">
+    <div class="form-group-sm">
+      <label>Name</label>
+      <input type="text" id="staff-name" placeholder="Full name">
+      <label>Email</label>
+      <input type="email" id="staff-email" placeholder="staff@example.com">
+      <label id="staff-password-label">Password</label>
+      <input type="password" id="staff-password" placeholder="At least 8 characters">
+    </div>
+    <div style="margin:1rem 0">
+      <div style="font-size:.78rem;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem">Permissions</div>
+      <div id="staff-permissions-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"></div>
+    </div>
+    <p id="staff-modal-error" style="display:none;color:var(--rose);font-size:.82rem;margin-bottom:.8rem"></p>
+    <button class="btn-sm btn-sm-primary" style="width:100%" id="staff-modal-save-btn" onclick="saveAdminStaff()">Save</button>
   </div>
 </div>
 
