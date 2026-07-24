@@ -117,6 +117,8 @@ section{padding:96px 5%}
 .ledger-inner{max-width:1240px;margin:0 auto;display:flex;align-items:stretch;flex-wrap:wrap}
 .ledger-item{flex:1;min-width:180px;padding:1.5rem 1.8rem;border-right:1px solid rgba(255,255,255,0.09);display:flex;flex-direction:column;gap:.3rem}
 .ledger-item:last-child{border-right:none}
+a.ledger-item{text-decoration:none;color:inherit;transition:background .2s}
+a.ledger-item:hover{background:rgba(255,255,255,0.04)}
 .ledger-label{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:6px}
 .ledger-dot{width:6px;height:6px;border-radius:50%;background:#3DDC84;box-shadow:0 0 8px #3DDC84;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite}
 @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
@@ -590,121 +592,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   </div>
 </section>
 
-<!-- VERIFICATION LEDGER -->
-<div class="ledger">
-  <div class="ledger-inner">
-    <div class="ledger-item">
-      <div class="ledger-label"><span class="ledger-dot"></span>Platform Status</div>
-      <div class="ledger-value">Verifying Live</div>
-    </div>
-    <div class="ledger-item">
-      <div class="ledger-label">🔒 Privacy Model</div>
-      <div class="ledger-value">7-Point Control</div>
-    </div>
-    <div class="ledger-item">
-      <div class="ledger-label">🛡️ Safety Tools</div>
-      <div class="ledger-value">Block &amp; Report Built-In</div>
-    </div>
-    <div class="ledger-item">
-      <div class="ledger-label">🇵🇰 Coverage</div>
-      <div class="ledger-value">4<small>/4 Provinces</small></div>
-    </div>
-    <div class="ledger-item">
-      <div class="ledger-label">📍 In-Person Desk</div>
-      <div class="ledger-value">Lahore</div>
-    </div>
-    <div class="ledger-item">
-      <div class="ledger-label">📱 Access</div>
-      <div class="ledger-value">Web · iOS · Android</div>
-    </div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section class="how" id="how">
-  <div class="section-header fade-in">
-    <div class="section-label">Simple Process</div>
-    <h2 class="section-title">
-      <span class="eng-only">From Registration to Rishta in 4 Steps</span>
-      <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">رجسٹریشن سے رشتے تک</span>
-    </h2>
-    <p class="section-sub">No middlemen. No monthly subscriptions. You pay once, we bring you matches, and a final success fee only when your rishta is finalised.</p>
-  </div>
-  <div class="steps-timeline">
-    <div class="step-row fade-in">
-      <div class="step-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
-      </div>
-      <div class="step-content">
-        <div class="step-eyebrow">Step 1</div>
-        <h3>Register &amp; Choose Package</h3>
-        <p>Create your profile and pay a one-time registration fee. Basic or Premium — your choice determines your features.</p>
-      </div>
-    </div>
-    <div class="step-row fade-in">
-      <div class="step-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M19 19l-4.5-4.5"/></svg>
-      </div>
-      <div class="step-content">
-        <div class="step-eyebrow">Step 2</div>
-        <h3>Browse Unlimited Matches</h3>
-        <p>Instantly access profiles matching your criteria — city, sect, education, age. Filter and shortlist freely.</p>
-      </div>
-    </div>
-    <div class="step-row fade-in">
-      <div class="step-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-4 3v-3H6a2 2 0 01-2-2V6z"/><path d="M12 8.6c-.7-1-2.3-1-2.8.1-.4 1 .2 1.7 1.3 2.6.5.4 1 .8 1.5 1.2.5-.4 1-.8 1.5-1.2 1.1-.9 1.7-1.6 1.3-2.6-.5-1.1-2.1-1.1-2.8-.1z"/></svg>
-      </div>
-      <div class="step-content">
-        <div class="step-eyebrow">Step 3</div>
-        <h3>Connect Directly</h3>
-        <p>Express interest, exchange messages, and let families speak — all within the platform. No middleman required.</p>
-      </div>
-    </div>
-    <div class="step-row fade-in">
-      <div class="step-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="13" r="5.3"/><circle cx="15" cy="13" r="5.3"/></svg>
-      </div>
-      <div class="step-content">
-        <div class="step-eyebrow">Step 4</div>
-        <h3>Finalise the Rishta</h3>
-        <p>When your rishta is confirmed, a one-time success fee applies — PKR 65,000 (Basic) or PKR 1,20,000 (Premium). No match, no fee.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HONEST PRICING / TRUST -->
-<section class="honest-pricing" id="honest-pricing">
-  <div class="section-header fade-in" style="text-align:center">
-    <div class="section-label">Our Promise</div>
-    <h2 class="section-title">No Subscriptions. No Surprises. No Upselling.</h2>
-    <p class="section-sub" style="max-width:640px;margin:0 auto">We looked closely at what people complain about most with other matrimony platforms in Pakistan. Here's what we do differently, on purpose.</p>
-  </div>
-  <div class="hp-grid">
-    <div class="hp-row fade-in">
-      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>A "lifetime" deal that quietly turns into a monthly subscription</div>
-      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>One-time registration fee. No subscriptions — ever. What you pay once is what you pay.</div>
-    </div>
-    <div class="hp-row fade-in">
-      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>Most profiles turn out to be marriage bureaus demanding their own separate fee</div>
-      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>Every profile is registered directly by the individual or their family. No third-party bureau fees, ever.</div>
-    </div>
-    <div class="hp-row fade-in">
-      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>Pay extra just to get a "verified" badge</div>
-      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>Verification is included in your registration. We never charge extra to prove you're real.</div>
-    </div>
-    <div class="hp-row fade-in">
-      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>A success fee buried in fine print, or never mentioned at all</div>
-      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>We say it upfront: registration now, success fee only if and when you actually find your match. No match, no success fee.</div>
-    </div>
-    <div class="hp-row fade-in">
-      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>Aggressive sales calls pushing you to upgrade or buy more</div>
-      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>Our team reaches out to help your match happen — never to sell you something you didn't ask for.</div>
-    </div>
-  </div>
-</section>
-
 <!-- PRICING -->
 <section class="plans" id="plans">
   <div class="section-header fade-in" style="text-align:center">
@@ -793,6 +680,117 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <div class="pm-card-detail">Number:<br><strong id="pm-easypaisa">0321-4133233</strong></div>
         <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-easypaisa', this)">Copy Number</button>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERIFICATION LEDGER -->
+<div class="ledger">
+  <div class="ledger-inner">
+    <div class="ledger-item">
+      <div class="ledger-label"><span class="ledger-dot"></span>Platform Status</div>
+      <div class="ledger-value">Verifying Live</div>
+    </div>
+    <a href="/privacy.html" class="ledger-item">
+      <div class="ledger-label">🔒 Privacy Model</div>
+      <div class="ledger-value">7-Point Control</div>
+    </a>
+    <a href="/terms.html" class="ledger-item">
+      <div class="ledger-label">🛡️ Safety Tools</div>
+      <div class="ledger-value">Block &amp; Report Built-In</div>
+    </a>
+    <div class="ledger-item">
+      <div class="ledger-label">🇵🇰 Coverage</div>
+      <div class="ledger-value">4<small>/4 Provinces</small></div>
+    </div>
+    <div class="ledger-item">
+      <div class="ledger-label">📍 In-Person Desk</div>
+      <div class="ledger-value">Lahore</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-header fade-in">
+    <div class="section-label">Simple Process</div>
+    <h2 class="section-title">
+      <span class="eng-only">From Registration to Rishta in 4 Steps</span>
+      <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">رجسٹریشن سے رشتے تک</span>
+    </h2>
+    <p class="section-sub">No middlemen. No monthly subscriptions. You pay once, we bring you matches, and a final success fee only when your rishta is finalised.</p>
+  </div>
+  <div class="steps-timeline">
+    <div class="step-row fade-in">
+      <div class="step-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+      </div>
+      <div class="step-content">
+        <div class="step-eyebrow">Step 1</div>
+        <h3>Register &amp; Choose Package</h3>
+        <p>Create your profile and pay a one-time registration fee. Basic or Premium — your choice determines your features.</p>
+      </div>
+    </div>
+    <div class="step-row fade-in">
+      <div class="step-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M19 19l-4.5-4.5"/></svg>
+      </div>
+      <div class="step-content">
+        <div class="step-eyebrow">Step 2</div>
+        <h3>Browse Unlimited Matches</h3>
+        <p>Instantly access profiles matching your criteria — city, sect, education, age. Filter and shortlist freely.</p>
+      </div>
+    </div>
+    <div class="step-row fade-in">
+      <div class="step-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-4 3v-3H6a2 2 0 01-2-2V6z"/><path d="M12 8.6c-.7-1-2.3-1-2.8.1-.4 1 .2 1.7 1.3 2.6.5.4 1 .8 1.5 1.2.5-.4 1-.8 1.5-1.2 1.1-.9 1.7-1.6 1.3-2.6-.5-1.1-2.1-1.1-2.8-.1z"/></svg>
+      </div>
+      <div class="step-content">
+        <div class="step-eyebrow">Step 3</div>
+        <h3>Connect Directly</h3>
+        <p>Express interest, exchange messages, and let families speak — all within the platform. No middleman required.</p>
+      </div>
+    </div>
+    <div class="step-row fade-in">
+      <div class="step-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="13" r="5.3"/><circle cx="15" cy="13" r="5.3"/></svg>
+      </div>
+      <div class="step-content">
+        <div class="step-eyebrow">Step 4</div>
+        <h3>Finalise the Rishta</h3>
+        <p>When your rishta is confirmed, a one-time success fee applies — PKR 65,000 (Basic) or PKR 1,20,000 (Premium). No match, no fee.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HONEST PRICING / TRUST -->
+<section class="honest-pricing" id="honest-pricing">
+  <div class="section-header fade-in" style="text-align:center">
+    <div class="section-label">Our Promise</div>
+    <h2 class="section-title">No Subscriptions. No Surprises. No Upselling.</h2>
+    <p class="section-sub" style="max-width:640px;margin:0 auto">We looked closely at what people complain about most with other matrimony platforms in Pakistan. Here's what we do differently, on purpose.</p>
+  </div>
+  <div class="hp-grid">
+    <div class="hp-row fade-in">
+      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>A "lifetime" deal that quietly turns into a monthly subscription</div>
+      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>One-time registration fee. No subscriptions — ever. What you pay once is what you pay.</div>
+    </div>
+    <div class="hp-row fade-in">
+      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>Most profiles turn out to be marriage bureaus demanding their own separate fee</div>
+      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>Every profile is registered directly by the individual or their family. No third-party bureau fees, ever.</div>
+    </div>
+    <div class="hp-row fade-in">
+      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>Pay extra just to get a "verified" badge</div>
+      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>Verification is included in your registration. We never charge extra to prove you're real.</div>
+    </div>
+    <div class="hp-row fade-in">
+      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>A success fee buried in fine print, or never mentioned at all</div>
+      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>We say it upfront: registration now, success fee only if and when you actually find your match. No match, no success fee.</div>
+    </div>
+    <div class="hp-row fade-in">
+      <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>Aggressive sales calls pushing you to upgrade or buy more</div>
+      <div class="hp-cell hp-good"><span class="hp-icon">✓</span>Our team reaches out to help your match happen — never to sell you something you didn't ask for.</div>
     </div>
   </div>
 </section>
