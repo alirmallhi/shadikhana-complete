@@ -50,7 +50,7 @@ function autoNotifyWhatsApp(payload) {
     'Package: ' + (payload.package || '-') + '\n' +
     'Payment Method: ' + (payload.payment_method || '-') + '\n' +
     '========================================\n' +
-    'Submitted automatically from shadikhana.pk';
+    'Submitted automatically from rishtasquare.com';
 
   var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
 

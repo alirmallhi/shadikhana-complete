@@ -993,8 +993,8 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <a href="#">About Rishta Square</a>
       <a href="#">Our Team</a>
       <a href="#">Lahore Office</a>
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
     </div>
     <div class="footer-col">
       <h4>Support</h4>
@@ -1755,7 +1755,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       </div>
 
       <div style="font-size:.78rem;color:var(--mid);margin-bottom:1rem;line-height:1.5">
-        By completing registration you agree to our <a href="#" style="color:var(--burgundy)">Terms of Service</a> and <a href="#" style="color:var(--burgundy)">Privacy Policy</a>. Your profile will be reviewed by our team before going live.
+        By completing registration you agree to our <a href="/terms.html" target="_blank" style="color:var(--burgundy)">Terms of Service</a> and <a href="/privacy.html" target="_blank" style="color:var(--burgundy)">Privacy Policy</a>. Your profile will be reviewed by our team before going live.
       </div>
 
       <div style="background:rgba(37,211,102,0.08);border:1.5px solid rgba(37,211,102,0.25);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.84rem;color:#1A7A3C;line-height:1.7">
@@ -2128,7 +2128,7 @@ function submitViaUs() {
               'Interested in: *' + currentViaUsMember + '*\n\n' +
               'Message: ' + msg + '\n\n' +
               'Contact: ' + (phone || 'Not provided') + '\n\n' +
-              '— Sent from shadikhana.pk';
+              '— Sent from rishtasquare.com';
   window.open('https://wa.me/923214133233?text=' + encodeURIComponent(waMsg), '_blank');
   closeModal('via-us');
   openModal('via-us-sent');
@@ -2311,7 +2311,7 @@ function sendToWhatsApp() {
   var priv   = getPrivacySettings();
 
   var lines = [
-    '🌸 *NEW SHADIKHANA REGISTRATION* 🌸',
+    '🌸 *NEW RISHTA SQUARE REGISTRATION* 🌸',
     '─────────────────────────────',
     '*📋 ACCOUNT DETAILS*',
     '• Full Name: '       + gv('f-fullname'),
@@ -2362,7 +2362,7 @@ function sendToWhatsApp() {
     '• Payment Method: '  + pm,
     '─────────────────────────────',
     '⏳ _Awaiting payment confirmation & profile review._',
-    '_Rishta Square Team — shadikhana.pk_'
+    '_Rishta Square Team — rishtasquare.com_'
   ];
 
   var msg     = lines.join('\n');
