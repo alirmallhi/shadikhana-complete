@@ -158,6 +158,8 @@ a{text-decoration:none;color:inherit}
   align-items:flex-end;gap:5px}
 .pc-badge{font-size:.62rem;font-weight:700;
   padding:3px 8px;border-radius:10px;background:#E8F5F0;color:var(--green)}
+.pc-premium-badge{font-size:.62rem;font-weight:700;
+  padding:3px 8px;border-radius:10px;background:rgba(184,151,90,0.18);color:#8A6010}
 .pc-match-badge{font-size:.78rem;font-weight:800;letter-spacing:.01em;
   padding:5px 11px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.18);white-space:nowrap}
 .pc-match-high{background:var(--green);color:#fff}
@@ -1073,6 +1075,10 @@ async function handlePhotoUpload(input) {
 // ══════════════════════════════════════════
 //  BROWSE PROFILES
 // ══════════════════════════════════════════
+function premiumBadgeHtml(pkg) {
+  return pkg === 'premium' ? '<span class="pc-premium-badge">⭐ Premium</span>' : '';
+}
+
 function matchBadgeHtml(score) {
   if (score == null) return '';
   var tier = score >= 80 ? 'pc-match-high' : (score >= 65 ? 'pc-match-mid' : 'pc-match-low');
@@ -1139,12 +1145,13 @@ async function loadBrowseProfiles(page) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var premiumBadge = premiumBadgeHtml(p.package);
     var compatBadge = matchBadgeHtml(p.compatibility_score);
     var activity = formatLastActive(p.last_active_at);
     var saveIcon = p.is_saved ? '❤️' : '🤍';
     return (
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + compatBadge + '</div>' +
+      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + compatBadge + '</div>' +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
       '</div>' +
       '<div class="pc-body">' +
@@ -1232,6 +1239,8 @@ async function viewProfileDetail(uuid) {
   var p = result.data;
   var initial = p.gender === 'Male' ? '👨' : '👩';
   var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : initial;
+  var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+  var premiumBadge = premiumBadgeHtml(p.package);
   var saveIcon = p.is_saved ? '❤️' : '🤍';
   var saveBtn = '<button class="pc-save-btn" onclick="toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>';
 
@@ -1305,7 +1314,7 @@ async function viewProfileDetail(uuid) {
     compatScoreBadge +
     matchBadge +
     guardianBadge +
-    '<div class="detail-photo">' + photo + saveBtn + '</div>' +
+    '<div class="detail-photo">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + '</div>' + saveBtn + '</div>' +
     photoRevealBtn +
     '<div class="detail-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
@@ -1547,10 +1556,12 @@ async function loadTodaysPicks() {
   result.data.forEach(function(p) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + '</div>' +
+      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + '</div></div>' +
       '<div class="pc-body">' +
       '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
       '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
@@ -1578,11 +1589,13 @@ async function loadMyMatches() {
   result.data.forEach(function(p) {
     var initial = p.gender === 'Male' ? '👨' : '👩';
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
     var saveIcon = p.is_saved ? '❤️' : '🤍';
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo +
+      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + '</div>' +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
       '</div>' +
       '<div class="pc-body">' +

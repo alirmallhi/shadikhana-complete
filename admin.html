@@ -1548,6 +1548,7 @@ async function loadMembersPanel(page) {
           (m.account_status === 'pending'
             ? '<button class="action-btn action-approve" onclick="confirmPaymentAndActivate(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Approve</button> '
             : '') +
+          '<button class="action-btn ' + (m.is_verified ? 'action-view' : 'action-approve') + '" onclick="toggleMemberVerified(' + m.id + ', ' + !!m.is_verified + ', this)">' + (m.is_verified ? 'Unverify' : 'Verify') + '</button> ' +
           '<button class="action-btn action-view" onclick="viewPendingMemberDetail(' + m.id + ')">View</button> ' +
           '<button class="action-btn action-delete" onclick="deleteMemberConfirm(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Del</button>' +
         '</td>' +
@@ -1569,6 +1570,23 @@ async function loadMembersPanel(page) {
 
   } catch (err) {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function toggleMemberVerified(memberId, currentlyVerified, btn) {
+  var next = !currentlyVerified;
+  btn.disabled = true;
+  try {
+    var data = await adminAPI('/admin/members/' + memberId, 'PUT', { is_verified: next });
+    if (data.success) {
+      loadMembersPanel(membersCurrentPage);
+    } else {
+      alert('Error: ' + (data.message || 'Could not update verification status.'));
+      btn.disabled = false;
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+    btn.disabled = false;
   }
 }
 
