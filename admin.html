@@ -1537,7 +1537,7 @@ async function loadMembersPanel(page) {
       var dateStr = new Date(m.created_at).toLocaleDateString('en-GB', { month:'short', year:'numeric' });
 
       return '<tr>' +
-        '<td><strong>' + m.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + m.gender + ' · ' + (m.age || '—') + '</span></td>' +
+        '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + m.id + ')"><strong style="text-decoration:underline;text-decoration-color:var(--light)">' + m.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + m.gender + ' · ' + (m.age || '—') + '</span></td>' +
         '<td>' + m.mobile + '<br><span style="font-size:.75rem;color:var(--mid)">' + m.email + '</span></td>' +
         '<td><span class="status-badge ' + pkgClass + '">' + pkgIcon + ' ' + m.package.charAt(0).toUpperCase() + m.package.slice(1) + '</span></td>' +
         '<td>' + (m.city || '—') + '</td>' +
