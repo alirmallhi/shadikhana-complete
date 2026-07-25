@@ -160,6 +160,16 @@ tr:hover td{background:var(--cream)}
 .form-group-sm label{font-size:.8rem;font-weight:600;display:block;margin-bottom:.4rem}
 .form-group-sm input,.form-group-sm select{width:100%;padding:.6rem .9rem;border:1.5px solid var(--light);border-radius:8px;font-size:.84rem;font-family:inherit;background:var(--cream);outline:none;margin-bottom:.8rem}
 .form-group-sm input:focus{border-color:var(--rose)}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem}
+.form-section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--gold);margin:1.2rem 0 .7rem;display:flex;align-items:center;gap:.5rem}
+.form-section-label:first-child{margin-top:0}
+.form-section-label::after{content:'';flex:1;height:1px;background:var(--light)}
+.form-group-sm textarea{width:100%;padding:.6rem .9rem;border:1.5px solid var(--light);border-radius:8px;
+  font-size:.84rem;font-family:inherit;background:var(--cream);outline:none;margin-bottom:.8rem;min-height:70px;resize:vertical}
+.mark-paid-row{display:flex;align-items:center;gap:.6rem;margin:.4rem 0 1rem;padding:.8rem 1rem;
+  background:var(--ivory);border-radius:10px}
+.mark-paid-row label{font-size:.84rem;font-weight:600;cursor:pointer}
 
 /* MOBILE */
 .sidebar-toggle{display:none;position:fixed;top:14px;left:14px;z-index:100;background:var(--sidebar);border:none;border-radius:8px;width:38px;height:38px;cursor:pointer;align-items:center;justify-content:center;color:#fff;font-size:1.1rem}
@@ -379,6 +389,9 @@ function applyPermissionVisibility() {
   <button class="nav-item" data-perm="success_fees" onclick="showPanel('successfee',this)">
     <span class="nav-item-icon">🏆</span>Success Fees
   </button>
+  <button class="nav-item" data-perm="connections" onclick="showPanel('connections',this)">
+    <span class="nav-item-icon">💞</span>Connections
+  </button>
   <button class="nav-item" data-perm="flagged_members" onclick="showPanel('flagged',this)">
     <span class="nav-item-icon">🚩</span>Flagged Members
     <span class="nav-badge" id="flagged-badge" style="display:none">—</span>
@@ -417,7 +430,7 @@ function applyPermissionVisibility() {
     </div>
     <div class="topbar-actions">
       <button class="notif-btn" onclick="alert('5 new notifications')">🔔<span class="notif-dot"></span></button>
-      <button class="btn-sm btn-sm-primary" onclick="alert('New member registration opened')">+ Add Member</button>
+      <button class="btn-sm btn-sm-primary" onclick="openAddMemberModal()">+ Add Member</button>
     </div>
   </div>
 
@@ -598,6 +611,22 @@ function applyPermissionVisibility() {
       <thead><tr><th>Member</th><th>Package</th><th>Amount Due</th><th>Contact</th><th>Actions</th></tr></thead>
       <tbody id="successfee-table-body">
         <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ CONNECTIONS (read-only: who matched whom, and when) ══════════ -->
+    <div class="panel" id="panel-connections">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:1.2rem 1.5rem">
+      <span class="card-title">Mutual Connections</span>
+      <span style="font-size:.78rem;color:var(--mid)">Members who sent and accepted an interest — no message content shown</span>
+    </div>
+    <table>
+      <thead><tr><th>Member A</th><th>Member B</th><th>Matched On</th></tr></thead>
+      <tbody id="connections-table-body">
+        <tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
       </tbody>
     </table>
   </div>
@@ -838,6 +867,7 @@ const pageTitles={
   payments:'Payments <span>All Transactions</span>',
   pending:'Pending Approvals <span>Requires Action</span>',
   successfee:'Success Fees <span>Revenue Tracker</span>',
+  connections:'Connections <span>Mutual Matches</span>',
   reports:'Reports <span>Analytics</span>',
   settings:'Settings <span>Configuration</span>',
   manageAdmins:'Manage Admins <span>Staff Accounts &amp; Permissions</span>'
@@ -1615,6 +1645,9 @@ async function loadMembersPanel(page) {
             : '') +
           '<button class="action-btn ' + (m.is_verified ? 'action-view' : 'action-approve') + '" onclick="toggleMemberVerified(' + m.id + ', ' + !!m.is_verified + ', this)">' + (m.is_verified ? 'Unverify' : 'Verify') + '</button> ' +
           '<button class="action-btn action-view" onclick="viewPendingMemberDetail(' + m.id + ')">View</button> ' +
+          (!m.has_credentials
+            ? '<button class="action-btn action-approve" onclick="inviteMemberToLogin(' + m.id + ', \'' + m.email.replace(/'/g, "\\'") + '\')">Invite to Login</button> '
+            : '') +
           '<button class="action-btn action-delete" onclick="deleteMemberConfirm(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Del</button>' +
         '</td>' +
       '</tr>';
@@ -1802,6 +1835,35 @@ async function loadSuccessFeePanel() {
 
   } catch (err) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+// ══════════════════════════════════════════
+//  CONNECTIONS PANEL — read-only, metadata only (no messages, no contact info)
+// ══════════════════════════════════════════
+async function loadConnectionsPanel() {
+  var tbody = document.getElementById('connections-table-body');
+  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  try {
+    var data = await adminAPI('/admin/connections');
+    if (!data.success) throw new Error(data.message);
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--mid)">No mutual matches yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(function(c) {
+      var dateStr = new Date(c.matched_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      return '<tr>' +
+        '<td>' + c.member_a_name + '</td>' +
+        '<td>' + c.member_b_name + '</td>' +
+        '<td>' + dateStr + '</td>' +
+      '</tr>';
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
   }
 }
 
@@ -2171,6 +2233,7 @@ showPanel = function(id, btn) {
   if (id === 'payments')    loadPaymentsPanel(1);
   if (id === 'pending')     loadPendingPayments();
   if (id === 'successfee')  loadSuccessFeePanel();
+  if (id === 'connections') loadConnectionsPanel();
   if (id === 'flagged')     loadFlaggedPanel();
   if (id === 'stories')     loadStoriesPanel();
   if (id === 'reports')     loadReportsPanel();
@@ -2190,7 +2253,8 @@ var ADMIN_PERMISSION_LABELS = {
   success_stories:  'Success Stories',
   smart_matching:   'Smart Matching',
   broadcast:        'Broadcast',
-  success_fees:     'Success Fees'
+  success_fees:     'Success Fees',
+  connections:      'Connections'
 };
 
 async function loadManageAdminsPanel() {
@@ -2342,6 +2406,125 @@ async function saveAdminStaff() {
   }
 }
 
+// ── Add Member (manual, admin-entered, no login credentials) ──
+function openAddMemberModal() {
+  document.querySelectorAll('#add-member-overlay input[type=text], #add-member-overlay input[type=email], #add-member-overlay input[type=number], #add-member-overlay input[type=date], #add-member-overlay textarea').forEach(function(el) { el.value = ''; });
+  document.getElementById('am-country').value = 'Pakistan';
+  document.getElementById('am-package').value = 'basic';
+  document.getElementById('am-mark_paid').checked = false;
+  document.getElementById('am-photo').value = '';
+  document.getElementById('add-member-error').style.display = 'none';
+  document.getElementById('add-member-overlay').classList.add('open');
+}
+
+function closeAddMemberModal() {
+  document.getElementById('add-member-overlay').classList.remove('open');
+}
+
+function amVal(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+async function saveNewMember() {
+  var errorEl = document.getElementById('add-member-error');
+  var btn     = document.getElementById('add-member-save-btn');
+  errorEl.style.display = 'none';
+
+  var full_name = amVal('am-full_name');
+  var email     = amVal('am-email');
+  var mobile    = amVal('am-mobile');
+  var gender    = amVal('am-gender');
+  var city      = amVal('am-city');
+
+  if (!full_name || !email || !mobile || !gender || !city) {
+    errorEl.textContent = 'Full name, email, mobile, gender and city are required.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  var body = {
+    full_name: full_name, display_name: amVal('am-display_name'), email: email, mobile: mobile,
+    whatsapp: amVal('am-whatsapp'), guardian_name: amVal('am-guardian_name'),
+    gender: gender, date_of_birth: amVal('am-date_of_birth'), marital_status: amVal('am-marital_status'),
+    children: amVal('am-children'), height: amVal('am-height'), complexion: amVal('am-complexion'),
+    religion: amVal('am-religion'), sect: amVal('am-sect'), ethnicity: amVal('am-ethnicity'), caste: amVal('am-caste'),
+    education: amVal('am-education'), institution: amVal('am-institution'),
+    profession: amVal('am-profession'), employer: amVal('am-employer'), monthly_income: amVal('am-monthly_income'),
+    city: city, area: amVal('am-area'), country: amVal('am-country') || 'Pakistan',
+    partner_age_min: amVal('am-partner_age_min'), partner_age_max: amVal('am-partner_age_max'),
+    partner_city: amVal('am-partner_city'), partner_education: amVal('am-partner_education'),
+    partner_description: amVal('am-partner_description'), about_me: amVal('am-about_me'),
+    family_description: amVal('am-family_description'),
+    father_name: amVal('am-father_name'), father_occupation: amVal('am-father_occupation'),
+    mother_name: amVal('am-mother_name'), mother_occupation: amVal('am-mother_occupation'),
+    parents_status: amVal('am-parents_status'), siblings_count: amVal('am-siblings_count'),
+    package: amVal('am-package'),
+    mark_paid: document.getElementById('am-mark_paid').checked
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Creating...';
+
+  try {
+    var data = await adminAPI('/admin/members', 'POST', body);
+    if (!data.success) {
+      errorEl.textContent = data.message || 'Could not create member.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    var photoFile = document.getElementById('am-photo').files[0];
+    if (photoFile) {
+      var fd = new FormData();
+      fd.append('photo', photoFile);
+      try {
+        await fetch(API + '/admin/members/' + data.data.id + '/photo', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + getAdminToken() },
+          body: fd
+        });
+      } catch (photoErr) {
+        console.error('Member photo upload failed:', photoErr.message);
+      }
+    }
+
+    closeAddMemberModal();
+    if (data.warning) alert(data.warning);
+    if (typeof loadMembersPanel === 'function') loadMembersPanel(1);
+    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+  } catch (err) {
+    errorEl.textContent = 'Error: ' + err.message;
+    errorEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Create Member';
+  }
+}
+
+// ── Invite an admin-created member to log in ──
+async function inviteMemberToLogin(memberId, memberEmail) {
+  if (!confirm('Generate login credentials for this member?')) return;
+  try {
+    var data = await adminAPI('/admin/members/' + memberId + '/invite-login', 'POST');
+    if (!data.success) {
+      alert(data.message || 'Could not generate login credentials.');
+      return;
+    }
+    document.getElementById('invite-login-email').value    = memberEmail;
+    document.getElementById('invite-login-password').value = data.data.temporary_password;
+    document.getElementById('invite-login-overlay').classList.add('open');
+    if (typeof loadMembersPanel === 'function') loadMembersPanel(membersCurrentPage);
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+function closeInviteLoginModal() {
+  document.getElementById('invite-login-overlay').classList.remove('open');
+  document.getElementById('invite-login-password').value = '';
+}
+
 async function toggleAdminActive(id, currentlyActive) {
   try {
     var data = await adminAPI('/admin/admins/' + id, 'PUT', { is_active: !currentlyActive });
@@ -2399,6 +2582,115 @@ async function deleteAdminAccount(id, name) {
     </div>
     <p id="staff-modal-error" style="display:none;color:var(--rose);font-size:.82rem;margin-bottom:.8rem"></p>
     <button class="btn-sm btn-sm-primary" style="width:100%" id="staff-modal-save-btn" onclick="saveAdminStaff()">Save</button>
+  </div>
+</div>
+
+<div id="add-member-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeAddMemberModal()">
+  <div class="admin-modal-box wide">
+    <button class="admin-modal-close" onclick="closeAddMemberModal()">✕</button>
+    <h3 style="font-family:'Playfair Display',serif;margin-bottom:.3rem">Add Member</h3>
+    <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">Create a profile for a member onboarded offline (WhatsApp, phone, or in person). No login is created — invite them to log in later from the Members table once they're ready.</p>
+
+    <div class="form-section-label">Account</div>
+    <div class="form-grid-2 form-group-sm">
+      <div><label>Full Name *</label><input type="text" id="am-full_name"></div>
+      <div><label>Display Name</label><input type="text" id="am-display_name" placeholder="Optional public alias"></div>
+      <div><label>Email *</label><input type="email" id="am-email"></div>
+      <div><label>Mobile *</label><input type="text" id="am-mobile" placeholder="03XX-XXXXXXX"></div>
+      <div><label>WhatsApp</label><input type="text" id="am-whatsapp" placeholder="Defaults to mobile"></div>
+      <div><label>Guardian Name</label><input type="text" id="am-guardian_name" placeholder="If profile is managed by a parent/guardian"></div>
+    </div>
+
+    <div class="form-section-label">Personal</div>
+    <div class="form-grid-2 form-group-sm">
+      <div><label>Gender *</label>
+        <select id="am-gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select>
+      </div>
+      <div><label>Date of Birth</label><input type="date" id="am-date_of_birth"></div>
+      <div><label>Marital Status</label>
+        <select id="am-marital_status"><option value="Never Married">Never Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option><option value="Annulled">Annulled</option></select>
+      </div>
+      <div><label>Children</label><input type="text" id="am-children" placeholder="e.g. No Children"></div>
+      <div><label>Height</label><input type="text" id="am-height" placeholder="e.g. 5'7&quot;"></div>
+      <div><label>Complexion</label><input type="text" id="am-complexion"></div>
+    </div>
+
+    <div class="form-section-label">Background</div>
+    <div class="form-grid-2 form-group-sm">
+      <div><label>Religion</label><input type="text" id="am-religion"></div>
+      <div><label>Sect</label><input type="text" id="am-sect"></div>
+      <div><label>Ethnicity</label><input type="text" id="am-ethnicity"></div>
+      <div><label>Caste</label><input type="text" id="am-caste"></div>
+      <div><label>Education</label><input type="text" id="am-education"></div>
+      <div><label>Institution</label><input type="text" id="am-institution"></div>
+    </div>
+
+    <div class="form-section-label">Lifestyle</div>
+    <div class="form-grid-2 form-group-sm">
+      <div><label>Profession</label><input type="text" id="am-profession"></div>
+      <div><label>Employer</label><input type="text" id="am-employer"></div>
+      <div><label>Monthly Income</label><input type="text" id="am-monthly_income"></div>
+      <div><label>City *</label><input type="text" id="am-city"></div>
+      <div><label>Area</label><input type="text" id="am-area"></div>
+      <div><label>Country</label><input type="text" id="am-country" placeholder="Pakistan" value="Pakistan"></div>
+    </div>
+
+    <div class="form-section-label">Partner Preferences</div>
+    <div class="form-grid-2 form-group-sm">
+      <div><label>Partner Age Min</label><input type="number" id="am-partner_age_min"></div>
+      <div><label>Partner Age Max</label><input type="number" id="am-partner_age_max"></div>
+      <div><label>Partner City</label><input type="text" id="am-partner_city"></div>
+      <div><label>Partner Education</label><input type="text" id="am-partner_education"></div>
+    </div>
+    <div class="form-group-sm">
+      <label>Partner Description</label><textarea id="am-partner_description"></textarea>
+      <label>About Me</label><textarea id="am-about_me"></textarea>
+      <label>Family Description</label><textarea id="am-family_description"></textarea>
+    </div>
+
+    <div class="form-section-label">Parents</div>
+    <div class="form-grid-2 form-group-sm">
+      <div><label>Father's Name</label><input type="text" id="am-father_name"></div>
+      <div><label>Father's Occupation</label><input type="text" id="am-father_occupation"></div>
+      <div><label>Mother's Name</label><input type="text" id="am-mother_name"></div>
+      <div><label>Mother's Occupation</label><input type="text" id="am-mother_occupation"></div>
+      <div><label>Parents Status</label><input type="text" id="am-parents_status" placeholder="e.g. Together, Deceased"></div>
+      <div><label>Siblings</label><input type="text" id="am-siblings_count"></div>
+    </div>
+
+    <div class="form-section-label">Photo</div>
+    <div class="form-group-sm">
+      <input type="file" id="am-photo" accept=".jpg,.jpeg,.png,.webp">
+    </div>
+
+    <div class="form-section-label">Package &amp; Payment</div>
+    <div class="form-grid-2 form-group-sm">
+      <div><label>Package *</label>
+        <select id="am-package"><option value="basic">Basic — PKR 10,000</option><option value="premium">Premium — PKR 35,000</option></select>
+      </div>
+    </div>
+    <div class="mark-paid-row">
+      <input type="checkbox" id="am-mark_paid">
+      <label for="am-mark_paid">Payment already confirmed (via WhatsApp/phone/bank transfer) — activate profile immediately</label>
+    </div>
+
+    <p id="add-member-error" style="display:none;color:var(--rose);font-size:.82rem;margin-bottom:.8rem"></p>
+    <button class="btn-sm btn-sm-primary" style="width:100%" id="add-member-save-btn" onclick="saveNewMember()">Create Member</button>
+  </div>
+</div>
+
+<div id="invite-login-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeInviteLoginModal()">
+  <div class="admin-modal-box" style="max-width:420px">
+    <button class="admin-modal-close" onclick="closeInviteLoginModal()">✕</button>
+    <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem">Login Credentials Generated</h3>
+    <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">Share these with the member yourself (WhatsApp/phone). This password will not be shown again.</p>
+    <div class="form-group-sm">
+      <label>Email</label>
+      <input type="text" id="invite-login-email" readonly>
+      <label>Temporary Password</label>
+      <input type="text" id="invite-login-password" readonly>
+    </div>
+    <button class="btn-sm btn-sm-primary" style="width:100%" onclick="closeInviteLoginModal()">Done</button>
   </div>
 </div>
 
