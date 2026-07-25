@@ -624,9 +624,9 @@ function applyPermissionVisibility() {
       <span style="font-size:.78rem;color:var(--mid)">Members who sent and accepted an interest — no message content shown</span>
     </div>
     <table>
-      <thead><tr><th>Member A</th><th>Member B</th><th>Matched On</th></tr></thead>
+      <thead><tr><th>Member A</th><th>Member B</th><th>Matched On</th><th>Actions</th></tr></thead>
       <tbody id="connections-table-body">
-        <tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+        <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
       </tbody>
     </table>
   </div>
@@ -1843,28 +1843,69 @@ async function loadSuccessFeePanel() {
 // ══════════════════════════════════════════
 async function loadConnectionsPanel() {
   var tbody = document.getElementById('connections-table-body');
-  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
 
   try {
     var data = await adminAPI('/admin/connections');
     if (!data.success) throw new Error(data.message);
 
     if (!data.data.length) {
-      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--mid)">No mutual matches yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">No mutual matches yet.</td></tr>';
       return;
     }
 
+    var isMaster = isAdminMaster();
+
     tbody.innerHTML = data.data.map(function(c) {
       var dateStr = new Date(c.matched_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      var nameAEsc = c.member_a_name.replace(/'/g, "\\'");
+      var nameBEsc = c.member_b_name.replace(/'/g, "\\'");
       return '<tr>' +
         '<td>' + c.member_a_name + '</td>' +
         '<td>' + c.member_b_name + '</td>' +
         '<td>' + dateStr + '</td>' +
+        '<td>' + (isMaster
+          ? '<button class="action-btn action-view" onclick="viewConnectionMessages(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">View Messages</button>'
+          : '') + '</td>' +
       '</tr>';
     }).join('');
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
   }
+}
+
+// ── Master-only: view the full message thread between a matched pair ──
+async function viewConnectionMessages(matchId, nameA, nameB) {
+  document.getElementById('message-thread-title').textContent = nameA + ' ↔ ' + nameB;
+  var body = document.getElementById('message-thread-body');
+  body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--mid)">Loading...</div>';
+  document.getElementById('message-thread-overlay').classList.add('open');
+
+  try {
+    var data = await adminAPI('/admin/connections/' + matchId + '/messages');
+    if (!data.success) throw new Error(data.message);
+
+    var msgs = data.data.messages;
+    if (!msgs.length) {
+      body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--mid)">No messages exchanged yet.</div>';
+      return;
+    }
+
+    body.innerHTML = msgs.map(function(m) {
+      var senderName = m.sender_id === data.data.member_a_id ? data.data.member_a_name : data.data.member_b_name;
+      var timeStr = new Date(m.created_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      return '<div style="padding:.8rem 1rem;border-bottom:1px solid var(--light)">' +
+        '<div style="font-size:.78rem;color:var(--mid);margin-bottom:.2rem"><strong style="color:var(--charcoal)">' + senderName + '</strong> · ' + timeStr + '</div>' +
+        '<div style="font-size:.9rem">' + escapeHtml(m.content) + '</div>' +
+      '</div>';
+    }).join('');
+  } catch (err) {
+    body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</div>';
+  }
+}
+
+function closeMessageThreadModal() {
+  document.getElementById('message-thread-overlay').classList.remove('open');
 }
 
 // ══════════════════════════════════════════
@@ -2691,6 +2732,15 @@ async function deleteAdminAccount(id, name) {
       <input type="text" id="invite-login-password" readonly>
     </div>
     <button class="btn-sm btn-sm-primary" style="width:100%" onclick="closeInviteLoginModal()">Done</button>
+  </div>
+</div>
+
+<div id="message-thread-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeMessageThreadModal()">
+  <div class="admin-modal-box" style="max-width:560px">
+    <button class="admin-modal-close" onclick="closeMessageThreadModal()">✕</button>
+    <h3 id="message-thread-title" style="font-family:'Playfair Display',serif;margin-bottom:.3rem"></h3>
+    <p style="font-size:.78rem;color:var(--mid);margin-bottom:1rem">Read-only. This access has been logged.</p>
+    <div id="message-thread-body" style="max-height:60vh;overflow-y:auto;border:1px solid var(--light);border-radius:10px"></div>
   </div>
 </div>
 
