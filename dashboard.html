@@ -24,6 +24,10 @@ a{text-decoration:none;color:inherit}
   font-size:1.35rem;font-weight:700;color:#FAF3EC}
 .logo-dot{width:32px;height:32px;background:linear-gradient(135deg,var(--burg),var(--rose));
   border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:.8rem}
+.hamburger-btn{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:.4rem;flex-shrink:0}
+.hamburger-btn span{width:22px;height:2px;background:#FAF3EC;border-radius:2px;display:block}
+.sidebar-backdrop{display:none}
 .topbar-right{display:flex;align-items:center;gap:1rem}
 .notif-btn{position:relative;background:var(--ivory);border:none;border-radius:10px;
   width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem}
@@ -274,11 +278,22 @@ a{text-decoration:none;color:inherit}
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   .layout{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .stats-grid{grid-template-columns:1fr 1fr}
+  .hamburger-btn{display:flex}
+  .sidebar{display:block;position:fixed;top:64px;left:0;bottom:0;width:260px;max-width:80vw;
+    transform:translateX(-100%);transition:transform .25s ease;z-index:70;overflow-y:auto;
+    box-shadow:4px 0 24px rgba(0,0,0,0.25)}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .sidebar-backdrop{display:block;position:fixed;top:64px;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.4);z-index:60;opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .sidebar-backdrop.open{opacity:1;pointer-events:auto}
+  .stats-grid{grid-template-columns:1fr 1fr;order:1}
   .profiles-grid{grid-template-columns:1fr 1fr}
   .quick-actions{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
+  #panel-home.active{display:flex;flex-direction:column}
+  #quick-actions-card{order:2}
+  #completion-checklist-card{order:3}
+  #todays-picks-card{order:4}
 }
 @media(max-width:600px){
   .interest-row{flex-wrap:wrap}
@@ -293,7 +308,12 @@ a{text-decoration:none;color:inherit}
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <a href="/" class="logo"><div class="logo-dot">💍</div>Rishta Square</a>
+  <div class="topbar-left">
+    <button class="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="/" class="logo"><div class="logo-dot">💍</div>Rishta Square</a>
+  </div>
   <div class="topbar-right">
     <button class="notif-btn" onclick="showPanel('notifications')">🔔<span class="notif-dot" id="notif-indicator"></span></button>
     <div class="user-chip" onclick="showPanel('profile')">
@@ -303,6 +323,7 @@ a{text-decoration:none;color:inherit}
     <button class="logout-btn" onclick="handleLogout()">Logout</button>
   </div>
 </div>
+<div class="sidebar-backdrop" onclick="closeMobileNav()"></div>
 
 <div class="layout">
 
@@ -378,12 +399,12 @@ a{text-decoration:none;color:inherit}
       <div id="whats-new-banner" style="display:none"></div>
 
       <div class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card" style="cursor:pointer" onclick="goToInterests('sent')">
           <div class="stat-icon">💌</div>
           <div class="stat-value" id="stat-sent">0</div>
           <div class="stat-label">Interests Sent</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="cursor:pointer" onclick="goToInterests('received')">
           <div class="stat-icon">💝</div>
           <div class="stat-value" id="stat-received">0</div>
           <div class="stat-label">Interests Received</div>
@@ -411,7 +432,7 @@ a{text-decoration:none;color:inherit}
         <div id="todays-picks-results" style="padding:1.2rem 1.5rem 1.5rem"></div>
       </div>
 
-      <div class="card">
+      <div class="card" id="quick-actions-card">
         <div class="card-header"><span class="card-title">Quick Actions</span></div>
         <div class="quick-actions">
           <div class="qa-btn" onclick="showPanel('profile')">
@@ -802,7 +823,18 @@ function renderUserChip() {
 // ══════════════════════════════════════════
 //  PANEL SWITCHING
 // ══════════════════════════════════════════
+function toggleMobileNav() {
+  document.querySelector('.sidebar').classList.toggle('mobile-open');
+  document.querySelector('.sidebar-backdrop').classList.toggle('open');
+}
+
+function closeMobileNav() {
+  document.querySelector('.sidebar').classList.remove('mobile-open');
+  document.querySelector('.sidebar-backdrop').classList.remove('open');
+}
+
 function showPanel(id, navEl) {
+  closeMobileNav();
   document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
   var panel = document.getElementById('panel-' + id);
   if (panel) panel.classList.add('active');
@@ -1829,6 +1861,14 @@ function switchInterestTab(tab, btnEl) {
   document.querySelectorAll('.tabs-row .tab-btn').forEach(function(b) { b.classList.remove('active'); });
   btnEl.classList.add('active');
   loadInterests();
+}
+
+function goToInterests(tab) {
+  currentInterestTab = tab;
+  document.querySelectorAll('.tabs-row .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var btn = document.querySelector('.tabs-row .tab-btn[onclick*="' + tab + '"]');
+  if (btn) btn.classList.add('active');
+  showPanel('interests');
 }
 
 async function loadInterests() {
