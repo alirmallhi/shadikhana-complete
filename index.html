@@ -125,6 +125,15 @@ a.ledger-item:hover{background:rgba(255,255,255,0.04)}
 .ledger-value{font-family:var(--font-mono);font-size:1.15rem;font-weight:500;color:#fff;letter-spacing:-.01em}
 .ledger-value small{font-size:.7rem;color:rgba(255,255,255,0.5);font-weight:400;margin-left:2px}
 
+/* TRUST CHECKLIST */
+.trust-checklist{background:var(--ivory)}
+.trust-grid{max-width:980px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.trust-item{background:var(--white);border:1.5px solid var(--hairline);border-radius:12px;
+  padding:1.1rem 1.3rem;display:flex;align-items:center;gap:.7rem;font-size:.92rem;font-weight:600;color:var(--charcoal)}
+.trust-item::before{content:'✓';color:var(--green);font-weight:700;font-size:1.1rem;flex-shrink:0}
+@media(max-width:820px){ .trust-grid{grid-template-columns:1fr 1fr} }
+@media(max-width:560px){ .trust-grid{grid-template-columns:1fr} }
+
 /* HOW IT WORKS */
 .how{background:linear-gradient(180deg,var(--white) 0%,#FFF6EC 100%);position:relative}
 .steps-timeline{position:relative;max-width:760px;margin:0 auto}
@@ -606,9 +615,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="plan-icon">🌱</div>
       <div class="plan-name">Basic</div>
       <div class="plan-price">PKR 10,000</div>
-      <div class="plan-sub">One-time registration · No monthly charges</div>
+      <div class="plan-sub">One-time registration fee · Non-refundable</div>
       <p style="font-size:.85rem;color:var(--mid);line-height:1.6;margin:.6rem 0 1rem">Built for members who are comfortable browsing, connecting, and managing their own search — with Smart Match suggestions and admin-reviewed recommendations from our team along the way. Ideal if you want full platform access at the lowest cost.</p>
-      <div class="plan-success-fee">💍 Success fee: PKR 65,000 (on confirmed match only)</div>
+      <div class="plan-success-fee">💍 Success fee: PKR 65,000 (on confirmed match only)<br><strong>Total if matched: PKR 75,000</strong></div>
       <ul class="plan-features">
         <li>Full profile creation</li>
         <li>Unlimited profile browsing</li>
@@ -628,10 +637,10 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="plan-badge">Full-Service · Dedicated Matchmaker</div>
       <div class="plan-icon">⭐</div>
       <div class="plan-name">Premium</div>
-      <div class="plan-price">PKR 30,000</div>
-      <div class="plan-sub">One-time registration · No monthly charges</div>
+      <div class="plan-price">PKR 35,000</div>
+      <div class="plan-sub">One-time registration fee · Non-refundable</div>
       <p style="font-size:.85rem;color:rgba(255,255,255,0.75);line-height:1.6;margin:.6rem 0 1rem">Built for members who want a dedicated matchmaker personally involved in their search — arranged family meet-ups, in-person consultation, and hands-on attention throughout. A natural fit for busy professionals, business families, and overseas Pakistanis who want us more directly involved.</p>
-      <div class="plan-success-fee">💍 Success fee: PKR 1,20,000 (on confirmed match only)</div>
+      <div class="plan-success-fee">💍 Success fee: PKR 125,000 (on confirmed match only)<br><strong>Total if matched: PKR 160,000</strong></div>
       <ul class="plan-features">
         <li>Everything in Basic, plus a dedicated human matchmaker</li>
         <li>Featured profile placement</li>
@@ -642,7 +651,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <li>In-person office consultation — Lahore</li>
         <li>WhatsApp &amp; call concierge support</li>
       </ul>
-      <button class="btn-plan" onclick="openModal('register')">Register – Premium · PKR 30,000</button>
+      <button class="btn-plan" onclick="openModal('register')">Register – Premium · PKR 35,000</button>
     </div>
   </div>
 
@@ -654,7 +663,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <div class="sfn-icon">💡</div>
     <div>
       <div class="sfn-title">How Our Success Fee Works</div>
-      <p class="sfn-desc">We believe in earning only when you succeed. Your one-time registration gives full platform access with no time limit and no recurring charges. A one-time success fee applies only when your rishta is confirmed — <strong>PKR 65,000 for Basic</strong> and <strong>PKR 1,20,000 for Premium</strong> members. For Premium, that fee covers the complete personal service — office consultation, arranged family meet-ups, and your dedicated matchmaker's involvement throughout. <strong>If no match is made, no success fee is ever charged.</strong></p>
+      <p class="sfn-desc">We believe in earning only when you succeed. Your one-time registration fee — <strong>PKR 10,000 for Basic</strong>, <strong>PKR 35,000 for Premium</strong> — gives full platform access with no time limit and no recurring charges, and is <strong>non-refundable</strong>. A one-time success fee applies only when your rishta is confirmed — <strong>PKR 65,000 for Basic</strong> and <strong>PKR 125,000 for Premium</strong> members. For Premium, that fee covers the complete personal service — office consultation, arranged family meet-ups, and your dedicated matchmaker's involvement throughout. <strong>If no match is made, no success fee is ever charged.</strong></p>
     </div>
   </div>
 
@@ -710,6 +719,26 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   </div>
 </div>
 
+<!-- TRUST CHECKLIST -->
+<section class="trust-checklist">
+  <div class="section-header fade-in" style="text-align:center">
+    <div class="section-label">Why Members Trust Us</div>
+    <h2 class="section-title">A Trusted Matchmaking System</h2>
+    <p class="section-sub" style="max-width:640px;margin:0 auto">Every part of the platform is built around one goal — helping you find a genuine match, safely and with real human support along the way.</p>
+  </div>
+  <div class="trust-grid">
+    <div class="trust-item fade-in">100% Verified Identities</div>
+    <div class="trust-item fade-in">Human Relationship Managers</div>
+    <div class="trust-item fade-in">AI-Assisted Compatibility</div>
+    <div class="trust-item fade-in">Real-Time Proposal Tracking</div>
+    <div class="trust-item fade-in">Strict Privacy Controls</div>
+    <div class="trust-item fade-in">Dedicated Customer Support</div>
+    <div class="trust-item fade-in">Feedback After Each Proposal</div>
+    <div class="trust-item fade-in">Professional Profile Creation</div>
+    <div class="trust-item fade-in">Family Onboarding Sessions</div>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section class="how" id="how">
   <div class="section-header fade-in">
@@ -758,7 +787,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="step-content">
         <div class="step-eyebrow">Step 4</div>
         <h3>Finalise the Rishta</h3>
-        <p>When your rishta is confirmed, a one-time success fee applies — PKR 65,000 (Basic) or PKR 1,20,000 (Premium). No match, no fee.</p>
+        <p>When your rishta is confirmed, a one-time success fee applies — PKR 65,000 (Basic) or PKR 125,000 (Premium). No match, no fee.</p>
       </div>
     </div>
   </div>
@@ -920,7 +949,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <div style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.3);border-radius:18px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
       <div>
         <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Premium Registration</div>
-        <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 30,000 one-time registration &nbsp;·&nbsp; PKR 1,20,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
+        <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 35,000 one-time registration (non-refundable) &nbsp;·&nbsp; PKR 125,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
       </div>
       <a href="#" class="btn-primary" onclick="openModal('register');return false" style="background:linear-gradient(135deg,#2196F3,#0D6EBE);color:#fff;font-weight:700;white-space:nowrap;flex-shrink:0">
         Register Premium →
@@ -1660,28 +1689,28 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     <!-- ── STEP 5: Package Selection ── -->
     <div id="reg-step-5" style="display:none">
       <h2 class="modal-title">Choose Your Package</h2>
-      <p class="modal-sub">One-time registration fee. No monthly charges — ever.</p>
+      <p class="modal-sub">One-time registration fee (non-refundable). No monthly charges — ever.</p>
 
       <div onclick="selectPlan(this,'basic')" class="plan-select-card selected">
         <input type="radio" name="pkg" value="basic" checked>
         <div class="psc-info">
           <div class="psc-name">🌱 Basic</div>
           <div class="psc-price">PKR 10,000</div>
-          <div class="psc-desc">Core access · Success fee on match: PKR 65,000</div>
+          <div class="psc-desc">Core access · Success fee on match: PKR 65,000 · Total if matched: PKR 75,000</div>
         </div>
       </div>
       <div onclick="selectPlan(this,'premium')" class="plan-select-card">
         <input type="radio" name="pkg" value="premium">
         <div class="psc-info">
           <div class="psc-name">⭐ Premium</div>
-          <div class="psc-price">PKR 30,000</div>
-          <div class="psc-desc">All features + dedicated matchmaker + family meet-ups arranged · Success fee: PKR 1,20,000</div>
+          <div class="psc-price">PKR 35,000</div>
+          <div class="psc-desc">All features + dedicated matchmaker + family meet-ups arranged · Success fee: PKR 125,000 · Total if matched: PKR 160,000</div>
         </div>
         <span class="psc-badge" style="background:rgba(26,18,37,0.1);color:var(--burgundy)">Full-Service</span>
       </div>
 
       <div style="background:rgba(240,168,48,0.08);border:1px solid rgba(240,168,48,0.25);border-radius:10px;padding:.85rem 1rem;margin-top:1rem;font-size:.8rem;color:#8A6010;line-height:1.6">
-        💡 <strong>Success fee</strong> is only charged once your rishta is confirmed. If no match is made, no success fee is ever due.
+        💡 <strong>Registration fee is non-refundable.</strong> The <strong>success fee</strong> is only charged once your rishta is confirmed — if no match is made, no success fee is ever due.
       </div>
 
       <div style="display:flex;gap:1rem;margin-top:1.4rem">
@@ -2194,7 +2223,7 @@ var currentStep = 1;
 var totalSteps  = 6;
 var planNames = {
   basic:     'Basic – PKR 10,000  ·  Success fee on match: PKR 65,000',
-  premium:   'Premium – PKR 30,000  ·  Success fee on match: PKR 1,20,000'
+  premium:   'Premium – PKR 35,000  ·  Success fee on match: PKR 125,000'
 };
 var selectedPlan = 'basic';
 

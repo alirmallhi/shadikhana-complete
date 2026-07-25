@@ -65,6 +65,18 @@
   .pd-note{max-width:720px;margin:0 auto 90px;padding:1.6rem 2rem;background:var(--ivory);border-radius:14px;border:1px solid var(--hairline);font-size:.88rem;line-height:1.7;color:var(--charcoal)}
   .pd-note strong{color:var(--burgundy)}
 
+  .concierge-section{max-width:1080px;margin:0 auto 70px;padding:0 5%}
+  .concierge-header{text-align:center;max-width:640px;margin:0 auto 2.4rem}
+  .concierge-header h2{font-family:var(--font-display);font-size:clamp(1.6rem,2.8vw,2.2rem);font-weight:600;margin:.7rem 0 .6rem;color:var(--burgundy)}
+  .concierge-header p{color:var(--mid);font-size:.94rem;line-height:1.65}
+  .concierge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem}
+  .concierge-card{background:linear-gradient(160deg,#FBE6EC 0%,#F5DEE2 100%);border:1.5px solid rgba(184,151,90,0.35);border-radius:16px;padding:1.7rem 1.5rem}
+  .concierge-icon{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin-bottom:1rem}
+  .concierge-card h3{font-family:var(--font-display);font-size:1.02rem;font-weight:600;color:var(--charcoal);margin-bottom:.4rem}
+  .concierge-card p{font-size:.84rem;color:var(--mid);line-height:1.6}
+  @media(max-width:820px){ .concierge-grid{grid-template-columns:1fr 1fr} }
+  @media(max-width:560px){ .concierge-grid{grid-template-columns:1fr} }
+
   footer{background:var(--ink);color:rgba(255,255,255,0.6);text-align:center;padding:2.5rem 5%;font-size:.82rem}
   footer a{color:var(--gold);text-decoration:none}
 
@@ -91,8 +103,8 @@
     <div class="pd-badge">Self-Service</div>
     <h2>Basic</h2>
     <div class="pd-price">PKR 10,000</div>
-    <div class="pd-price-note">One-time registration · No monthly charges</div>
-    <div class="pd-success">💍 Success fee: PKR 65,000 — only if matched</div>
+    <div class="pd-price-note">One-time registration fee · Non-refundable</div>
+    <div class="pd-success">💍 Success fee: PKR 65,000 — only if matched<br><strong>Total if matched: PKR 75,000</strong></div>
     <div class="pd-who"><strong>Best for:</strong> members who are comfortable browsing profiles, filtering by their own criteria, and reaching out directly — and want the lowest-cost way to access the full platform. You're in the driver's seat, with Smart Match suggestions and admin-reviewed recommendations from our team helping point you in the right direction along the way.</div>
     <div class="pd-section-label">What's Included</div>
     <ul class="pd-list">
@@ -115,9 +127,9 @@
   <div class="pd-card premium">
     <div class="pd-badge">Full-Service · Dedicated Matchmaker</div>
     <h2>Premium</h2>
-    <div class="pd-price">PKR 30,000</div>
-    <div class="pd-price-note">One-time registration · No monthly charges</div>
-    <div class="pd-success">💍 Success fee: PKR 1,20,000 — only if matched</div>
+    <div class="pd-price">PKR 35,000</div>
+    <div class="pd-price-note">One-time registration fee · Non-refundable</div>
+    <div class="pd-success">💍 Success fee: PKR 125,000 — only if matched<br><strong>Total if matched: PKR 160,000</strong></div>
     <div class="pd-who"><strong>Best for:</strong> members who want us personally, hands-on involved — a dedicated matchmaker who knows your profile, arranges family meet-ups, and represents you in consultations. A natural fit for busy professionals, business families, and overseas Pakistanis who'd rather have dedicated support than manage the search entirely on their own.</div>
     <div class="pd-section-label">Everything in Basic, Plus</div>
     <ul class="pd-list">
@@ -128,13 +140,49 @@
       <li>In-person office consultation — Lahore</li>
       <li>WhatsApp &amp; call concierge support</li>
     </ul>
-    <a href="/index.html#plans" class="pd-cta">Register — Premium · PKR 30,000</a>
+    <a href="/index.html#plans" class="pd-cta">Register — Premium · PKR 35,000</a>
   </div>
 
 </div>
 
+<!-- PREMIUM CONCIERGE SERVICE -->
+<div class="concierge-section">
+  <div class="concierge-header">
+    <div class="pd-label">Premium Exclusive</div>
+    <h2>Your Personal Concierge Service</h2>
+    <p>Every Premium membership comes with hands-on support at every stage — not just a dedicated matchmaker, but a full concierge experience from your first profile draft to well beyond your engagement.</p>
+  </div>
+  <div class="concierge-grid">
+    <div class="concierge-card">
+      <div class="concierge-icon">🔍</div>
+      <h3>Curated Introductions</h3>
+      <p>Your matchmaker hand-picks and presents only genuinely compatible profiles, rather than leaving you to search the whole platform yourself.</p>
+    </div>
+    <div class="concierge-card">
+      <div class="concierge-icon">✍️</div>
+      <h3>Profile Coaching</h3>
+      <p>One-on-one guidance on how to present yourself — photos, bio, and preferences — so your profile puts your best foot forward.</p>
+    </div>
+    <div class="concierge-card">
+      <div class="concierge-icon">🤝</div>
+      <h3>Family Meeting Coordination</h3>
+      <p>We handle the logistics of arranging and scheduling family meet-ups, so introductions happen smoothly and respectfully.</p>
+    </div>
+    <div class="concierge-card">
+      <div class="concierge-icon">🕊️</div>
+      <h3>Negotiation Support</h3>
+      <p>A neutral, experienced voice to help both families navigate expectations and next steps with clarity and respect.</p>
+    </div>
+    <div class="concierge-card">
+      <div class="concierge-icon">💐</div>
+      <h3>Post-Engagement Guidance</h3>
+      <p>Our support doesn't end at "yes" — we stay available for guidance as you move from engagement toward the next chapter.</p>
+    </div>
+  </div>
+</div>
+
 <div class="pd-note">
-  💡 <strong>Both packages share the same success-fee promise:</strong> you only pay the success fee once your rishta is actually confirmed. No match, no success fee — ever. The registration fee is what's different upfront, and it reflects how much of the matchmaking work our team does directly on your behalf versus how much you drive yourself.
+  💡 <strong>Both packages share the same success-fee promise:</strong> you only pay the success fee once your rishta is actually confirmed. No match, no success fee — ever. The registration fee is what's different upfront, and it reflects how much of the matchmaking work our team does directly on your behalf versus how much you drive yourself. <strong>Registration fees are non-refundable</strong> once your profile has been submitted, regardless of package.
 </div>
 
 <footer>
