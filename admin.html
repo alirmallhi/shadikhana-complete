@@ -1645,9 +1645,7 @@ async function loadMembersPanel(page) {
             : '') +
           '<button class="action-btn ' + (m.is_verified ? 'action-view' : 'action-approve') + '" onclick="toggleMemberVerified(' + m.id + ', ' + !!m.is_verified + ', this)">' + (m.is_verified ? 'Unverify' : 'Verify') + '</button> ' +
           '<button class="action-btn action-view" onclick="viewPendingMemberDetail(' + m.id + ')">View</button> ' +
-          (!m.has_credentials
-            ? '<button class="action-btn action-approve" onclick="inviteMemberToLogin(' + m.id + ', \'' + m.email.replace(/'/g, "\\'") + '\')">Invite to Login</button> '
-            : '') +
+          '<button class="action-btn action-approve" onclick="inviteMemberToLogin(' + m.id + ', \'' + m.email.replace(/'/g, "\\'") + '\')">' + (m.has_credentials ? 'Regenerate Login' : 'Invite to Login') + '</button> ' +
           '<button class="action-btn action-delete" onclick="deleteMemberConfirm(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Del</button>' +
         '</td>' +
       '</tr>';
@@ -2558,7 +2556,6 @@ async function inviteMemberToLogin(memberId, memberEmail) {
     document.getElementById('invite-login-email').value    = memberEmail;
     document.getElementById('invite-login-password').value = data.data.temporary_password;
     document.getElementById('invite-login-overlay').classList.add('open');
-    if (typeof loadMembersPanel === 'function') loadMembersPanel(membersCurrentPage);
   } catch (err) {
     alert('Error: ' + err.message);
   }
@@ -2567,6 +2564,7 @@ async function inviteMemberToLogin(memberId, memberEmail) {
 function closeInviteLoginModal() {
   document.getElementById('invite-login-overlay').classList.remove('open');
   document.getElementById('invite-login-password').value = '';
+  if (typeof loadMembersPanel === 'function') loadMembersPanel(membersCurrentPage);
 }
 
 async function toggleAdminActive(id, currentlyActive) {
