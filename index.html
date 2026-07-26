@@ -275,6 +275,9 @@ a.ledger-item:hover{background:rgba(255,255,255,0.04)}
 .fv-bar-track{background:rgba(255,255,255,0.15);border-radius:4px;height:6px}
 .fv-bar-fill{height:6px;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--rose))}
 
+/* PREMIUM SHOWCASE */
+.showcase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3rem}
+
 /* TESTIMONIALS */
 .testimonials{background:var(--ivory)}
 .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
@@ -369,6 +372,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   .plans-grid{grid-template-columns:1fr;max-width:480px;margin:0 auto}
   .plan-card.featured{transform:scale(1)}
   .features-grid{grid-template-columns:1fr}
+  .showcase-grid{grid-template-columns:1fr}
   .testi-grid{grid-template-columns:1fr}
   .app-section{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr 1fr}
@@ -935,7 +939,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     </div>
 
     <!-- Service cards grid -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3rem">
+    <div class="showcase-grid">
 
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(33,150,243,0.2);border-radius:20px;padding:1.8rem 1.6rem;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(33,150,243,0.6)'" onmouseout="this.style.borderColor='rgba(33,150,243,0.2)'">
         <div style="font-size:2.2rem;margin-bottom:1rem">👤</div>
