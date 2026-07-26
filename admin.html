@@ -1629,6 +1629,8 @@ async function loadMembersPanel(page) {
       return;
     }
 
+    var isMaster = isAdminMaster();
+
     tbody.innerHTML = members.map(function(m) {
       var pkgClass  = m.package === 'premium' ? 'status-premium' : 'status-basic';
       var pkgIcon   = m.package === 'premium' ? '⭐' : '🌱';
@@ -1655,7 +1657,9 @@ async function loadMembersPanel(page) {
             : '') +
           '<button class="action-btn ' + (m.is_verified ? 'action-view' : 'action-approve') + '" onclick="toggleMemberVerified(' + m.id + ', ' + !!m.is_verified + ', this)">' + (m.is_verified ? 'Unverify' : 'Verify') + '</button> ' +
           '<button class="action-btn action-view" onclick="viewPendingMemberDetail(' + m.id + ')">View</button> ' +
-          '<button class="action-btn action-approve" onclick="inviteMemberToLogin(' + m.id + ', \'' + m.email.replace(/'/g, "\\'") + '\')">' + (m.has_credentials ? 'Regenerate Login' : 'Invite to Login') + '</button> ' +
+          (isMaster
+            ? '<button class="action-btn action-approve" onclick="inviteMemberToLogin(' + m.id + ', \'' + m.email.replace(/'/g, "\\'") + '\')">' + (m.has_credentials ? 'Regenerate Login' : 'Invite to Login') + '</button> '
+            : '') +
           '<button class="action-btn action-delete" onclick="deleteMemberConfirm(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Del</button>' +
         '</td>' +
       '</tr>';
