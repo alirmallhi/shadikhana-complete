@@ -1853,18 +1853,27 @@ async function loadConnectionsPanel() {
     }
 
     var isMaster = isAdminMaster();
+    var canManageSuccessFees = isMaster || !!getAdminPermissions().success_fees;
 
     tbody.innerHTML = data.data.map(function(c) {
       var dateStr = new Date(c.matched_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
       var nameAEsc = c.member_a_name.replace(/'/g, "\\'");
       var nameBEsc = c.member_b_name.replace(/'/g, "\\'");
+      var successAction = c.status === 'confirmed'
+        ? '<span class="status-badge status-active">✓ Confirmed</span>'
+        : (canManageSuccessFees
+            ? '<button class="action-btn action-approve" onclick="markMatchSuccessful(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">Mark as Successful Match</button>'
+            : '');
       return '<tr>' +
         '<td>' + c.member_a_name + '</td>' +
         '<td>' + c.member_b_name + '</td>' +
         '<td>' + dateStr + '</td>' +
-        '<td>' + (isMaster
-          ? '<button class="action-btn action-view" onclick="viewConnectionMessages(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">View Messages</button>'
-          : '') + '</td>' +
+        '<td>' +
+          (isMaster
+            ? '<button class="action-btn action-view" onclick="viewConnectionMessages(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">View Messages</button> '
+            : '') +
+          successAction +
+        '</td>' +
       '</tr>';
     }).join('');
   } catch (err) {
@@ -1904,6 +1913,39 @@ async function viewConnectionMessages(matchId, nameA, nameB) {
 
 function closeMessageThreadModal() {
   document.getElementById('message-thread-overlay').classList.remove('open');
+}
+
+// ── Mark a mutual match as a successful rishta: records the success fee,
+// notifies both members (unless the fee was already collected off-platform),
+// moves both to 'matched' status, then hands off to a pre-filled (but
+// unpublished) Success Story draft for the admin to write up and review. ──
+async function markMatchSuccessful(matchId, nameA, nameB) {
+  if (!confirm('Mark the match between ' + nameA + ' and ' + nameB + ' as a successful rishta?\n\nThis will record the success fee owed for both members and move them to "matched" status.')) return;
+
+  var feesAlreadyCollected = confirm('Were the success fees already collected from both members (e.g. via WhatsApp/phone/bank transfer)?\n\nClick OK if yes — no fee-due notification will be sent.\nClick Cancel if the fee is still outstanding — both members will be notified.');
+
+  try {
+    var data = await adminAPI('/admin/matches/' + matchId + '/confirm', 'PUT', { fees_already_collected: feesAlreadyCollected });
+    if (!data.success) {
+      alert(data.message || 'Could not confirm this match.');
+      return;
+    }
+
+    loadConnectionsPanel();
+
+    var d = data.data;
+    showPanel('stories');
+    document.getElementById('story-couple').value = d.member_a_name + ' & ' + d.member_b_name;
+    document.getElementById('story-location').value = d.member_a_city && d.member_b_city
+      ? (d.member_a_city === d.member_b_city ? d.member_a_city : d.member_a_city + ' & ' + d.member_b_city)
+      : (d.member_a_city || d.member_b_city || '');
+    document.getElementById('story-package').value = d.member_a_package === d.member_b_package ? d.member_a_package : '';
+    document.getElementById('story-date').value = '';
+    document.getElementById('story-text').value = '';
+    alert('Match confirmed! A draft success story has been started below — write it up and click "Add Story" when ready (it stays unpublished until you publish it).');
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
 }
 
 // ══════════════════════════════════════════
