@@ -2450,6 +2450,9 @@ async function saveAdminStaff() {
 // ── Add Member (manual, admin-entered, no login credentials) ──
 function openAddMemberModal() {
   document.querySelectorAll('#add-member-overlay input[type=text], #add-member-overlay input[type=email], #add-member-overlay input[type=number], #add-member-overlay input[type=date], #add-member-overlay textarea').forEach(function(el) { el.value = ''; });
+  ['am-marital_status', 'am-children', 'am-height', 'am-complexion', 'am-religion', 'am-sect', 'am-ethnicity', 'am-caste', 'am-education'].forEach(function(id) {
+    document.getElementById(id).selectedIndex = 0;
+  });
   document.getElementById('am-country').value = 'Pakistan';
   document.getElementById('am-package').value = 'basic';
   document.getElementById('am-mark_paid').checked = false;
@@ -2649,20 +2652,20 @@ async function deleteAdminAccount(id, name) {
       </div>
       <div><label>Date of Birth</label><input type="date" id="am-date_of_birth"></div>
       <div><label>Marital Status</label>
-        <select id="am-marital_status"><option value="Never Married">Never Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option><option value="Annulled">Annulled</option></select>
+        <select id="am-marital_status"><option value="">Select Status</option></select>
       </div>
-      <div><label>Children</label><input type="text" id="am-children" placeholder="e.g. No Children"></div>
-      <div><label>Height</label><input type="text" id="am-height" placeholder="e.g. 5'7&quot;"></div>
-      <div><label>Complexion</label><input type="text" id="am-complexion"></div>
+      <div><label>Children</label><select id="am-children"></select></div>
+      <div><label>Height</label><select id="am-height"><option value="">Select Height</option></select></div>
+      <div><label>Complexion</label><select id="am-complexion"><option value="">Select Complexion</option></select></div>
     </div>
 
     <div class="form-section-label">Background</div>
     <div class="form-grid-2 form-group-sm">
-      <div><label>Religion</label><input type="text" id="am-religion"></div>
-      <div><label>Sect</label><input type="text" id="am-sect"></div>
-      <div><label>Ethnicity</label><input type="text" id="am-ethnicity"></div>
-      <div><label>Caste</label><input type="text" id="am-caste"></div>
-      <div><label>Education</label><input type="text" id="am-education"></div>
+      <div><label>Religion</label><select id="am-religion"><option value="">Select Religion</option></select></div>
+      <div><label>Sect</label><select id="am-sect"><option value="">Select Sect</option></select></div>
+      <div><label>Ethnicity</label><select id="am-ethnicity"><option value="">Select Ethnicity</option></select></div>
+      <div><label>Caste</label><select id="am-caste"><option value="">Select Caste</option></select></div>
+      <div><label>Education</label><select id="am-education"><option value="">Select Education</option></select></div>
       <div><label>Institution</label><input type="text" id="am-institution"></div>
     </div>
 
@@ -2743,6 +2746,19 @@ async function deleteAdminAccount(id, name) {
     <div id="message-thread-body" style="max-height:60vh;overflow-y:auto;border:1px solid var(--light);border-radius:10px"></div>
   </div>
 </div>
+
+<script src="/formOptions.js"></script>
+<script>
+rsPopulateSelect(document.getElementById('am-marital_status'), RS_MARITAL_STATUS);
+rsPopulateSelect(document.getElementById('am-children'), RS_CHILDREN);
+rsPopulateSelect(document.getElementById('am-height'), RS_HEIGHT);
+rsPopulateSelect(document.getElementById('am-complexion'), RS_COMPLEXION);
+rsPopulateSelect(document.getElementById('am-religion'), RS_RELIGION);
+rsPopulateSelect(document.getElementById('am-sect'), RS_SECT);
+rsPopulateSelect(document.getElementById('am-ethnicity'), RS_ETHNICITY);
+rsPopulateSelect(document.getElementById('am-caste'), RS_CASTE);
+rsPopulateSelect(document.getElementById('am-education'), RS_EDUCATION);
+</script>
 
 </body>
 </html>
