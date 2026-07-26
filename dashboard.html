@@ -345,6 +345,14 @@ a{text-decoration:none;color:inherit}
     <div class="nav-item" onclick="showPanel('matches', this)">
       <span class="nav-item-icon">💍</span>My Matches
     </div>
+    <div class="nav-item" onclick="showPanel('interests', this)">
+      <span class="nav-item-icon">💌</span>Interests
+      <span class="nav-badge" id="interests-badge" style="display:none">0</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('messages', this)">
+      <span class="nav-item-icon">💬</span>Messages
+      <span class="nav-badge" id="messages-badge" style="display:none">0</span>
+    </div>
     <div class="nav-item" onclick="showPanel('saved', this)">
       <span class="nav-item-icon">🤍</span>Saved
     </div>
@@ -354,14 +362,6 @@ a{text-decoration:none;color:inherit}
     <div class="nav-item" onclick="showPanel('compliments', this)">
       <span class="nav-item-icon">😊</span>Compliments
       <span class="nav-badge" id="compliments-badge" style="display:none">0</span>
-    </div>
-    <div class="nav-item" onclick="showPanel('interests', this)">
-      <span class="nav-item-icon">💌</span>Interests
-      <span class="nav-badge" id="interests-badge" style="display:none">0</span>
-    </div>
-    <div class="nav-item" onclick="showPanel('messages', this)">
-      <span class="nav-item-icon">💬</span>Messages
-      <span class="nav-badge" id="messages-badge" style="display:none">0</span>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -576,6 +576,17 @@ a{text-decoration:none;color:inherit}
             <div style="font-size:.84rem;color:var(--mid)">Loading...</div>
           </div>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="form-section-label">🔒 Change Password</div>
+        <div class="form-group"><label>Current Password</label><input type="password" id="cp-current" autocomplete="current-password"></div>
+        <div class="form-row">
+          <div class="form-group"><label>New Password</label><input type="password" id="cp-new" autocomplete="new-password" placeholder="At least 6 characters"></div>
+          <div class="form-group"><label>Confirm New Password</label><input type="password" id="cp-confirm" autocomplete="new-password"></div>
+        </div>
+        <button type="button" class="btn-save" onclick="changePassword()">Change Password</button>
+        <span id="change-password-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
       </div>
     </div>
 
@@ -1076,6 +1087,43 @@ async function saveProfile() {
     statusEl.style.display = 'inline';
     statusEl.style.color = 'var(--rose)';
     statusEl.textContent = '⚠️ ' + (result.message || 'Could not save changes.');
+  }
+}
+
+async function changePassword() {
+  var statusEl = document.getElementById('change-password-status');
+  var current      = document.getElementById('cp-current').value;
+  var next         = document.getElementById('cp-new').value;
+  var confirmValue = document.getElementById('cp-confirm').value;
+
+  function showStatus(ok, msg) {
+    statusEl.style.display = 'inline';
+    statusEl.style.color = ok ? 'var(--green)' : 'var(--rose)';
+    statusEl.textContent = (ok ? '✅ ' : '⚠️ ') + msg;
+  }
+
+  if (!current || !next || !confirmValue) {
+    showStatus(false, 'Please fill in all three fields.');
+    return;
+  }
+  if (next.length < 6) {
+    showStatus(false, 'New password must be at least 6 characters.');
+    return;
+  }
+  if (next !== confirmValue) {
+    showStatus(false, 'New password and confirmation do not match.');
+    return;
+  }
+
+  var result = await apiCall('/member/change-password', 'PUT', { current_password: current, new_password: next });
+  if (result.success) {
+    showStatus(true, 'Password changed successfully!');
+    document.getElementById('cp-current').value = '';
+    document.getElementById('cp-new').value = '';
+    document.getElementById('cp-confirm').value = '';
+    setTimeout(function() { statusEl.style.display = 'none'; }, 3000);
+  } else {
+    showStatus(false, result.message || 'Could not change password.');
   }
 }
 
