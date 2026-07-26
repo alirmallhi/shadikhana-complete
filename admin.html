@@ -618,6 +618,9 @@ function applyPermissionVisibility() {
 
 <!-- ══════════ CONNECTIONS (read-only: who matched whom, and when) ══════════ -->
     <div class="panel" id="panel-connections">
+  <div id="record-match-btn-wrap" style="display:none;justify-content:flex-end;margin-bottom:1.2rem">
+    <button class="btn-sm btn-sm-primary" onclick="openRecordMatchModal()">+ Record a Match</button>
+  </div>
   <div class="card" style="padding:0;overflow:hidden">
     <div class="card-header" style="padding:1.2rem 1.5rem">
       <span class="card-title">Mutual Connections</span>
@@ -953,6 +956,7 @@ function renderMatchCards(matches, pagination) {
     good:      { bg:'rgba(28,28,46,0.08)', color:'#1C1C2E', label:'⭐⭐ Good Match' },
     fair:      { bg:'#F3EFFF', color:'#5A5370', label:'⭐ Fair Match' },
   };
+  const canManageSuccessFees = isAdminMaster() || !!getAdminPermissions().success_fees;
 
   container.innerHTML = matches.map(m => {
     const tc = tierColors[m.tier] || tierColors.fair;
@@ -1042,6 +1046,12 @@ function renderMatchCards(matches, pagination) {
                   style="background:var(--ivory);border:1.5px solid var(--light);border-radius:8px;
                          padding:.5rem .8rem;font-size:.78rem;font-weight:600;cursor:pointer">
             ✅ Mark Reviewed
+          </button>` : ''}
+          ${canManageSuccessFees ? `
+          <button onclick="markMatchSuccessfulByMembers(${m.a_id}, ${m.b_id}, '${m.a_name.replace(/'/g,"\\'")}', '${m.b_name.replace(/'/g,"\\'")}')"
+                  style="background:#2D7A5F;color:#fff;border:none;border-radius:8px;
+                         padding:.5rem .8rem;font-size:.78rem;font-weight:600;cursor:pointer">
+            🎉 Mark as Successful Match
           </button>` : ''}
         </div>
       </div>
@@ -1843,6 +1853,10 @@ async function loadConnectionsPanel() {
   var tbody = document.getElementById('connections-table-body');
   tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
 
+  var isMaster = isAdminMaster();
+  var canManageSuccessFees = isMaster || !!getAdminPermissions().success_fees;
+  document.getElementById('record-match-btn-wrap').style.display = canManageSuccessFees ? 'flex' : 'none';
+
   try {
     var data = await adminAPI('/admin/connections');
     if (!data.success) throw new Error(data.message);
@@ -1851,9 +1865,6 @@ async function loadConnectionsPanel() {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">No mutual matches yet.</td></tr>';
       return;
     }
-
-    var isMaster = isAdminMaster();
-    var canManageSuccessFees = isMaster || !!getAdminPermissions().success_fees;
 
     tbody.innerHTML = data.data.map(function(c) {
       var dateStr = new Date(c.matched_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
@@ -1919,6 +1930,24 @@ function closeMessageThreadModal() {
 // notifies both members (unless the fee was already collected off-platform),
 // moves both to 'matched' status, then hands off to a pre-filled (but
 // unpublished) Success Story draft for the admin to write up and review. ──
+// ── Shared post-confirm UI: pre-fill the Success Story draft and hand off
+// to the Success Stories panel. Used by every "mark successful" entry point
+// (Connections, Smart Matching, Record a Match) so this only lives once. ──
+function applyMatchConfirmSuccessUI(d, refreshFn) {
+  if (typeof refreshFn === 'function') refreshFn();
+
+  showPanel('stories');
+  document.getElementById('story-couple').value = d.member_a_name + ' & ' + d.member_b_name;
+  document.getElementById('story-location').value = d.member_a_city && d.member_b_city
+    ? (d.member_a_city === d.member_b_city ? d.member_a_city : d.member_a_city + ' & ' + d.member_b_city)
+    : (d.member_a_city || d.member_b_city || '');
+  document.getElementById('story-package').value = d.member_a_package === d.member_b_package ? d.member_a_package : '';
+  document.getElementById('story-date').value = '';
+  document.getElementById('story-text').value = '';
+  alert('Match confirmed! A draft success story has been started below — write it up and click "Add Story" when ready (it stays unpublished until you publish it).');
+}
+
+// ── Connections panel: confirm an existing match by its matches.id ──
 async function markMatchSuccessful(matchId, nameA, nameB) {
   if (!confirm('Mark the match between ' + nameA + ' and ' + nameB + ' as a successful rishta?\n\nThis will record the success fee owed for both members and move them to "matched" status.')) return;
 
@@ -1930,22 +1959,148 @@ async function markMatchSuccessful(matchId, nameA, nameB) {
       alert(data.message || 'Could not confirm this match.');
       return;
     }
-
-    loadConnectionsPanel();
-
-    var d = data.data;
-    showPanel('stories');
-    document.getElementById('story-couple').value = d.member_a_name + ' & ' + d.member_b_name;
-    document.getElementById('story-location').value = d.member_a_city && d.member_b_city
-      ? (d.member_a_city === d.member_b_city ? d.member_a_city : d.member_a_city + ' & ' + d.member_b_city)
-      : (d.member_a_city || d.member_b_city || '');
-    document.getElementById('story-package').value = d.member_a_package === d.member_b_package ? d.member_a_package : '';
-    document.getElementById('story-date').value = '';
-    document.getElementById('story-text').value = '';
-    alert('Match confirmed! A draft success story has been started below — write it up and click "Add Story" when ready (it stays unpublished until you publish it).');
+    applyMatchConfirmSuccessUI(data.data, loadConnectionsPanel);
   } catch (err) {
     alert('Error: ' + err.message);
   }
+}
+
+// ── Shared: confirm a match between two member ids that may or may not
+// already have a matches row (Smart Matching, Record a Match) — same
+// two-dialog pattern as markMatchSuccessful above, calling the /confirm-pair
+// endpoint instead of /:id/confirm. ──
+async function confirmMatchByMemberIds(memberAId, memberBId, nameA, nameB, refreshFn) {
+  if (!confirm('Mark ' + nameA + ' and ' + nameB + ' as a successful rishta?\n\nThis will record the success fee owed for both members and move them to "matched" status.')) return;
+
+  var feesAlreadyCollected = confirm('Were the success fees already collected from both members (e.g. via WhatsApp/phone/bank transfer)?\n\nClick OK if yes — no fee-due notification will be sent.\nClick Cancel if the fee is still outstanding — both members will be notified.');
+
+  try {
+    var data = await adminAPI('/admin/matches/confirm-pair', 'POST', {
+      member_a_id: memberAId, member_b_id: memberBId, fees_already_collected: feesAlreadyCollected
+    });
+    if (!data.success) {
+      alert(data.message || 'Could not confirm this match.');
+      return;
+    }
+    applyMatchConfirmSuccessUI(data.data, refreshFn);
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+// ── Smart Matching panel: mark a recommended/scored pair successful even
+// though they have no matches row yet (confirm-pair creates one). ──
+function markMatchSuccessfulByMembers(memberAId, memberBId, nameA, nameB) {
+  confirmMatchByMemberIds(memberAId, memberBId, nameA, nameB, function() {
+    if (typeof fetchMatchingResults === 'function') fetchMatchingResults();
+  });
+}
+
+// ══════════════════════════════════════════
+//  RECORD A MATCH — general-purpose two-member picker for matches that
+//  happened entirely outside the platform (in person, family connection).
+//  Reuses the existing member search (same query the Members table uses)
+//  and the same confirmMatchByMemberIds flow as Smart Matching above.
+// ══════════════════════════════════════════
+var rmSelected = { a: null, b: null };
+var rmSearchTimers = { a: null, b: null };
+
+function openRecordMatchModal() {
+  rmSelected = { a: null, b: null };
+  ['a', 'b'].forEach(function(slot) {
+    document.getElementById('rm-search-' + slot).value = '';
+    document.getElementById('rm-selected-' + slot).style.display = 'none';
+    document.getElementById('rm-results-' + slot).style.display = 'none';
+    document.getElementById('rm-search-' + slot).style.display = 'block';
+  });
+  document.getElementById('record-match-error').style.display = 'none';
+  document.getElementById('record-match-confirm-btn').disabled = true;
+  document.getElementById('record-match-overlay').classList.add('open');
+}
+
+function closeRecordMatchModal() {
+  document.getElementById('record-match-overlay').classList.remove('open');
+}
+
+function rmSearchMembers(slot) {
+  clearTimeout(rmSearchTimers[slot]);
+  var query = document.getElementById('rm-search-' + slot).value.trim();
+  var resultsEl = document.getElementById('rm-results-' + slot);
+
+  if (query.length < 2) {
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  rmSearchTimers[slot] = setTimeout(async function() {
+    try {
+      var data = await adminAPI('/admin/members?search=' + encodeURIComponent(query) + '&limit=8');
+      if (!data.success) return;
+      var members = data.data.members || [];
+
+      if (!members.length) {
+        resultsEl.innerHTML = '<div style="padding:.7rem .9rem;font-size:.82rem;color:var(--mid)">No members found.</div>';
+        resultsEl.style.display = 'block';
+        return;
+      }
+
+      resultsEl.innerHTML = members.map(function(m) {
+        var nameEsc = m.full_name.replace(/'/g, "\\'");
+        return '<div style="padding:.6rem .9rem;cursor:pointer;border-bottom:1px solid var(--light);font-size:.84rem"' +
+          ' onmouseover="this.style.background=\'var(--ivory)\'" onmouseout="this.style.background=\'#fff\'"' +
+          ' onclick="rmSelectMember(\'' + slot + '\', ' + m.id + ', \'' + nameEsc + '\')">' +
+          '<strong>' + m.full_name + '</strong><br>' +
+          '<span style="color:var(--mid);font-size:.76rem">' + m.email + ' · ' + (m.city || '—') + '</span>' +
+        '</div>';
+      }).join('');
+      resultsEl.style.display = 'block';
+    } catch (err) {
+      resultsEl.style.display = 'none';
+    }
+  }, 300);
+}
+
+function rmSelectMember(slot, id, name) {
+  rmSelected[slot] = { id: id, name: name };
+  document.getElementById('rm-search-' + slot).style.display = 'none';
+  document.getElementById('rm-results-' + slot).style.display = 'none';
+  document.getElementById('rm-results-' + slot).innerHTML = '';
+  var selectedEl = document.getElementById('rm-selected-' + slot);
+  selectedEl.style.display = 'block';
+  selectedEl.innerHTML = '✓ ' + name + ' <a href="#" style="font-weight:400;font-size:.78rem;margin-left:.5rem" onclick="rmClearSelection(\'' + slot + '\');return false">change</a>';
+
+  rmUpdateConfirmState();
+}
+
+function rmClearSelection(slot) {
+  rmSelected[slot] = null;
+  document.getElementById('rm-selected-' + slot).style.display = 'none';
+  document.getElementById('rm-search-' + slot).style.display = 'block';
+  document.getElementById('rm-search-' + slot).value = '';
+  rmUpdateConfirmState();
+}
+
+function rmUpdateConfirmState() {
+  var errorEl = document.getElementById('record-match-error');
+  var btn = document.getElementById('record-match-confirm-btn');
+
+  if (rmSelected.a && rmSelected.b && rmSelected.a.id === rmSelected.b.id) {
+    errorEl.textContent = 'Member A and Member B must be different people.';
+    errorEl.style.display = 'block';
+    btn.disabled = true;
+    return;
+  }
+
+  errorEl.style.display = 'none';
+  btn.disabled = !(rmSelected.a && rmSelected.b);
+}
+
+function confirmRecordMatch() {
+  if (!rmSelected.a || !rmSelected.b) return;
+  var a = rmSelected.a, b = rmSelected.b;
+  closeRecordMatchModal();
+  confirmMatchByMemberIds(a.id, b.id, a.name, b.name, loadConnectionsPanel);
 }
 
 // ══════════════════════════════════════════
@@ -2784,6 +2939,31 @@ async function deleteAdminAccount(id, name) {
     <h3 id="message-thread-title" style="font-family:'Playfair Display',serif;margin-bottom:.3rem"></h3>
     <p style="font-size:.78rem;color:var(--mid);margin-bottom:1rem">Read-only. This access has been logged.</p>
     <div id="message-thread-body" style="max-height:60vh;overflow-y:auto;border:1px solid var(--light);border-radius:10px"></div>
+  </div>
+</div>
+
+<div id="record-match-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeRecordMatchModal()">
+  <div class="admin-modal-box" style="max-width:480px">
+    <button class="admin-modal-close" onclick="closeRecordMatchModal()">✕</button>
+    <h3 style="font-family:'Playfair Display',serif;margin-bottom:.3rem">Record a Match</h3>
+    <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">For a match that happened outside the platform (in person, family connection, etc.) — search and pick both members below.</p>
+
+    <div class="form-group-sm" style="position:relative">
+      <label>Member A</label>
+      <input type="text" id="rm-search-a" placeholder="Search by name, email, or mobile..." autocomplete="off" oninput="rmSearchMembers('a')">
+      <div id="rm-selected-a" style="display:none;padding:.6rem .9rem;background:var(--ivory);border-radius:8px;margin-bottom:.8rem;font-size:.86rem;font-weight:600"></div>
+      <div id="rm-results-a" style="display:none;position:absolute;left:0;right:0;background:#fff;border:1.5px solid var(--light);border-radius:8px;max-height:220px;overflow-y:auto;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,0.12)"></div>
+    </div>
+
+    <div class="form-group-sm" style="position:relative">
+      <label>Member B</label>
+      <input type="text" id="rm-search-b" placeholder="Search by name, email, or mobile..." autocomplete="off" oninput="rmSearchMembers('b')">
+      <div id="rm-selected-b" style="display:none;padding:.6rem .9rem;background:var(--ivory);border-radius:8px;margin-bottom:.8rem;font-size:.86rem;font-weight:600"></div>
+      <div id="rm-results-b" style="display:none;position:absolute;left:0;right:0;background:#fff;border:1.5px solid var(--light);border-radius:8px;max-height:220px;overflow-y:auto;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,0.12)"></div>
+    </div>
+
+    <p id="record-match-error" style="display:none;color:var(--rose);font-size:.82rem;margin-bottom:.8rem"></p>
+    <button class="btn-sm btn-sm-primary" style="width:100%" id="record-match-confirm-btn" onclick="confirmRecordMatch()" disabled>Confirm Match</button>
   </div>
 </div>
 
