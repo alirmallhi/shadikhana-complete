@@ -1619,10 +1619,15 @@ function buildMemberProfileHtml(m, payments) {
           '<div style="font-size:.82rem;color:var(--mid)">' + (m.age || '—') + ' yrs · ' + escapeHtml(m.city) + ' · ' + escapeHtml(m.gender) + '</div></div>';
   html += '</div>';
 
-  html += '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.7rem 0 1rem">';
+  html += '<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin:.7rem 0 1rem">';
   html += '<span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.package || '').toUpperCase() + '</span>';
   html += '<span style="background:' + (m.account_status === 'active' ? '#E8F5F0' : '#FEF3E2') + ';color:' + (m.account_status === 'active' ? '#2D7A5F' : '#8A6010') + ';border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">' + (m.account_status || '').toUpperCase() + '</span>';
   if (m.is_verified) html += '<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:3px 9px;font-size:.7rem;font-weight:700">✓ VERIFIED</span>';
+  if (m.package === 'basic' || m.package === 'premium') {
+    var otherPkg = m.package === 'premium' ? 'basic' : 'premium';
+    html += '<button class="btn-sm" style="background:var(--charcoal);color:#fff;padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;cursor:pointer;border:none" ' +
+            'onclick="adminChangeMemberPackage(' + m.id + ', \'' + otherPkg + '\', this)">Switch to ' + otherPkg.charAt(0).toUpperCase() + otherPkg.slice(1) + '</button>';
+  }
   html += '</div>';
 
   if (m.about_me) html += '<span class="amd-section-label">About</span><div class="amd-narrative">' + escapeHtml(m.about_me) + '</div>';
@@ -1719,6 +1724,30 @@ async function viewMatchPairDetail(idA, idB) {
 
 async function viewPendingMemberDetail(memberId) {
   viewAdminMemberDetail(memberId);
+}
+
+// Basic <-> Premium is a one-click toggle since there are only two tiers —
+// no dropdown needed. Upgrading records a PKR 25,000 fee; downgrading does
+// not (no refund of the difference). Re-renders the detail view on success
+// so the badge and button reflect the new tier immediately.
+async function adminChangeMemberPackage(memberId, newPackage, btn) {
+  var confirmMsg = 'Change this member\'s package to ' + newPackage.toUpperCase() + '?' +
+    (newPackage === 'premium' ? '\n\nThis will record a PKR 25,000 upgrade fee.' : '');
+  if (!confirm(confirmMsg)) return;
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Updating...'; }
+  try {
+    var result = await adminAPI('/admin/members/' + memberId + '/package', 'PUT', { new_package: newPackage });
+    if (result.success) {
+      viewAdminMemberDetail(memberId);
+    } else {
+      alert(result.message || 'Could not change package.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Switch to ' + newPackage.charAt(0).toUpperCase() + newPackage.slice(1); }
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Switch to ' + newPackage.charAt(0).toUpperCase() + newPackage.slice(1); }
+  }
 }
 
 
