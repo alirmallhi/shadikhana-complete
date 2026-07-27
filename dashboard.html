@@ -1525,6 +1525,17 @@ async function handlePhotoUpload(input) {
 // ══════════════════════════════════════════
 //  BROWSE PROFILES
 // ══════════════════════════════════════════
+// Fills the same space the photo <img> would occupy, so it's used verbatim
+// (no separate "no photo" vs "hidden photo" variant) — the backend already
+// sends photo_url:null for both cases, so there's nothing here that could
+// leak which one it was.
+function avatarPlaceholderHtml(name, radius) {
+  var initial = (name || '').trim().charAt(0).toUpperCase() || '?';
+  return '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;' +
+    'background:linear-gradient(135deg,var(--burg),var(--rose));color:#fff;border-radius:' + (radius || 0) + 'px;' +
+    'font-family:\'Playfair Display\',serif;font-weight:700;font-size:2.2rem">' + escapeHtml(initial) + '</div>';
+}
+
 function premiumBadgeHtml(pkg) {
   return pkg === 'premium' ? '<span class="pc-premium-badge">⭐ Premium</span>' : '';
 }
@@ -1593,8 +1604,7 @@ async function loadBrowseProfiles(page) {
   }
 
   var cardsHtml = profiles.map(function(p) {
-    var initial = p.gender === 'Male' ? '👨' : '👩';
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var premiumBadge = premiumBadgeHtml(p.package);
     var compatBadge = matchBadgeHtml(p.compatibility_score);
@@ -1688,8 +1698,7 @@ async function viewProfileDetail(uuid) {
     return;
   }
   var p = result.data;
-  var initial = p.gender === 'Male' ? '👨' : '👩';
-  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : initial;
+  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : avatarPlaceholderHtml(p.display_name || p.full_name, 14);
   var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
   var premiumBadge = premiumBadgeHtml(p.package);
   var saveIcon = p.is_saved ? '❤️' : '🤍';
@@ -1800,8 +1809,7 @@ async function previewMyProfile() {
     return;
   }
   var p = result.data;
-  var initial = p.gender === 'Male' ? '👨' : '👩';
-  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : initial;
+  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : avatarPlaceholderHtml(p.display_name || p.full_name, 14);
 
   var prefParts = [];
   if (p.partner_age_min && p.partner_age_max) prefParts.push(p.partner_age_min + '–' + p.partner_age_max + ' years old');
@@ -2005,8 +2013,7 @@ async function loadTodaysPicks() {
   card.style.display = 'block';
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
-    var initial = p.gender === 'Male' ? '👨' : '👩';
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
@@ -2038,8 +2045,7 @@ async function loadMyMatches() {
 
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
-    var initial = p.gender === 'Male' ? '👨' : '👩';
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
@@ -2078,8 +2084,7 @@ async function loadSavedProfiles() {
 
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
-    var initial = p.gender === 'Male' ? '👨' : '👩';
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var activity = formatLastActive(p.last_active_at);
     html +=
@@ -2123,8 +2128,7 @@ async function loadProfileViewers() {
 
   var html = '<div class="profiles-grid">';
   viewers.forEach(function(p) {
-    var initial = p.gender === 'Male' ? '👨' : '👩';
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : initial;
+    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var activity = formatLastActive(p.last_viewed_at);
     html +=

@@ -1612,9 +1612,11 @@ function buildMemberProfileHtml(m, payments) {
   var html = '';
 
   html += '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:.3rem">';
-  if (m.photo_url) {
-    html += '<img src="' + m.photo_url + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0">';
-  }
+  html += m.photo_url
+    ? '<img src="' + m.photo_url + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0">'
+    : '<div style="width:70px;height:70px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;' +
+      'background:linear-gradient(135deg,var(--burgundy),var(--rose));color:#fff;' +
+      'font-family:\'Playfair Display\',serif;font-weight:700;font-size:1.6rem">' + escapeHtml((m.full_name || '').trim().charAt(0).toUpperCase() || '?') + '</div>';
   html += '<div><div style="font-family:\'Playfair Display\',serif;font-size:1.3rem;font-weight:700">' + escapeHtml(m.full_name) + '</div>' +
           '<div style="font-size:.82rem;color:var(--mid)">' + (m.age || '—') + ' yrs · ' + escapeHtml(m.city) + ' · ' + escapeHtml(m.gender) + '</div></div>';
   html += '</div>';
