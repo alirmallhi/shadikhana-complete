@@ -361,8 +361,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 
 /* RESPONSIVE */
 @media(max-width:960px){
-  .hero{grid-template-columns:1fr;text-align:center;padding-top:90px}
-  .hero-text{max-width:100%}
+  .hero{grid-template-columns:minmax(0,1fr);text-align:center;padding-top:90px}
+  .hero-text{max-width:100%;padding-left:5%;padding-right:5%}
+  .hero-sub{margin-left:auto;margin-right:auto}
   .hero-actions,.hero-stats{justify-content:center}
   .hero-visual{margin-top:2rem}
   .float-match,.float-notif{display:none}
