@@ -636,6 +636,34 @@ function applyPermissionVisibility() {
       </table>
     </div>
   </div>
+
+  <div style="margin-top:2rem">
+    <div class="form-section-label">🚻 Gender Correction Requests</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr><th>Member</th><th>Current</th><th>Requested</th><th>Reason</th><th>Submitted</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="gender-correction-table-body">
+          <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem">
+    <div class="form-section-label">📝 Profile Correction Requests</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr><th>Member</th><th>Field</th><th>Current Value</th><th>Requested Value</th><th>Reason</th><th>Submitted</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="profile-change-table-body">
+          <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 
@@ -1446,6 +1474,107 @@ async function reviewVerification(action) {
   } catch (err) {
     errorEl.style.display = 'block';
     errorEl.textContent = 'Error: ' + err.message;
+  }
+}
+
+// ══════════════════════════════════════════
+//  GENDER CORRECTION REQUESTS
+// ══════════════════════════════════════════
+async function loadGenderCorrectionRequests() {
+  var tbody = document.getElementById('gender-correction-table-body');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+  try {
+    var data = await adminAPI('/admin/gender-correction-requests');
+    if (!data.success) throw new Error(data.message);
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--mid)">No pending gender correction requests 🎉</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(function(m) {
+      return '<tr>' +
+        '<td><strong>' + m.full_name + '</strong></td>' +
+        '<td>' + m.gender + '</td>' +
+        '<td>' + m.gender_correction_requested + '</td>' +
+        '<td>' + (m.gender_correction_reason || '—') + '</td>' +
+        '<td>' + new Date(m.created_at).toLocaleDateString() + '</td>' +
+        '<td>' +
+          '<button class="action-btn action-approve" onclick="reviewGenderCorrection(' + m.id + ', \'approve\', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Approve</button> ' +
+          '<button class="action-btn action-delete" onclick="reviewGenderCorrection(' + m.id + ', \'reject\', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Reject</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function reviewGenderCorrection(memberId, action, memberName) {
+  // Reason text isn't sensitive (unlike CNIC), so this uses a plain confirm
+  // instead of a reveal-then-decide modal — matching the simpler inline
+  // row-action pattern already used elsewhere in Pending Approvals.
+  var verb = action === 'approve' ? 'approve' : 'reject';
+  if (!confirm('Are you sure you want to ' + verb + ' this gender correction request for ' + memberName + '?')) return;
+
+  try {
+    var data = await adminAPI('/admin/gender-correction-requests/' + memberId, 'PUT', { action: action });
+    if (!data.success) throw new Error(data.message);
+    alert(data.message);
+    loadGenderCorrectionRequests();
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+// ══════════════════════════════════════════
+//  PROFILE CORRECTION REQUESTS (Category B fields)
+// ══════════════════════════════════════════
+async function loadProfileChangeRequests() {
+  var tbody = document.getElementById('profile-change-table-body');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+  try {
+    var data = await adminAPI('/admin/profile-change-requests');
+    if (!data.success) throw new Error(data.message);
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">No pending profile correction requests 🎉</td></tr>';
+      return;
+    }
+
+    // Every column the admin needs — field, old value, new value, reason —
+    // is already on the row, so this is reviewable at a glance with no
+    // per-row detail fetch, same as Gender Correction Requests above.
+    tbody.innerHTML = data.data.map(function(r) {
+      return '<tr>' +
+        '<td><strong>' + r.full_name + '</strong></td>' +
+        '<td>' + r.field_label + '</td>' +
+        '<td>' + (r.old_value || '—') + '</td>' +
+        '<td>' + r.requested_value + '</td>' +
+        '<td>' + (r.reason || '—') + '</td>' +
+        '<td>' + new Date(r.created_at).toLocaleDateString() + '</td>' +
+        '<td>' +
+          '<button class="action-btn action-approve" onclick="reviewProfileChangeRequest(' + r.id + ', \'approve\', \'' + r.full_name.replace(/'/g, "\\'") + '\', \'' + r.field_label + '\')">Approve</button> ' +
+          '<button class="action-btn action-delete" onclick="reviewProfileChangeRequest(' + r.id + ', \'reject\', \'' + r.full_name.replace(/'/g, "\\'") + '\', \'' + r.field_label + '\')">Reject</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function reviewProfileChangeRequest(requestId, action, memberName, fieldLabel) {
+  var verb = action === 'approve' ? 'approve' : 'reject';
+  if (!confirm('Are you sure you want to ' + verb + ' this ' + fieldLabel + ' correction request for ' + memberName + '?')) return;
+
+  try {
+    var data = await adminAPI('/admin/profile-change-requests/' + requestId, 'PUT', { action: action });
+    if (!data.success) throw new Error(data.message);
+    alert(data.message);
+    loadProfileChangeRequests();
+  } catch (err) {
+    alert('Error: ' + err.message);
   }
 }
 
@@ -2604,7 +2733,7 @@ showPanel = function(id, btn) {
   if (id === 'dashboard')   loadDashboardStats();
   if (id === 'members')     loadMembersPanel(1);
   if (id === 'payments')    loadPaymentsPanel(1);
-  if (id === 'pending')     { loadPendingPayments(); loadVerificationRequests(); }
+  if (id === 'pending')     { loadPendingPayments(); loadVerificationRequests(); loadGenderCorrectionRequests(); loadProfileChangeRequests(); }
   if (id === 'successfee')  loadSuccessFeePanel();
   if (id === 'connections') loadConnectionsPanel();
   if (id === 'flagged')     loadFlaggedPanel();

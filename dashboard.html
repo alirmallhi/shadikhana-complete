@@ -543,6 +543,20 @@ a{text-decoration:none;color:inherit}
             <div class="form-group"><label>Full Name</label><input type="text" id="p-full_name"></div>
             <div class="form-group"><label>Display Name</label><input type="text" id="p-display_name"></div>
           </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <input type="text" id="p-gender-display" disabled style="background:var(--light);cursor:not-allowed">
+            <div id="gender-correction-status-note" style="font-size:.78rem;color:var(--mid);margin-top:.35rem"></div>
+            <a href="#" id="gender-correction-link" style="font-size:.78rem;font-weight:600" onclick="toggleGenderCorrectionForm();return false">Gender incorrect? Request a correction.</a>
+            <div id="gender-correction-form" style="display:none;margin-top:.6rem;padding:.8rem 1rem;background:var(--ivory);border-radius:8px">
+              <div class="form-group"><label>Correct Gender</label>
+                <select id="gc-requested-gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
+              </div>
+              <div class="form-group"><label>Reason (Optional)</label><textarea id="gc-reason" style="min-height:60px" placeholder="e.g. Selected the wrong option by mistake at registration"></textarea></div>
+              <button type="button" class="btn-save" onclick="submitGenderCorrection()">Submit Request</button>
+              <span id="gender-correction-submit-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
+            </div>
+          </div>
           <div class="form-row">
             <div class="form-group"><label>Height</label><input type="text" id="p-height"></div>
             <div class="form-group"><label>Weight (kg)</label><input type="number" id="p-weight"></div>
@@ -682,6 +696,41 @@ a{text-decoration:none;color:inherit}
           <div class="form-group"><label>CNIC Number</label><input type="text" id="cnic-input" placeholder="XXXXX-XXXXXXX-X" maxlength="15" inputmode="numeric" oninput="formatCnicInput(this)"></div>
           <button type="button" class="btn-save" onclick="submitCnicForVerification()">Submit for Verification</button>
           <span id="cnic-submit-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-section-label">📝 Request a Profile Correction</div>
+        <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">For fields that affect matching — religion, sect, ethnicity, caste, marital status, children, date of birth, profile type — corrections go through a quick admin review instead of an instant self-edit.</p>
+        <div class="form-group">
+          <label>Which field needs correction?</label>
+          <select id="pcr-field-select" onchange="updatePcrFieldInput()">
+            <option value="">Select a field</option>
+            <option value="date_of_birth">Date of Birth</option>
+            <option value="marital_status">Marital Status</option>
+            <option value="children">Children</option>
+            <option value="religion">Religion</option>
+            <option value="sect">Sect</option>
+            <option value="ethnicity">Ethnicity</option>
+            <option value="caste">Caste</option>
+            <option value="profile_for">Profile Type</option>
+          </select>
+        </div>
+        <div class="form-group" id="pcr-value-wrap" style="display:none">
+          <label>Correct Value</label>
+          <input type="date" id="pcr-value-date" style="display:none">
+          <select id="pcr-value-select" style="display:none"></select>
+        </div>
+        <div class="form-group" id="pcr-reason-wrap" style="display:none">
+          <label>Reason (Optional)</label>
+          <textarea id="pcr-reason" style="min-height:60px" placeholder="e.g. Typo at registration"></textarea>
+        </div>
+        <button type="button" class="btn-save" id="pcr-submit-btn" style="display:none" onclick="submitProfileChangeRequest()">Submit Request</button>
+        <span id="pcr-submit-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
+
+        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--light)">
+          <div style="font-size:.82rem;font-weight:600;margin-bottom:.5rem">Your Requests</div>
+          <div id="pcr-history-list" style="font-size:.82rem;color:var(--mid)">Loading...</div>
         </div>
       </div>
 
@@ -1123,6 +1172,10 @@ function loadProfileForm() {
   document.getElementById('p-hijab-wrap').style.display = (currentMember.gender === 'Female') ? 'block' : 'none';
   document.getElementById('p-beard-wrap').style.display = (currentMember.gender === 'Male') ? 'block' : 'none';
 
+  document.getElementById('p-gender-display').value = currentMember.gender || '';
+  renderGenderCorrectionStatus();
+  loadMyProfileChangeRequests();
+
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
     if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
@@ -1185,6 +1238,156 @@ async function submitCnicForVerification() {
     statusEl.style.color = 'var(--rose)';
     statusEl.textContent = '⚠️ ' + (result.message || 'Could not submit CNIC.');
   }
+}
+
+function renderGenderCorrectionStatus() {
+  var noteEl = document.getElementById('gender-correction-status-note');
+  var linkEl = document.getElementById('gender-correction-link');
+  var formEl = document.getElementById('gender-correction-form');
+  var status = currentMember.gender_correction_status || 'not_submitted';
+
+  var notes = {
+    pending:  '⏳ Gender correction request pending review.',
+    rejected: '❌ Your previous gender correction request was rejected.'
+  };
+  noteEl.textContent = notes[status] || '';
+
+  // Only not_submitted/rejected can open a new request — same
+  // status-transition rule the backend enforces, mirrored here so the
+  // form doesn't even appear when it would just be rejected server-side.
+  var canRequest = (status === 'not_submitted' || status === 'rejected');
+  linkEl.style.display = canRequest ? 'inline' : 'none';
+  if (!canRequest) formEl.style.display = 'none';
+}
+
+function toggleGenderCorrectionForm() {
+  var formEl = document.getElementById('gender-correction-form');
+  formEl.style.display = (formEl.style.display === 'none') ? 'block' : 'none';
+}
+
+async function submitGenderCorrection() {
+  var statusEl = document.getElementById('gender-correction-submit-status');
+  var requestedGender = gv('gc-requested-gender');
+  var reason = gv('gc-reason');
+
+  if (!requestedGender) {
+    statusEl.style.display = 'inline';
+    statusEl.style.color = 'var(--rose)';
+    statusEl.textContent = '⚠️ Please select the correct gender.';
+    return;
+  }
+
+  var result = await apiCall('/member/gender-correction-request', 'POST', { requested_gender: requestedGender, reason: reason });
+  statusEl.style.display = 'inline';
+  if (result.success) {
+    statusEl.style.color = 'var(--green)';
+    statusEl.textContent = '✅ ' + result.message;
+    currentMember.gender_correction_status = 'pending';
+    document.getElementById('gender-correction-form').style.display = 'none';
+    renderGenderCorrectionStatus();
+  } else {
+    statusEl.style.color = 'var(--rose)';
+    statusEl.textContent = '⚠️ ' + (result.message || 'Could not submit request.');
+  }
+}
+
+// ══════════════════════════════════════════
+//  GENERALIZED PROFILE CHANGE REQUESTS (Category B fields)
+// ══════════════════════════════════════════
+// Unlike gender/CNIC (one field, one status), multiple fields can have
+// independent pending requests at once, so this shows a list of the
+// member's own requests rather than a single status pill.
+var PCR_FIELD_OPTIONS = {
+  marital_status: (typeof RS_MARITAL_STATUS !== 'undefined') ? RS_MARITAL_STATUS : [],
+  children:       (typeof RS_CHILDREN !== 'undefined') ? RS_CHILDREN : [],
+  religion:       (typeof RS_RELIGION !== 'undefined') ? RS_RELIGION : [],
+  sect:           (typeof RS_SECT !== 'undefined') ? RS_SECT : [],
+  ethnicity:      (typeof RS_ETHNICITY !== 'undefined') ? RS_ETHNICITY : [],
+  caste:          (typeof RS_CASTE !== 'undefined') ? RS_CASTE : [],
+  profile_for:    ['self_male', 'self_female', 'guardian']
+};
+var PCR_PROFILE_FOR_LABELS = { self_male: 'Myself — Man', self_female: 'Myself — Woman', guardian: 'My Son / Daughter' };
+
+function updatePcrFieldInput() {
+  var field = document.getElementById('pcr-field-select').value;
+  var wrap = document.getElementById('pcr-value-wrap');
+  var dateInput = document.getElementById('pcr-value-date');
+  var selectInput = document.getElementById('pcr-value-select');
+  var reasonWrap = document.getElementById('pcr-reason-wrap');
+  var submitBtn = document.getElementById('pcr-submit-btn');
+
+  if (!field) {
+    wrap.style.display = 'none';
+    reasonWrap.style.display = 'none';
+    submitBtn.style.display = 'none';
+    return;
+  }
+
+  wrap.style.display = 'block';
+  reasonWrap.style.display = 'block';
+  submitBtn.style.display = 'inline-block';
+
+  if (field === 'date_of_birth') {
+    dateInput.style.display = 'block';
+    selectInput.style.display = 'none';
+  } else {
+    dateInput.style.display = 'none';
+    selectInput.style.display = 'block';
+    if (field === 'profile_for') {
+      selectInput.innerHTML = '<option value="">Select</option>' + PCR_FIELD_OPTIONS.profile_for.map(function(v) {
+        return '<option value="' + v + '">' + PCR_PROFILE_FOR_LABELS[v] + '</option>';
+      }).join('');
+    } else if (typeof rsPopulateSelect === 'function') {
+      selectInput.innerHTML = '<option value="">Select</option>';
+      rsPopulateSelect(selectInput, PCR_FIELD_OPTIONS[field]);
+    }
+  }
+}
+
+async function submitProfileChangeRequest() {
+  var field = document.getElementById('pcr-field-select').value;
+  var value = (field === 'date_of_birth')
+    ? document.getElementById('pcr-value-date').value
+    : document.getElementById('pcr-value-select').value;
+  var reason = gv('pcr-reason');
+  var statusEl = document.getElementById('pcr-submit-status');
+
+  if (!field || !value) {
+    statusEl.style.display = 'inline';
+    statusEl.style.color = 'var(--rose)';
+    statusEl.textContent = '⚠️ Please select a field and a value.';
+    return;
+  }
+
+  var result = await apiCall('/member/profile-change-request', 'POST', { field_name: field, requested_value: value, reason: reason });
+  statusEl.style.display = 'inline';
+  if (result.success) {
+    statusEl.style.color = 'var(--green)';
+    statusEl.textContent = '✅ ' + result.message;
+    document.getElementById('pcr-field-select').value = '';
+    document.getElementById('pcr-reason').value = '';
+    updatePcrFieldInput();
+    loadMyProfileChangeRequests();
+  } else {
+    statusEl.style.color = 'var(--rose)';
+    statusEl.textContent = '⚠️ ' + (result.message || 'Could not submit request.');
+  }
+}
+
+async function loadMyProfileChangeRequests() {
+  var listEl = document.getElementById('pcr-history-list');
+  var result = await apiCall('/member/profile-change-requests');
+  if (!result.success || !result.data.length) {
+    listEl.textContent = 'No requests yet.';
+    return;
+  }
+  var statusIcons = { pending: '⏳', approved: '✅', rejected: '❌' };
+  listEl.innerHTML = result.data.map(function(r) {
+    return '<div style="padding:.5rem 0;border-bottom:1px solid var(--light)">' +
+      '<strong>' + r.field_label + '</strong>: ' + (r.old_value || '—') + ' → ' + r.requested_value +
+      ' <span style="margin-left:.5rem">' + (statusIcons[r.status] || '') + ' ' + r.status + '</span>' +
+    '</div>';
+  }).join('');
 }
 
 async function savePhotoPrivacyOption(value) {
