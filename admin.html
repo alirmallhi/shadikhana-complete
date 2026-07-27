@@ -39,8 +39,28 @@ body{font-family:'Inter',sans-serif;background:#F4F0EB;color:var(--charcoal);dis
 .page-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--charcoal)}
 .page-title span{font-family:'Inter',sans-serif;font-size:.8rem;font-weight:400;color:var(--mid);margin-left:.6rem}
 .topbar-actions{display:flex;align-items:center;gap:1rem}
+.notif-wrap{position:relative}
 .notif-btn{position:relative;background:var(--ivory);border:none;border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem}
-.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--rose);border-radius:50%;border:2px solid #fff}
+.notif-dot{display:none;position:absolute;top:2px;right:2px;min-width:16px;height:16px;line-height:16px;padding:0 3px;background:var(--rose);color:#fff;font-size:.6rem;font-weight:700;text-align:center;border-radius:8px;border:2px solid #fff}
+/* Dropdown panel reuses the exact visual pattern already established for
+   the "Record a Match" live-search results (#rm-results-a/b): absolute
+   position, white card, same border/radius/shadow — not new dropdown CSS. */
+.notif-dropdown{display:none;position:absolute;top:48px;right:0;width:340px;max-width:90vw;background:#fff;border:1.5px solid var(--light);border-radius:12px;max-height:420px;overflow-y:auto;z-index:60;box-shadow:0 12px 32px rgba(0,0,0,0.16)}
+.notif-dropdown.open{display:block}
+.notif-dropdown-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid var(--light);position:sticky;top:0;background:#fff}
+.notif-dropdown-title{font-weight:700;font-size:.88rem}
+.notif-mark-all{background:none;border:none;color:var(--burgundy);font-size:.76rem;font-weight:600;cursor:pointer}
+.notif-row{display:flex;gap:.7rem;padding:.7rem 1rem;border-bottom:1px solid var(--light);cursor:pointer;transition:background .15s}
+.notif-row:hover{background:var(--ivory)}
+.notif-row:last-child{border-bottom:none}
+.notif-row.unread{background:rgba(184,151,90,0.06)}
+.notif-row-icon{font-size:1.1rem;flex-shrink:0}
+.notif-row-title{font-size:.84rem;color:var(--charcoal);margin-bottom:.15rem}
+.notif-row.unread .notif-row-title{font-weight:700}
+.notif-row-body{font-size:.76rem;color:var(--mid);margin-bottom:.2rem}
+.notif-row-time{font-size:.7rem;color:var(--mid)}
+.notif-row-dot{width:7px;height:7px;border-radius:50%;background:var(--rose);flex-shrink:0;margin-top:5px}
+.notif-empty{padding:2rem 1rem;text-align:center;color:var(--mid);font-size:.84rem}
 .content{padding:2rem;flex:1}
 
 /* PANELS */
@@ -297,6 +317,7 @@ async function handleAdminLogin() {
     window.addEventListener('load', function() {
       applyPermissionVisibility();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
+      if (typeof loadNotifications === 'function') loadNotifications();
     });
   }
 })();
@@ -429,7 +450,16 @@ function applyPermissionVisibility() {
       <span class="page-title" id="page-title">Dashboard <span>Overview</span></span>
     </div>
     <div class="topbar-actions">
-      <button class="notif-btn" onclick="alert('5 new notifications')">🔔<span class="notif-dot"></span></button>
+      <div class="notif-wrap">
+        <button class="notif-btn" onclick="toggleNotifDropdown()">🔔<span class="notif-dot" id="notif-dot"></span></button>
+        <div class="notif-dropdown" id="notif-dropdown">
+          <div class="notif-dropdown-header">
+            <span class="notif-dropdown-title">Notifications</span>
+            <button class="notif-mark-all" onclick="markAllNotificationsRead()">Mark all as read</button>
+          </div>
+          <div id="notif-list"></div>
+        </div>
+      </div>
       <button class="btn-sm btn-sm-primary" onclick="openAddMemberModal()">+ Add Member</button>
     </div>
   </div>
@@ -2480,6 +2510,98 @@ showPanel = function(id, btn) {
   if (id === 'settings')    loadSettingsPanel();
   if (id === 'manageAdmins') loadManageAdminsPanel();
 };
+
+// ══════════════════════════════════════════
+//  ADMIN NOTIFICATIONS (bell dropdown)
+// ══════════════════════════════════════════
+var notifCache = [];
+var NOTIF_ICONS = { new_registration: '🆕', new_payment: '💳', success_fee: '💍', new_report: '🚩' };
+
+function timeAgo(dateStr) {
+  var diffMs = Date.now() - new Date(dateStr).getTime();
+  var mins = Math.floor(diffMs / 60000);
+  if (mins < 1)  return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  var hrs = Math.floor(mins / 60);
+  if (hrs < 24)  return hrs + 'h ago';
+  var days = Math.floor(hrs / 24);
+  if (days < 7)  return days + 'd ago';
+  return new Date(dateStr).toLocaleDateString();
+}
+
+async function loadNotifications() {
+  try {
+    var res = await adminAPI('/admin/notifications');
+    if (!res.success) return;
+    notifCache = res.data.notifications || [];
+    renderNotifDropdown();
+
+    var dot = document.getElementById('notif-dot');
+    var unread = res.data.unread_count || 0;
+    if (unread > 0) {
+      dot.style.display = 'block';
+      dot.textContent = unread > 9 ? '9+' : unread;
+    } else {
+      dot.style.display = 'none';
+      dot.textContent = '';
+    }
+  } catch (err) {
+    console.error('loadNotifications error:', err);
+  }
+}
+
+function renderNotifDropdown() {
+  var list = document.getElementById('notif-list');
+  if (!notifCache.length) {
+    list.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
+    return;
+  }
+  list.innerHTML = notifCache.map(function(n) {
+    var icon = NOTIF_ICONS[n.type] || '🔔';
+    return '<div class="notif-row' + (n.is_read ? '' : ' unread') + '" onclick="handleNotificationClick(' + n.id + ')">' +
+      '<span class="notif-row-icon">' + icon + '</span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div class="notif-row-title">' + n.title + '</div>' +
+        (n.body ? '<div class="notif-row-body">' + n.body + '</div>' : '') +
+        '<div class="notif-row-time">' + timeAgo(n.created_at) + '</div>' +
+      '</div>' +
+      (n.is_read ? '' : '<span class="notif-row-dot"></span>') +
+    '</div>';
+  }).join('');
+}
+
+function toggleNotifDropdown() {
+  var dd = document.getElementById('notif-dropdown');
+  var wasOpen = dd.classList.contains('open');
+  dd.classList.toggle('open');
+  if (!wasOpen) loadNotifications();
+}
+
+async function handleNotificationClick(id) {
+  var notif = notifCache.find(function(n) { return n.id === id; });
+  try { await adminAPI('/admin/notifications/' + id + '/read', 'POST'); } catch (err) {}
+  document.getElementById('notif-dropdown').classList.remove('open');
+  loadNotifications();
+  if (notif && notif.link) {
+    var hash = notif.link.split('#')[1];
+    if (hash) showPanel(hash);
+  }
+}
+
+async function markAllNotificationsRead() {
+  try { await adminAPI('/admin/notifications/read-all', 'POST'); } catch (err) {}
+  loadNotifications();
+}
+
+// Close the dropdown on any click outside the bell/panel — same convention
+// as the other overlay-style UI on this page closing on outside interaction.
+document.addEventListener('click', function(e) {
+  var wrap = document.querySelector('.notif-wrap');
+  var dd   = document.getElementById('notif-dropdown');
+  if (wrap && dd && dd.classList.contains('open') && !wrap.contains(e.target)) {
+    dd.classList.remove('open');
+  }
+});
 
 // ══════════════════════════════════════════
 //  MANAGE ADMINS (master only) — LIVE DATA
