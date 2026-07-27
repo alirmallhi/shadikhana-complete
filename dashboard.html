@@ -530,6 +530,19 @@ a{text-decoration:none;color:inherit}
             <div class="form-group"><label>Body Type</label><input type="text" id="p-body_type"></div>
           </div>
 
+          <div class="form-section-label">Religious Practice</div>
+          <div class="form-group"><label>Religiosity / Practice Level</label>
+            <select id="p-piety_level"><option value="">Select</option></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group" id="p-hijab-wrap" style="display:none"><label>Hijab</label>
+              <select id="p-hijab_status"><option value="">Select</option></select>
+            </div>
+            <div class="form-group" id="p-beard-wrap" style="display:none"><label>Beard</label>
+              <select id="p-beard_status"><option value="">Select</option></select>
+            </div>
+          </div>
+
           <div class="form-section-label">Career & Income</div>
           <div class="form-row">
             <div class="form-group"><label>Profession</label><input type="text" id="p-profession"></div>
@@ -780,6 +793,7 @@ a{text-decoration:none;color:inherit}
 <script src="/capacitor-bridge.js"></script>
 <script src="/api.js"></script>
 <script src="/passwordRules.js"></script>
+<script src="/formOptions.js"></script>
 <script>
 // ══════════════════════════════════════════
 //  DASHBOARD INITIALISATION
@@ -1012,7 +1026,19 @@ function loadProfileForm() {
   var fields = ['full_name','display_name','height','weight','complexion','body_type',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
-                'about_me','family_description','wali_name','wali_mobile'];
+                'about_me','family_description','wali_name','wali_mobile',
+                'piety_level','hijab_status','beard_status'];
+
+  if (typeof rsPopulateSelect === 'function') {
+    rsPopulateSelect(document.getElementById('p-piety_level'), RS_PIETY);
+    rsPopulateSelect(document.getElementById('p-hijab_status'), RS_HIJAB);
+    rsPopulateSelect(document.getElementById('p-beard_status'), RS_BEARD);
+  }
+  // Hijab only relevant for female profiles, beard only for male — gender
+  // isn't editable here, so this is a one-time show/hide, not an onchange.
+  document.getElementById('p-hijab-wrap').style.display = (currentMember.gender === 'Female') ? 'block' : 'none';
+  document.getElementById('p-beard-wrap').style.display = (currentMember.gender === 'Male') ? 'block' : 'none';
+
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
     if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
@@ -1123,7 +1149,8 @@ async function saveProfile() {
   var fields = ['display_name','height','weight','complexion','body_type',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
-                'about_me','family_description','wali_name','wali_mobile'];
+                'about_me','family_description','wali_name','wali_mobile',
+                'piety_level','hijab_status','beard_status'];
   var updates = {};
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);

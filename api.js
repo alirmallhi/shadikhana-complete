@@ -101,6 +101,8 @@ async function submitRegistration() {
     ethnicity:           gv('f-ethnicity'),
     caste:               gv('f-caste'),
     piety_level:         gv('f-piety'),
+    hijab_status:        gv('f-hijab'),
+    beard_status:        gv('f-beard'),
     education:           gv('f-education'),
     study_field:         gv('f-studyfield'),
     institution:         gv('f-institution'),

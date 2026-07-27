@@ -59,6 +59,20 @@ var RS_PIETY = [
   'Prefer not to say'
 ];
 
+var RS_HIJAB = [
+  'Wears Hijab',
+  'Wears Hijab (sometimes)',
+  'Does Not Wear Hijab',
+  'Prefer not to say'
+];
+
+var RS_BEARD = [
+  'Keeps a Beard',
+  'Trimmed Beard',
+  'Clean Shaven',
+  'Prefer not to say'
+];
+
 var RS_EDUCATION = [
   'Matric (Grade 10)',
   'Intermediate (Grade 12 / F.A / F.Sc)',

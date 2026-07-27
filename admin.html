@@ -852,6 +852,15 @@ function applyPermissionVisibility() {
           <option value="0">⏳ Not Reviewed</option>
           <option value="1">✅ Reviewed</option>
         </select>
+        <select id="mk-filter-piety" class="filter-select" onchange="loadMatchingPanel()">
+          <option value="">All Practice Levels</option>
+        </select>
+        <select id="mk-filter-hijab" class="filter-select" onchange="loadMatchingPanel()">
+          <option value="">All Hijab</option>
+        </select>
+        <select id="mk-filter-beard" class="filter-select" onchange="loadMatchingPanel()">
+          <option value="">All Beard</option>
+        </select>
         <input id="mk-filter-minscore" class="filter-input" type="number" value="40" min="1" max="100"
                placeholder="Min score" style="width:110px" onchange="loadMatchingPanel()">
         <button class="btn-sm btn-sm-primary" onclick="loadMatchingPanel()">Filter</button>
@@ -968,10 +977,16 @@ async function fetchMatchingResults() {
   const tier      = document.getElementById('mk-filter-tier')?.value || '';
   const reviewed  = document.getElementById('mk-filter-reviewed')?.value;
   const minScore  = document.getElementById('mk-filter-minscore')?.value || 40;
+  const piety     = document.getElementById('mk-filter-piety')?.value || '';
+  const hijab     = document.getElementById('mk-filter-hijab')?.value || '';
+  const beard     = document.getElementById('mk-filter-beard')?.value || '';
 
   let url = `/admin/matching/all?page=${mkCurrentPage}&limit=15&min_score=${minScore}`;
   if (tier)     url += `&tier=${tier}`;
   if (reviewed !== '' && reviewed !== undefined) url += `&reviewed=${reviewed}`;
+  if (piety)    url += `&piety_level=${encodeURIComponent(piety)}`;
+  if (hijab)    url += `&hijab_status=${encodeURIComponent(hijab)}`;
+  if (beard)    url += `&beard_status=${encodeURIComponent(beard)}`;
 
   document.getElementById('matching-results').innerHTML =
     '<div style="text-align:center;padding:2rem;color:var(--mid)">⏳ Loading matches...</div>';
@@ -3206,6 +3221,9 @@ rsPopulateSelect(document.getElementById('am-sect'), RS_SECT);
 rsPopulateSelect(document.getElementById('am-ethnicity'), RS_ETHNICITY);
 rsPopulateSelect(document.getElementById('am-caste'), RS_CASTE);
 rsPopulateSelect(document.getElementById('am-education'), RS_EDUCATION);
+rsPopulateSelect(document.getElementById('mk-filter-piety'), RS_PIETY);
+rsPopulateSelect(document.getElementById('mk-filter-hijab'), RS_HIJAB);
+rsPopulateSelect(document.getElementById('mk-filter-beard'), RS_BEARD);
 </script>
 
 </body>
