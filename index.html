@@ -1129,7 +1129,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="form-section-label">Basic Info</div>
       <div class="form-row">
         <div class="form-group"><label>Gender<span class="required-star">*</span></label>
-          <select id="f-gender" onchange="updateReligiousPracticeFields()"><option value="">Select Gender</option><option>Male</option><option>Female</option></select>
+          <select id="f-gender"><option value="">Select Gender</option><option>Male</option><option>Female</option></select>
         </div>
         <div class="form-group"><label>Date of Birth<span class="required-star">*</span></label>
           <input type="date" id="f-dob">
@@ -1221,16 +1221,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
             <option value="">Select Practice Level</option>
           </select>
         </div>
-      </div>
-      <div class="form-group" id="f-hijab-wrap" style="display:none"><label>Hijab</label>
-        <select id="f-hijab">
-          <option value="">Select</option>
-        </select>
-      </div>
-      <div class="form-group" id="f-beard-wrap" style="display:none"><label>Beard</label>
-        <select id="f-beard">
-          <option value="">Select</option>
-        </select>
       </div>
 
       <div class="form-section-label">Education</div>
@@ -2504,18 +2494,6 @@ rsPopulateSelect(document.getElementById('f-sect'), RS_SECT);
 rsPopulateSelect(document.getElementById('f-ethnicity'), RS_ETHNICITY);
 rsPopulateSelect(document.getElementById('f-caste'), RS_CASTE);
 rsPopulateSelect(document.getElementById('f-piety'), RS_PIETY);
-rsPopulateSelect(document.getElementById('f-hijab'), RS_HIJAB);
-rsPopulateSelect(document.getElementById('f-beard'), RS_BEARD);
-
-// Hijab is only relevant to female profiles, beard only to male — no
-// existing gender-conditional field pattern in this codebase, so this is a
-// small standalone show/hide, modeled on updatePaymentFields()'s existing
-// "swap visible fields on a select's change" approach.
-function updateReligiousPracticeFields() {
-  var gender = document.getElementById('f-gender').value;
-  document.getElementById('f-hijab-wrap').style.display = (gender === 'Female') ? 'block' : 'none';
-  document.getElementById('f-beard-wrap').style.display = (gender === 'Male') ? 'block' : 'none';
-}
 rsPopulateSelect(document.getElementById('f-education'), RS_EDUCATION);
 </script>
 </body>

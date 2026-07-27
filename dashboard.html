@@ -572,14 +572,6 @@ a{text-decoration:none;color:inherit}
               <select id="p-piety_level"><option value="">Select</option></select>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group" id="p-hijab-wrap" style="display:none"><label>Hijab</label>
-              <select id="p-hijab_status"><option value="">Select</option></select>
-            </div>
-            <div class="form-group" id="p-beard-wrap" style="display:none"><label>Beard</label>
-              <select id="p-beard_status"><option value="">Select</option></select>
-            </div>
-          </div>
 
           <div class="form-section-label">Career & Income</div>
           <div class="form-row">
@@ -1162,17 +1154,11 @@ function loadProfileForm() {
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
-                'piety_level','hijab_status','beard_status'];
+                'piety_level'];
 
   if (typeof rsPopulateSelect === 'function') {
     rsPopulateSelect(document.getElementById('p-piety_level'), RS_PIETY);
-    rsPopulateSelect(document.getElementById('p-hijab_status'), RS_HIJAB);
-    rsPopulateSelect(document.getElementById('p-beard_status'), RS_BEARD);
   }
-  // Hijab only relevant for female profiles, beard only for male — gender
-  // isn't editable here, so this is a one-time show/hide, not an onchange.
-  document.getElementById('p-hijab-wrap').style.display = (currentMember.gender === 'Female') ? 'block' : 'none';
-  document.getElementById('p-beard-wrap').style.display = (currentMember.gender === 'Male') ? 'block' : 'none';
 
   document.getElementById('p-gender-display').value = currentMember.gender || '';
   renderGenderCorrectionStatus();
@@ -1444,7 +1430,7 @@ async function saveProfile() {
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
-                'piety_level','hijab_status','beard_status'];
+                'piety_level'];
   var updates = {};
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
