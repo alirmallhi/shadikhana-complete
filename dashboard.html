@@ -754,6 +754,12 @@ a{text-decoration:none;color:inherit}
         </select>
         <input class="filter-input" id="filter-age-min" type="number" placeholder="Min Age" style="max-width:100px">
         <input class="filter-input" id="filter-age-max" type="number" placeholder="Max Age" style="max-width:100px">
+        <select class="filter-select" id="filter-sort" onchange="loadBrowseProfiles(1)">
+          <option value="match">Sort: Highest Match %</option>
+          <option value="newest">Sort: Newest Registered</option>
+          <option value="active">Sort: Recently Active</option>
+          <option value="name">Sort: Name A-Z</option>
+        </select>
         <button class="btn-filter" onclick="loadBrowseProfiles(1)">Search</button>
         <button class="btn-filter" style="background:var(--gold);color:var(--charcoal)" onclick="saveCurrentSearch()">💾 Save This Search</button>
       </div>
@@ -1561,7 +1567,8 @@ async function loadBrowseProfiles(page) {
     city: document.getElementById('filter-city').value,
     religion: document.getElementById('filter-religion').value,
     age_min: document.getElementById('filter-age-min').value,
-    age_max: document.getElementById('filter-age-max').value
+    age_max: document.getElementById('filter-age-max').value,
+    sortBy: document.getElementById('filter-sort').value
   };
 
   var params = Object.keys(filters)
