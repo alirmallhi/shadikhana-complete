@@ -112,6 +112,28 @@ a{text-decoration:none;color:inherit}
 .form-group input,.form-group select,.form-group textarea{
   width:100%;padding:.7rem .9rem;border:1.5px solid var(--light);border-radius:10px;
   font-size:.87rem;font-family:inherit;background:var(--cream);color:var(--charcoal);outline:none}
+
+/* Privacy toggle rows — copied from index.html's registration privacy
+   section so Profile Edit matches it exactly, not a new pattern. */
+.privacy-toggle-row{display:flex;align-items:center;justify-content:space-between;
+                    padding:.75rem 0;border-bottom:1px solid var(--light);gap:1rem}
+.privacy-toggle-row:last-child{border-bottom:none}
+.ptog-left{flex:1}
+.ptog-label{font-size:.88rem;font-weight:600;color:var(--charcoal);margin-bottom:.15rem}
+.ptog-sub{font-size:.75rem;color:var(--mid);line-height:1.4}
+.ptog-badge{font-size:.65rem;padding:2px 7px;border-radius:8px;font-weight:700;
+            margin-left:6px;vertical-align:middle}
+.ptog-badge.mutual{background:rgba(26,18,37,0.1);color:var(--burg)}
+.ptog-badge.premium{background:rgba(240,168,48,0.15);color:#8A6010}
+.privacy-mini-toggle{position:relative;width:42px;height:22px;flex-shrink:0}
+.privacy-mini-toggle input{opacity:0;width:0;height:0}
+.pmt-slider{position:absolute;inset:0;border-radius:22px;background:var(--light);
+            cursor:pointer;transition:.3s}
+.pmt-slider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;
+                    background:#fff;left:2px;top:2px;transition:.3s;
+                    box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.privacy-mini-toggle input:checked+.pmt-slider{background:#2D7A5F}
+.privacy-mini-toggle input:checked+.pmt-slider::before{transform:translateX(20px)}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--rose)}
 .form-group textarea{min-height:80px;resize:vertical}
 .btn-save{background:#3C121B;color:#FAF3EC;border:none;
@@ -571,6 +593,68 @@ a{text-decoration:none;color:inherit}
           <div class="form-section-label">About</div>
           <div class="form-group"><label>About Me</label><textarea id="p-about_me"></textarea></div>
           <div class="form-group"><label>Family Description</label><textarea id="p-family_description"></textarea></div>
+
+          <div class="form-section-label">Privacy Settings</div>
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Contact Number <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Your mobile & WhatsApp hidden until mutual interest is confirmed</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="p-priv_contact">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Family Details <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Parents' names, occupations & family description hidden until matched</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="p-priv_family">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Income & Employer <span class="ptog-badge premium">Premium+ Only</span></div>
+              <div class="ptog-sub">Monthly income and employer name visible to Premium only</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="p-priv_income">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Exact Location <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Hide area/neighbourhood — only show city until matched</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="p-priv_location">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Show Full Name vs Alias Only</div>
+              <div class="ptog-sub">When ON — only your display/alias name is shown, not your full name</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="p-priv_name">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
+          <div class="privacy-toggle-row">
+            <div class="ptog-left">
+              <div class="ptog-label">Marital History Details <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-sub">Detailed marital info (divorce/widowed details) hidden until matched</div>
+            </div>
+            <label class="privacy-mini-toggle">
+              <input type="checkbox" id="p-priv_marital">
+              <span class="pmt-slider"></span>
+            </label>
+          </div>
 
           <div class="form-section-label">Family Involvement (Optional)</div>
           <p style="font-size:.82rem;color:var(--mid);margin-bottom:.8rem;max-width:520px">If you'd like a trusted family member kept in the loop, add their details below. They'll receive a WhatsApp message from us whenever you have a new mutual match — nothing more, and nothing without your match happening first.</p>
@@ -1044,6 +1128,11 @@ function loadProfileForm() {
     if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
   });
 
+  ['priv_contact', 'priv_family', 'priv_income', 'priv_location', 'priv_name', 'priv_marital'].forEach(function(f) {
+    var el = document.getElementById('p-' + f);
+    if (el) el.checked = !!currentMember[f];
+  });
+
   var photoPreview = document.getElementById('profile-photo-preview');
   if (currentMember.photo_url) {
     photoPreview.innerHTML = '<img src="' + currentMember.photo_url + '" alt="Profile photo">';
@@ -1155,6 +1244,11 @@ async function saveProfile() {
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
     if (el) updates[f] = el.value;
+  });
+
+  ['priv_contact', 'priv_family', 'priv_income', 'priv_location', 'priv_name', 'priv_marital'].forEach(function(f) {
+    var el = document.getElementById('p-' + f);
+    if (el) updates[f] = el.checked;
   });
 
   var result = await apiCall('/member/profile', 'PUT', updates);
