@@ -622,6 +622,20 @@ function applyPermissionVisibility() {
       </tbody>
     </table>
   </div>
+
+  <div style="margin-top:2rem">
+    <div class="form-section-label">🪪 Verification Requests</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr><th>Member</th><th>Package</th><th>City</th><th>Submitted</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="verification-table-body">
+          <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 
@@ -1343,6 +1357,80 @@ async function confirmPaymentAndActivate(memberId, memberName) {
     }
   } catch (err) {
     alert('Error: ' + err.message);
+  }
+}
+
+// ══════════════════════════════════════════
+//  CNIC VERIFICATION REQUESTS
+// ══════════════════════════════════════════
+var verificationReviewMemberId = null;
+
+async function loadVerificationRequests() {
+  var tbody = document.getElementById('verification-table-body');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+  try {
+    var data = await adminAPI('/admin/verification-requests');
+    if (!data.success) throw new Error(data.message);
+
+    if (!data.data.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">No pending verification requests 🎉</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(function(m) {
+      return '<tr>' +
+        '<td><strong>' + m.full_name + '</strong></td>' +
+        '<td>' + (m.package ? m.package.charAt(0).toUpperCase() + m.package.slice(1) : '—') + '</td>' +
+        '<td>' + (m.city || '—') + '</td>' +
+        '<td>' + new Date(m.created_at).toLocaleDateString() + '</td>' +
+        '<td><button class="action-btn action-view" onclick="openVerificationReview(' + m.id + ')">Review</button></td>' +
+      '</tr>';
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function openVerificationReview(memberId) {
+  verificationReviewMemberId = memberId;
+  var body = document.getElementById('verification-review-body');
+  var errorEl = document.getElementById('verification-review-error');
+  errorEl.style.display = 'none';
+  body.innerHTML = 'Loading...';
+  document.getElementById('verification-review-overlay').classList.add('open');
+
+  try {
+    var data = await adminAPI('/admin/verification-requests/' + memberId);
+    if (!data.success) throw new Error(data.message);
+    var m = data.data;
+    body.innerHTML =
+      '<div style="margin-bottom:.6rem"><strong>' + m.full_name + '</strong> — ' + (m.package || '—') + ', ' + (m.city || '—') + '</div>' +
+      '<div style="background:var(--ivory);border-radius:8px;padding:.8rem 1rem;font-family:var(--font-mono, monospace);font-size:1rem;font-weight:700;letter-spacing:.05em">' + m.cnic + '</div>';
+  } catch (err) {
+    body.innerHTML = '';
+    errorEl.style.display = 'block';
+    errorEl.textContent = 'Error: ' + err.message;
+  }
+}
+
+function closeVerificationReviewModal() {
+  document.getElementById('verification-review-overlay').classList.remove('open');
+  verificationReviewMemberId = null;
+}
+
+async function reviewVerification(action) {
+  if (!verificationReviewMemberId) return;
+  var errorEl = document.getElementById('verification-review-error');
+  errorEl.style.display = 'none';
+
+  try {
+    var data = await adminAPI('/admin/verification-requests/' + verificationReviewMemberId, 'PUT', { action: action });
+    if (!data.success) throw new Error(data.message);
+    closeVerificationReviewModal();
+    loadVerificationRequests();
+  } catch (err) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = 'Error: ' + err.message;
   }
 }
 
@@ -2501,7 +2589,7 @@ showPanel = function(id, btn) {
   if (id === 'dashboard')   loadDashboardStats();
   if (id === 'members')     loadMembersPanel(1);
   if (id === 'payments')    loadPaymentsPanel(1);
-  if (id === 'pending')     loadPendingPayments();
+  if (id === 'pending')     { loadPendingPayments(); loadVerificationRequests(); }
   if (id === 'successfee')  loadSuccessFeePanel();
   if (id === 'connections') loadConnectionsPanel();
   if (id === 'flagged')     loadFlaggedPanel();
@@ -3056,6 +3144,20 @@ async function deleteAdminAccount(id, name) {
       <input type="text" id="invite-login-password" readonly>
     </div>
     <button class="btn-sm btn-sm-primary" style="width:100%" onclick="closeInviteLoginModal()">Done</button>
+  </div>
+</div>
+
+<div id="verification-review-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeVerificationReviewModal()">
+  <div class="admin-modal-box" style="max-width:420px">
+    <button class="admin-modal-close" onclick="closeVerificationReviewModal()">✕</button>
+    <h3 style="font-family:'Playfair Display',serif;margin-bottom:.3rem">Verify Identity</h3>
+    <p style="font-size:.78rem;color:var(--mid);margin-bottom:1rem">Confirm the CNIC matches the member's registration details before approving.</p>
+    <div id="verification-review-body" style="font-size:.9rem">Loading...</div>
+    <div style="display:flex;gap:.8rem;margin-top:1.2rem">
+      <button class="btn-sm btn-sm-primary" style="flex:1;background:var(--green)" onclick="reviewVerification('approve')">✅ Approve</button>
+      <button class="btn-sm btn-sm-outline" style="flex:1" onclick="reviewVerification('reject')">❌ Reject</button>
+    </div>
+    <p id="verification-review-error" style="display:none;color:var(--rose);font-size:.82rem;margin-top:.8rem"></p>
   </div>
 </div>
 

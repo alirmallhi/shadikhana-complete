@@ -26,6 +26,16 @@ function gv(id) {
   return el ? (el.value || '').trim() : '';
 }
 
+// Live-format a CNIC as it's typed: #####-#######-#, capped at 13 digits.
+// Shared by the registration form (index.html) and profile edit (dashboard.html).
+function formatCnicInput(el) {
+  var digits = el.value.replace(/\D/g, '').slice(0, 13);
+  var formatted = digits;
+  if (digits.length > 5)  formatted = digits.slice(0, 5) + '-' + digits.slice(5);
+  if (digits.length > 12) formatted = digits.slice(0, 5) + '-' + digits.slice(5, 12) + '-' + digits.slice(12);
+  el.value = formatted;
+}
+
 // ── Automatically open WhatsApp in background with profile summary ──
 // Called right after a successful database save — no extra click needed
 function autoNotifyWhatsApp(payload) {
@@ -72,6 +82,7 @@ async function submitRegistration() {
     display_name:        gv('f-alias'),
     mobile:              gv('f-mobile'),
     whatsapp:            gv('f-whatsapp'),
+    cnic:                gv('f-cnic'),
     email:               gv('f-email'),
     password:            document.getElementById('f-password') ? document.getElementById('f-password').value : '',
     profile_for:         (typeof selectedProfileFor !== 'undefined' ? selectedProfileFor : 'self_male'),
@@ -145,6 +156,10 @@ async function submitRegistration() {
   }
   if (!payload.guardian_declaration) {
     alert('Please confirm the registration declaration before continuing.');
+    return;
+  }
+  if (payload.cnic && payload.cnic.replace(/\D/g, '').length !== 13) {
+    alert('CNIC must be 13 digits, or leave it blank.');
     return;
   }
 

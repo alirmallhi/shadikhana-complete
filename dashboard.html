@@ -579,6 +579,16 @@ a{text-decoration:none;color:inherit}
       </div>
 
       <div class="card">
+        <div class="form-section-label">🪪 Identity Verification</div>
+        <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem" id="cnic-status-text">Loading...</p>
+        <div id="cnic-submit-section" style="display:none">
+          <div class="form-group"><label>CNIC Number</label><input type="text" id="cnic-input" placeholder="XXXXX-XXXXXXX-X" maxlength="15" inputmode="numeric" oninput="formatCnicInput(this)"></div>
+          <button type="button" class="btn-save" onclick="submitCnicForVerification()">Submit for Verification</button>
+          <span id="cnic-submit-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="form-section-label">🔒 Change Password</div>
         <div class="form-group"><label>Current Password</label><input type="password" id="cp-current" autocomplete="current-password"></div>
         <div class="form-row">
@@ -1016,6 +1026,50 @@ function loadProfileForm() {
   var currentPrivacy = currentMember.photo_privacy || 'show';
   var radioEl = document.querySelector('input[name="photo_privacy"][value="' + currentPrivacy + '"]');
   if (radioEl) radioEl.checked = true;
+
+  renderCnicStatus();
+}
+
+function renderCnicStatus() {
+  var statusText = document.getElementById('cnic-status-text');
+  var submitSection = document.getElementById('cnic-submit-section');
+  var status = currentMember.cnic_verification_status || 'not_submitted';
+
+  var labels = {
+    not_submitted: '⚪ Not submitted — add your CNIC below to become eligible for a Verified badge.',
+    pending:       '⏳ Submitted — under review by our team.',
+    verified:      '✅ Verified — your profile now shows the Verified badge.',
+    rejected:      '❌ Your submission was rejected. You can resubmit below.'
+  };
+  statusText.textContent = labels[status] || labels.not_submitted;
+
+  var canSubmit = (status === 'not_submitted' || status === 'rejected');
+  submitSection.style.display = canSubmit ? 'block' : 'none';
+}
+
+async function submitCnicForVerification() {
+  var statusEl = document.getElementById('cnic-submit-status');
+  var cnic = gv('cnic-input');
+
+  if (cnic.replace(/\D/g, '').length !== 13) {
+    statusEl.style.display = 'inline';
+    statusEl.style.color = 'var(--rose)';
+    statusEl.textContent = '⚠️ CNIC must be 13 digits.';
+    return;
+  }
+
+  var result = await apiCall('/member/cnic', 'PUT', { cnic: cnic });
+  statusEl.style.display = 'inline';
+  if (result.success) {
+    statusEl.style.color = 'var(--green)';
+    statusEl.textContent = '✅ ' + result.message;
+    currentMember.cnic_verification_status = 'pending';
+    document.getElementById('cnic-input').value = '';
+    renderCnicStatus();
+  } else {
+    statusEl.style.color = 'var(--rose)';
+    statusEl.textContent = '⚠️ ' + (result.message || 'Could not submit CNIC.');
+  }
 }
 
 async function savePhotoPrivacyOption(value) {

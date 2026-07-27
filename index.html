@@ -1106,6 +1106,11 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <div class="form-group"><label>Mobile Number<span class="required-star">*</span></label><input type="tel" id="f-mobile" placeholder="+92 300 1234567"></div>
         <div class="form-group"><label>WhatsApp Number</label><input type="tel" id="f-whatsapp" placeholder="Same or different number"></div>
       </div>
+      <div class="form-group">
+        <label>CNIC Number <span style="font-weight:400;color:var(--mid)">(Optional)</span></label>
+        <input type="text" id="f-cnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15" inputmode="numeric" oninput="formatCnicInput(this)">
+        <div style="font-size:.78rem;color:var(--mid);margin-top:.3rem">Optional — submit your CNIC to become eligible for a Verified badge on your profile. Reviewed manually by our team.</div>
+      </div>
       <div class="form-group"><label>Email Address<span class="required-star">*</span></label><input type="email" id="f-email" placeholder="you@email.com"></div>
       <div class="form-row">
         <div class="form-group"><label>Create Password<span class="required-star">*</span></label><input type="password" id="f-password" placeholder="Min. 8 characters"></div>
