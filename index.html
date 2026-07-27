@@ -214,14 +214,20 @@ a.ledger-item:hover{background:rgba(255,255,255,0.04)}
 .pm-label{font-size:.82rem;color:var(--mid);font-weight:600;font-family:var(--font-body)}
 .pm-section-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);text-align:center;margin-bottom:1.2rem}
 .pm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;max-width:760px;margin:0 auto}
-.pm-card{background:var(--white);border:1.5px solid var(--hairline);border-radius:16px;padding:1.4rem 1.2rem;text-align:center;box-shadow:0 3px 10px rgba(26,18,37,0.05);transition:transform .18s,box-shadow .18s}
-.pm-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(26,18,37,0.12)}
-.pm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;margin:0 auto .7rem}
-.pm-card-name{font-weight:700;font-size:.95rem;color:var(--charcoal);margin-bottom:.5rem}
+.pm-card{background:var(--white);border:1.5px solid var(--hairline);border-left:4px solid var(--pm-accent-1);border-radius:16px;padding:1.4rem 1.2rem;text-align:center;box-shadow:0 4px 16px rgba(26,18,37,0.08);transition:transform .18s,box-shadow .18s}
+.pm-card:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(26,18,37,0.14)}
+/* Real brand colors: JazzCash red (#EE2327) sampled from their SVG logo fill;
+   EasyPaisa green (#00BD5F) sampled from their PNG logo pixels. Bank Transfer
+   uses a generic deep trust-blue (no single bank brand to match here). */
+.pm-card-bank{--pm-accent-1:#1E88E5;--pm-accent-2:#0D47A1;--pm-accent-tint:rgba(30,136,229,0.08)}
+.pm-card-jazzcash{--pm-accent-1:#EE2327;--pm-accent-2:#B71C1C;--pm-accent-tint:rgba(238,35,39,0.08)}
+.pm-card-easypaisa{--pm-accent-1:#00BD5F;--pm-accent-2:#00793D;--pm-accent-tint:rgba(0,189,95,0.08)}
+.pm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;margin:0 auto .7rem;background:linear-gradient(135deg,var(--pm-accent-1),var(--pm-accent-2))}
+.pm-card-name{font-weight:700;font-size:.95rem;color:var(--pm-accent-2);margin-bottom:.5rem}
 .pm-card-detail{font-size:.78rem;color:var(--mid);line-height:1.6;margin-bottom:.7rem;min-height:56px}
 .pm-card-detail strong{color:var(--charcoal)}
-.pm-copy-btn{background:var(--ivory);border:1px solid var(--light);border-radius:8px;padding:.4rem .8rem;font-size:.72rem;font-weight:700;color:var(--burgundy);cursor:pointer;font-family:var(--font-body);transition:background .15s}
-.pm-copy-btn:hover{background:var(--light)}
+.pm-copy-btn{background:var(--pm-accent-tint);border:1px solid var(--pm-accent-1);border-radius:8px;padding:.4rem .8rem;font-size:.72rem;font-weight:700;color:var(--pm-accent-2);cursor:pointer;font-family:var(--font-body);transition:background .15s,color .15s}
+.pm-copy-btn:hover{background:var(--pm-accent-2);color:#fff}
 @media(max-width:700px){.pm-grid{grid-template-columns:1fr}}
 
 /* PROFILES */
@@ -726,20 +732,20 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   <div class="payment-methods">
     <div class="pm-section-label">Pay via any of these methods</div>
     <div class="pm-grid">
-      <div class="pm-card">
-        <div class="pm-icon" style="background:#E8F0FE;color:#1565C0">🏦</div>
+      <div class="pm-card pm-card-bank">
+        <div class="pm-icon">🏦</div>
         <div class="pm-card-name">Bank Transfer</div>
         <div class="pm-card-detail">Meezan Bank<br>Title: AR Designs<br>Acc No: 02510104608941<br>IBAN: <strong id="pm-bank">PK42MEZN0002510104608941</strong><br>Branch: DHA Phase VI Br-Lahore</div>
         <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-bank', this)">Copy IBAN</button>
       </div>
-      <div class="pm-card">
-        <div class="pm-icon" style="background:#FDECEC;color:#D32F2F">📱</div>
+      <div class="pm-card pm-card-jazzcash">
+        <div class="pm-icon">📱</div>
         <div class="pm-card-name">JazzCash</div>
         <div class="pm-card-detail">Number:<br><strong id="pm-jazzcash">0321-4133233</strong></div>
         <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-jazzcash', this)">Copy Number</button>
       </div>
-      <div class="pm-card">
-        <div class="pm-icon" style="background:#E8F5E9;color:#0FA26B">📲</div>
+      <div class="pm-card pm-card-easypaisa">
+        <div class="pm-icon">📲</div>
         <div class="pm-card-name">EasyPaisa</div>
         <div class="pm-card-detail">Number:<br><strong id="pm-easypaisa">0321-4133233</strong></div>
         <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-easypaisa', this)">Copy Number</button>
