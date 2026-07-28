@@ -74,6 +74,18 @@ body.urdu-mode .eng-only{display:none}
 .trust-card-text strong{display:block;font-size:.92rem;font-weight:700;color:#3C121B;font-family:var(--font-display)}
 .trust-card-text span{font-size:.78rem;color:#6B5B5F;font-weight:400}
 
+/* HOMEPAGE TRUST PROMISE (fake profiles / privacy) — same icon-circle +
+   heading + description shape as .trust-card above, sized for a longer
+   body paragraph and used as a standalone section instead of the hero's
+   narrow sidebar column. */
+.trust-promise{background:var(--cream)}
+.trust-promise-grid{max-width:940px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.trust-promise-card{background:var(--white);border-radius:14px;padding:1.8rem;box-shadow:0 12px 28px rgba(28,26,30,0.07);border:1px solid var(--hairline);border-left:3px solid #E8B84B;display:flex;gap:1.2rem;align-items:flex-start}
+.trust-promise-icon{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#E8B84B,#3C121B);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.trust-promise-card h3{font-family:var(--font-display);font-size:1.12rem;font-weight:700;color:#3C121B;margin-bottom:.45rem}
+.trust-promise-card p{font-size:.87rem;color:var(--mid);line-height:1.65}
+@media(max-width:820px){.trust-promise-grid{grid-template-columns:1fr}}
+
 /* legacy phone-mockup styles below are unused after the hero redesign but left in place */
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .phone-mockup{width:265px;height:545px;background:var(--charcoal);border-radius:40px;box-shadow:0 30px 80px rgba(28,28,46,0.35),0 0 0 8px rgba(28,28,46,0.08);position:relative;overflow:hidden;border:2px solid rgba(255,255,255,0.1)}
@@ -620,6 +632,26 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="trust-card">
         <div class="trust-card-icon">🔒</div>
         <div class="trust-card-text"><strong>Privacy Controls</strong><span>You choose what's shared</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST PROMISE -->
+<section class="trust-promise">
+  <div class="trust-promise-grid">
+    <div class="trust-promise-card fade-in">
+      <div class="trust-promise-icon">🛡️</div>
+      <div>
+        <h3>Zero Tolerance for Fake Profiles</h3>
+        <p>Every profile is manually reviewed by our team before it goes live, and identity is verified through CNIC. Any profile found to be fake, duplicate, or misrepresented is removed immediately — no exceptions.</p>
+      </div>
+    </div>
+    <div class="trust-promise-card fade-in">
+      <div class="trust-promise-icon">🔒</div>
+      <div>
+        <h3>Your Privacy, Protected</h3>
+        <p>Profiles are never public — only visible to genuine, registered members. Sensitive details like contact info, family background, and income stay hidden until mutual interest is confirmed. We never share member data with anyone outside Rishta Square.</p>
       </div>
     </div>
   </div>
