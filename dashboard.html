@@ -139,6 +139,7 @@ a{text-decoration:none;color:inherit}
 .btn-save{background:#3C121B;color:#FAF3EC;border:none;
   border-radius:10px;padding:.8rem 1.8rem;font-weight:700;font-size:.9rem;cursor:pointer}
 .btn-save:hover{opacity:.92}
+.btn-save:disabled{background:var(--light);color:var(--mid);cursor:not-allowed;opacity:1}
 
 .photo-section{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;padding:1.2rem;
   background:var(--ivory);border-radius:14px}
@@ -1620,7 +1621,7 @@ async function loadBrowseProfiles(page) {
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
-      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      interestActionHtml(p, 'sm') +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
         : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
@@ -1675,6 +1676,37 @@ async function toggleSaveProfile(uuid, isSaved, el) {
   }
 }
 
+// Renders the correct interest-related button/badge for a profile card or
+// the detail modal, based on the interest relationship the backend already
+// resolves (sent_interest_status / received_interest_status / is_mutual_match)
+// — replaces the old behavior where "Send Interest" always rendered active
+// regardless of prior state, and clicking was the only way to discover you'd
+// already sent one.
+function interestActionHtml(p, variant) {
+  var isFull = variant === 'full';
+  var cls = isFull ? 'btn-save' : 'btn-interest-sm';
+  var style = isFull ? ' style="width:100%;margin-top:1.2rem"' : '';
+  var stop = isFull ? '' : 'event.stopPropagation();';
+
+  if (p.is_mutual_match) {
+    // The profile detail modal renders its own dedicated Message button for
+    // mutual matches (see viewProfileDetail) — card lists just need a status
+    // badge here since they don't have room for a full message flow inline.
+    return isFull ? '' : '<span class="interest-status is-accepted">✓ Matched</span>';
+  }
+  if (p.sent_interest_status === 'sent') {
+    return '<button class="' + cls + '"' + style + ' disabled>✓ Interest Sent</button>';
+  }
+  if (p.sent_interest_status === 'rejected') {
+    return '<button class="' + cls + '"' + style + ' disabled>Interest Declined</button>';
+  }
+  if (p.received_interest_status === 'sent') {
+    var action = (isFull ? 'closeDetailModal();' : stop) + 'goToInterests(\'received\')';
+    return '<button class="' + cls + '"' + style + ' onclick="' + action + '">💌 Respond to Interest</button>';
+  }
+  return '<button class="' + cls + '"' + style + ' onclick="' + stop + 'sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>';
+}
+
 async function sendInterestTo(uuid, btnEl) {
   btnEl.disabled = true;
   btnEl.textContent = 'Sending...';
@@ -1727,7 +1759,7 @@ async function viewProfileDetail(uuid) {
 
   var actionBtn = p.is_mutual_match
     ? '<button class="btn-save" style="width:100%;margin-top:1.2rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="closeDetailModal();startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>'
-    : '<button class="btn-save" style="width:100%;margin-top:1.2rem" onclick="sendInterestTo(\'' + p.uuid + '\', this);this.textContent=\'Sending...\'">Send Interest</button>' +
+    : interestActionHtml(p, 'full') +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" disabled>✓ Compliment Sent</button>'
         : '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="openComplimentModal(this.dataset.uuid, this.dataset.name)">😊 Send a Compliment</button>');
@@ -2026,7 +2058,7 @@ async function loadTodaysPicks() {
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
-      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      interestActionHtml(p, 'sm') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -2062,7 +2094,7 @@ async function loadMyMatches() {
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       (p.admin_notes ? '<div class="pc-meta" style="font-style:italic;color:var(--burg)">"' + p.admin_notes + '"</div>' : '') +
       '<div class="pc-actions">' +
-      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      interestActionHtml(p, 'sm') +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
         : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
@@ -2097,7 +2129,7 @@ async function loadSavedProfiles() {
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
-      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      interestActionHtml(p, 'sm') +
       (p.has_complimented
         ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
         : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
@@ -2139,7 +2171,7 @@ async function loadProfileViewers() {
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
       '<div class="pc-meta pc-activity">👁️ Viewed ' + (activity.label || 'recently') + '</div>' +
       '<div class="pc-actions">' +
-      '<button class="btn-interest-sm" onclick="event.stopPropagation();sendInterestTo(\'' + p.uuid + '\', this)">Send Interest</button>' +
+      interestActionHtml(p, 'sm') +
       '</div></div></div>';
   });
   html += '</div>';
