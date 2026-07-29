@@ -893,8 +893,10 @@ function applyPermissionVisibility() {
       <!-- Member lookup -->
       <div class="card" style="padding:1rem 1.5rem;margin-bottom:1.2rem;display:flex;gap:1rem;align-items:center">
         <span style="font-weight:600;font-size:.9rem;white-space:nowrap">🔍 Matches for Member:</span>
-        <input id="mk-member-id" class="filter-input" placeholder="Enter Member ID..." style="max-width:200px">
-        <button class="btn-sm btn-sm-primary" onclick="loadMemberMatches()">Show Matches</button>
+        <div style="position:relative;max-width:260px;flex:1">
+          <input id="mk-member-search" class="filter-input" placeholder="Search by member name..." autocomplete="off" style="width:100%" oninput="mkSearchMembers()">
+          <div id="mk-member-results" style="display:none;position:absolute;left:0;right:0;background:#fff;border:1.5px solid var(--light);border-radius:8px;max-height:220px;overflow-y:auto;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,0.12)"></div>
+        </div>
         <span style="font-size:.8rem;color:var(--mid)">Shows all computed matches for a specific member</span>
       </div>
 
@@ -1162,22 +1164,77 @@ function mkChangePage(dir) {
 }
 
 // Load matches for a specific member
-async function loadMemberMatches() {
-  const id = document.getElementById('mk-member-id').value.trim();
-  if (!id) return alert('Please enter a Member ID');
+// Same live-search typeahead pattern as "Record a Match" (rmSearchMembers) —
+// reuses the existing /admin/members name/email/mobile search.
+let mkSearchTimer = null;
+function mkSearchMembers() {
+  clearTimeout(mkSearchTimer);
+  var query = document.getElementById('mk-member-search').value.trim();
+  var resultsEl = document.getElementById('mk-member-results');
+
+  if (query.length < 2) {
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  mkSearchTimer = setTimeout(async function() {
+    try {
+      var data = await adminAPI('/admin/members?search=' + encodeURIComponent(query) + '&limit=8');
+      if (!data.success) return;
+      var members = data.data.members || [];
+
+      if (!members.length) {
+        resultsEl.innerHTML = '<div style="padding:.7rem .9rem;font-size:.82rem;color:var(--mid)">No member found matching "' + escapeHtml(query) + '".</div>';
+        resultsEl.style.display = 'block';
+        return;
+      }
+
+      resultsEl.innerHTML = members.map(function(m) {
+        var nameEsc = m.full_name.replace(/'/g, "\\'");
+        return '<div style="padding:.6rem .9rem;cursor:pointer;border-bottom:1px solid var(--light);font-size:.84rem"' +
+          ' onmouseover="this.style.background=\'var(--ivory)\'" onmouseout="this.style.background=\'#fff\'"' +
+          ' onclick="mkSelectMember(' + m.id + ', \'' + nameEsc + '\')">' +
+          '<strong>' + m.full_name + '</strong><br>' +
+          '<span style="color:var(--mid);font-size:.76rem">' + (m.city || '—') + ' · ' + (m.email || '—') + '</span>' +
+        '</div>';
+      }).join('');
+      resultsEl.style.display = 'block';
+    } catch (err) {
+      resultsEl.style.display = 'none';
+    }
+  }, 300);
+}
+
+function mkSelectMember(id, name) {
+  document.getElementById('mk-member-results').style.display = 'none';
+  document.getElementById('mk-member-results').innerHTML = '';
+  document.getElementById('mk-member-search').value = name;
   loadMemberMatchesById(id);
 }
 
 async function loadMemberMatchesById(id) {
   document.getElementById('matching-results').innerHTML =
-    `<div style="text-align:center;padding:2rem">⏳ Loading matches for Member #${id}...</div>`;
+    `<div style="text-align:center;padding:2rem">⏳ Loading matches...</div>`;
   try {
     const data = await adminAPI(`/admin/matching/member/${id}`);
     if (!data.success) throw new Error(data.message);
     const m = data.data.member;
+
+    if (!m) {
+      document.getElementById('matching-results').innerHTML =
+        `<div style="text-align:center;padding:2rem;color:var(--mid)">No member found.</div>`;
+      return;
+    }
+
+    // Keep the search box in sync when this is triggered from elsewhere
+    // (e.g. an "All matches for A" button on a match card), not just the
+    // typeahead above.
+    document.getElementById('mk-member-search').value = m.full_name || '';
+
     document.getElementById('matching-results').innerHTML =
       `<div style="background:var(--ivory);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1rem;font-size:.88rem">
-        <strong>${m?.full_name}</strong> · ${m?.gender} · ${m?.age} yrs · ${m?.city} · ${m?.package?.toUpperCase()}
+        <strong>${m.full_name}</strong> · ${m.gender} · ${m.age} yrs · ${m.city} · ${(m.package || '').toUpperCase()}
         — <strong>${data.data.total}</strong> matches found
       </div>` +
       data.data.matches.map(match => `
