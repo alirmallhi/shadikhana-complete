@@ -1589,6 +1589,16 @@ async function rejectPendingMember(memberId, memberName) {
   }
 }
 
+// ── Overlay outside-click guard: only close when both mousedown and click
+// land directly on the overlay, so a text-selection drag ending near the
+// modal edge isn't mistaken for an outside click ──
+function overlayClick(e, fn) {
+  var overlay = e.currentTarget;
+  if (e.type === 'mousedown') { overlay._mdOnOverlay = (e.target === overlay); return; }
+  if (overlay._mdOnOverlay && e.target === overlay) fn();
+  overlay._mdOnOverlay = false;
+}
+
 // ── View full details of a pending member ──
 function escapeHtml(str) {
   var div = document.createElement('div');
@@ -3174,14 +3184,14 @@ async function deleteAdminAccount(id, name) {
 </script>
 
 <!-- ADMIN PROFILE DETAIL MODAL -->
-<div id="admin-profile-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeAdminProfileModal()">
+<div id="admin-profile-overlay" class="admin-modal-overlay" onmousedown="overlayClick(event)" onclick="overlayClick(event, closeAdminProfileModal)">
   <div class="admin-modal-box">
     <button class="admin-modal-close" onclick="closeAdminProfileModal()">✕</button>
     <div id="admin-profile-content"></div>
   </div>
 </div>
 
-<div id="admin-staff-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeAdminStaffModal()">
+<div id="admin-staff-overlay" class="admin-modal-overlay" onmousedown="overlayClick(event)" onclick="overlayClick(event, closeAdminStaffModal)">
   <div class="admin-modal-box" style="max-width:480px">
     <button class="admin-modal-close" onclick="closeAdminStaffModal()">✕</button>
     <h3 id="staff-modal-title" style="font-family:'Playfair Display',serif;margin-bottom:1rem">Add Staff Admin</h3>
@@ -3203,7 +3213,7 @@ async function deleteAdminAccount(id, name) {
   </div>
 </div>
 
-<div id="add-member-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeAddMemberModal()">
+<div id="add-member-overlay" class="admin-modal-overlay" onmousedown="overlayClick(event)" onclick="overlayClick(event, closeAddMemberModal)">
   <div class="admin-modal-box wide">
     <button class="admin-modal-close" onclick="closeAddMemberModal()">✕</button>
     <h3 style="font-family:'Playfair Display',serif;margin-bottom:.3rem">Add Member</h3>
@@ -3297,7 +3307,7 @@ async function deleteAdminAccount(id, name) {
   </div>
 </div>
 
-<div id="invite-login-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeInviteLoginModal()">
+<div id="invite-login-overlay" class="admin-modal-overlay" onmousedown="overlayClick(event)" onclick="overlayClick(event, closeInviteLoginModal)">
   <div class="admin-modal-box" style="max-width:420px">
     <button class="admin-modal-close" onclick="closeInviteLoginModal()">✕</button>
     <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem">Login Credentials Generated</h3>
@@ -3312,7 +3322,7 @@ async function deleteAdminAccount(id, name) {
   </div>
 </div>
 
-<div id="verification-review-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeVerificationReviewModal()">
+<div id="verification-review-overlay" class="admin-modal-overlay" onmousedown="overlayClick(event)" onclick="overlayClick(event, closeVerificationReviewModal)">
   <div class="admin-modal-box" style="max-width:420px">
     <button class="admin-modal-close" onclick="closeVerificationReviewModal()">✕</button>
     <h3 style="font-family:'Playfair Display',serif;margin-bottom:.3rem">Verify Identity</h3>
@@ -3326,7 +3336,7 @@ async function deleteAdminAccount(id, name) {
   </div>
 </div>
 
-<div id="message-thread-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeMessageThreadModal()">
+<div id="message-thread-overlay" class="admin-modal-overlay" onmousedown="overlayClick(event)" onclick="overlayClick(event, closeMessageThreadModal)">
   <div class="admin-modal-box" style="max-width:560px">
     <button class="admin-modal-close" onclick="closeMessageThreadModal()">✕</button>
     <h3 id="message-thread-title" style="font-family:'Playfair Display',serif;margin-bottom:.3rem"></h3>
@@ -3335,7 +3345,7 @@ async function deleteAdminAccount(id, name) {
   </div>
 </div>
 
-<div id="record-match-overlay" class="admin-modal-overlay" onclick="if(event.target===this) closeRecordMatchModal()">
+<div id="record-match-overlay" class="admin-modal-overlay" onmousedown="overlayClick(event)" onclick="overlayClick(event, closeRecordMatchModal)">
   <div class="admin-modal-box" style="max-width:480px">
     <button class="admin-modal-close" onclick="closeRecordMatchModal()">✕</button>
     <h3 style="font-family:'Playfair Display',serif;margin-bottom:.3rem">Record a Match</h3>

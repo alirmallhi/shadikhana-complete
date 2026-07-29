@@ -2174,8 +2174,11 @@ function closeModal(id) {
   if (el) { el.classList.remove('open'); document.body.style.overflow = ''; }
 }
 document.querySelectorAll('.modal-overlay').forEach(function(o) {
+  var mouseDownOnOverlay = false;
+  o.addEventListener('mousedown', function(e) { mouseDownOnOverlay = (e.target === this); });
   o.addEventListener('click', function(e) {
-    if (e.target === this) { this.classList.remove('open'); document.body.style.overflow = ''; }
+    if (mouseDownOnOverlay && e.target === this) { this.classList.remove('open'); document.body.style.overflow = ''; }
+    mouseDownOnOverlay = false;
   });
 });
 
