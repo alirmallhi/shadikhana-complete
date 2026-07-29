@@ -2597,14 +2597,25 @@ async function loadNotifications() {
     });
   }
 
-  if (!notifResult.success || !notifResult.data.length) {
+  // Requests still awaiting response are already shown, actionable, in the
+  // section above — skip their matching "awaiting response" log entry here
+  // so the same pending request isn't shown twice (once actionable, once not).
+  var pendingPhotoNames = (pendingResult.success ? pendingResult.data : []).map(function(r) {
+    return r.display_name || r.full_name || 'A member';
+  });
+  var generalNotifs = (notifResult.success ? notifResult.data : []).filter(function(n) {
+    if (n.type !== 'photo_reveal' || n.title !== 'Photo Request') return true;
+    return !pendingPhotoNames.some(function(name) { return n.body === (name + ' would like to see your photo.'); });
+  });
+
+  if (!generalNotifs.length) {
     if (!html) {
       container.innerHTML = '<div class="empty-state"><div class="ei">🔔</div>No notifications yet.</div>';
       return;
     }
   } else {
     if (html) html += '<div class="msg-section-label">Notifications</div>';
-    notifResult.data.forEach(function(n) {
+    generalNotifs.forEach(function(n) {
       html += '<div class="interest-row">' +
         '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'compliment' ? '😊' : n.type === 'photo_reveal' ? '🔓' : '🔔') + '</div>' +
         '<div class="interest-info">' +
