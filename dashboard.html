@@ -1595,14 +1595,25 @@ async function loadBrowseProfiles(page) {
     return;
   }
 
-  var profiles = result.data.profiles;
-  if (!profiles.length) {
+  var rawProfiles = result.data.profiles || [];
+  if (!rawProfiles.length) {
     if (page === 1) {
       container.innerHTML = '<div class="empty-state"><div class="ei">🔍</div>No profiles found matching your filters.</div>';
     }
     if (loadMoreArea) loadMoreArea.innerHTML = '';
     return;
   }
+
+  // Dedupe by member UUID, regardless of root cause — a fresh search/sort
+  // (page 1) resets the seen set, "Load More" pages filter against it so a
+  // profile already on screen never gets appended twice.
+  if (page === 1) loadBrowseProfiles._seenUuids = new Set();
+  var seenUuids = loadBrowseProfiles._seenUuids || (loadBrowseProfiles._seenUuids = new Set());
+  var profiles = rawProfiles.filter(function(p) {
+    if (seenUuids.has(p.uuid)) return false;
+    seenUuids.add(p.uuid);
+    return true;
+  });
 
   var cardsHtml = profiles.map(function(p) {
     var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
