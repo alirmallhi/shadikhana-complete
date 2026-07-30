@@ -2617,7 +2617,7 @@ async function loadNotifications() {
     if (html) html += '<div class="msg-section-label">Notifications</div>';
     generalNotifs.forEach(function(n) {
       html += '<div class="interest-row">' +
-        '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'compliment' ? '😊' : n.type === 'photo_reveal' ? '🔓' : '🔔') + '</div>' +
+        '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'compliment' ? '😊' : n.type === 'photo_reveal' ? '🔓' : (n.type === 'match' || n.type === 'match_recommendation') ? '💍' : '🔔') + '</div>' +
         '<div class="interest-info">' +
         '<div class="interest-name">' + n.title + '</div>' +
         '<div class="interest-meta">' + n.body + '</div>' +
