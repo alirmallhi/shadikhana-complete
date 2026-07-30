@@ -2104,7 +2104,7 @@ async function loadPaymentsPanel(page) {
       return;
     }
 
-    var methodIcons = { jazzcash:'📱 JazzCash', easypaisa:'📲 EasyPaisa', bank_transfer:'🏦 Bank Transfer', card:'💳 Card' };
+    var methodIcons = { jazzcash:'📱 JazzCash', nayapay:'🟢 NayaPay', easypaisa:'📲 EasyPaisa', bank_transfer:'🏦 Bank Transfer', card:'💳 Card' };
 
     tbody.innerHTML = payments.map(function(p) {
       var statusClass = p.status === 'completed' ? 'status-paid' : p.status === 'failed' ? 'status-unpaid' : 'status-pending';
