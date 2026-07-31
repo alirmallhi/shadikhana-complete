@@ -318,6 +318,13 @@ async function handleAdminLogin() {
       applyPermissionVisibility();
       if (typeof loadDashboardStats === 'function') loadDashboardStats();
       if (typeof loadNotifications === 'function') loadNotifications();
+
+      // Deep link from external messages (e.g. the WhatsApp new-registration
+      // notification) straight to a specific member's profile: #member=123
+      var memberMatch = window.location.hash.match(/^#member=(\d+)$/);
+      if (memberMatch && typeof viewAdminMemberDetail === 'function') {
+        viewAdminMemberDetail(memberMatch[1]);
+      }
     });
   }
 })();
