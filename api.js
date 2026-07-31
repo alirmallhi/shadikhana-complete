@@ -2,7 +2,7 @@
 // This file connects your website to the backend API on Render
 
 var API_BASE = 'https://shadikhana-api.onrender.com/api';
-var WA_NUMBER = '923214133233';
+var WA_NUMBER = '923105786268';
 
 // ── Make API calls ──
 async function apiCall(endpoint, method, body) {
