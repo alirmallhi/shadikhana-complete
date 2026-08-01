@@ -749,9 +749,25 @@ a{text-decoration:none;color:inherit}
       <div class="filter-bar">
         <input class="filter-input" id="filter-name" placeholder="Search by name..." onkeydown="if(event.key==='Enter') loadBrowseProfiles(1)">
         <input class="filter-input" id="filter-city" placeholder="City">
-        <select class="filter-select" id="filter-religion">
+        <select class="filter-select" id="filter-religion" onchange="updateBrowseSectFilter()">
           <option value="">Any Religion</option>
-          <option value="Islam">Islam</option>
+        </select>
+        <select class="filter-select" id="filter-sect" style="display:none">
+          <option value="">Any Sect</option>
+        </select>
+        <select class="filter-select" id="filter-profession">
+          <option value="">Any Profession</option>
+          <option value="Doctor">Doctor</option>
+          <option value="Engineer">Engineer</option>
+          <option value="IT Professional">IT Professional</option>
+          <option value="Business Owner">Business Owner</option>
+          <option value="Teacher / Educator">Teacher / Educator</option>
+          <option value="Government Employee">Government Employee</option>
+          <option value="Banking / Finance">Banking / Finance</option>
+          <option value="Lawyer">Lawyer</option>
+          <option value="Armed Forces">Armed Forces</option>
+          <option value="Homemaker">Homemaker</option>
+          <option value="Other">Other</option>
         </select>
         <input class="filter-input" id="filter-age-min" type="number" placeholder="Min Age" style="max-width:100px">
         <input class="filter-input" id="filter-age-max" type="number" placeholder="Max Age" style="max-width:100px">
@@ -954,6 +970,7 @@ async function initDashboard() {
   currentMember = result.data;
   localStorage.setItem('sk_member', JSON.stringify(currentMember));
   renderUserChip();
+  initBrowseFilters();
   renderDashboardHome();
   loadInterestsCount();
   loadMessagesCount();
@@ -1562,6 +1579,35 @@ function formatLastActive(timestamp) {
   return { label: '', dot: '' };
 }
 
+// Religion is populated from the same controlled list used at registration
+// (formOptions.js) so Browse always reflects every religion members can
+// actually register under, not just Islam.
+function initBrowseFilters() {
+  var religionSelect = document.getElementById('filter-religion');
+  if (religionSelect && religionSelect.options.length <= 1 && typeof RS_RELIGION !== 'undefined' && typeof rsPopulateSelect === 'function') {
+    rsPopulateSelect(religionSelect, RS_RELIGION);
+  }
+  updateBrowseSectFilter();
+}
+
+// Sect only has real, meaningful data for Islam — every other religion was
+// shown that same Islam-specific sect list at registration (Sunni/Shia/
+// Ahmadi/etc.), so filtering non-Muslim members by it would silently return
+// misleading empty results. Hidden until Religion = Islam is selected.
+function updateBrowseSectFilter() {
+  var religion    = document.getElementById('filter-religion').value;
+  var sectSelect  = document.getElementById('filter-sect');
+  if (religion === 'Islam') {
+    if (sectSelect.options.length <= 1 && typeof RS_SECT !== 'undefined' && typeof rsPopulateSelect === 'function') {
+      rsPopulateSelect(sectSelect, RS_SECT);
+    }
+    sectSelect.style.display = '';
+  } else {
+    sectSelect.value = '';
+    sectSelect.style.display = 'none';
+  }
+}
+
 async function loadBrowseProfiles(page) {
   page = page || 1;
   var container    = document.getElementById('browse-results');
@@ -1578,6 +1624,8 @@ async function loadBrowseProfiles(page) {
     name: document.getElementById('filter-name').value,
     city: document.getElementById('filter-city').value,
     religion: document.getElementById('filter-religion').value,
+    sect: document.getElementById('filter-sect').style.display !== 'none' ? document.getElementById('filter-sect').value : '',
+    profession: document.getElementById('filter-profession').value,
     age_min: document.getElementById('filter-age-min').value,
     age_max: document.getElementById('filter-age-max').value,
     sortBy: document.getElementById('filter-sort').value
