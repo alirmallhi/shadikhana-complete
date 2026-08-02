@@ -31,8 +31,9 @@ a{text-decoration:none;color:inherit}
 .topbar-right{display:flex;align-items:center;gap:1rem}
 .notif-btn{position:relative;background:var(--ivory);border:none;border-radius:10px;
   width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem}
-.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--rose);
-  border-radius:50%;border:2px solid #fff;display:none}
+.notif-dot{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;background:var(--rose);
+  color:#fff;border-radius:9px;border:2px solid #fff;font-size:.62rem;font-weight:700;line-height:1;
+  display:none;align-items:center;justify-content:center;padding:0 3px}
 .user-chip{display:flex;align-items:center;gap:8px;background:var(--ivory);border-radius:24px;
   padding:.4rem .9rem .4rem .4rem;cursor:pointer;border:1.5px solid var(--light)}
 .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--burg),var(--rose));
@@ -551,16 +552,20 @@ a{text-decoration:none;color:inherit}
             <label>Gender</label>
             <input type="text" id="p-gender-display" disabled style="background:var(--light);cursor:not-allowed">
             <div id="gender-correction-status-note" style="font-size:.78rem;color:var(--mid);margin-top:.35rem"></div>
-            <a href="#" id="gender-correction-link" style="font-size:.78rem;font-weight:600" onclick="toggleGenderCorrectionForm();return false">Gender incorrect? Request a correction.</a>
-            <div id="gender-correction-form" style="display:none;margin-top:.6rem;padding:.8rem 1rem;background:var(--ivory);border-radius:8px">
-              <div class="form-group"><label>Correct Gender</label>
-                <select id="gc-requested-gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
-              </div>
-              <div class="form-group"><label>Reason (Optional)</label><textarea id="gc-reason" style="min-height:60px" placeholder="e.g. Selected the wrong option by mistake at registration"></textarea></div>
-              <button type="button" class="btn-save" onclick="submitGenderCorrection()">Submit Request</button>
-              <span id="gender-correction-submit-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
+          </div>
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="text" id="p-date_of_birth-display" disabled style="background:var(--light);cursor:not-allowed">
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Marital Status</label>
+              <input type="text" id="p-marital_status-display" disabled style="background:var(--light);cursor:not-allowed">
+            </div>
+            <div class="form-group"><label>Children</label>
+              <input type="text" id="p-children-display" disabled style="background:var(--light);cursor:not-allowed">
             </div>
           </div>
+          <p style="font-size:.78rem;color:var(--mid);margin:-.6rem 0 1rem">Gender, Date of Birth, Marital Status, Children, and CNIC affect matching, so corrections go through a quick admin review — use "Request a Profile Correction" below.</p>
           <div class="form-row">
             <div class="form-group"><label>Height</label><input type="text" id="p-height"></div>
             <div class="form-group"><label>Weight (kg)</label><input type="number" id="p-weight"></div>
@@ -710,21 +715,18 @@ a{text-decoration:none;color:inherit}
 
       <div class="card">
         <div class="form-section-label">🪪 Identity Verification</div>
-        <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem" id="cnic-status-text">Loading...</p>
-        <div id="cnic-submit-section" style="display:none">
-          <div class="form-group"><label>CNIC Number</label><input type="text" id="cnic-input" placeholder="XXXXX-XXXXXXX-X" maxlength="15" inputmode="numeric" oninput="formatCnicInput(this)"></div>
-          <button type="button" class="btn-save" onclick="submitCnicForVerification()">Submit for Verification</button>
-          <span id="cnic-submit-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
-        </div>
+        <p style="font-size:.84rem;color:var(--mid);margin-bottom:0" id="cnic-status-text">Loading...</p>
       </div>
 
       <div class="card">
         <div class="form-section-label">📝 Request a Profile Correction</div>
-        <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">For fields that affect matching — marital status, children, date of birth — corrections go through a quick admin review instead of an instant self-edit.</p>
+        <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">For fields that affect matching — gender, CNIC, date of birth, marital status, children — corrections go through a quick admin review instead of an instant self-edit.</p>
         <div class="form-group">
           <label>Which field needs correction?</label>
           <select id="pcr-field-select" onchange="updatePcrFieldInput()">
             <option value="">Select a field</option>
+            <option value="gender">Gender</option>
+            <option value="cnic">CNIC</option>
             <option value="date_of_birth">Date of Birth</option>
             <option value="marital_status">Marital Status</option>
             <option value="children">Children</option>
@@ -733,6 +735,7 @@ a{text-decoration:none;color:inherit}
         <div class="form-group" id="pcr-value-wrap" style="display:none">
           <label>Correct Value</label>
           <input type="date" id="pcr-value-date" style="display:none">
+          <input type="text" id="pcr-value-cnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15" inputmode="numeric" oninput="formatCnicInput(this)" style="display:none">
           <select id="pcr-value-select" style="display:none"></select>
         </div>
         <div class="form-group" id="pcr-reason-wrap" style="display:none">
@@ -743,7 +746,7 @@ a{text-decoration:none;color:inherit}
         <span id="pcr-submit-status" style="margin-left:1rem;font-size:.84rem;display:none"></span>
 
         <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--light)">
-          <div style="font-size:.82rem;font-weight:600;margin-bottom:.5rem">Your Requests</div>
+          <div style="font-size:.82rem;font-weight:600;margin-bottom:.5rem">Pending / Recent Requests</div>
           <div id="pcr-history-list" style="font-size:.82rem;color:var(--mid)">Loading...</div>
         </div>
       </div>
@@ -1175,6 +1178,24 @@ async function checkWhatsNew() {
     '</div></div>';
 }
 
+// The bell badge combines pending-received-interests + pending photo
+// requests — the two actionable "needs your response" item types — kept
+// as two separately-updated counters since they're fetched by two
+// independent functions, summed and rendered by updateNotifBellBadge().
+var pendingInterestsCount = 0;
+var pendingPhotoRequestsCount = 0;
+
+function updateNotifBellBadge() {
+  var total = pendingInterestsCount + pendingPhotoRequestsCount;
+  var bellBadge = document.getElementById('notif-indicator');
+  if (total > 0) {
+    bellBadge.textContent = total > 99 ? '99+' : total;
+    bellBadge.style.display = 'flex';
+  } else {
+    bellBadge.style.display = 'none';
+  }
+}
+
 async function loadInterestsCount() {
   var result = await apiCall('/interests', 'GET');
   if (result.success) {
@@ -1183,8 +1204,11 @@ async function loadInterestsCount() {
     if (pendingReceived > 0) {
       badge.style.display = 'inline-block';
       badge.textContent = pendingReceived;
-      document.getElementById('notif-indicator').style.display = 'block';
+    } else {
+      badge.style.display = 'none';
     }
+    pendingInterestsCount = pendingReceived;
+    updateNotifBellBadge();
   }
 }
 
@@ -1230,6 +1254,9 @@ function loadProfileForm() {
   }
 
   document.getElementById('p-gender-display').value = currentMember.gender || '';
+  document.getElementById('p-date_of_birth-display').value = currentMember.date_of_birth || '';
+  document.getElementById('p-marital_status-display').value = currentMember.marital_status || '';
+  document.getElementById('p-children-display').value = currentMember.children || '';
   renderGenderCorrectionStatus();
   loadMyProfileChangeRequests();
 
@@ -1255,97 +1282,33 @@ function loadProfileForm() {
   renderCnicStatus();
 }
 
+// Read-only status display — submission/resubmission now happens via the
+// unified "Request a Profile Correction" dropdown below (field: CNIC),
+// not a dedicated form on this card.
 function renderCnicStatus() {
   var statusText = document.getElementById('cnic-status-text');
-  var submitSection = document.getElementById('cnic-submit-section');
   var status = currentMember.cnic_verification_status || 'not_submitted';
 
   var labels = {
-    not_submitted: '⚪ Not submitted — add your CNIC below to become eligible for a Verified badge.',
+    not_submitted: '⚪ Not submitted — use "Request a Profile Correction" below to add your CNIC and become eligible for a Verified badge.',
     pending:       '⏳ Submitted — under review by our team.',
-    verified:      '✅ Verified — your profile now shows the Verified badge.',
-    rejected:      '❌ Your submission was rejected. You can resubmit below.'
+    verified:      '✅ Verified — your profile now shows the Verified badge. Entered the wrong CNIC? Use "Request a Profile Correction" below to submit the right one.',
+    rejected:      '❌ Your submission was rejected. Use "Request a Profile Correction" below to resubmit.'
   };
   statusText.textContent = labels[status] || labels.not_submitted;
-
-  var canSubmit = (status === 'not_submitted' || status === 'rejected');
-  submitSection.style.display = canSubmit ? 'block' : 'none';
 }
 
-async function submitCnicForVerification() {
-  var statusEl = document.getElementById('cnic-submit-status');
-  var cnic = gv('cnic-input');
-
-  if (cnic.replace(/\D/g, '').length !== 13) {
-    statusEl.style.display = 'inline';
-    statusEl.style.color = 'var(--rose)';
-    statusEl.textContent = '⚠️ CNIC must be 13 digits.';
-    return;
-  }
-
-  var result = await apiCall('/member/cnic', 'PUT', { cnic: cnic });
-  statusEl.style.display = 'inline';
-  if (result.success) {
-    statusEl.style.color = 'var(--green)';
-    statusEl.textContent = '✅ ' + result.message;
-    currentMember.cnic_verification_status = 'pending';
-    document.getElementById('cnic-input').value = '';
-    renderCnicStatus();
-  } else {
-    statusEl.style.color = 'var(--rose)';
-    statusEl.textContent = '⚠️ ' + (result.message || 'Could not submit CNIC.');
-  }
-}
-
+// Read-only status display — same reasoning as CNIC above, submission now
+// happens via the unified dropdown, not a dedicated link/form on this card.
 function renderGenderCorrectionStatus() {
   var noteEl = document.getElementById('gender-correction-status-note');
-  var linkEl = document.getElementById('gender-correction-link');
-  var formEl = document.getElementById('gender-correction-form');
   var status = currentMember.gender_correction_status || 'not_submitted';
 
   var notes = {
     pending:  '⏳ Gender correction request pending review.',
-    rejected: '❌ Your previous gender correction request was rejected.'
+    rejected: '❌ Your previous gender correction request was rejected. You can submit a new one below.'
   };
   noteEl.textContent = notes[status] || '';
-
-  // Only not_submitted/rejected can open a new request — same
-  // status-transition rule the backend enforces, mirrored here so the
-  // form doesn't even appear when it would just be rejected server-side.
-  var canRequest = (status === 'not_submitted' || status === 'rejected');
-  linkEl.style.display = canRequest ? 'inline' : 'none';
-  if (!canRequest) formEl.style.display = 'none';
-}
-
-function toggleGenderCorrectionForm() {
-  var formEl = document.getElementById('gender-correction-form');
-  formEl.style.display = (formEl.style.display === 'none') ? 'block' : 'none';
-}
-
-async function submitGenderCorrection() {
-  var statusEl = document.getElementById('gender-correction-submit-status');
-  var requestedGender = gv('gc-requested-gender');
-  var reason = gv('gc-reason');
-
-  if (!requestedGender) {
-    statusEl.style.display = 'inline';
-    statusEl.style.color = 'var(--rose)';
-    statusEl.textContent = '⚠️ Please select the correct gender.';
-    return;
-  }
-
-  var result = await apiCall('/member/gender-correction-request', 'POST', { requested_gender: requestedGender, reason: reason });
-  statusEl.style.display = 'inline';
-  if (result.success) {
-    statusEl.style.color = 'var(--green)';
-    statusEl.textContent = '✅ ' + result.message;
-    currentMember.gender_correction_status = 'pending';
-    document.getElementById('gender-correction-form').style.display = 'none';
-    renderGenderCorrectionStatus();
-  } else {
-    statusEl.style.color = 'var(--rose)';
-    statusEl.textContent = '⚠️ ' + (result.message || 'Could not submit request.');
-  }
 }
 
 // ══════════════════════════════════════════
@@ -1357,6 +1320,7 @@ async function submitGenderCorrection() {
 var PCR_FIELD_OPTIONS = {
   marital_status: (typeof RS_MARITAL_STATUS !== 'undefined') ? RS_MARITAL_STATUS : [],
   children:       (typeof RS_CHILDREN !== 'undefined') ? RS_CHILDREN : [],
+  gender:         ['Male', 'Female'],
 };
 // Used by loadProfileForm()'s Profile Type select — religion/sect/ethnicity/
 // caste/profile_for moved to direct self-edit, so this is no longer part of
@@ -1367,6 +1331,7 @@ function updatePcrFieldInput() {
   var field = document.getElementById('pcr-field-select').value;
   var wrap = document.getElementById('pcr-value-wrap');
   var dateInput = document.getElementById('pcr-value-date');
+  var cnicInput = document.getElementById('pcr-value-cnic');
   var selectInput = document.getElementById('pcr-value-select');
   var reasonWrap = document.getElementById('pcr-reason-wrap');
   var submitBtn = document.getElementById('pcr-submit-btn');
@@ -1379,15 +1344,23 @@ function updatePcrFieldInput() {
   }
 
   wrap.style.display = 'block';
-  reasonWrap.style.display = 'block';
   submitBtn.style.display = 'inline-block';
+  dateInput.style.display = 'none';
+  cnicInput.style.display = 'none';
+  selectInput.style.display = 'none';
 
   if (field === 'date_of_birth') {
     dateInput.style.display = 'block';
-    selectInput.style.display = 'none';
+    reasonWrap.style.display = 'block';
+  } else if (field === 'cnic') {
+    // CNIC has no reason field, same as its old dedicated submit form —
+    // the backend endpoint doesn't read/store one.
+    cnicInput.style.display = 'block';
+    cnicInput.value = '';
+    reasonWrap.style.display = 'none';
   } else {
-    dateInput.style.display = 'none';
     selectInput.style.display = 'block';
+    reasonWrap.style.display = 'block';
     if (typeof rsPopulateSelect === 'function') {
       selectInput.innerHTML = '<option value="">Select</option>';
       rsPopulateSelect(selectInput, PCR_FIELD_OPTIONS[field]);
@@ -1395,22 +1368,57 @@ function updatePcrFieldInput() {
   }
 }
 
+// Bridges the unified dropdown to whichever backend actually owns each
+// field: gender and CNIC keep their own dedicated endpoints (separate DB
+// columns, and for CNIC, encryption — never routed through the generic
+// profile_change_requests table, which stores old/new values in plain
+// text), everything else uses the generic endpoint.
 async function submitProfileChangeRequest() {
   var field = document.getElementById('pcr-field-select').value;
-  var value = (field === 'date_of_birth')
-    ? document.getElementById('pcr-value-date').value
-    : document.getElementById('pcr-value-select').value;
   var reason = gv('pcr-reason');
   var statusEl = document.getElementById('pcr-submit-status');
 
-  if (!field || !value) {
+  if (!field) {
     statusEl.style.display = 'inline';
     statusEl.style.color = 'var(--rose)';
-    statusEl.textContent = '⚠️ Please select a field and a value.';
+    statusEl.textContent = '⚠️ Please select a field.';
     return;
   }
 
-  var result = await apiCall('/member/profile-change-request', 'POST', { field_name: field, requested_value: value, reason: reason });
+  var result;
+  if (field === 'gender') {
+    var requestedGender = gv('pcr-value-select');
+    if (!requestedGender) {
+      statusEl.style.display = 'inline';
+      statusEl.style.color = 'var(--rose)';
+      statusEl.textContent = '⚠️ Please select the correct gender.';
+      return;
+    }
+    result = await apiCall('/member/gender-correction-request', 'POST', { requested_gender: requestedGender, reason: reason });
+    if (result.success) currentMember.gender_correction_status = 'pending';
+  } else if (field === 'cnic') {
+    var cnic = gv('pcr-value-cnic');
+    if (cnic.replace(/\D/g, '').length !== 13) {
+      statusEl.style.display = 'inline';
+      statusEl.style.color = 'var(--rose)';
+      statusEl.textContent = '⚠️ CNIC must be 13 digits.';
+      return;
+    }
+    result = await apiCall('/member/cnic', 'PUT', { cnic: cnic });
+    if (result.success) currentMember.cnic_verification_status = 'pending';
+  } else {
+    var value = (field === 'date_of_birth')
+      ? document.getElementById('pcr-value-date').value
+      : document.getElementById('pcr-value-select').value;
+    if (!value) {
+      statusEl.style.display = 'inline';
+      statusEl.style.color = 'var(--rose)';
+      statusEl.textContent = '⚠️ Please select a value.';
+      return;
+    }
+    result = await apiCall('/member/profile-change-request', 'POST', { field_name: field, requested_value: value, reason: reason });
+  }
+
   statusEl.style.display = 'inline';
   if (result.success) {
     statusEl.style.color = 'var(--green)';
@@ -1418,6 +1426,8 @@ async function submitProfileChangeRequest() {
     document.getElementById('pcr-field-select').value = '';
     document.getElementById('pcr-reason').value = '';
     updatePcrFieldInput();
+    renderCnicStatus();
+    renderGenderCorrectionStatus();
     loadMyProfileChangeRequests();
   } else {
     statusEl.style.color = 'var(--rose)';
@@ -1425,15 +1435,22 @@ async function submitProfileChangeRequest() {
   }
 }
 
+// Only pending/rejected — once approved, the field's current value is
+// just shown normally (the read-only displays above, or the live field
+// itself for self-editable fields), so there's nothing left to say here.
+// Previously this listed every request ever made, forever, including
+// approved ones from months ago — a permanent "Religion — Islam approved"
+// banner that never went away, even across logout/login.
 async function loadMyProfileChangeRequests() {
   var listEl = document.getElementById('pcr-history-list');
   var result = await apiCall('/member/profile-change-requests');
-  if (!result.success || !result.data.length) {
-    listEl.textContent = 'No requests yet.';
+  var pending = result.success ? result.data.filter(function(r) { return r.status !== 'approved'; }) : [];
+  if (!pending.length) {
+    listEl.textContent = 'No pending requests.';
     return;
   }
-  var statusIcons = { pending: '⏳', approved: '✅', rejected: '❌' };
-  listEl.innerHTML = result.data.map(function(r) {
+  var statusIcons = { pending: '⏳', rejected: '❌' };
+  listEl.innerHTML = pending.map(function(r) {
     return '<div style="padding:.5rem 0;border-bottom:1px solid var(--light)">' +
       '<strong>' + r.field_label + '</strong>: ' + (r.old_value || '—') + ' → ' + r.requested_value +
       ' <span style="margin-left:.5rem">' + (statusIcons[r.status] || '') + ' ' + r.status + '</span>' +
@@ -2635,8 +2652,9 @@ async function sendChatMessage() {
 
 async function checkPendingPhotoRequests() {
   var result = await apiCall('/member/photo-reveal/pending', 'GET');
-  if (result.success && result.data.length > 0) {
-    document.getElementById('notif-indicator').style.display = 'block';
+  if (result.success) {
+    pendingPhotoRequestsCount = result.data.length;
+    updateNotifBellBadge();
   }
 }
 
@@ -2648,7 +2666,6 @@ async function loadMessagesCount() {
     if (totalUnread > 0) {
       badge.style.display = 'inline-block';
       badge.textContent = totalUnread;
-      document.getElementById('notif-indicator').style.display = 'block';
     } else {
       badge.style.display = 'none';
     }
@@ -2713,7 +2730,12 @@ async function loadNotifications() {
   }
 
   container.innerHTML = html;
-  document.getElementById('notif-indicator').style.display = 'none';
+  // Deliberately does not clear notif-indicator here — it reflects pending
+  // interests/photo requests specifically (see updateNotifBellBadge()),
+  // which are only resolved by actually responding to them, not by
+  // viewing this list. Clearing it on view previously made the badge lie
+  // ("0 pending" right after visiting Notifications, even though the
+  // interest/photo request itself was still fully unanswered).
 }
 
 async function respondPhotoRevealAction(requestId, action, btn) {
@@ -2722,6 +2744,7 @@ async function respondPhotoRevealAction(requestId, action, btn) {
   if (result.success) {
     row.style.opacity = '0.5';
     row.innerHTML = '<div class="interest-info"><div class="interest-meta">' + (action === 'approved' ? '✓ Approved' : 'Denied') + '</div></div>';
+    checkPendingPhotoRequests();
   } else {
     alert(result.message || 'Could not update request.');
   }

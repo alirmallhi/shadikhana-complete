@@ -1478,6 +1478,21 @@ if(chart){
 // ══════════════════════════════════════════
 var pkgAmounts = { basic: 10000, premium: 35000 };
 
+// Parses the "id:name||id:name" format getAllMembers sends for
+// guardian_duplicate_members/ip_duplicate_members into clickable links —
+// a shared guardian/IP can legitimately match more than one other profile,
+// so this always renders the full set, not just the first.
+function formatDuplicateMemberLinks(raw) {
+  if (!raw) return '';
+  return raw.split('||').map(function(pair) {
+    var sep = pair.indexOf(':');
+    if (sep === -1) return '';
+    var id = pair.slice(0, sep);
+    var name = pair.slice(sep + 1);
+    return '<a href="#" onclick="viewAdminMemberDetail(' + id + ');return false" style="color:#B42318;text-decoration:underline">' + escapeHtml(name) + '</a>';
+  }).join(', ');
+}
+
 async function loadPendingPayments() {
   var tbody  = document.getElementById('pending-table-body');
   var banner = document.getElementById('pending-summary-banner');
@@ -1516,10 +1531,10 @@ async function loadPendingPayments() {
 
       var duplicateWarning = '';
       if (m.guardian_duplicate_count > 0) {
-        duplicateWarning += '<div style="background:#FDECEC;color:#B42318;font-size:.72rem;font-weight:600;padding:3px 7px;border-radius:6px;margin-top:4px;display:inline-block">⚠️ Same guardian on ' + m.guardian_duplicate_count + ' other profile' + (m.guardian_duplicate_count > 1 ? 's' : '') + '</div><br>';
+        duplicateWarning += '<div style="background:#FDECEC;color:#B42318;font-size:.72rem;font-weight:600;padding:3px 7px;border-radius:6px;margin-top:4px;display:inline-block">⚠️ Same guardian on ' + m.guardian_duplicate_count + ' other profile' + (m.guardian_duplicate_count > 1 ? 's' : '') + ': ' + formatDuplicateMemberLinks(m.guardian_duplicate_members) + '</div><br>';
       }
       if (m.ip_duplicate_count > 0) {
-        duplicateWarning += '<div style="background:#FDECEC;color:#B42318;font-size:.72rem;font-weight:600;padding:3px 7px;border-radius:6px;margin-top:4px;display:inline-block">⚠️ Same device/network as ' + m.ip_duplicate_count + ' other profile' + (m.ip_duplicate_count > 1 ? 's' : '') + '</div><br>';
+        duplicateWarning += '<div style="background:#FDECEC;color:#B42318;font-size:.72rem;font-weight:600;padding:3px 7px;border-radius:6px;margin-top:4px;display:inline-block">⚠️ Same device/network as ' + m.ip_duplicate_count + ' other profile' + (m.ip_duplicate_count > 1 ? 's' : '') + ': ' + formatDuplicateMemberLinks(m.ip_duplicate_members) + '</div><br>';
       }
 
       return '<tr>' +
