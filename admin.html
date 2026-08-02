@@ -907,6 +907,20 @@ function applyPermissionVisibility() {
         <span style="font-size:.8rem;color:var(--mid)">Shows all computed matches for a specific member</span>
       </div>
 
+      <!-- Manual match creation — appears once a Member A is selected above -->
+      <div class="card" id="mk-manual-match-card" style="padding:1rem 1.5rem;margin-bottom:1.2rem;display:none">
+        <div style="font-weight:600;font-size:.9rem;margin-bottom:.8rem">➕ Create a Manual Match</div>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+          <span style="font-size:.84rem;color:var(--mid)">Score <strong id="mk-manual-member-a-name"></strong> against:</span>
+          <div style="position:relative;max-width:260px;flex:1">
+            <input id="mk-member-b-search" class="filter-input" placeholder="Search for the second member..." autocomplete="off" style="width:100%" oninput="mkSearchMemberB()">
+            <div id="mk-member-b-results" style="display:none;position:absolute;left:0;right:0;background:#fff;border:1.5px solid var(--light);border-radius:8px;max-height:220px;overflow-y:auto;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,0.12)"></div>
+          </div>
+          <button class="btn-sm btn-sm-primary" id="mk-score-pair-btn" disabled onclick="scoreManualPair()">⚡ Score This Pair</button>
+        </div>
+        <div id="mk-manual-match-result" style="margin-top:1rem"></div>
+      </div>
+
       <!-- Match Cards -->
       <div id="matching-results">
         <div style="text-align:center;padding:3rem;color:var(--mid)">
@@ -1037,6 +1051,25 @@ function renderMatchCards(matches, pagination) {
     return;
   }
 
+  container.innerHTML = buildMatchCardsHtml(matches);
+
+  // Pagination
+  const pg = document.getElementById('mk-pagination');
+  if (pagination && pagination.total_pages > 1) {
+    pg.style.display = 'flex';
+    document.getElementById('mk-page-info').textContent =
+      `Showing page ${pagination.page} of ${pagination.total_pages} (${pagination.total} total matches)`;
+    document.getElementById('mk-page-num').textContent = pagination.page;
+  } else {
+    pg.style.display = 'none';
+  }
+}
+
+// Same rich card markup (score badge, both profiles, score breakdown,
+// Compare/Recommend/Review/Mark Successful actions) used by the main Match
+// Results feed above — reused as-is by "Matches for Member" and the manual
+// match creation flow below, instead of a separate simpler rendering.
+function buildMatchCardsHtml(matches) {
   const tierColors = {
     excellent: { bg:'#E8F5F0', color:'#2D7A5F', label:'⭐⭐⭐ Excellent Match' },
     good:      { bg:'rgba(28,28,46,0.08)', color:'#1C1C2E', label:'⭐⭐ Good Match' },
@@ -1044,7 +1077,7 @@ function renderMatchCards(matches, pagination) {
   };
   const canManageSuccessFees = isAdminMaster() || !!getAdminPermissions().success_fees;
 
-  container.innerHTML = matches.map(m => {
+  return matches.map(m => {
     const tc = tierColors[m.tier] || tierColors.fair;
     const bd = typeof m.breakdown === 'string' ? JSON.parse(m.breakdown) : (m.breakdown || {});
 
@@ -1152,17 +1185,6 @@ function renderMatchCards(matches, pagination) {
       </div>
     </div>`;
   }).join('');
-
-  // Pagination
-  const pg = document.getElementById('mk-pagination');
-  if (pagination && pagination.total_pages > 1) {
-    pg.style.display = 'flex';
-    document.getElementById('mk-page-info').textContent =
-      `Showing page ${pagination.page} of ${pagination.total_pages} (${pagination.total} total matches)`;
-    document.getElementById('mk-page-num').textContent = pagination.page;
-  } else {
-    pg.style.display = 'none';
-  }
 }
 
 function mkChangePage(dir) {
@@ -1231,6 +1253,7 @@ async function loadMemberMatchesById(id) {
     if (!m) {
       document.getElementById('matching-results').innerHTML =
         `<div style="text-align:center;padding:2rem;color:var(--mid)">No member found.</div>`;
+      document.getElementById('mk-manual-match-card').style.display = 'none';
       return;
     }
 
@@ -1239,30 +1262,116 @@ async function loadMemberMatchesById(id) {
     // typeahead above.
     document.getElementById('mk-member-search').value = m.full_name || '';
 
-    document.getElementById('matching-results').innerHTML =
+    // Manual match creation is keyed off whichever member this view is
+    // currently showing, however it got here — reset Member B's selection
+    // each time since it doesn't carry over between different Member A's.
+    mkSelectedMemberA = { id: m.id, name: m.full_name };
+    mkSelectedMemberB = null;
+    document.getElementById('mk-manual-match-card').style.display = 'block';
+    document.getElementById('mk-manual-member-a-name').textContent = m.full_name;
+    document.getElementById('mk-member-b-search').value = '';
+    document.getElementById('mk-member-b-results').style.display = 'none';
+    document.getElementById('mk-member-b-results').innerHTML = '';
+    document.getElementById('mk-score-pair-btn').disabled = true;
+    document.getElementById('mk-manual-match-result').innerHTML = '';
+
+    const bannerHtml =
       `<div style="background:var(--ivory);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1rem;font-size:.88rem">
         <strong>${m.full_name}</strong> · ${m.gender} · ${m.age} yrs · ${m.city} · ${(m.package || '').toUpperCase()}
         — <strong>${data.data.total}</strong> matches found
-      </div>` +
-      data.data.matches.map(match => `
-        <div style="background:#fff;border-radius:12px;padding:1.2rem;margin-bottom:.8rem;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
-          <div style="font-size:1.8rem;font-weight:700;color:${match.score>=85?'#2D7A5F':match.score>=65?'#1C1C2E':'#5A5370'};
-                      font-family:'Playfair Display',serif;min-width:60px;text-align:center">${match.score}%</div>
-          <div style="flex:1">
-            <div style="font-weight:700">${match.full_name}</div>
-            <div style="font-size:.82rem;color:var(--mid)">${match.gender} · ${match.age} yrs · ${match.city} · ${match.profession||'—'}</div>
-            <div style="font-size:.78rem;color:var(--mid)">${match.religion||''} ${match.sect?'· '+match.sect:''} · ${match.marital_status||''}</div>
-          </div>
-          <span style="background:rgba(28,28,46,0.08);color:var(--burgundy);border-radius:6px;
-                       padding:3px 10px;font-size:.72rem;font-weight:700">${match.tier?.toUpperCase()}</span>
-          ${match.admin_recommended ?
-            '<span style="background:#E8F5F0;color:#2D7A5F;border-radius:6px;padding:3px 10px;font-size:.72rem;font-weight:700">💌 RECOMMENDED</span>' : ''}
-        </div>
-      `).join('');
+      </div>`;
+
+    // Same rich card format as the main Match Results feed, not a separate
+    // simpler list — reuses buildMatchCardsHtml directly.
+    document.getElementById('matching-results').innerHTML = bannerHtml + (
+      data.data.matches.length
+        ? buildMatchCardsHtml(data.data.matches)
+        : '<div style="text-align:center;padding:2rem;color:var(--mid)">No computed matches yet for this member — search for a second member below to create one manually.</div>'
+    );
+    document.getElementById('mk-pagination').style.display = 'none';
   } catch(e) {
     document.getElementById('matching-results').innerHTML =
       `<div style="text-align:center;padding:2rem;color:var(--rose)">❌ ${e.message}</div>`;
+  }
+}
+
+// ══════════════════════════════════════════
+//  MANUAL MATCH CREATION — score any two members fresh, even if they were
+//  never computed together (e.g. excluded by a hard filter during the last
+//  rescan). Member B search reuses the same typeahead pattern as Member A
+//  above and "Record a Match" (rmSearchMembers).
+// ══════════════════════════════════════════
+var mkSelectedMemberA = null;
+var mkSelectedMemberB = null;
+let mkSearchBTimer = null;
+
+function mkSearchMemberB() {
+  clearTimeout(mkSearchBTimer);
+  var query = document.getElementById('mk-member-b-search').value.trim();
+  var resultsEl = document.getElementById('mk-member-b-results');
+
+  if (query.length < 2) {
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  mkSearchBTimer = setTimeout(async function() {
+    try {
+      var data = await adminAPI('/admin/members?search=' + encodeURIComponent(query) + '&limit=8');
+      if (!data.success) return;
+      // Any member in the system is eligible except whoever is already
+      // selected as Member A.
+      var members = (data.data.members || []).filter(function(mem) {
+        return !mkSelectedMemberA || mem.id !== mkSelectedMemberA.id;
+      });
+
+      if (!members.length) {
+        resultsEl.innerHTML = '<div style="padding:.7rem .9rem;font-size:.82rem;color:var(--mid)">No member found matching "' + escapeHtml(query) + '".</div>';
+        resultsEl.style.display = 'block';
+        return;
+      }
+
+      resultsEl.innerHTML = members.map(function(mem) {
+        var nameEsc = mem.full_name.replace(/'/g, "\\'");
+        return '<div style="padding:.6rem .9rem;cursor:pointer;border-bottom:1px solid var(--light);font-size:.84rem"' +
+          ' onmouseover="this.style.background=\'var(--ivory)\'" onmouseout="this.style.background=\'#fff\'"' +
+          ' onclick="mkSelectMemberB(' + mem.id + ', \'' + nameEsc + '\')">' +
+          '<strong>' + mem.full_name + '</strong><br>' +
+          '<span style="color:var(--mid);font-size:.76rem">' + (mem.city || '—') + ' · ' + (mem.email || '—') + '</span>' +
+        '</div>';
+      }).join('');
+      resultsEl.style.display = 'block';
+    } catch (err) {
+      resultsEl.style.display = 'none';
+    }
+  }, 300);
+}
+
+function mkSelectMemberB(id, name) {
+  mkSelectedMemberB = { id: id, name: name };
+  document.getElementById('mk-member-b-results').style.display = 'none';
+  document.getElementById('mk-member-b-results').innerHTML = '';
+  document.getElementById('mk-member-b-search').value = name;
+  document.getElementById('mk-score-pair-btn').disabled = false;
+}
+
+async function scoreManualPair() {
+  if (!mkSelectedMemberA || !mkSelectedMemberB) return;
+  var resultEl = document.getElementById('mk-manual-match-result');
+  resultEl.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--mid)">⏳ Scoring...</div>';
+  try {
+    var data = await adminAPI('/admin/matching/score-pair', 'POST', {
+      member_a_id: mkSelectedMemberA.id,
+      member_b_id: mkSelectedMemberB.id
+    });
+    if (!data.success) throw new Error(data.message);
+    // Same card component as everywhere else on this page — actionable
+    // (Recommend/Review/Mark Successful) exactly like a system-computed
+    // match, regardless of score.
+    resultEl.innerHTML = buildMatchCardsHtml([data.data.match]);
+  } catch (e) {
+    resultEl.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--rose)">❌ ' + e.message + '</div>';
   }
 }
 
