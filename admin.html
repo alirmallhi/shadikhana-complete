@@ -2176,8 +2176,12 @@ async function toggleMemberVerified(memberId, currentlyVerified, btn) {
 
 async function deleteMemberConfirm(memberId, memberName) {
   if (!confirm('Permanently delete ' + memberName + "'s profile? This cannot be undone.")) return;
+  var sendNotification = confirm(
+    'Also send ' + memberName + ' an email notifying them their account was deleted?\n\n' +
+    'OK = yes, send it\nCancel = skip (e.g. test/cleanup account)'
+  );
   try {
-    var data = await adminAPI('/admin/members/' + memberId, 'DELETE');
+    var data = await adminAPI('/admin/members/' + memberId, 'DELETE', { skip_notification: !sendNotification });
     if (data.success) {
       alert(memberName + ' has been deleted.');
       loadMembersPanel(membersCurrentPage);

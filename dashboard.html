@@ -544,6 +544,9 @@ a{text-decoration:none;color:inherit}
             <div class="form-group"><label>Full Name</label><input type="text" id="p-full_name"></div>
             <div class="form-group"><label>Display Name</label><input type="text" id="p-display_name"></div>
           </div>
+          <div class="form-group"><label>Profile Type</label>
+            <select id="p-profile_for"><option value="">Select</option></select>
+          </div>
           <div class="form-group">
             <label>Gender</label>
             <input type="text" id="p-gender-display" disabled style="background:var(--light);cursor:not-allowed">
@@ -569,9 +572,30 @@ a{text-decoration:none;color:inherit}
 
           <div class="form-section-label">Religious Practice</div>
           <div class="form-row">
+            <div class="form-group"><label>Religion</label>
+              <select id="p-religion"><option value="">Select</option></select>
+            </div>
+            <div class="form-group"><label>Sect</label>
+              <select id="p-sect"><option value="">Select</option></select>
+            </div>
+          </div>
+          <div class="form-row">
             <div class="form-group"><label>Religiosity / Practice Level</label>
               <select id="p-piety_level"><option value="">Select</option></select>
             </div>
+          </div>
+
+          <div class="form-section-label">Background & Education</div>
+          <div class="form-row">
+            <div class="form-group"><label>Ethnicity / Mother Tongue</label>
+              <select id="p-ethnicity"><option value="">Select</option></select>
+            </div>
+            <div class="form-group"><label>Caste</label>
+              <select id="p-caste"><option value="">Select</option></select>
+            </div>
+          </div>
+          <div class="form-group"><label>Education</label>
+            <select id="p-education"><option value="">Select</option></select>
           </div>
 
           <div class="form-section-label">Career & Income</div>
@@ -696,7 +720,7 @@ a{text-decoration:none;color:inherit}
 
       <div class="card">
         <div class="form-section-label">📝 Request a Profile Correction</div>
-        <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">For fields that affect matching — religion, sect, ethnicity, caste, marital status, children, date of birth, profile type — corrections go through a quick admin review instead of an instant self-edit.</p>
+        <p style="font-size:.84rem;color:var(--mid);margin-bottom:1rem">For fields that affect matching — marital status, children, date of birth — corrections go through a quick admin review instead of an instant self-edit.</p>
         <div class="form-group">
           <label>Which field needs correction?</label>
           <select id="pcr-field-select" onchange="updatePcrFieldInput()">
@@ -704,11 +728,6 @@ a{text-decoration:none;color:inherit}
             <option value="date_of_birth">Date of Birth</option>
             <option value="marital_status">Marital Status</option>
             <option value="children">Children</option>
-            <option value="religion">Religion</option>
-            <option value="sect">Sect</option>
-            <option value="ethnicity">Ethnicity</option>
-            <option value="caste">Caste</option>
-            <option value="profile_for">Profile Type</option>
           </select>
         </div>
         <div class="form-group" id="pcr-value-wrap" style="display:none">
@@ -1178,10 +1197,36 @@ function loadProfileForm() {
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
-                'piety_level'];
+                'piety_level','religion','sect','ethnicity','caste','education','profile_for'];
 
+  // Guarded by options.length <= 1 (just the static placeholder) — this
+  // panel's loadProfileForm() re-runs every time the member navigates back
+  // to My Profile, and rsPopulateSelect() only ever appends, never clears.
+  // Without this guard each revisit re-appends the full option list on top
+  // of what's already there (same fix already applied to the Browse
+  // Religion/Sect filters for the same reason).
   if (typeof rsPopulateSelect === 'function') {
-    rsPopulateSelect(document.getElementById('p-piety_level'), RS_PIETY);
+    [
+      ['p-piety_level', RS_PIETY],
+      ['p-religion',    RS_RELIGION],
+      ['p-sect',        RS_SECT],
+      ['p-ethnicity',   RS_ETHNICITY],
+      ['p-caste',       RS_CASTE],
+      ['p-education',   RS_EDUCATION],
+    ].forEach(function(pair) {
+      var el = document.getElementById(pair[0]);
+      if (el && el.options.length <= 1) rsPopulateSelect(el, pair[1]);
+    });
+  }
+
+  // profile_for uses a value/label map, not a plain RS_* string list, and
+  // is built via a full innerHTML replace (not append-only), so it's safe
+  // to re-run every time without the same guard.
+  var profileForSelect = document.getElementById('p-profile_for');
+  if (profileForSelect) {
+    profileForSelect.innerHTML = '<option value="">Select</option>' + Object.keys(PROFILE_FOR_LABELS).map(function(v) {
+      return '<option value="' + v + '">' + PROFILE_FOR_LABELS[v] + '</option>';
+    }).join('');
   }
 
   document.getElementById('p-gender-display').value = currentMember.gender || '';
@@ -1312,13 +1357,11 @@ async function submitGenderCorrection() {
 var PCR_FIELD_OPTIONS = {
   marital_status: (typeof RS_MARITAL_STATUS !== 'undefined') ? RS_MARITAL_STATUS : [],
   children:       (typeof RS_CHILDREN !== 'undefined') ? RS_CHILDREN : [],
-  religion:       (typeof RS_RELIGION !== 'undefined') ? RS_RELIGION : [],
-  sect:           (typeof RS_SECT !== 'undefined') ? RS_SECT : [],
-  ethnicity:      (typeof RS_ETHNICITY !== 'undefined') ? RS_ETHNICITY : [],
-  caste:          (typeof RS_CASTE !== 'undefined') ? RS_CASTE : [],
-  profile_for:    ['self_male', 'self_female', 'guardian']
 };
-var PCR_PROFILE_FOR_LABELS = { self_male: 'Myself — Man', self_female: 'Myself — Woman', guardian: 'My Son / Daughter' };
+// Used by loadProfileForm()'s Profile Type select — religion/sect/ethnicity/
+// caste/profile_for moved to direct self-edit, so this is no longer part of
+// the profile-change-request flow itself.
+var PROFILE_FOR_LABELS = { self_male: 'Myself — Man', self_female: 'Myself — Woman', guardian: 'My Son / Daughter' };
 
 function updatePcrFieldInput() {
   var field = document.getElementById('pcr-field-select').value;
@@ -1345,11 +1388,7 @@ function updatePcrFieldInput() {
   } else {
     dateInput.style.display = 'none';
     selectInput.style.display = 'block';
-    if (field === 'profile_for') {
-      selectInput.innerHTML = '<option value="">Select</option>' + PCR_FIELD_OPTIONS.profile_for.map(function(v) {
-        return '<option value="' + v + '">' + PCR_PROFILE_FOR_LABELS[v] + '</option>';
-      }).join('');
-    } else if (typeof rsPopulateSelect === 'function') {
+    if (typeof rsPopulateSelect === 'function') {
       selectInput.innerHTML = '<option value="">Select</option>';
       rsPopulateSelect(selectInput, PCR_FIELD_OPTIONS[field]);
     }
@@ -1454,7 +1493,7 @@ async function saveProfile() {
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
-                'piety_level'];
+                'piety_level','religion','sect','ethnicity','caste','education','profile_for'];
   var updates = {};
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
