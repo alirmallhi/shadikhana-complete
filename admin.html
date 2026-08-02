@@ -1265,7 +1265,7 @@ async function loadMemberMatchesById(id) {
     // Manual match creation is keyed off whichever member this view is
     // currently showing, however it got here — reset Member B's selection
     // each time since it doesn't carry over between different Member A's.
-    mkSelectedMemberA = { id: m.id, name: m.full_name };
+    mkSelectedMemberA = { id: m.id, name: m.full_name, gender: m.gender };
     mkSelectedMemberB = null;
     document.getElementById('mk-manual-match-card').style.display = 'block';
     document.getElementById('mk-manual-member-a-name').textContent = m.full_name;
@@ -1321,9 +1321,17 @@ function mkSearchMemberB() {
       var data = await adminAPI('/admin/members?search=' + encodeURIComponent(query) + '&limit=8');
       if (!data.success) return;
       // Any member in the system is eligible except whoever is already
-      // selected as Member A.
+      // selected as Member A, or anyone the same gender as Member A —
+      // matches are opposite-gender only, no exceptions (the backend
+      // rejects this outright too; filtering it out here just avoids a
+      // pointless round trip). Compared case-insensitively so this can't
+      // be fooled by the same casing inconsistency the backend fix guards
+      // against.
       var members = (data.data.members || []).filter(function(mem) {
-        return !mkSelectedMemberA || mem.id !== mkSelectedMemberA.id;
+        if (mkSelectedMemberA && mem.id === mkSelectedMemberA.id) return false;
+        if (mkSelectedMemberA && mkSelectedMemberA.gender && mem.gender &&
+            mem.gender.trim().toLowerCase() === mkSelectedMemberA.gender.trim().toLowerCase()) return false;
+        return true;
       });
 
       if (!members.length) {
@@ -3405,7 +3413,7 @@ async function deleteAdminAccount(id, name) {
     <div class="form-section-label">Personal</div>
     <div class="form-grid-2 form-group-sm">
       <div><label>Gender *</label>
-        <select id="am-gender"><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select>
+        <select id="am-gender"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select>
       </div>
       <div><label>Date of Birth</label><input type="date" id="am-date_of_birth"></div>
       <div><label>Marital Status</label>
