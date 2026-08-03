@@ -546,7 +546,8 @@ a{text-decoration:none;color:inherit}
             <div class="form-group"><label>Display Name</label><input type="text" id="p-display_name"></div>
           </div>
           <div class="form-group"><label>Profile Type</label>
-            <select id="p-profile_for"><option value="">Select</option></select>
+            <input type="text" id="p-profile_for-display" disabled style="background:var(--light);cursor:not-allowed">
+            <div style="font-size:.78rem;color:var(--mid);margin-top:.35rem">Permanently set at registration and can't be changed — if this needs to be different, please register a new profile instead.</div>
           </div>
           <div class="form-group">
             <label>Gender</label>
@@ -570,10 +571,7 @@ a{text-decoration:none;color:inherit}
             <div class="form-group"><label>Height</label><input type="text" id="p-height"></div>
             <div class="form-group"><label>Weight (kg)</label><input type="number" id="p-weight"></div>
           </div>
-          <div class="form-row">
-            <div class="form-group"><label>Complexion</label><input type="text" id="p-complexion"></div>
-            <div class="form-group"><label>Body Type</label><input type="text" id="p-body_type"></div>
-          </div>
+          <div class="form-group"><label>Complexion</label><input type="text" id="p-complexion"></div>
 
           <div class="form-section-label">Religious Practice</div>
           <div class="form-row">
@@ -1217,11 +1215,11 @@ async function loadInterestsCount() {
 // ══════════════════════════════════════════
 function loadProfileForm() {
   if (!currentMember) return;
-  var fields = ['full_name','display_name','height','weight','complexion','body_type',
+  var fields = ['full_name','display_name','height','weight','complexion',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
-                'piety_level','religion','sect','ethnicity','caste','education','profile_for'];
+                'piety_level','religion','sect','ethnicity','caste','education'];
 
   // Guarded by options.length <= 1 (just the static placeholder) — this
   // panel's loadProfileForm() re-runs every time the member navigates back
@@ -1243,18 +1241,16 @@ function loadProfileForm() {
     });
   }
 
-  // profile_for uses a value/label map, not a plain RS_* string list, and
-  // is built via a full innerHTML replace (not append-only), so it's safe
-  // to re-run every time without the same guard.
-  var profileForSelect = document.getElementById('p-profile_for');
-  if (profileForSelect) {
-    profileForSelect.innerHTML = '<option value="">Select</option>' + Object.keys(PROFILE_FOR_LABELS).map(function(v) {
-      return '<option value="' + v + '">' + PROFILE_FOR_LABELS[v] + '</option>';
-    }).join('');
-  }
+  // Read-only — permanently locked after registration (see the allowed[]
+  // comment in updateProfile on the backend for why).
+  document.getElementById('p-profile_for-display').value = PROFILE_FOR_LABELS[currentMember.profile_for] || currentMember.profile_for || '';
 
   document.getElementById('p-gender-display').value = currentMember.gender || '';
-  document.getElementById('p-date_of_birth-display').value = currentMember.date_of_birth || '';
+  // Stored/returned as a raw ISO timestamp (e.g. "2002-01-01T00:00:00.000Z")
+  // — formatted here for display only, the DB value and API response are
+  // untouched.
+  document.getElementById('p-date_of_birth-display').value =
+    currentMember.date_of_birth ? new Date(currentMember.date_of_birth).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
   document.getElementById('p-marital_status-display').value = currentMember.marital_status || '';
   document.getElementById('p-children-display').value = currentMember.children || '';
   renderGenderCorrectionStatus();
@@ -1353,11 +1349,14 @@ function updatePcrFieldInput() {
     dateInput.style.display = 'block';
     reasonWrap.style.display = 'block';
   } else if (field === 'cnic') {
-    // CNIC has no reason field, same as its old dedicated submit form —
-    // the backend endpoint doesn't read/store one.
+    // Whether this becomes a first-time verification submission or a
+    // correction request is decided server-side (based on the member's
+    // current cnic_verification_status) — reason is only actually stored
+    // for the correction case, but there's no way to know which one this
+    // will be ahead of time, so it's always shown; harmless if unused.
     cnicInput.style.display = 'block';
     cnicInput.value = '';
-    reasonWrap.style.display = 'none';
+    reasonWrap.style.display = 'block';
   } else {
     selectInput.style.display = 'block';
     reasonWrap.style.display = 'block';
@@ -1404,8 +1403,15 @@ async function submitProfileChangeRequest() {
       statusEl.textContent = '⚠️ CNIC must be 13 digits.';
       return;
     }
-    result = await apiCall('/member/cnic', 'PUT', { cnic: cnic });
-    if (result.success) currentMember.cnic_verification_status = 'pending';
+    result = await apiCall('/member/cnic', 'PUT', { cnic: cnic, reason: reason });
+    // Only a first-time submission actually moves cnic_verification_status
+    // to 'pending' server-side — a correction (from an already verified/
+    // rejected member) leaves it untouched until an admin reviews it, so
+    // reflecting "pending" here for that case would show a status that
+    // hasn't actually changed yet.
+    if (result.success && result.data && result.data.type === 'verification') {
+      currentMember.cnic_verification_status = 'pending';
+    }
   } else {
     var value = (field === 'date_of_birth')
       ? document.getElementById('pcr-value-date').value
@@ -1506,11 +1512,11 @@ async function unblockMemberAction(uuid, name) {
 }
 
 async function saveProfile() {
-  var fields = ['display_name','height','weight','complexion','body_type',
+  var fields = ['display_name','height','weight','complexion',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
-                'piety_level','religion','sect','ethnicity','caste','education','profile_for'];
+                'piety_level','religion','sect','ethnicity','caste','education'];
   var updates = {};
   fields.forEach(function(f) {
     var el = document.getElementById('p-' + f);
@@ -1695,7 +1701,7 @@ async function loadBrowseProfiles(page) {
   var result = await apiCall('/profiles?' + params, 'GET');
 
   if (!result.success) {
-    container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load profiles. Please try again.</div>';
+    container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>' + escapeHtml(result.message || 'Could not load profiles. Please try again.') + '</div>';
     return;
   }
 

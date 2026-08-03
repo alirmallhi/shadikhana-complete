@@ -95,7 +95,6 @@ async function submitRegistration() {
     height:              gv('f-height'),
     weight:              gv('f-weight'),
     complexion:          gv('f-complexion'),
-    body_type:           gv('f-bodytype'),
     religion:            gv('f-religion'),
     sect:                gv('f-sect'),
     ethnicity:           gv('f-ethnicity'),
