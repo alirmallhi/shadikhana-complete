@@ -1692,17 +1692,23 @@ function avatarPlaceholderHtml(name, radius) {
     'font-family:\'Playfair Display\',serif;font-weight:700;font-size:2.2rem">' + escapeHtml(initial) + '</div>';
 }
 
-// Builds the same photo/placeholder markup every card already built, plus a
-// click-to-expand wrapper — but only around a real, unlocked photo. A
-// locked (blurred/hidden) photo or the placeholder stays exactly as it was:
-// nothing to open full-size, since the viewer isn't actually allowed to see
-// it yet. `placeholder`, if given, overrides the default avatar-initial
+// Builds the same photo/placeholder markup every card already built, plus —
+// only when explicitly asked for via enableLightbox — a click-to-expand
+// wrapper around a real, unlocked photo. Listing/grid cards (Browse,
+// Smart Matching, Saved, Who Viewed, Compliments) deliberately leave this
+// off: the photo there is just part of a bigger tappable card that
+// navigates to the profile, and on mobile especially the photo is most of
+// that tappable area, so intercepting its tap for a lightbox instead made
+// it hard to actually open a profile. Only the profile detail view
+// (viewProfileDetail/previewMyProfile) opts in. A locked (blurred/hidden)
+// photo or the placeholder never gets the lightbox wrapper regardless.
+// `placeholder`, if given, overrides the default avatar-initial
 // placeholder (Compliments cards use a plain 👤 emoji instead).
-function profilePhotoHtml(p, radius, placeholder) {
+function profilePhotoHtml(p, radius, placeholder, enableLightbox) {
   if (!p.photo_url) return placeholder !== undefined ? placeholder : avatarPlaceholderHtml(p.display_name || p.full_name, radius);
   var radiusStyle = radius ? 'border-radius:' + radius + 'px;' : '';
   var img = '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;' + radiusStyle + '">';
-  if (p.photo_locked) return img;
+  if (p.photo_locked || !enableLightbox) return img;
   return '<div style="width:100%;height:100%;cursor:pointer" onclick="event.stopPropagation();openPhotoLightbox(this.querySelector(\'img\').src)">' + img + '</div>';
 }
 
@@ -1948,7 +1954,7 @@ async function viewProfileDetail(uuid) {
     return;
   }
   var p = result.data;
-  var photo = profilePhotoHtml(p, 14);
+  var photo = profilePhotoHtml(p, 14, undefined, true);
   var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
   var premiumBadge = premiumBadgeHtml(p.package);
   var saveIcon = p.is_saved ? '❤️' : '🤍';
@@ -2059,7 +2065,7 @@ async function previewMyProfile() {
     return;
   }
   var p = result.data;
-  var photo = profilePhotoHtml(p, 14);
+  var photo = profilePhotoHtml(p, 14, undefined, true);
 
   var prefParts = [];
   if (p.partner_age_min && p.partner_age_max) prefParts.push(p.partner_age_min + '–' + p.partner_age_max + ' years old');
