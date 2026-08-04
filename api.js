@@ -14,6 +14,7 @@ async function apiCall(endpoint, method, body) {
   try {
     var res  = await fetch(API_BASE + endpoint, opts);
     var data = await res.json();
+    data.httpStatus = res.status;
     return data;
   } catch (err) {
     console.log('API error:', err);
