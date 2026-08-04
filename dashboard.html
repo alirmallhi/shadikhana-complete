@@ -275,11 +275,40 @@ a{text-decoration:none;color:inherit}
 .msg-bubble-row.mine .msg-bubble{background:var(--burg);color:#fff;border-bottom-right-radius:4px}
 .msg-bubble-time{font-size:.65rem;color:var(--mid);margin-top:.3rem;text-align:right}
 .msg-bubble-row.mine .msg-bubble-time{color:rgba(255,255,255,0.7)}
-.msg-input-row{display:flex;gap:.7rem;padding:1rem;border-top:1px solid var(--light)}
-.msg-input-row input{flex:1;padding:.7rem 1rem;border:1.5px solid var(--light);border-radius:10px;font-family:inherit;font-size:.88rem}
+.msg-seen{margin-left:.35rem}
+.msg-bubble-photo{padding:.32rem .32rem 0}
+.msg-bubble-photo img{display:block;width:100%;max-width:220px;max-height:280px;object-fit:cover;border-radius:10px;cursor:pointer}
+.msg-bubble-photo .msg-bubble-time{padding:.3rem .15rem .05rem}
+.msg-photo-caption{padding:.35rem .55rem .1rem;font-size:.86rem;line-height:1.4}
+.msg-input-row{display:flex;gap:.7rem;padding:1rem;border-top:1px solid var(--light);align-items:center}
+.msg-input-row input[type="text"]{flex:1;padding:.7rem 1rem;border:1.5px solid var(--light);border-radius:10px;font-family:inherit;font-size:.88rem}
 .msg-input-row button{background:#3C121B;color:#FAF3EC;border:none;border-radius:10px;padding:.7rem 1.3rem;font-weight:700;cursor:pointer;font-size:.86rem}
 .msg-input-row button:disabled{opacity:.5;cursor:not-allowed}
+.msg-photo-btn{background:var(--ivory)!important;color:var(--charcoal)!important;padding:.7rem .9rem!important;flex-shrink:0}
 @media(max-width:820px){.msg-layout{flex-direction:column;height:auto}.msg-conv-col{width:100%;max-height:220px}.msg-thread-col{min-height:400px}}
+
+/* ── PREMIUM MESSAGING THEME ──
+   Scoped entirely under #panel-messages.messaging-premium (toggled once in
+   initDashboard() based on currentMember.package) so Basic members' chat UI
+   is completely untouched — richer accents on the sender's own bubbles, a
+   framed/elevated treatment for shared photos, and a touch more breathing
+   room, all within the site's existing maroon/cream palette. */
+#panel-messages.messaging-premium .msg-thread-header{
+  background:linear-gradient(135deg,#3C121B,#5A1E2C);color:#FAF3EC;border-bottom:1px solid #E8B84B}
+#panel-messages.messaging-premium .msg-thread-col{border-color:#E8C784;box-shadow:0 4px 18px rgba(60,18,27,0.08)}
+#panel-messages.messaging-premium .msg-conv-item.active{background:rgba(232,184,75,0.14)}
+#panel-messages.messaging-premium .msg-bubble{font-size:.88rem;line-height:1.55}
+#panel-messages.messaging-premium .msg-bubble-row.mine .msg-bubble{
+  background:linear-gradient(135deg,#4A1620,#6B2436);box-shadow:0 3px 10px rgba(60,18,27,0.28)}
+#panel-messages.messaging-premium .msg-bubble-row:not(.mine) .msg-bubble{
+  background:#FFF9EF;border:1px solid #F0DFB8}
+#panel-messages.messaging-premium .msg-seen{color:#E8B84B;font-weight:700}
+#panel-messages.messaging-premium .msg-bubble-row:not(.mine) .msg-bubble-photo,
+#panel-messages.messaging-premium .msg-bubble-row.mine .msg-bubble-photo{
+  padding:.4rem;border-radius:14px;box-shadow:0 5px 16px rgba(60,18,27,0.22)}
+#panel-messages.messaging-premium .msg-bubble-photo img{border-radius:10px;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06)}
+#panel-messages.messaging-premium .msg-input-row{background:linear-gradient(180deg,#FFFCF7,#FAF3EC)}
+#panel-messages.messaging-premium .msg-photo-btn{background:#FFF3DC!important;border:1px solid #E8C784}
 
 /* ── PROFILE DETAIL MODAL ── */
 .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);
@@ -910,6 +939,8 @@ a{text-decoration:none;color:inherit}
             <div class="empty-state"><div class="ei">💬</div>Pick someone from the list to start chatting.</div>
           </div>
           <div class="msg-input-row" id="msg-input-row" style="display:none">
+            <input type="file" id="msg-photo-input" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="sendChatPhoto(this)">
+            <button type="button" class="msg-photo-btn" id="msg-photo-btn" onclick="document.getElementById('msg-photo-input').click()" style="display:none" title="Send a photo (Premium)">📷</button>
             <input type="text" id="msg-input" placeholder="Type a message..." maxlength="2000"
                    onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMessage();}">
             <button id="msg-send-btn" onclick="sendChatMessage()">Send</button>
@@ -1022,6 +1053,7 @@ async function initDashboard() {
   }
   currentMember = result.data;
   localStorage.setItem('sk_member', JSON.stringify(currentMember));
+  applyMessagingPremiumUi();
   renderUserChip();
   initBrowseFilters();
   renderDashboardHome();
@@ -2581,6 +2613,17 @@ async function respondToInterest(interestId, action) {
 var currentChatUuid = null;
 var currentChatName = '';
 
+// Photo sending and read receipts are Premium-only; the richer visual
+// theme is Premium-only too. All three are driven off this one toggle
+// rather than checking currentMember.package separately in each place.
+function applyMessagingPremiumUi() {
+  var isPremium = !!(currentMember && currentMember.package === 'premium');
+  var panel = document.getElementById('panel-messages');
+  if (panel) panel.classList.toggle('messaging-premium', isPremium);
+  var photoBtn = document.getElementById('msg-photo-btn');
+  if (photoBtn) photoBtn.style.display = isPremium ? '' : 'none';
+}
+
 async function loadMessagesPanel() {
   var col = document.getElementById('msg-conv-col');
   col.innerHTML = '<div class="loading-spinner">Loading...</div>';
@@ -2610,7 +2653,8 @@ async function loadMessagesPanel() {
     convos.forEach(function(c) {
       var name = c.display_name || c.full_name || 'Rishta Square Member';
       var unreadBadge = c.unread_count > 0 ? '<span class="msg-conv-unread">' + c.unread_count + '</span>' : '';
-      var preview = (c.last_message_sender_id === currentMember.id ? 'You: ' : '') + (c.last_message || '');
+      var previewText = c.last_message || (c.last_message_photo_url ? '📷 Photo' : '');
+      var preview = (c.last_message_sender_id === currentMember.id ? 'You: ' : '') + previewText;
       html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)">' +
         '<div class="msg-conv-av">👤</div>' +
         '<div class="msg-conv-info">' +
@@ -2680,12 +2724,35 @@ function renderThread(msgs) {
     body.innerHTML = '<div class="empty-state"><div class="ei">👋</div>Say hello! Start the conversation.</div>';
     return;
   }
+
+  // Read receipts are Premium-only, and (like WhatsApp) only shown on the
+  // single most recent message the viewer sent — not repeated on every
+  // earlier read message, which would just be visual clutter given is_read
+  // flips for a whole batch of messages at once when the other side opens
+  // the conversation.
+  var isPremiumViewer = !!(currentMember && currentMember.package === 'premium');
+  var lastMineIdx = -1;
+  msgs.forEach(function(m, idx) { if (m.sender_id === currentMember.id) lastMineIdx = idx; });
+
   var html = '';
-  msgs.forEach(function(m) {
+  msgs.forEach(function(m, idx) {
     var mine = m.sender_id === currentMember.id;
     var time = new Date(m.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    var seenHtml = (mine && isPremiumViewer && idx === lastMineIdx && m.is_read)
+      ? '<span class="msg-seen">✓ Seen</span>' : '';
+
+    var bodyHtml;
+    if (m.photo_url) {
+      bodyHtml =
+        '<img src="' + m.photo_url + '" alt="Photo" onclick="openPhotoLightbox(this.src)">' +
+        (m.content ? '<div class="msg-photo-caption">' + escapeHtml(m.content) + '</div>' : '') +
+        '<div class="msg-bubble-time">' + time + seenHtml + '</div>';
+    } else {
+      bodyHtml = escapeHtml(m.content) + '<div class="msg-bubble-time">' + time + seenHtml + '</div>';
+    }
+
     html += '<div class="msg-bubble-row' + (mine ? ' mine' : '') + '">' +
-      '<div class="msg-bubble">' + escapeHtml(m.content) + '<div class="msg-bubble-time">' + time + '</div></div>' +
+      '<div class="msg-bubble' + (m.photo_url ? ' msg-bubble-photo' : '') + '">' + bodyHtml + '</div>' +
       '</div>';
   });
   body.innerHTML = html;
@@ -2718,6 +2785,66 @@ async function sendChatMessage() {
     openConversation(reopenUuid, reopenName, matchEl);
   } else {
     alert(result.message || 'Could not send message.');
+  }
+}
+
+// Sending a chat photo, Premium-only (the button itself is hidden for Basic
+// members — applyMessagingPremiumUi() — but the backend re-checks too).
+// Two-step, same as the profile photo upload: raw fetch()+FormData to
+// /member/chat-photo (apiCall() always JSON-encodes, so it can't carry a
+// file), then a normal apiCall() to actually attach the URL to a message.
+async function sendChatPhoto(input) {
+  if (!input.files || !input.files[0] || !currentChatUuid) return;
+  var file = input.files[0];
+
+  var allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (allowedTypes.indexOf(file.type) === -1) {
+    alert('Only JPG, PNG and WEBP images are allowed.');
+    input.value = '';
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Photo must be 5MB or smaller.');
+    input.value = '';
+    return;
+  }
+
+  var btn = document.getElementById('msg-photo-btn');
+  if (btn) btn.disabled = true;
+
+  var formData = new FormData();
+  formData.append('photo', file);
+  var token = localStorage.getItem('sk_token');
+
+  try {
+    var uploadRes  = await fetch(API_BASE + '/member/chat-photo', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    });
+    var uploadData = await uploadRes.json();
+    if (!uploadData.success) {
+      alert(uploadData.message || 'Photo upload failed.');
+      return;
+    }
+
+    var sendResult = await apiCall('/messages/send', 'POST', {
+      receiver_uuid: currentChatUuid,
+      photo_url: uploadData.data.photo_url
+    });
+    if (sendResult.success) {
+      var reopenUuid = currentChatUuid, reopenName = currentChatName;
+      await loadMessagesPanel();
+      var matchEl = document.querySelector('.msg-conv-item[data-uuid="' + reopenUuid + '"]');
+      openConversation(reopenUuid, reopenName, matchEl);
+    } else {
+      alert(sendResult.message || 'Could not send photo.');
+    }
+  } catch (err) {
+    alert('Photo upload failed. Please try again.');
+  } finally {
+    input.value = '';
+    if (btn) btn.disabled = false;
   }
 }
 
