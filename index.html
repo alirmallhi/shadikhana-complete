@@ -566,6 +566,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <span class="urdu-only">EN English</span>
     </button>
     <a href="#" id="nav-signin-link" onclick="openModal('login');return false">Sign In</a>
+    <a href="#" id="nav-logout-link" onclick="logout();return false" style="display:none">Log Out</a>
     <a href="#" class="nav-cta" onclick="openModal('register');return false">Register Now</a>
   </div>
   <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">
@@ -577,6 +578,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   <a href="#plans" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
   <a href="#profiles" onclick="document.getElementById('mobileMenu').classList.remove('open')">Browse Profiles</a>
   <a href="#" id="mobile-signin-link" onclick="openModal('login');return false">Sign In</a>
+  <a href="#" id="mobile-logout-link" onclick="logout();return false" style="display:none">Log Out</a>
   <a href="#" onclick="openModal('register');return false" style="color:var(--burgundy);font-weight:700">Register Free →</a>
 </div>
 
@@ -605,6 +607,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <span class="eng-only" id="hero-signin-eng">Sign In</span>
         <span class="urdu-only" id="hero-signin-urdu" style="font-family:'Noto Nastaliq Urdu',serif">سائن ان کریں</span>
       </a>
+      <a href="#" id="hero-logout-link" onclick="logout();return false" style="display:none;align-self:center;font-size:.85rem;color:var(--mid);text-decoration:underline">Log Out</a>
     </div>
     <div class="lahore-badge">
       📍 <span class="eng-only">In-Person Services Available in Lahore</span>
@@ -2439,6 +2442,13 @@ function updateNavForSession() {
     if (heroEng) heroEng.textContent = 'My Dashboard';
     if (heroUrdu) heroUrdu.textContent = 'میرا ڈیش بورڈ';
   }
+
+  // logout() itself comes from api.js (same function the dashboard's
+  // logout button calls) — just unhiding the links here, no reimplementation.
+  ['nav-logout-link', 'mobile-logout-link', 'hero-logout-link'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = '';
+  });
 }
 
 // ══════════════════════════════════════════
