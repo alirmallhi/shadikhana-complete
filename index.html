@@ -565,7 +565,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <span class="eng-only">🇵🇰 اردو</span>
       <span class="urdu-only">EN English</span>
     </button>
-    <a href="#" onclick="openModal('login');return false">Sign In</a>
+    <a href="#" id="nav-signin-link" onclick="openModal('login');return false">Sign In</a>
     <a href="#" class="nav-cta" onclick="openModal('register');return false">Register Now</a>
   </div>
   <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">
@@ -576,7 +576,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   <a href="#how" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
   <a href="#plans" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
   <a href="#profiles" onclick="document.getElementById('mobileMenu').classList.remove('open')">Browse Profiles</a>
-  <a href="#" onclick="openModal('login');return false">Sign In</a>
+  <a href="#" id="mobile-signin-link" onclick="openModal('login');return false">Sign In</a>
   <a href="#" onclick="openModal('register');return false" style="color:var(--burgundy);font-weight:700">Register Free →</a>
 </div>
 
@@ -601,9 +601,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <span class="eng-only">Create Free Profile</span>
         <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">پروفائل بنائیں</span>
       </a>
-      <a href="#" class="btn-outline" onclick="openModal('login');return false">
-        <span class="eng-only">Sign In</span>
-        <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">سائن ان کریں</span>
+      <a href="#" class="btn-outline" id="hero-signin-btn" onclick="openModal('login');return false">
+        <span class="eng-only" id="hero-signin-eng">Sign In</span>
+        <span class="urdu-only" id="hero-signin-urdu" style="font-family:'Noto Nastaliq Urdu',serif">سائن ان کریں</span>
       </a>
     </div>
     <div class="lahore-badge">
@@ -2407,7 +2407,39 @@ document.addEventListener('DOMContentLoaded', function() {
   setPrivacyPreset('standard');
   loadShowcaseProfiles();
   loadSuccessStories();
+  updateNavForSession();
 });
+
+// A logged-in member landing here (e.g. via "Back to Website") shouldn't be
+// prompted to sign in again — swap Sign In for a Dashboard link instead.
+// Reuses isLoggedIn() from api.js rather than re-checking localStorage here.
+function updateNavForSession() {
+  if (typeof isLoggedIn !== 'function' || !isLoggedIn()) return;
+
+  var navLink = document.getElementById('nav-signin-link');
+  if (navLink) {
+    navLink.href = '/dashboard.html';
+    navLink.removeAttribute('onclick');
+    navLink.textContent = 'My Dashboard';
+  }
+
+  var mobileLink = document.getElementById('mobile-signin-link');
+  if (mobileLink) {
+    mobileLink.href = '/dashboard.html';
+    mobileLink.removeAttribute('onclick');
+    mobileLink.textContent = 'My Dashboard';
+  }
+
+  var heroBtn = document.getElementById('hero-signin-btn');
+  if (heroBtn) {
+    heroBtn.href = '/dashboard.html';
+    heroBtn.removeAttribute('onclick');
+    var heroEng = document.getElementById('hero-signin-eng');
+    var heroUrdu = document.getElementById('hero-signin-urdu');
+    if (heroEng) heroEng.textContent = 'My Dashboard';
+    if (heroUrdu) heroUrdu.textContent = 'میرا ڈیش بورڈ';
+  }
+}
 
 // ══════════════════════════════════════════
 //  LIVE PROFILE SHOWCASE — real members, never real photo/contact for anonymous visitors
