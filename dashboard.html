@@ -41,6 +41,10 @@ a{text-decoration:none;color:inherit}
 .user-chip-name{font-size:.84rem;font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .logout-btn{background:none;border:none;color:#E5C9BF;font-size:.8rem;cursor:pointer;padding:.4rem .6rem}
 .logout-btn:hover{color:#E8B84B}
+/* On mobile the topbar has no room for a separate Logout control once the
+   member name is in play — Logout moves into the sidebar/hamburger menu
+   instead (see #sidebar-logout-item, shown only under the 900px breakpoint). */
+#sidebar-logout-item{display:none}
 
 /* ── LAYOUT ── */
 .layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px)}
@@ -310,6 +314,9 @@ a{text-decoration:none;color:inherit}
   .sidebar-backdrop{display:block;position:fixed;top:64px;left:0;right:0;bottom:0;
     background:rgba(0,0,0,0.4);z-index:60;opacity:0;pointer-events:none;transition:opacity .25s ease}
   .sidebar-backdrop.open{opacity:1;pointer-events:auto}
+  .logout-btn{display:none}
+  #sidebar-logout-item{display:flex}
+  .user-chip-name{max-width:70px}
   .stats-grid{grid-template-columns:1fr 1fr;order:1}
   .profiles-grid{grid-template-columns:1fr 1fr}
   .quick-actions{grid-template-columns:1fr}
@@ -396,6 +403,9 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="nav-item" onclick="window.location.href='/'">
       <span class="nav-item-icon">🌐</span>Back to Website
+    </div>
+    <div class="nav-item" id="sidebar-logout-item" onclick="handleLogout()">
+      <span class="nav-item-icon">🚪</span>Logout
     </div>
   </aside>
 
@@ -2765,14 +2775,8 @@ async function respondPhotoRevealAction(requestId, action, btn) {
   }
 }
 
-// ══════════════════════════════════════════
-//  LOGOUT
-// ══════════════════════════════════════════
-function handleLogout() {
-  if (confirm('Are you sure you want to log out?')) {
-    logout();
-  }
-}
+// handleLogout() itself lives in api.js now — shared with the homepage so
+// the confirmation dialog behaves identically in both places.
 </script>
 </body>
 </html>

@@ -306,6 +306,14 @@ function getCurrentMember() {
   return data ? JSON.parse(data) : null;
 }
 
+// Shared by every page's Logout control (dashboard topbar/sidebar, homepage
+// nav/hero) so the confirmation prompt behaves identically everywhere.
+function handleLogout() {
+  if (confirm('Are you sure you want to log out?')) {
+    logout();
+  }
+}
+
 function logout() {
   if (typeof skUnregisterPush === 'function') skUnregisterPush();
   if (typeof skMirrorSession === 'function') skMirrorSession(false);

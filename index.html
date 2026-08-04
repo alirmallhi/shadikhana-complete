@@ -566,8 +566,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <span class="urdu-only">EN English</span>
     </button>
     <a href="#" id="nav-signin-link" onclick="openModal('login');return false">Sign In</a>
-    <a href="#" id="nav-logout-link" onclick="logout();return false" style="display:none">Log Out</a>
-    <a href="#" class="nav-cta" onclick="openModal('register');return false">Register Now</a>
+    <a href="#" class="nav-cta" id="nav-cta-btn" onclick="openModal('register');return false">Register Now</a>
   </div>
   <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -599,7 +598,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">شادی میچ پاکستانی خاندانوں کو جوڑتا ہے — ملک بھر میں اور بیرون ملک بھی۔</span>
     </p>
     <div class="hero-actions">
-      <a href="#" class="btn-primary" onclick="openModal('register');return false">
+      <a href="#" class="btn-primary" id="hero-create-profile-btn" onclick="openModal('register');return false">
         <span class="eng-only">Create Free Profile</span>
         <span class="urdu-only" style="font-family:'Noto Nastaliq Urdu',serif">پروفائل بنائیں</span>
       </a>
@@ -607,7 +606,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
         <span class="eng-only" id="hero-signin-eng">Sign In</span>
         <span class="urdu-only" id="hero-signin-urdu" style="font-family:'Noto Nastaliq Urdu',serif">سائن ان کریں</span>
       </a>
-      <a href="#" id="hero-logout-link" onclick="logout();return false" style="display:none;align-self:center;font-size:.85rem;color:var(--mid);text-decoration:underline">Log Out</a>
     </div>
     <div class="lahore-badge">
       📍 <span class="eng-only">In-Person Services Available in Lahore</span>
@@ -2443,12 +2441,28 @@ function updateNavForSession() {
     if (heroUrdu) heroUrdu.textContent = 'میرا ڈیش بورڈ';
   }
 
-  // logout() itself comes from api.js (same function the dashboard's
-  // logout button calls) — just unhiding the links here, no reimplementation.
-  ['nav-logout-link', 'mobile-logout-link', 'hero-logout-link'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.style.display = '';
-  });
+  // The mobile menu keeps its own separate Log Out link (no CTA button to
+  // repurpose there), so just unhide it.
+  var mobileLogoutLink = document.getElementById('mobile-logout-link');
+  if (mobileLogoutLink) mobileLogoutLink.style.display = '';
+
+  // No point showing "Create Free Profile" to someone who already has one.
+  var heroCreateBtn = document.getElementById('hero-create-profile-btn');
+  if (heroCreateBtn) heroCreateBtn.style.display = 'none';
+
+  // Register Now is the most prominent action in the header — once logged
+  // in, that slot becomes Log Out instead (same button, same styling) so
+  // there's a single Log Out control, not a second small link next to it.
+  // handleLogout() (confirm dialog + logout()) comes from api.js, shared
+  // with the dashboard's own Logout button — not reimplemented here.
+  var navCtaBtn = document.getElementById('nav-cta-btn');
+  if (navCtaBtn) {
+    navCtaBtn.textContent = 'Log Out';
+    navCtaBtn.onclick = function(e) {
+      e.preventDefault();
+      handleLogout();
+    };
+  }
 }
 
 // ══════════════════════════════════════════
