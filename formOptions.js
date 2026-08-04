@@ -94,3 +94,29 @@ function rsPopulateSelect(selectEl, options) {
     }
   });
 }
+
+// ── SECT DEPENDS ON RELIGION ──
+// Sect only has real, meaningful data for Islam (RS_SECT is entirely
+// Sunni/Shia/Ahmadi/etc.) — for every other religion there's no such
+// concept, so the field is hidden and any previously selected value is
+// cleared, rather than showing Islam's sect list or a dropdown with no
+// options. Shared by registration, profile edit, and the Browse filter so
+// all three stay in sync with RS_SECT instead of three separate copies of
+// this logic drifting apart.
+// `container`, if given, is what actually gets hidden/shown instead of the
+// select itself — for forms where Sect has its own <label> that would
+// otherwise be left dangling with nothing under it (Browse's filter bar
+// has no per-field labels, so it can omit this).
+function rsSyncSectToReligion(religionSelect, sectSelect, container) {
+  if (!religionSelect || !sectSelect) return;
+  var target = container || sectSelect;
+  if (religionSelect.value === 'Islam') {
+    if (sectSelect.options.length <= 1 && typeof RS_SECT !== 'undefined') {
+      rsPopulateSelect(sectSelect, RS_SECT);
+    }
+    target.style.display = '';
+  } else {
+    sectSelect.value = '';
+    target.style.display = 'none';
+  }
+}

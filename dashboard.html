@@ -285,6 +285,15 @@ a{text-decoration:none;color:inherit}
 .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);
   align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
 .overlay.open{display:flex}
+
+/* ── FULL-SIZE PHOTO VIEW ── */
+.photo-lightbox{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,8,12,0.94);
+  align-items:center;justify-content:center;padding:2.5rem 1.5rem;cursor:pointer}
+.photo-lightbox.open{display:flex}
+.photo-lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;cursor:default}
+.photo-lightbox-close{position:absolute;top:1.2rem;right:1.2rem;background:rgba(255,255,255,0.15);
+  color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;line-height:1}
 .detail-modal{background:#fff;border-radius:20px;padding:2rem;max-width:540px;width:100%;position:relative}
 .detail-close{position:absolute;top:1.1rem;right:1.1rem;background:var(--light);border:none;
   border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem}
@@ -590,9 +599,9 @@ a{text-decoration:none;color:inherit}
           <div class="form-section-label">Religious Practice</div>
           <div class="form-row">
             <div class="form-group"><label>Religion</label>
-              <select id="p-religion"><option value="">Select</option></select>
+              <select id="p-religion" onchange="rsSyncSectToReligion(this, document.getElementById('p-sect'), document.getElementById('p-sect-group'))"><option value="">Select</option></select>
             </div>
-            <div class="form-group"><label>Sect</label>
+            <div class="form-group" id="p-sect-group" style="display:none"><label>Sect</label>
               <select id="p-sect"><option value="">Select</option></select>
             </div>
           </div>
@@ -974,6 +983,12 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
+<!-- FULL-SIZE PHOTO VIEW -->
+<div class="photo-lightbox" id="photo-lightbox" onclick="closePhotoLightbox()">
+  <button class="photo-lightbox-close" onclick="event.stopPropagation();closePhotoLightbox()">✕</button>
+  <img id="photo-lightbox-img" src="" alt="Full-size photo">
+</div>
+
 <script src="/capacitor-bridge.js"></script>
 <script src="/api.js"></script>
 <script src="/passwordRules.js"></script>
@@ -1237,19 +1252,20 @@ function loadProfileForm() {
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
-                'piety_level','religion','sect','ethnicity','caste','education'];
+                'piety_level','religion','ethnicity','caste','education'];
 
   // Guarded by options.length <= 1 (just the static placeholder) — this
   // panel's loadProfileForm() re-runs every time the member navigates back
   // to My Profile, and rsPopulateSelect() only ever appends, never clears.
   // Without this guard each revisit re-appends the full option list on top
   // of what's already there (same fix already applied to the Browse
-  // Religion/Sect filters for the same reason).
+  // Religion/Sect filters for the same reason). Sect is deliberately not
+  // here — it's populated dynamically by rsSyncSectToReligion() below,
+  // based on whatever Religion turns out to be.
   if (typeof rsPopulateSelect === 'function') {
     [
       ['p-piety_level', RS_PIETY],
       ['p-religion',    RS_RELIGION],
-      ['p-sect',        RS_SECT],
       ['p-ethnicity',   RS_ETHNICITY],
       ['p-caste',       RS_CASTE],
       ['p-education',   RS_EDUCATION],
@@ -1279,6 +1295,15 @@ function loadProfileForm() {
     var el = document.getElementById('p-' + f);
     if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
   });
+
+  // Sect depends on Religion (just set above), so it has to be synced —
+  // and its value applied — after the fact, not from the generic loop.
+  if (typeof rsSyncSectToReligion === 'function') {
+    rsSyncSectToReligion(document.getElementById('p-religion'), document.getElementById('p-sect'), document.getElementById('p-sect-group'));
+  }
+  if (currentMember.sect && currentMember.sect !== '—') {
+    document.getElementById('p-sect').value = currentMember.sect;
+  }
 
   ['priv_contact', 'priv_family', 'priv_income', 'priv_location', 'priv_name', 'priv_marital'].forEach(function(f) {
     var el = document.getElementById('p-' + f);
@@ -1635,6 +1660,33 @@ function avatarPlaceholderHtml(name, radius) {
     'font-family:\'Playfair Display\',serif;font-weight:700;font-size:2.2rem">' + escapeHtml(initial) + '</div>';
 }
 
+// Builds the same photo/placeholder markup every card already built, plus a
+// click-to-expand wrapper — but only around a real, unlocked photo. A
+// locked (blurred/hidden) photo or the placeholder stays exactly as it was:
+// nothing to open full-size, since the viewer isn't actually allowed to see
+// it yet. `placeholder`, if given, overrides the default avatar-initial
+// placeholder (Compliments cards use a plain 👤 emoji instead).
+function profilePhotoHtml(p, radius, placeholder) {
+  if (!p.photo_url) return placeholder !== undefined ? placeholder : avatarPlaceholderHtml(p.display_name || p.full_name, radius);
+  var radiusStyle = radius ? 'border-radius:' + radius + 'px;' : '';
+  var img = '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;' + radiusStyle + '">';
+  if (p.photo_locked) return img;
+  return '<div style="width:100%;height:100%;cursor:pointer" onclick="event.stopPropagation();openPhotoLightbox(this.querySelector(\'img\').src)">' + img + '</div>';
+}
+
+// Full-size photo view — no zoom, no swipe/carousel, just tap-anywhere
+// (or the close button) to dismiss. Shared by every card/detail view above
+// that shows an already-visible (non-blurred) member photo.
+function openPhotoLightbox(url) {
+  if (!url) return;
+  document.getElementById('photo-lightbox-img').src = url;
+  document.getElementById('photo-lightbox').classList.add('open');
+}
+function closePhotoLightbox() {
+  document.getElementById('photo-lightbox').classList.remove('open');
+  document.getElementById('photo-lightbox-img').src = '';
+}
+
 function premiumBadgeHtml(pkg) {
   return pkg === 'premium' ? '<span class="pc-premium-badge">⭐ Premium</span>' : '';
 }
@@ -1675,17 +1727,11 @@ function initBrowseFilters() {
 // shown that same Islam-specific sect list at registration (Sunni/Shia/
 // Ahmadi/etc.), so filtering non-Muslim members by it would silently return
 // misleading empty results. Hidden until Religion = Islam is selected.
+// (rsSyncSectToReligion lives in formOptions.js — shared with registration
+// and profile-edit's own Religion/Sect fields.)
 function updateBrowseSectFilter() {
-  var religion    = document.getElementById('filter-religion').value;
-  var sectSelect  = document.getElementById('filter-sect');
-  if (religion === 'Islam') {
-    if (sectSelect.options.length <= 1 && typeof RS_SECT !== 'undefined' && typeof rsPopulateSelect === 'function') {
-      rsPopulateSelect(sectSelect, RS_SECT);
-    }
-    sectSelect.style.display = '';
-  } else {
-    sectSelect.value = '';
-    sectSelect.style.display = 'none';
+  if (typeof rsSyncSectToReligion === 'function') {
+    rsSyncSectToReligion(document.getElementById('filter-religion'), document.getElementById('filter-sect'));
   }
 }
 
@@ -1745,7 +1791,7 @@ async function loadBrowseProfiles(page) {
   });
 
   var cardsHtml = profiles.map(function(p) {
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
+    var photo = profilePhotoHtml(p);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var premiumBadge = premiumBadgeHtml(p.package);
     var compatBadge = matchBadgeHtml(p.compatibility_score);
@@ -1870,7 +1916,7 @@ async function viewProfileDetail(uuid) {
     return;
   }
   var p = result.data;
-  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : avatarPlaceholderHtml(p.display_name || p.full_name, 14);
+  var photo = profilePhotoHtml(p, 14);
   var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
   var premiumBadge = premiumBadgeHtml(p.package);
   var saveIcon = p.is_saved ? '❤️' : '🤍';
@@ -1981,7 +2027,7 @@ async function previewMyProfile() {
     return;
   }
   var p = result.data;
-  var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">' : avatarPlaceholderHtml(p.display_name || p.full_name, 14);
+  var photo = profilePhotoHtml(p, 14);
 
   var prefParts = [];
   if (p.partner_age_min && p.partner_age_max) prefParts.push(p.partner_age_min + '–' + p.partner_age_max + ' years old');
@@ -2185,7 +2231,7 @@ async function loadTodaysPicks() {
   card.style.display = 'block';
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
+    var photo = profilePhotoHtml(p);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
@@ -2217,7 +2263,7 @@ async function loadMyMatches() {
 
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
+    var photo = profilePhotoHtml(p);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
@@ -2256,7 +2302,7 @@ async function loadSavedProfiles() {
 
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
+    var photo = profilePhotoHtml(p);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var activity = formatLastActive(p.last_active_at);
     html +=
@@ -2300,7 +2346,7 @@ async function loadProfileViewers() {
 
   var html = '<div class="profiles-grid">';
   viewers.forEach(function(p) {
-    var photo = p.photo_url ? '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover">' : avatarPlaceholderHtml(p.display_name || p.full_name);
+    var photo = profilePhotoHtml(p);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
     var activity = formatLastActive(p.last_viewed_at);
     html +=
@@ -2429,7 +2475,7 @@ async function loadCompliments() {
 
   var html = result.data.map(function(c) {
     var initial = '👤';
-    var photo = c.photo_url ? '<img src="' + c.photo_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:10px">' : initial;
+    var photo = profilePhotoHtml(c, 10, initial);
     var name = c.display_name || c.full_name || 'Rishta Square Member';
     var date = new Date(c.created_at).toLocaleDateString();
     return '<div class="interest-row">' +

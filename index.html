@@ -1215,11 +1215,11 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
       <div class="form-section-label">Religion & Community</div>
       <div class="form-row">
         <div class="form-group"><label>Religion<span class="required-star">*</span></label>
-          <select id="f-religion">
+          <select id="f-religion" onchange="rsSyncSectToReligion(this, document.getElementById('f-sect'), document.getElementById('f-sect-group'))">
             <option value="">Select Religion</option>
           </select>
         </div>
-        <div class="form-group"><label>Sect<span class="required-star">*</span></label>
+        <div class="form-group" id="f-sect-group" style="display:none"><label>Sect<span class="required-star">*</span></label>
           <select id="f-sect">
             <option value="">Select Sect</option>
           </select>
@@ -2587,7 +2587,7 @@ rsPopulateSelect(document.getElementById('f-children'), RS_CHILDREN);
 rsPopulateSelect(document.getElementById('f-height'), RS_HEIGHT);
 rsPopulateSelect(document.getElementById('f-complexion'), RS_COMPLEXION);
 rsPopulateSelect(document.getElementById('f-religion'), RS_RELIGION);
-rsPopulateSelect(document.getElementById('f-sect'), RS_SECT);
+rsSyncSectToReligion(document.getElementById('f-religion'), document.getElementById('f-sect'), document.getElementById('f-sect-group'));
 rsPopulateSelect(document.getElementById('f-ethnicity'), RS_ETHNICITY);
 rsPopulateSelect(document.getElementById('f-caste'), RS_CASTE);
 rsPopulateSelect(document.getElementById('f-piety'), RS_PIETY);
