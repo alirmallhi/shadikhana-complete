@@ -292,23 +292,29 @@ a{text-decoration:none;color:inherit}
    initDashboard() based on currentMember.package) so Basic members' chat UI
    is completely untouched — richer accents on the sender's own bubbles, a
    framed/elevated treatment for shared photos, and a touch more breathing
-   room, all within the site's existing maroon/cream palette. */
+   room, all within the site's existing maroon/cream palette.
+   Every declaration here is !important: these selectors already have the
+   highest specificity in this stylesheet (verified against the actual
+   generated markup — nothing else targets these classes with equal or
+   higher specificity), but marking them !important too means they're
+   guaranteed to win outright rather than depending on winning a
+   specificity contest against anything not yet accounted for. */
 #panel-messages.messaging-premium .msg-thread-header{
-  background:linear-gradient(135deg,#3C121B,#5A1E2C);color:#FAF3EC;border-bottom:1px solid #E8B84B}
-#panel-messages.messaging-premium .msg-thread-col{border-color:#E8C784;box-shadow:0 4px 18px rgba(60,18,27,0.08)}
-#panel-messages.messaging-premium .msg-conv-item.active{background:rgba(232,184,75,0.14)}
-#panel-messages.messaging-premium .msg-bubble{font-size:.88rem;line-height:1.55}
+  background:linear-gradient(135deg,#3C121B,#5A1E2C)!important;color:#FAF3EC!important;border-bottom:1px solid #E8B84B!important}
+#panel-messages.messaging-premium .msg-thread-col{border-color:#E8C784!important;box-shadow:0 4px 18px rgba(60,18,27,0.08)!important}
+#panel-messages.messaging-premium .msg-conv-item.active{background:rgba(232,184,75,0.14)!important}
+#panel-messages.messaging-premium .msg-bubble{font-size:.88rem!important;line-height:1.55!important}
 #panel-messages.messaging-premium .msg-bubble-row.mine .msg-bubble{
-  background:linear-gradient(135deg,#4A1620,#6B2436);box-shadow:0 3px 10px rgba(60,18,27,0.28)}
+  background:linear-gradient(135deg,#4A1620,#6B2436)!important;box-shadow:0 3px 10px rgba(60,18,27,0.28)!important}
 #panel-messages.messaging-premium .msg-bubble-row:not(.mine) .msg-bubble{
-  background:#FFF9EF;border:1px solid #F0DFB8}
-#panel-messages.messaging-premium .msg-seen{color:#E8B84B;font-weight:700}
+  background:#FFF9EF!important;border:1px solid #F0DFB8!important}
+#panel-messages.messaging-premium .msg-seen{color:#E8B84B!important;font-weight:700!important}
 #panel-messages.messaging-premium .msg-bubble-row:not(.mine) .msg-bubble-photo,
 #panel-messages.messaging-premium .msg-bubble-row.mine .msg-bubble-photo{
-  padding:.4rem;border-radius:14px;box-shadow:0 5px 16px rgba(60,18,27,0.22)}
-#panel-messages.messaging-premium .msg-bubble-photo img{border-radius:10px;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06)}
-#panel-messages.messaging-premium .msg-input-row{background:linear-gradient(180deg,#FFFCF7,#FAF3EC)}
-#panel-messages.messaging-premium .msg-photo-btn{background:#FFF3DC!important;border:1px solid #E8C784}
+  padding:.4rem!important;border-radius:14px!important;box-shadow:0 5px 16px rgba(60,18,27,0.22)!important}
+#panel-messages.messaging-premium .msg-bubble-photo img{border-radius:10px!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06)!important}
+#panel-messages.messaging-premium .msg-input-row{background:linear-gradient(180deg,#FFFCF7,#FAF3EC)!important}
+#panel-messages.messaging-premium .msg-photo-btn{background:#FFF3DC!important;border:1px solid #E8C784!important}
 
 /* ── PROFILE DETAIL MODAL ── */
 .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);
