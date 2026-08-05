@@ -2409,9 +2409,16 @@ async function viewConnectionMessages(matchId, nameA, nameB) {
     body.innerHTML = msgs.map(function(m) {
       var senderName = m.sender_id === data.data.member_a_id ? data.data.member_a_name : data.data.member_b_name;
       var timeStr = new Date(m.created_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      // Photo messages (Premium chat photo sharing) — same tap-to-fullsize
+      // lightbox already used for profile photos elsewhere in this admin
+      // page, consistent with how photos display in the member-facing chat.
+      var bodyHtml = m.photo_url
+        ? '<img src="' + m.photo_url + '" alt="Photo" style="max-width:220px;max-height:220px;border-radius:10px;object-fit:cover;cursor:pointer" onclick="openPhotoLightbox(this.src)">' +
+          (m.content ? '<div style="font-size:.9rem;margin-top:.4rem">' + escapeHtml(m.content) + '</div>' : '')
+        : '<div style="font-size:.9rem">' + escapeHtml(m.content) + '</div>';
       return '<div style="padding:.8rem 1rem;border-bottom:1px solid var(--light)">' +
         '<div style="font-size:.78rem;color:var(--mid);margin-bottom:.2rem"><strong style="color:var(--charcoal)">' + senderName + '</strong> · ' + timeStr + '</div>' +
-        '<div style="font-size:.9rem">' + escapeHtml(m.content) + '</div>' +
+        bodyHtml +
       '</div>';
     }).join('');
   } catch (err) {
