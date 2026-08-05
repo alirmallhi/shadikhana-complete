@@ -282,7 +282,7 @@ async function handleLogin() {
       window.location.href = '/dashboard.html';
     } else {
       if (errorEl) {
-        errorEl.textContent = result.message || 'Invalid email or password. Please try again.';
+        errorEl.textContent = result.message || 'Invalid login or password. Please try again.';
         errorEl.style.display = 'block';
       }
     }
