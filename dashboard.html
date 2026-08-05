@@ -377,6 +377,7 @@ a{text-decoration:none;color:inherit}
   #quick-actions-card{order:2}
   #completion-checklist-card{order:3}
   #todays-picks-card{order:4}
+  #finding-match-card{order:5}
 }
 @media(max-width:600px){
   .interest-row{flex-wrap:wrap}
@@ -426,7 +427,7 @@ a{text-decoration:none;color:inherit}
       <span class="nav-item-icon">🔍</span>Browse Profiles
     </div>
     <div class="nav-item" onclick="showPanel('matches', this)">
-      <span class="nav-item-icon">💍</span>My Matches
+      <span class="nav-item-icon">💍</span>Matchmaker's Picks
     </div>
     <div class="nav-item" onclick="showPanel('interests', this)">
       <span class="nav-item-icon">💌</span>Interests
@@ -501,7 +502,7 @@ a{text-decoration:none;color:inherit}
         <div class="stat-card">
           <div class="stat-icon">💍</div>
           <div class="stat-value" id="stat-matches">0</div>
-          <div class="stat-label">Recommended Matches</div>
+          <div class="stat-label">Matchmaker's Picks</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">✅</div>
@@ -534,11 +535,11 @@ a{text-decoration:none;color:inherit}
           </div>
           <div class="qa-btn" onclick="showPanel('matches')">
             <div class="qa-icon">💍</div>
-            <div class="qa-label">View My Matches</div>
+            <div class="qa-label">View Matchmaker's Picks</div>
           </div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" id="finding-match-card">
         <div class="card-header"><span class="card-title">💡 Finding the Right Match</span></div>
         <div style="padding:1.2rem 1.5rem 1.5rem">
           <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1rem">
@@ -878,7 +879,7 @@ a{text-decoration:none;color:inherit}
 
     <!-- ══════════ MY MATCHES ══════════ -->
     <div class="panel" id="panel-matches">
-      <h1 class="page-title">My Recommended Matches</h1>
+      <h1 class="page-title">Matchmaker's Picks</h1>
       <p class="page-sub">Profiles our matchmakers have specially recommended for you</p>
 
       <div id="matches-results">
