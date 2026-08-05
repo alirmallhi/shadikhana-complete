@@ -743,7 +743,7 @@ function dismissLaunchBanner() {
         <li class="disabled">Dedicated matchmaker</li>
         <li class="disabled">In-person consultation &amp; arranged meet-ups</li>
       </ul>
-      <button class="btn-plan" onclick="openModal('register')">Register – Basic · PKR 10,000</button>
+      <button class="btn-plan" onclick="openModal('register','basic')">Register – Basic · PKR 10,000</button>
     </div>
     <!-- Premium -->
     <div class="plan-card featured fade-in">
@@ -764,7 +764,7 @@ function dismissLaunchBanner() {
         <li>In-person office consultation — Lahore</li>
         <li>WhatsApp &amp; call concierge support</li>
       </ul>
-      <button class="btn-plan" onclick="openModal('register')">Register – Premium · PKR 35,000</button>
+      <button class="btn-plan" onclick="openModal('register','premium')">Register – Premium · PKR 35,000</button>
     </div>
   </div>
 
@@ -1089,7 +1089,7 @@ function dismissLaunchBanner() {
         <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Premium Registration</div>
         <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 35,000 one-time registration (non-refundable) &nbsp;·&nbsp; PKR 125,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
       </div>
-      <a href="#" class="btn-primary" onclick="openModal('register');return false" style="background:linear-gradient(135deg,#2196F3,#0D6EBE);color:#fff;font-weight:700;white-space:nowrap;flex-shrink:0">
+      <a href="#" class="btn-primary" onclick="openModal('register','premium');return false" style="background:linear-gradient(135deg,#2196F3,#0D6EBE);color:#fff;font-weight:700;white-space:nowrap;flex-shrink:0">
         Register Premium →
       </a>
     </div>
@@ -1164,6 +1164,12 @@ function dismissLaunchBanner() {
         <div class="step-pill pending" id="sp6"><div class="step-pill-num"><span>6</span></div>Payment</div>
       </div>
     </div>
+
+    <!-- Shown/hidden by applyPreselectedPlan() — persists across all 6
+         steps (not just step 1) so there's no point in the flow where
+         someone who clicked a Premium-specific CTA is left wondering
+         whether their choice actually carried through. -->
+    <div id="reg-plan-banner" style="display:none;background:linear-gradient(135deg,rgba(33,150,243,0.12),rgba(13,110,190,0.08));border:1.5px solid rgba(33,150,243,0.35);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1.2rem;font-size:.88rem;line-height:1.5;color:var(--charcoal)"></div>
 
     <!-- ── STEP 1: Account & Contact ── -->
     <div id="reg-step-1">
@@ -1756,7 +1762,7 @@ function dismissLaunchBanner() {
       <h2 class="modal-title">Choose Your Package</h2>
       <p class="modal-sub">One-time registration fee (non-refundable). No monthly charges — ever.</p>
 
-      <div onclick="selectPlan(this,'basic')" class="plan-select-card selected">
+      <div onclick="selectPlan(this,'basic')" class="plan-select-card selected" data-plan="basic">
         <input type="radio" name="pkg" value="basic" checked>
         <div class="psc-info">
           <div class="psc-name">🌱 Basic</div>
@@ -1764,7 +1770,7 @@ function dismissLaunchBanner() {
           <div class="psc-desc">Core access · Success fee on match: PKR 65,000 · Total if matched: PKR 75,000</div>
         </div>
       </div>
-      <div onclick="selectPlan(this,'premium')" class="plan-select-card">
+      <div onclick="selectPlan(this,'premium')" class="plan-select-card" data-plan="premium">
         <input type="radio" name="pkg" value="premium">
         <div class="psc-info">
           <div class="psc-name">⭐ Premium</div>
@@ -2213,12 +2219,45 @@ function toggleLang() {
 // ══════════════════════════════════════════
 //  MODAL OPEN / CLOSE
 // ══════════════════════════════════════════
-function openModal(id) {
+// plan, for the register modal specifically, is optional and always
+// resolves to 'basic' or 'premium' — every caller that doesn't care
+// (generic "Register Now" links) just omits it, which resets to Basic
+// rather than carrying over whatever was selected the last time the
+// modal was open.
+function openModal(id, plan) {
   var el = document.getElementById('modal-' + id);
   if (el) {
     el.classList.add('open');
     el.scrollTop = 0;
     document.body.style.overflow = 'hidden';
+  }
+  if (id === 'register') applyPreselectedPlan(plan || 'basic');
+}
+
+// Pre-selects step 5's plan card/radio and shows a persistent confirmation
+// banner (visible across all 6 steps, not just step 1) so someone who
+// clicked a Premium-specific CTA — e.g. the Premium Registration button,
+// or a ?package=premium link — isn't left wondering which tier they're
+// actually signing up for until they reach step 5.
+function applyPreselectedPlan(plan) {
+  if (plan !== 'premium') plan = 'basic';
+  selectedPlan = plan;
+
+  document.querySelectorAll('.plan-select-card').forEach(function(c) { c.classList.remove('selected'); });
+  var card = document.querySelector('.plan-select-card[data-plan="' + plan + '"]');
+  if (card) {
+    card.classList.add('selected');
+    var radio = card.querySelector('input[type=radio]');
+    if (radio) radio.checked = true;
+  }
+
+  var banner = document.getElementById('reg-plan-banner');
+  if (!banner) return;
+  if (plan === 'premium') {
+    banner.style.display = 'block';
+    banner.innerHTML = '🌟 You\'re registering for <strong>Premium</strong> — PKR 35,000 registration + PKR 125,000 success fee on a confirmed match only.';
+  } else {
+    banner.style.display = 'none';
   }
 }
 function closeModal(id) {
@@ -2464,6 +2503,15 @@ document.addEventListener('DOMContentLoaded', function() {
   loadShowcaseProfiles();
   loadSuccessStories();
   updateNavForSession();
+
+  // Supports deep-linking straight into registration pre-set to a specific
+  // package — e.g. rishtasquare.com/?package=premium from an ad/WhatsApp
+  // link — not just the on-page Premium buttons, which pass the plan
+  // directly via openModal('register','premium') instead.
+  var pkgParam = new URLSearchParams(window.location.search).get('package');
+  if (pkgParam === 'premium' || pkgParam === 'basic') {
+    openModal('register', pkgParam);
+  }
 });
 
 // A logged-in member landing here (e.g. via "Back to Website") shouldn't be
