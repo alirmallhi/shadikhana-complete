@@ -15,7 +15,14 @@
 (function () {
   var style = document.createElement('style');
   style.textContent =
-    '.photo-lightbox{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,8,12,0.94);' +
+    // z-index has to clear the highest overlay in either host page —
+    // admin.html's own profile-detail modal (.admin-modal-overlay, and
+    // #admin-login-gate) both sit at 9999, which is what was trapping the
+    // lightbox behind that modal instead of on top of it. Set comfortably
+    // above that (dashboard.html's own modals only go up to 200) so the
+    // lightbox is reliably the topmost layer regardless of which page/
+    // modal it's opened from.
+    '.photo-lightbox{display:none;position:fixed;inset:0;z-index:100000;background:rgba(10,8,12,0.94);' +
     'align-items:center;justify-content:center;padding:2.5rem 1.5rem;cursor:pointer}' +
     '.photo-lightbox.open{display:flex}' +
     '.photo-lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;cursor:default}' +
