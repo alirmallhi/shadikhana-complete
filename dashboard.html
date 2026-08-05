@@ -369,14 +369,19 @@ a{text-decoration:none;color:inherit}
   .logout-btn{display:none}
   #sidebar-logout-item{display:flex}
   .user-chip-name{max-width:70px}
-  .stats-grid{grid-template-columns:1fr 1fr;order:1}
+  .stats-grid{grid-template-columns:1fr 1fr;order:3}
   .profiles-grid{grid-template-columns:1fr 1fr}
   .quick-actions{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
+  /* Desktop keeps DOM order (stats first) — this reordering is mobile-only.
+     Quick Actions and Today's Picks are the actionable content, so they
+     move above the stats grid (mostly zeros for new members, pushing
+     everything useful far down the page otherwise); Finding the Right
+     Match stays last on both. */
   #panel-home.active{display:flex;flex-direction:column}
-  #quick-actions-card{order:2}
-  #completion-checklist-card{order:3}
-  #todays-picks-card{order:4}
+  #quick-actions-card{order:1}
+  #todays-picks-card{order:2}
+  #completion-checklist-card{order:4}
   #finding-match-card{order:5}
 }
 @media(max-width:600px){
@@ -1753,6 +1758,14 @@ function premiumBadgeHtml(pkg) {
   return pkg === 'premium' ? '<span class="pc-premium-badge">★ Premium</span>' : '';
 }
 
+// Premium always leads, Verified follows — the paid tier indicator gets
+// visual priority over everything else. Shared here so every card stays
+// consistent instead of each one concatenating badges in its own order.
+function profileBadgesHtml(p) {
+  var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+  return premiumBadgeHtml(p.package) + verifiedBadge;
+}
+
 function matchBadgeHtml(score) {
   if (score == null) return '';
   var tier = score >= 80 ? 'pc-match-high' : (score >= 65 ? 'pc-match-mid' : 'pc-match-low');
@@ -1854,14 +1867,12 @@ async function loadBrowseProfiles(page) {
 
   var cardsHtml = profiles.map(function(p) {
     var photo = profilePhotoHtml(p);
-    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
-    var premiumBadge = premiumBadgeHtml(p.package);
     var compatBadge = matchBadgeHtml(p.compatibility_score);
     var activity = formatLastActive(p.last_active_at);
     var saveIcon = p.is_saved ? '❤️' : '🤍';
     return (
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + compatBadge + '</div>' +
+      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + profileBadgesHtml(p) + compatBadge + '</div>' +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
       '</div>' +
       '<div class="pc-body">' +
@@ -1979,8 +1990,6 @@ async function viewProfileDetail(uuid) {
   }
   var p = result.data;
   var photo = profilePhotoHtml(p, 14, undefined, true);
-  var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
-  var premiumBadge = premiumBadgeHtml(p.package);
   var saveIcon = p.is_saved ? '❤️' : '🤍';
   var saveBtn = '<button class="pc-save-btn" onclick="toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>';
 
@@ -2054,7 +2063,7 @@ async function viewProfileDetail(uuid) {
     compatScoreBadge +
     matchBadge +
     guardianBadge +
-    '<div class="detail-photo">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + '</div>' + saveBtn + '</div>' +
+    '<div class="detail-photo">' + photo + '<div class="pc-badges-top">' + profileBadgesHtml(p) + '</div>' + saveBtn + '</div>' +
     photoRevealBtn +
     '<div class="detail-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
     '<div class="detail-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.marital_status || '—') + '</div>' +
@@ -2294,12 +2303,10 @@ async function loadTodaysPicks() {
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
     var photo = profilePhotoHtml(p);
-    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
-    var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + '</div></div>' +
+      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + profileBadgesHtml(p) + '</div></div>' +
       '<div class="pc-body">' +
       '<div class="pc-score">⭐ ' + p.score + '% Match</div>' +
       '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
@@ -2326,13 +2333,11 @@ async function loadMyMatches() {
   var html = '<div class="profiles-grid">';
   result.data.forEach(function(p) {
     var photo = profilePhotoHtml(p);
-    var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
-    var premiumBadge = premiumBadgeHtml(p.package);
     var activity = formatLastActive(p.last_active_at);
     var saveIcon = p.is_saved ? '❤️' : '🤍';
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + verifiedBadge + premiumBadge + '</div>' +
+      '<div class="pc-top">' + photo + '<div class="pc-badges-top">' + profileBadgesHtml(p) + '</div>' +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>' +
       '</div>' +
       '<div class="pc-body">' +

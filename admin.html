@@ -576,6 +576,7 @@ function applyPermissionVisibility() {
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-icon">📥</div><div class="kpi-value" style="color:#2196F3" id="pay-kpi-reg">—</div><div class="kpi-label">Registration Fees Received</div></div>
     <div class="kpi-card"><div class="kpi-icon">🏆</div><div class="kpi-value" style="color:var(--gold)" id="pay-kpi-success">—</div><div class="kpi-label">Success Fees Received</div></div>
+    <div class="kpi-card"><div class="kpi-icon">⬆️</div><div class="kpi-value" style="color:var(--burgundy)" id="pay-kpi-upgrade">—</div><div class="kpi-label">Upgrade Fees Received</div></div>
     <div class="kpi-card"><div class="kpi-icon">⏳</div><div class="kpi-value" style="color:#B42318" id="pay-kpi-pending">—</div><div class="kpi-label">Pending Payments</div></div>
     <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-value" style="color:var(--green)" id="pay-kpi-total">—</div><div class="kpi-label">Total Revenue</div></div>
   </div>
@@ -2236,6 +2237,7 @@ async function loadPaymentsPanel(page) {
     if (dashData.success) {
       document.getElementById('pay-kpi-reg').textContent     = formatPKR(dashData.data.revenue.registration || 0);
       document.getElementById('pay-kpi-success').textContent = formatPKR(dashData.data.revenue.success_fee || 0);
+      document.getElementById('pay-kpi-upgrade').textContent = formatPKR(dashData.data.revenue.package_upgrade || 0);
       document.getElementById('pay-kpi-pending').textContent = formatPKR(dashData.data.revenue.pending || 0);
       document.getElementById('pay-kpi-total').textContent   = formatPKR(dashData.data.revenue.total || 0);
     }
@@ -2253,7 +2255,9 @@ async function loadPaymentsPanel(page) {
       var statusClass = p.status === 'completed' ? 'status-paid' : p.status === 'failed' ? 'status-unpaid' : 'status-pending';
       var statusLabel = p.status === 'completed' ? '✓ Paid' : p.status === 'failed' ? '✗ Failed' : '⏳ Pending';
       var dateStr = new Date(p.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-      var typeLabel = p.type === 'registration' ? 'Registration Fee' : 'Success Fee';
+      var typeLabel = p.type === 'registration' ? 'Registration Fee'
+        : p.type === 'package_upgrade' ? 'Package Upgrade Fee'
+        : 'Success Fee';
 
       return '<tr>' +
         '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + p.member_id + ')"><strong style="text-decoration:underline;text-decoration-color:var(--light)">' + p.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + (p.city || '—') + '</span></td>' +
