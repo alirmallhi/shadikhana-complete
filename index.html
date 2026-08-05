@@ -45,8 +45,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .launch-banner{position:fixed;top:0;left:0;right:0;z-index:101;background:linear-gradient(90deg,var(--burgundy),#3a2a4a);
   color:#fff;text-align:center;padding:.85rem 2.8rem .85rem 1rem;font-size:.92rem;font-weight:600;line-height:1.5;
   box-shadow:0 2px 10px rgba(0,0,0,0.2)}
-.launch-banner strong{font-size:1.14em;font-weight:800;color:var(--gold)}
-.launch-banner a{color:var(--gold);text-decoration:underline;font-weight:800;display:inline-block;
+/* #E8B84B, not var(--gold) (#B8975A) — the muted brand gold only just
+   cleared WCAG AA against this gradient (4.73:1 at its lighter end,
+   #3a2a4a) and read as low-contrast/washed-out. This brighter gold (also
+   used for gold accents elsewhere in the app) hits AAA against both ends
+   of the gradient (9.84:1 / 7.07:1) while staying in the same gold family
+   as the rest of the banner. */
+.launch-banner strong{font-size:1.14em;font-weight:800;color:#E8B84B}
+.launch-banner a{color:#E8B84B;text-decoration:underline;font-weight:800;display:inline-block;
   animation:launchPulse 1.8s ease-in-out infinite}
 @keyframes launchPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.82}}
 .launch-banner-close{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;
