@@ -320,15 +320,8 @@ a{text-decoration:none;color:inherit}
 .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,28,46,0.6);
   align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
 .overlay.open{display:flex}
-
-/* ── FULL-SIZE PHOTO VIEW ── */
-.photo-lightbox{display:none;position:fixed;inset:0;z-index:300;background:rgba(10,8,12,0.94);
-  align-items:center;justify-content:center;padding:2.5rem 1.5rem;cursor:pointer}
-.photo-lightbox.open{display:flex}
-.photo-lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;cursor:default}
-.photo-lightbox-close{position:absolute;top:1.2rem;right:1.2rem;background:rgba(255,255,255,0.15);
-  color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;line-height:1}
+/* Full-size photo view styles/markup are injected by photoLightbox.js
+   (shared with admin.html) — nothing to define here. */
 .detail-modal{background:#fff;border-radius:20px;padding:2rem;max-width:540px;width:100%;position:relative}
 .detail-close{position:absolute;top:1.1rem;right:1.1rem;background:var(--light);border:none;
   border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem}
@@ -1020,16 +1013,11 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
-<!-- FULL-SIZE PHOTO VIEW -->
-<div class="photo-lightbox" id="photo-lightbox" onclick="closePhotoLightbox()">
-  <button class="photo-lightbox-close" onclick="event.stopPropagation();closePhotoLightbox()">✕</button>
-  <img id="photo-lightbox-img" src="" alt="Full-size photo">
-</div>
-
 <script src="/capacitor-bridge.js"></script>
 <script src="/api.js"></script>
 <script src="/passwordRules.js"></script>
 <script src="/formOptions.js"></script>
+<script src="/photoLightbox.js"></script>
 <script>
 // ══════════════════════════════════════════
 //  DASHBOARD INITIALISATION
@@ -1715,20 +1703,8 @@ function profilePhotoHtml(p, radius, placeholder, enableLightbox) {
   var radiusStyle = radius ? 'border-radius:' + radius + 'px;' : '';
   var img = '<img src="' + p.photo_url + '" style="width:100%;height:100%;object-fit:cover;' + radiusStyle + '">';
   if (p.photo_locked || !enableLightbox) return img;
+  // openPhotoLightbox comes from photoLightbox.js (shared with admin.html).
   return '<div style="width:100%;height:100%;cursor:pointer" onclick="event.stopPropagation();openPhotoLightbox(this.querySelector(\'img\').src)">' + img + '</div>';
-}
-
-// Full-size photo view — no zoom, no swipe/carousel, just tap-anywhere
-// (or the close button) to dismiss. Shared by every card/detail view above
-// that shows an already-visible (non-blurred) member photo.
-function openPhotoLightbox(url) {
-  if (!url) return;
-  document.getElementById('photo-lightbox-img').src = url;
-  document.getElementById('photo-lightbox').classList.add('open');
-}
-function closePhotoLightbox() {
-  document.getElementById('photo-lightbox').classList.remove('open');
-  document.getElementById('photo-lightbox-img').src = '';
 }
 
 function premiumBadgeHtml(pkg) {

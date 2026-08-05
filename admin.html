@@ -1819,7 +1819,7 @@ function buildMemberProfileHtml(m, payments) {
 
   html += '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:.3rem">';
   html += m.photo_url
-    ? '<img src="' + m.photo_url + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0">'
+    ? '<img src="' + m.photo_url + '" style="width:70px;height:70px;border-radius:12px;object-fit:cover;flex-shrink:0;cursor:pointer" onclick="openPhotoLightbox(this.src)">'
     : '<div style="width:70px;height:70px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;' +
       'background:linear-gradient(135deg,var(--burgundy),var(--rose));color:#fff;' +
       'font-family:\'Playfair Display\',serif;font-weight:700;font-size:1.6rem">' + escapeHtml((m.full_name || '').trim().charAt(0).toUpperCase() || '?') + '</div>';
@@ -3571,6 +3571,7 @@ async function deleteAdminAccount(id, name) {
 </div>
 
 <script src="/formOptions.js"></script>
+<script src="/photoLightbox.js"></script>
 <script>
 rsPopulateSelect(document.getElementById('am-marital_status'), RS_MARITAL_STATUS);
 rsPopulateSelect(document.getElementById('am-children'), RS_CHILDREN);
