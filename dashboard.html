@@ -375,7 +375,16 @@ a{text-decoration:none;color:inherit}
   .sidebar-backdrop.open{opacity:1;pointer-events:auto}
   .logout-btn{display:none}
   #sidebar-logout-item{display:flex}
-  .user-chip-name{max-width:70px}
+  .user-chip-name{max-width:120px;font-size:1rem}
+  /* Bell, hamburger, and logo read as visually mismatched sizes on mobile
+     (hamburger's thin 22px bars and the 24px logo image both looked
+     small next to the bell's 38px pill) — bring them up to a consistent
+     visual weight. Bell itself and the topbar-left/topbar-right grouping
+     stay untouched — only sizing changes here, no repositioning. */
+  .hamburger-btn{padding:.55rem}
+  .hamburger-btn span{width:24px;height:2.5px}
+  .logo-dot{padding:4px 7px}
+  .logo-dot img{height:30px}
   .stats-grid{grid-template-columns:1fr 1fr;order:3}
   .profiles-grid{grid-template-columns:1fr 1fr}
   .quick-actions{grid-template-columns:1fr}
@@ -397,6 +406,9 @@ a{text-decoration:none;color:inherit}
   .stats-grid{grid-template-columns:1fr}
   .profiles-grid{grid-template-columns:1fr}
   .content{padding:1.5rem 4%}
+  /* Narrower phones can't spare the full 120px without risking overflow
+     next to the hamburger/logo/bell — still well above the old 70px. */
+  .user-chip-name{max-width:90px}
 }
 </style>
 </head>
