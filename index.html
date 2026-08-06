@@ -389,6 +389,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
   .steps-grid,.profiles-grid{grid-template-columns:1fr}
   .nav-links{display:none}
   .hamburger{display:flex}
+  .nav-logo-text{display:none}
   .footer-grid{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
   .hero h1{font-size:2rem}
@@ -542,11 +543,12 @@ function dismissLaunchBanner() {
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo"><img src="/assets/images/rs-logo-header.png" alt="Rishta Square" class="logo-icon">Rishta Square</a>
+  <a href="#" class="nav-logo"><img src="/assets/images/rs-logo-header.png" alt="Rishta Square" class="logo-icon"><span class="nav-logo-text">Rishta Square</span></a>
   <div class="nav-links">
     <a href="#how">How It Works</a>
     <a href="#plans">Pricing</a>
     <a href="#features">Why Us</a>
+    <a href="/payment.html">Payment Methods</a>
     <button class="lang-toggle" onclick="toggleLang()">
       <span class="eng-only">🇵🇰 اردو</span>
       <span class="urdu-only">EN English</span>
@@ -561,6 +563,7 @@ function dismissLaunchBanner() {
 <div class="mobile-menu" id="mobileMenu">
   <a href="#how" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
   <a href="#plans" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
+  <a href="/payment.html">Payment Methods</a>
   <a href="#" id="mobile-signin-link" onclick="openModal('login');return false">Sign In</a>
   <a href="#" id="mobile-logout-link" onclick="logout();return false" style="display:none">Log Out</a>
   <a href="#" id="mobile-register-link" onclick="openModal('register');return false" style="color:var(--burgundy);font-weight:700">Register Free →</a>
@@ -1005,6 +1008,7 @@ function dismissLaunchBanner() {
       <a href="#how">How It Works</a>
       <a href="#plans">Membership Plans</a>
       <a href="#success-stories-section">Success Stories</a>
+      <a href="/payment.html">Payment Methods</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
@@ -1018,7 +1022,7 @@ function dismissLaunchBanner() {
     </div>
   </div>
   <div class="footer-bottom">
-    <div>© 2025 Rishta Square. All rights reserved. Made with ❤️ in Lahore, Pakistan.</div>
+    <div>© <span id="footer-year">2025</span> Rishta Square. All rights reserved. Made with ❤️ in Lahore, Pakistan.</div>
     <div class="footer-socials">
       <a href="https://facebook.com/rishtasquare" title="Facebook" target="_blank" rel="noopener">📘</a>
       <a href="https://instagram.com/rishtasquare" title="Instagram" target="_blank" rel="noopener">📸</a>
@@ -2365,6 +2369,9 @@ var obs = new IntersectionObserver(function(entries) {
   });
 }, { threshold: 0.05 });
 document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); });
+
+var footerYearEl = document.getElementById('footer-year');
+if (footerYearEl) footerYearEl.textContent = new Date().getFullYear();
 
 // Initialise privacy preset on load
 document.addEventListener('DOMContentLoaded', function() {
