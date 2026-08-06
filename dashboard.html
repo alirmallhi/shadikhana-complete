@@ -375,16 +375,28 @@ a{text-decoration:none;color:inherit}
   .sidebar-backdrop.open{opacity:1;pointer-events:auto}
   .logout-btn{display:none}
   #sidebar-logout-item{display:flex}
-  .user-chip-name{max-width:120px;font-size:1rem}
-  /* Bell, hamburger, and logo read as visually mismatched sizes on mobile
-     (hamburger's thin 22px bars and the 24px logo image both looked
-     small next to the bell's 38px pill) — bring them up to a consistent
-     visual weight. Bell itself and the topbar-left/topbar-right grouping
-     stay untouched — only sizing changes here, no repositioning. */
-  .hamburger-btn{padding:.55rem}
+  /* Shift bell+name left by tightening every gap between topbar-left and
+     topbar-right (was space-between, pinning the group to the far edge
+     and leaving the freed-up middle empty) — plain flex-start, no
+     flex-grow/centering/absolute positioning this time. Every other
+     number here (icon sizes, chip padding/avatar/gaps) was trimmed down
+     from a first pass specifically so the reclaimed width could go to
+     the name instead: enlarging hamburger+logo to fully match the
+     bell's 38px ate ~30px more than a modest bump, which is exactly the
+     margin "Farhan Mughal" (measured 107-114px in Inter 600 16px)
+     needed to fit without truncating at common 360-375px phone widths.
+     So hamburger/logo below are close to, not exactly, the bell's size —
+     a verified trade-off, not an oversight. */
+  .topbar{justify-content:flex-start;gap:.5rem}
+  .topbar-left{gap:.5rem}
+  .hamburger-btn{padding:.45rem}
   .hamburger-btn span{width:24px;height:2.5px}
-  .logo-dot{padding:4px 7px}
-  .logo-dot img{height:30px}
+  .logo-dot{padding:3px 5px}
+  .logo-dot img{height:27px}
+  .topbar-right{gap:.45rem}
+  .user-chip{padding:.3rem .5rem .3rem .3rem;gap:6px}
+  .user-avatar{width:26px;height:26px}
+  .user-chip-name{font-size:1rem;max-width:120px}
   .stats-grid{grid-template-columns:1fr 1fr;order:3}
   .profiles-grid{grid-template-columns:1fr 1fr}
   .quick-actions{grid-template-columns:1fr}
@@ -406,9 +418,6 @@ a{text-decoration:none;color:inherit}
   .stats-grid{grid-template-columns:1fr}
   .profiles-grid{grid-template-columns:1fr}
   .content{padding:1.5rem 4%}
-  /* Narrower phones can't spare the full 120px without risking overflow
-     next to the hamburger/logo/bell — still well above the old 70px. */
-  .user-chip-name{max-width:90px}
 }
 </style>
 </head>
