@@ -367,19 +367,23 @@ a{text-decoration:none;color:inherit}
   .hamburger-btn{display:flex}
   .logo-text{display:none}
   /* Two-row header: hamburger+logo and bell share row 1 (left/right
-     edges), avatar+name gets its own centered row 2 below — both rows
-     still inside the maroon topbar block itself (fixed height:64px
-     swapped for a taller fixed height that fits both rows), rather than
-     the name pill spilling out past a height:64px box into the page
-     content underneath. topbar-right no longer acts as its own box on
-     mobile (display:contents) so its two children — the bell and the
-     user-chip — become independent grid items of .topbar itself. */
-  .topbar{height:112px;display:grid;grid-template-columns:auto 1fr auto;
-    grid-template-rows:auto auto;align-items:center;gap:.5rem .6rem;padding:.5rem 5%}
-  .topbar-left{grid-column:1;grid-row:1;justify-self:start}
-  .topbar-right{display:contents}
-  .user-chip{grid-column:1/-1;grid-row:2;justify-self:center;min-width:0}
-  .notif-btn{grid-column:3;grid-row:1;justify-self:end}
+     edges, plain flex), avatar+name gets its own centered row 2 below —
+     both rows inside the same enlarged maroon topbar block (height:64px
+     swapped for a taller fixed height that fits both rows). The previous
+     attempt used display:contents on topbar-right to split the bell and
+     the name pill into independent grid cells, but that relies on a
+     feature with a history of inconsistent cross-browser support and
+     didn't render correctly — pulling the name pill out with
+     position:absolute instead is far more reliably supported. .topbar
+     already has position:sticky, which is enough to act as the
+     containing block absolute descendants position against, so the
+     chip centers against the full header width, not just topbar-right's
+     own box. */
+  .topbar{height:112px;display:flex;align-items:flex-start;
+    justify-content:space-between;padding:.6rem 5% 0}
+  .topbar-right{display:flex;align-items:center}
+  .user-chip{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+    margin:0;min-width:0}
   .user-chip-name{font-size:1rem;max-width:200px}
 
   /* Bell, hamburger, and logo read as visually mismatched sizes on mobile
