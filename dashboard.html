@@ -366,6 +366,12 @@ a{text-decoration:none;color:inherit}
   .layout{grid-template-columns:1fr}
   .hamburger-btn{display:flex}
   .logo-text{display:none}
+  /* With the logo text gone, space-between left a big gap between the
+     logo and the bell/name — pull topbar-right in next to topbar-left
+     instead of pinning it to the far edge, and let the name use the
+     freed-up room (was clamped tighter than desktop's 120px). */
+  .topbar{justify-content:flex-start;gap:1.5rem}
+  .user-chip-name{max-width:120px}
   .sidebar{display:block;position:fixed;top:64px;left:0;bottom:0;width:260px;max-width:80vw;
     transform:translateX(-100%);transition:transform .25s ease;z-index:70;overflow-y:auto;
     box-shadow:4px 0 24px rgba(0,0,0,0.25)}
@@ -375,7 +381,6 @@ a{text-decoration:none;color:inherit}
   .sidebar-backdrop.open{opacity:1;pointer-events:auto}
   .logout-btn{display:none}
   #sidebar-logout-item{display:flex}
-  .user-chip-name{max-width:70px}
   .stats-grid{grid-template-columns:1fr 1fr;order:3}
   .profiles-grid{grid-template-columns:1fr 1fr}
   .quick-actions{grid-template-columns:1fr}
@@ -397,6 +402,9 @@ a{text-decoration:none;color:inherit}
   .stats-grid{grid-template-columns:1fr}
   .profiles-grid{grid-template-columns:1fr}
   .content{padding:1.5rem 4%}
+  /* Narrower phones can't spare the full 120px without risking overflow
+     next to the hamburger/logo/bell — still well above the old 70px. */
+  .user-chip-name{max-width:90px}
 }
 </style>
 </head>
