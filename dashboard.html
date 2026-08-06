@@ -377,7 +377,16 @@ a{text-decoration:none;color:inherit}
   .topbar{justify-content:flex-start;gap:1.5rem}
   .topbar-right{flex:1}
   .user-chip{flex:1;min-width:0}
-  .user-chip-name{flex:1;min-width:0;max-width:none}
+  .user-chip-name{flex:1;min-width:0;max-width:none;font-size:1rem}
+
+  /* Bell, hamburger, and logo read as visually mismatched sizes on mobile
+     (hamburger's thin 22px bars and the 24px logo image both looked
+     small next to the bell's 38px pill) — bring them up to a consistent
+     visual weight. */
+  .hamburger-btn{padding:.55rem}
+  .hamburger-btn span{width:24px;height:2.5px}
+  .logo-dot{padding:4px 7px}
+  .logo-dot img{height:30px}
   .sidebar{display:block;position:fixed;top:64px;left:0;bottom:0;width:260px;max-width:80vw;
     transform:translateX(-100%);transition:transform .25s ease;z-index:70;overflow-y:auto;
     box-shadow:4px 0 24px rgba(0,0,0,0.25)}
