@@ -375,20 +375,21 @@ a{text-decoration:none;color:inherit}
   .sidebar-backdrop.open{opacity:1;pointer-events:auto}
   .logout-btn{display:none}
   #sidebar-logout-item{display:flex}
-  /* Shift bell+name left by tightening every gap between topbar-left and
-     topbar-right (was space-between, pinning the group to the far edge
-     and leaving the freed-up middle empty) — plain flex-start, no
-     flex-grow/centering/absolute positioning this time. Every other
-     number here (icon sizes, chip padding/avatar/gaps) was trimmed down
-     from a first pass specifically so the reclaimed width could go to
-     the name instead: enlarging hamburger+logo to fully match the
-     bell's 38px ate ~30px more than a modest bump, which is exactly the
-     margin "Farhan Mughal" (measured 107-114px in Inter 600 16px)
-     needed to fit without truncating at common 360-375px phone widths.
+  /* Left group (hamburger+logo) and right group (bell+name) distributed
+     across the full header width via space-between, instead of packed
+     together at the left with dead space trailing on the right. The
+     internal gaps/sizes below (icon sizes, chip padding/avatar/gaps)
+     stay trimmed regardless of this distribution choice — space-between
+     vs flex-start only changes where LEFTOVER space goes (middle gap vs
+     trailing edge), not the underlying fact that topbar-left + topbar-
+     right must still fit within the content width, which is what these
+     trims were verified against: enlarging hamburger+logo to fully
+     match the bell's 38px ate ~30px more than a modest bump, which is
+     exactly the margin "Farhan Mughal" (measured 107-114px in Inter 600
+     16px) needed to fit without truncating at common 360-375px widths.
      So hamburger/logo below are close to, not exactly, the bell's size —
      a verified trade-off, not an oversight. */
-  .topbar{justify-content:flex-start;gap:.5rem}
-  .topbar-left{gap:.5rem}
+  .topbar{justify-content:space-between}
   .hamburger-btn{padding:.45rem}
   .hamburger-btn span{width:24px;height:2.5px}
   .logo-dot{padding:3px 5px}
