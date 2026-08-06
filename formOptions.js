@@ -44,11 +44,35 @@ var RS_ETHNICITY = [
 
 var RS_CASTE = [
   { group: 'Syed / Sadat', options: ['Syed'] },
-  { group: 'Punjabi', options: ['Awan', 'Arain', 'Rajput', 'Jat', 'Gujjar', 'Sheikh', 'Chaudhry', 'Mian', 'Butt', 'Mughal', 'Malik'] },
-  { group: 'Urdu Speaking', options: ['Ansari', 'Siddiqui', 'Farooqi', 'Qureshi', 'Abbasi'] },
-  { group: 'Sindhi / Baloch', options: ['Sindhi – Memon', 'Sindhi – Soomro', 'Baloch – Marri', 'Baloch – Bugti'] },
-  { group: 'Pashtun', options: ['Yusufzai', 'Durrani', 'Afridi', 'Khattak'] },
+  { group: 'Punjabi', options: [
+    'Awan', 'Arain', 'Rajput', 'Jat', 'Gujjar', 'Sheikh', 'Chaudhry', 'Mian', 'Butt', 'Mughal', 'Malik',
+    'Chishti', 'Kamboh', 'Khokhar', 'Warraich', 'Cheema', 'Sial', 'Tarar', 'Bhatti', 'Ghumman',
+    'Virk', 'Randhawa', 'Dogar', 'Gondal'
+  ] },
+  { group: 'Urdu Speaking / Muhajir', options: ['Ansari', 'Siddiqui', 'Farooqi', 'Qureshi', 'Abbasi', 'Hashmi', 'Usmani', 'Rizvi'] },
+  { group: 'Sindhi', options: ['Memon', 'Soomro', 'Bhutto', 'Chandio', 'Jatoi', 'Khuhro', 'Talpur', 'Abro', 'Mahar', 'Lashari'] },
+  { group: 'Baloch', options: ['Marri', 'Bugti', 'Mengal', 'Raisani', 'Zehri', 'Bizenjo', 'Rind', 'Domki', 'Jamali', 'Magsi'] },
+  { group: 'Pashtun', options: [
+    'Yusufzai', 'Durrani', 'Afridi', 'Khattak', 'Achakzai', 'Mohmand', 'Wazir', 'Mehsud',
+    'Bangash', 'Orakzai', 'Marwat', 'Niazi', 'Khalil', 'Tanoli'
+  ] },
   { options: ['Other (specify in description)', 'Does Not Matter'] }
+];
+
+// Browse filter's profession categories are keyword-based buckets over free
+// text (see PROFESSION_CATEGORIES in the backend's membersController.js) —
+// these labels MUST stay in exact string sync with that object's keys, since
+// the backend looks a selected label up as a literal object key. Registration
+// and profile-edit both use this same list (with "Other" revealing a
+// free-text field) so newly-created profiles land in one of these buckets
+// by construction, rather than relying on keyword-matching against whatever
+// free text a member happened to type.
+var RS_PROFESSION = [
+  'Doctor', 'Nurse / Healthcare Worker', 'Engineer', 'IT Professional', 'Architect',
+  'Accountant', 'Banking / Finance', 'Business Owner / Entrepreneur', 'Consultant / Freelancer',
+  'Sales / Marketing', 'HR', 'Teacher / Educator', 'Government Employee / Civil Servant',
+  'Lawyer', 'Pharmacist', 'Media / Journalism', 'Armed Forces', 'Real Estate',
+  'Textile / Manufacturing', 'Student', 'Homemaker', 'Other'
 ];
 
 var RS_PIETY = [

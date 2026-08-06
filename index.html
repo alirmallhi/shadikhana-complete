@@ -1316,8 +1316,11 @@ function dismissLaunchBanner() {
             <option>Unemployed (seeking)</option>
           </select>
         </div>
-        <div class="form-group"><label>Profession / Job Title</label>
-          <input type="text" id="f-profession" placeholder="e.g. Software Engineer, Doctor, Teacher">
+        <div class="form-group"><label>Profession</label>
+          <select id="f-profession" onchange="document.getElementById('f-profession-other').style.display = this.value === 'Other' ? 'block' : 'none'">
+            <option value="">Select Profession</option>
+          </select>
+          <input type="text" id="f-profession-other" placeholder="Please specify your profession" style="display:none;margin-top:.6rem">
         </div>
       </div>
       <div class="form-row">
@@ -2393,6 +2396,12 @@ function sendToWhatsApp() {
   var pmEl   = document.getElementById('payment-method');
   var pm     = pmEl ? pmEl.options[pmEl.selectedIndex].text.trim() : '—';
   var priv   = getPrivacySettings();
+  // Profession is now a controlled dropdown (RS_PROFESSION) so Browse's
+  // keyword-matching categories work reliably for new registrations — but
+  // "Other" needs the actual specified text here, not the literal word
+  // "Other", so admin has the real profession when manually creating the
+  // member from this WhatsApp message.
+  var profession = gv('f-profession') === 'Other' ? gv('f-profession-other') : gv('f-profession');
 
   var lines = [
     '🌸 *NEW RISHTA SQUARE REGISTRATION* 🌸',
@@ -2424,7 +2433,7 @@ function sendToWhatsApp() {
     '─────────────────────────────',
     '*💼 CAREER & RESIDENCE*',
     '• Employment: '      + gv('f-employment'),
-    '• Profession: '      + gv('f-profession'),
+    '• Profession: '      + profession,
     '• Income: '          + gv('f-income'),
     '• City: '            + gv('f-city'),
     '• Country: '         + gv('f-country'),
@@ -2602,6 +2611,7 @@ rsPopulateSelect(document.getElementById('f-ethnicity'), RS_ETHNICITY);
 rsPopulateSelect(document.getElementById('f-caste'), RS_CASTE);
 rsPopulateSelect(document.getElementById('f-piety'), RS_PIETY);
 rsPopulateSelect(document.getElementById('f-education'), RS_EDUCATION);
+rsPopulateSelect(document.getElementById('f-profession'), RS_PROFESSION);
 </script>
 </body>
 </html>

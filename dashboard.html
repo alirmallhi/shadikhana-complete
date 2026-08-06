@@ -707,7 +707,12 @@ a{text-decoration:none;color:inherit}
 
           <div class="form-section-label">Career & Income</div>
           <div class="form-row">
-            <div class="form-group"><label>Profession</label><input type="text" id="p-profession"></div>
+            <div class="form-group"><label>Profession</label>
+              <select id="p-profession" onchange="document.getElementById('p-profession-other').style.display = this.value === 'Other' ? 'block' : 'none'">
+                <option value="">Select</option>
+              </select>
+              <input type="text" id="p-profession-other" placeholder="Please specify" style="display:none;margin-top:.5rem">
+            </div>
             <div class="form-group"><label>Employer</label><input type="text" id="p-employer"></div>
           </div>
           <div class="form-group"><label>Monthly Income</label><input type="text" id="p-monthly_income"></div>
@@ -881,17 +886,6 @@ a{text-decoration:none;color:inherit}
         </select>
         <select class="filter-select" id="filter-profession">
           <option value="">Any Profession</option>
-          <option value="Doctor">Doctor</option>
-          <option value="Engineer">Engineer</option>
-          <option value="IT Professional">IT Professional</option>
-          <option value="Business Owner">Business Owner</option>
-          <option value="Teacher / Educator">Teacher / Educator</option>
-          <option value="Government Employee">Government Employee</option>
-          <option value="Banking / Finance">Banking / Finance</option>
-          <option value="Lawyer">Lawyer</option>
-          <option value="Armed Forces">Armed Forces</option>
-          <option value="Homemaker">Homemaker</option>
-          <option value="Other">Other</option>
         </select>
         <select class="filter-select" id="filter-education">
           <option value="">Any Education</option>
@@ -1373,6 +1367,7 @@ function loadProfileForm() {
       ['p-ethnicity',   RS_ETHNICITY],
       ['p-caste',       RS_CASTE],
       ['p-education',   RS_EDUCATION],
+      ['p-profession',  RS_PROFESSION],
     ].forEach(function(pair) {
       var el = document.getElementById(pair[0]);
       if (el && el.options.length <= 1) rsPopulateSelect(el, pair[1]);
@@ -1399,6 +1394,18 @@ function loadProfileForm() {
     var el = document.getElementById('p-' + f);
     if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
   });
+
+  // Profession became a controlled dropdown after members could already
+  // have arbitrary free text saved from before — assigning a non-matching
+  // value to a <select> above silently leaves it unselected rather than
+  // erroring, so surface that raw legacy value in the "Other" field
+  // instead of letting it appear to have vanished.
+  var profSelect = document.getElementById('p-profession');
+  if (profSelect && !profSelect.value && currentMember.profession && currentMember.profession !== '—') {
+    profSelect.value = 'Other';
+    document.getElementById('p-profession-other').value = currentMember.profession;
+    document.getElementById('p-profession-other').style.display = 'block';
+  }
 
   // Sect depends on Religion (just set above), so it has to be synced —
   // and its value applied — after the fact, not from the generic loop.
@@ -1676,6 +1683,13 @@ async function saveProfile() {
     if (el) updates[f] = el.checked;
   });
 
+  // Profession is a controlled dropdown (RS_PROFESSION) — "Other" needs the
+  // actual specified text saved, not the literal word "Other".
+  if (updates.profession === 'Other') {
+    var otherEl = document.getElementById('p-profession-other');
+    updates.profession = (otherEl && otherEl.value.trim()) || 'Other';
+  }
+
   var result = await apiCall('/member/profile', 'PUT', updates);
   var statusEl = document.getElementById('profile-save-status');
   if (result.success) {
@@ -1838,6 +1852,12 @@ function initBrowseFilters() {
   var casteSelect = document.getElementById('filter-caste');
   if (casteSelect && casteSelect.options.length <= 1 && typeof RS_CASTE !== 'undefined' && typeof rsPopulateSelect === 'function') {
     rsPopulateSelect(casteSelect, RS_CASTE);
+  }
+  // Same labels as the backend's PROFESSION_CATEGORIES keys (membersController.js) —
+  // must stay in exact string sync, see the comment on RS_PROFESSION in formOptions.js.
+  var professionSelect = document.getElementById('filter-profession');
+  if (professionSelect && professionSelect.options.length <= 1 && typeof RS_PROFESSION !== 'undefined' && typeof rsPopulateSelect === 'function') {
+    rsPopulateSelect(professionSelect, RS_PROFESSION);
   }
   updateBrowseSectFilter();
 }
