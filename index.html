@@ -31,6 +31,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .nav-links{display:flex;align-items:center;gap:1.8rem}
 .nav-links a{text-decoration:none;color:var(--mid);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;transition:color .2s}
 .nav-links a:hover{color:var(--burgundy)}
+.nav-dropdown{position:relative}
+.nav-dropdown-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  background:var(--white);border:1px solid var(--hairline);border-radius:10px;
+  box-shadow:0 12px 32px rgba(26,18,37,0.12);min-width:190px;padding:.5rem;z-index:110}
+.nav-dropdown:hover .nav-dropdown-menu,.nav-dropdown.open .nav-dropdown-menu{display:block}
+.nav-dropdown-menu a{display:block;padding:.6rem .9rem;border-radius:6px;font-size:.78rem;
+  font-weight:600;text-transform:none;letter-spacing:normal;color:var(--charcoal)}
+.nav-dropdown-menu a:hover{background:var(--cream);color:var(--burgundy)}
 .nav-cta{background:var(--charcoal);color:#fff!important;padding:.7rem 1.5rem;border-radius:3px;font-weight:600!important;font-size:.78rem!important;letter-spacing:.04em;text-transform:uppercase}
 .nav-cta:hover{filter:brightness(1.08)}
 .lang-toggle{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--hairline);border-radius:20px;padding:.3rem .8rem;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--mid);font-family:var(--font-mono)}
@@ -575,6 +583,13 @@ function dismissLaunchBanner() {
     <a href="#how">How It Works</a>
     <a href="#plans">Pricing</a>
     <a href="#features">Why Us</a>
+    <div class="nav-dropdown" id="legal-dropdown">
+      <a href="#" onclick="document.getElementById('legal-dropdown').classList.toggle('open');return false">Legal ▾</a>
+      <div class="nav-dropdown-menu">
+        <a href="/terms.html">Terms and Conditions</a>
+        <a href="/privacy.html">Privacy Policy</a>
+      </div>
+    </div>
     <button class="lang-toggle" onclick="toggleLang()">
       <span class="eng-only">🇵🇰 اردو</span>
       <span class="urdu-only">EN English</span>
@@ -2161,6 +2176,16 @@ function submitViaUs() {
 function toggleLang() {
   document.body.classList.toggle('urdu-mode');
 }
+
+// Nav "Legal" dropdown also opens on click (not just hover, for touch/
+// tablet-width screens where :hover doesn't apply) — close it on any
+// click outside the dropdown itself.
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('legal-dropdown');
+  if (dd && dd.classList.contains('open') && !dd.contains(e.target)) {
+    dd.classList.remove('open');
+  }
+});
 
 // ══════════════════════════════════════════
 //  MODAL OPEN / CLOSE
