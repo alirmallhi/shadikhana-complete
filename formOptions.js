@@ -80,6 +80,7 @@ var RS_PIETY = [
   'Moderately Religious',
   'Cultural / Traditional',
   'Spiritual but not strict',
+  'Liberal',
   'Prefer not to say'
 ];
 

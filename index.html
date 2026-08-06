@@ -1303,13 +1303,6 @@ function dismissLaunchBanner() {
             <option>Employed – Private Sector</option>
             <option>Employed – Government / Civil Service</option>
             <option>Self-Employed / Business Owner</option>
-            <option>Doctor / Medical Professional</option>
-            <option>Engineer</option>
-            <option>Teacher / Academic</option>
-            <option>Lawyer / Legal</option>
-            <option>Armed Forces / Police</option>
-            <option>IT / Tech Professional</option>
-            <option>Banker / Finance</option>
             <option>Student</option>
             <option>Housewife / Not Working</option>
             <option>Retired</option>
@@ -1344,7 +1337,7 @@ function dismissLaunchBanner() {
       <div class="form-section-label">Residence & Property</div>
       <div class="form-row">
         <div class="form-group"><label>Country of Residence<span class="required-star">*</span></label>
-          <select id="f-country">
+          <select id="f-country" onchange="updateCityFieldForCountry()">
             <option>Pakistan</option>
             <option>United Kingdom</option><option>United Arab Emirates</option>
             <option>Saudi Arabia</option><option>United States</option>
@@ -1362,6 +1355,7 @@ function dismissLaunchBanner() {
             <option>Bahawalpur</option><option>Sargodha</option><option>Abbottabad</option>
             <option>Other</option>
           </select>
+          <input type="text" id="f-city-other" placeholder="Enter your city" style="display:none">
         </div>
       </div>
       <div class="form-row">
@@ -2387,6 +2381,18 @@ function copyPaymentDetail(elId, btn) {
   });
 }
 
+// The city dropdown only lists Pakistani cities, so it's meaningless once
+// a non-Pakistan country is selected — switch to free text instead of
+// showing a Pakistan-specific list for a UK/US/UAE/etc. resident.
+function updateCityFieldForCountry() {
+  var isPakistan = document.getElementById('f-country').value === 'Pakistan';
+  var citySelect = document.getElementById('f-city');
+  var cityOther  = document.getElementById('f-city-other');
+  citySelect.style.display = isPakistan ? '' : 'none';
+  cityOther.style.display  = isPakistan ? 'none' : '';
+  if (isPakistan) { cityOther.value = ''; } else { citySelect.value = ''; }
+}
+
 // ══════════════════════════════════════════
 //  WHATSAPP REGISTRATION SUBMISSION
 // ══════════════════════════════════════════
@@ -2402,6 +2408,9 @@ function sendToWhatsApp() {
   // "Other", so admin has the real profession when manually creating the
   // member from this WhatsApp message.
   var profession = gv('f-profession') === 'Other' ? gv('f-profession-other') : gv('f-profession');
+  // City is a Pakistan-only dropdown — free text for every other country
+  // (see updateCityFieldForCountry above).
+  var city = gv('f-country') === 'Pakistan' ? gv('f-city') : gv('f-city-other');
 
   var lines = [
     '🌸 *NEW RISHTA SQUARE REGISTRATION* 🌸',
@@ -2435,7 +2444,7 @@ function sendToWhatsApp() {
     '• Employment: '      + gv('f-employment'),
     '• Profession: '      + profession,
     '• Income: '          + gv('f-income'),
-    '• City: '            + gv('f-city'),
+    '• City: '            + city,
     '• Country: '         + gv('f-country'),
     '• House Size: '      + gv('f-housesize'),
     '─────────────────────────────',
