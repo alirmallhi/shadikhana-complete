@@ -893,6 +893,12 @@ a{text-decoration:none;color:inherit}
           <option value="Homemaker">Homemaker</option>
           <option value="Other">Other</option>
         </select>
+        <select class="filter-select" id="filter-education">
+          <option value="">Any Education</option>
+        </select>
+        <select class="filter-select" id="filter-caste">
+          <option value="">Any Caste</option>
+        </select>
         <input class="filter-input" id="filter-age-min" type="number" placeholder="Min Age" style="max-width:100px">
         <input class="filter-input" id="filter-age-max" type="number" placeholder="Max Age" style="max-width:100px">
         <select class="filter-select" id="filter-sort" onchange="loadBrowseProfiles(1)">
@@ -1816,13 +1822,22 @@ function formatLastActive(timestamp) {
   return { label: '', dot: '' };
 }
 
-// Religion is populated from the same controlled list used at registration
-// (formOptions.js) so Browse always reflects every religion members can
-// actually register under, not just Islam.
+// Religion/Education/Caste are populated from the same controlled lists
+// used at registration (formOptions.js) so Browse always reflects every
+// value members can actually register under, not just whatever's already
+// in the database.
 function initBrowseFilters() {
   var religionSelect = document.getElementById('filter-religion');
   if (religionSelect && religionSelect.options.length <= 1 && typeof RS_RELIGION !== 'undefined' && typeof rsPopulateSelect === 'function') {
     rsPopulateSelect(religionSelect, RS_RELIGION);
+  }
+  var educationSelect = document.getElementById('filter-education');
+  if (educationSelect && educationSelect.options.length <= 1 && typeof RS_EDUCATION !== 'undefined' && typeof rsPopulateSelect === 'function') {
+    rsPopulateSelect(educationSelect, RS_EDUCATION);
+  }
+  var casteSelect = document.getElementById('filter-caste');
+  if (casteSelect && casteSelect.options.length <= 1 && typeof RS_CASTE !== 'undefined' && typeof rsPopulateSelect === 'function') {
+    rsPopulateSelect(casteSelect, RS_CASTE);
   }
   updateBrowseSectFilter();
 }
@@ -1857,6 +1872,8 @@ async function loadBrowseProfiles(page) {
     religion: document.getElementById('filter-religion').value,
     sect: document.getElementById('filter-sect').style.display !== 'none' ? document.getElementById('filter-sect').value : '',
     profession: document.getElementById('filter-profession').value,
+    education: document.getElementById('filter-education').value,
+    caste: document.getElementById('filter-caste').value,
     age_min: document.getElementById('filter-age-min').value,
     age_max: document.getElementById('filter-age-max').value,
     sortBy: document.getElementById('filter-sort').value
