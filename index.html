@@ -255,59 +255,6 @@ a.ledger-item:hover{background:rgba(255,255,255,0.04)}
 .sfn-icon{font-size:2.2rem;flex-shrink:0}
 .sfn-title{font-weight:700;font-size:1rem;margin-bottom:.4rem}
 .sfn-desc{font-size:.88rem;color:var(--mid);line-height:1.6}
-.payment-methods{display:flex;flex-direction:column;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--hairline)}
-.payment-section .payment-methods{margin-top:0;padding-top:0;border-top:none}
-.pm-label{font-size:.82rem;color:var(--mid);font-weight:600;font-family:var(--font-body)}
-.pm-section-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);text-align:center;margin-bottom:1.2rem}
-.pm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;max-width:760px;margin:0 auto}
-/* Dark card treatment — background reuses var(--ink), the exact dark navy
-   already used by the Verification Ledger stats bar further down this same
-   page, for consistency rather than a new color. */
-.pm-card{background:var(--ink);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.4rem 1.2rem;text-align:center;box-shadow:0 6px 20px rgba(8,27,46,0.25);transition:transform .18s,box-shadow .18s}
-.pm-card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(8,27,46,0.4)}
-/* Real brand colors kept on the icon circles: JazzCash red (#EE2327)
-   sampled from their SVG logo fill. NayaPay teal-green (#00A99D) is an
-   approximation of their app icon, not sampled from an asset on file.
-   Bank Transfer uses a generic deep trust-blue. */
-.pm-card-bank{--pm-accent-1:#1E88E5;--pm-accent-2:#0D47A1}
-.pm-card-jazzcash{--pm-accent-1:#EE2327;--pm-accent-2:#B71C1C}
-.pm-card-nayapay{--pm-accent-1:#00A99D;--pm-accent-2:#00786F}
-.pm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;margin:0 auto .7rem;background:linear-gradient(135deg,var(--pm-accent-1),var(--pm-accent-2))}
-.pm-card-name{font-weight:700;font-size:.95rem;color:var(--gold);margin-bottom:.5rem}
-.pm-card-detail{font-size:.78rem;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:.7rem;min-height:56px}
-.pm-card-detail strong{color:#fff}
-/* Same outlined light-on-dark button already used by .store-btn in the
-   dark app-section further down this page — reused, not reinvented. */
-.pm-copy-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:.4rem .8rem;font-size:.72rem;font-weight:700;color:#fff;cursor:pointer;font-family:var(--font-body);transition:background .15s}
-.pm-copy-btn:hover{background:rgba(255,255,255,0.18)}
-@media(max-width:700px){.pm-grid{grid-template-columns:1fr}}
-
-/* PROFILES */
-.profiles-section{background:var(--cream)}
-.profiles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-.profile-card{background:var(--white);border-radius:18px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.07);transition:transform .2s,box-shadow .2s;cursor:pointer}
-.profile-card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(26,18,37,0.14)}
-.profile-card-top{height:150px;display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative}
-.pc1{background:linear-gradient(135deg,#FDE8EF,#FAD0DE)}
-.pc2{background:linear-gradient(135deg,#E8F0FD,#D0DCFA)}
-.pc3{background:linear-gradient(135deg,#FEF3E2,#FAE5C0)}
-.pc4{background:linear-gradient(135deg,#E8F5F0,#C8EAE0)}
-.pc5{background:linear-gradient(135deg,#F3E8FE,#E0C8FA)}
-.pc6{background:linear-gradient(135deg,#FDE8E8,#FAD0D0)}
-.profile-verified-badge{position:absolute;top:10px;right:10px;background:var(--green);color:#fff;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:10px}
-.profile-featured-badge{position:absolute;top:10px;right:10px;background:var(--gold);color:#fff;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:10px}
-.profile-vip-badge{position:absolute;top:10px;right:10px;background:var(--burgundy);color:#fff;font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:10px}
-.profile-card-body{padding:1.2rem 1.3rem 1.4rem}
-.profile-name{font-weight:700;font-size:1rem;margin-bottom:.25rem}
-.profile-details{font-size:.8rem;color:var(--mid);margin-bottom:.7rem;line-height:1.55}
-.profile-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.9rem}
-.tag{background:var(--cream);color:var(--mid);font-size:.68rem;padding:3px 8px;border-radius:6px;border:1px solid var(--light)}
-.profile-actions{display:flex;gap:.6rem}
-.btn-interest{flex:1;background:var(--burgundy);color:#fff;border:none;border-radius:8px;padding:.55rem;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
-.btn-interest:hover{background:var(--rose)}
-.btn-save{border:1.5px solid var(--light);background:transparent;border-radius:8px;padding:.55rem .8rem;font-size:1rem;cursor:pointer;transition:border-color .2s}
-.btn-save:hover{border-color:var(--rose)}
-
 /* FEATURES */
 .features{background:linear-gradient(180deg,#FFF6EC 0%,var(--white) 100%)}
 .features-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
@@ -492,12 +439,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 .pref-status-direct{background:#E8F5F0;color:var(--green)}
 .pref-status-viaus{background:rgba(26,18,37,0.1);color:var(--burgundy)}
 
-/* ── Contact Preference badge on profile cards ── */
-.contact-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;
-               padding:3px 8px;border-radius:10px;margin-bottom:.5rem}
-.contact-badge.direct{background:#E8F5F0;color:#2D7A5F}
-.contact-badge.via-us{background:rgba(26,18,37,0.1);color:var(--burgundy)}
-
 /* ── Direct Contact Action Buttons on profile cards ── */
 .btn-call{background:linear-gradient(135deg,#2D7A5F,#1A5C45);color:#fff;border:none;
           border-radius:8px;padding:.52rem .7rem;font-size:.85rem;cursor:pointer;
@@ -507,10 +448,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
          border-radius:8px;padding:.52rem .7rem;font-size:.85rem;cursor:pointer;
          transition:opacity .2s;flex-shrink:0}
 .btn-msg:hover{opacity:.85}
-.btn-via-us{flex:1;background:var(--ivory);color:var(--burgundy);border:1.5px solid var(--burgundy);
-            border-radius:8px;padding:.52rem;font-size:.78rem;font-weight:600;cursor:pointer;
-            transition:background .2s}
-.btn-via-us:hover{background:var(--burgundy);color:#fff}
 
 /* ── Contact Modal ── */
 .contact-method-card{border:2px solid var(--light);border-radius:14px;padding:1.2rem;
@@ -563,18 +500,6 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
                      margin-top:1rem;font-size:.8rem;color:var(--mid);line-height:1.6;
                      border:1px solid var(--light)}
 
-/* ── Privacy badge on profile cards ── */
-.privacy-shield{position:absolute;bottom:10px;left:10px;background:rgba(28,28,46,0.75);
-                color:#fff;font-size:.62rem;font-weight:700;padding:3px 8px;
-                border-radius:8px;backdrop-filter:blur(4px)}
-
-/* ── Blurred photo placeholder ── */
-.photo-blurred{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-               flex-direction:column;gap:.4rem;font-size:.75rem;font-weight:600;color:var(--mid)}
-.unlock-info-btn{background:transparent;border:1.5px solid var(--light);border-radius:20px;
-                 padding:3px 12px;font-size:.7rem;font-weight:600;cursor:pointer;color:var(--mid);
-                 transition:all .2s;margin-top:.3rem}
-.unlock-info-btn:hover{border-color:var(--burgundy);color:var(--burgundy);background:rgba(26,18,37,0.05)}
 .contact-method-info strong{display:block;font-size:.92rem;font-weight:700;margin-bottom:.2rem}
 .contact-method-info span{font-size:.8rem;color:var(--mid)}
 .required-star{color:var(--rose);margin-left:2px}
@@ -621,7 +546,6 @@ function dismissLaunchBanner() {
   <div class="nav-links">
     <a href="#how">How It Works</a>
     <a href="#plans">Pricing</a>
-    <a href="#profiles">Browse</a>
     <a href="#features">Why Us</a>
     <button class="lang-toggle" onclick="toggleLang()">
       <span class="eng-only">🇵🇰 اردو</span>
@@ -637,10 +561,9 @@ function dismissLaunchBanner() {
 <div class="mobile-menu" id="mobileMenu">
   <a href="#how" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
   <a href="#plans" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
-  <a href="#profiles" onclick="document.getElementById('mobileMenu').classList.remove('open')">Browse Profiles</a>
   <a href="#" id="mobile-signin-link" onclick="openModal('login');return false">Sign In</a>
   <a href="#" id="mobile-logout-link" onclick="logout();return false" style="display:none">Log Out</a>
-  <a href="#" onclick="openModal('register');return false" style="color:var(--burgundy);font-weight:700">Register Free →</a>
+  <a href="#" id="mobile-register-link" onclick="openModal('register');return false" style="color:var(--burgundy);font-weight:700">Register Free →</a>
 </div>
 
 <!-- HERO -->
@@ -827,37 +750,6 @@ function dismissLaunchBanner() {
   </div>
 </section>
 
-<!-- PAYMENT METHODS -->
-<section class="plans payment-section">
-  <div class="payment-methods">
-    <div class="pm-section-label">Pay via any of these methods</div>
-    <div class="pm-grid">
-      <div class="pm-card pm-card-bank">
-        <div class="pm-icon">🏦</div>
-        <div class="pm-card-name">Bank Transfer</div>
-        <div class="pm-card-detail">Meezan Bank<br>Title: ALI REHAN MALLHI<br>Acc No: 02510104365908<br>IBAN: <strong id="pm-bank">PK77MEZN0002510104365908</strong><br>Branch: DHA Phase VI Br-Lahore</div>
-        <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-bank', this)">Copy IBAN</button>
-        <div style="margin-top:.9rem">
-          <img src="/assets/images/meezan-bank-qr.jpeg" alt="Meezan Bank QR code for bank transfer" style="width:140px;height:140px;border-radius:8px;display:block;margin:0 auto;background:#fff">
-          <div style="font-size:.68rem;color:rgba(255,255,255,0.55);margin-top:.5rem">Scan with your banking app to pay</div>
-        </div>
-      </div>
-      <div class="pm-card pm-card-jazzcash">
-        <div class="pm-icon">📱</div>
-        <div class="pm-card-name">JazzCash</div>
-        <div class="pm-card-detail">Number:<br><strong id="pm-jazzcash">0321-4133233</strong></div>
-        <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-jazzcash', this)">Copy Number</button>
-      </div>
-      <div class="pm-card pm-card-nayapay">
-        <div class="pm-icon">🟢</div>
-        <div class="pm-card-name">NayaPay</div>
-        <div class="pm-card-detail">NayaPay ID: alimallhi@nayapay<br>Acc No: 03214133233<br>IBAN: <strong id="pm-nayapay">PK58NAYA1234503214133233</strong></div>
-        <button class="pm-copy-btn" onclick="copyPaymentDetail('pm-nayapay', this)">Copy IBAN</button>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- VERIFICATION LEDGER -->
 <div class="ledger">
   <div class="ledger-inner">
@@ -966,21 +858,6 @@ function dismissLaunchBanner() {
       <div class="hp-cell hp-bad"><span class="hp-icon">✕</span>Aggressive sales calls pushing you to upgrade or buy more</div>
       <div class="hp-cell hp-good"><span class="hp-icon">✓</span>Our team reaches out to help your match happen — never to sell you something you didn't ask for.</div>
     </div>
-  </div>
-</section>
-
-<!-- BROWSE PROFILES -->
-<section class="profiles-section" id="profiles">
-  <div class="section-header fade-in">
-    <div class="section-label">Active Members</div>
-    <h2 class="section-title">Browse Recent Profiles</h2>
-    <p class="section-sub">Genuine, family-vetted profiles from across Pakistan and the overseas community. Register to unlock full details.</p>
-  </div>
-  <div class="profiles-grid" id="showcase-profiles-grid">
-    <div class="fade-in" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--mid);font-family:var(--font-mono);font-size:.85rem">Loading live profiles…</div>
-  </div>
-  <div style="text-align:center;margin-top:3rem">
-    <a href="#" class="btn-primary" onclick="openModal('register');return false">Register to View All Profiles</a>
   </div>
 </section>
 
@@ -1125,7 +1002,6 @@ function dismissLaunchBanner() {
     </div>
     <div class="footer-col">
       <h4>Platform</h4>
-      <a href="#profiles">Browse Profiles</a>
       <a href="#how">How It Works</a>
       <a href="#plans">Membership Plans</a>
       <a href="#success-stories-section">Success Stories</a>
@@ -2405,20 +2281,6 @@ function gv(id) {
 }
 
 // ══════════════════════════════════════════
-//  COPY PAYMENT DETAIL TO CLIPBOARD
-// ══════════════════════════════════════════
-function copyPaymentDetail(elId, btn) {
-  var text = document.getElementById(elId).textContent;
-  navigator.clipboard.writeText(text).then(function() {
-    var original = btn.textContent;
-    btn.textContent = '✓ Copied';
-    setTimeout(function() { btn.textContent = original; }, 1800);
-  }).catch(function() {
-    alert('Copy this manually: ' + text);
-  });
-}
-
-// ══════════════════════════════════════════
 //  WHATSAPP REGISTRATION SUBMISSION
 // ══════════════════════════════════════════
 function sendToWhatsApp() {
@@ -2507,7 +2369,6 @@ document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); })
 // Initialise privacy preset on load
 document.addEventListener('DOMContentLoaded', function() {
   setPrivacyPreset('standard');
-  loadShowcaseProfiles();
   loadSuccessStories();
   updateNavForSession();
 
@@ -2556,6 +2417,11 @@ function updateNavForSession() {
   var mobileLogoutLink = document.getElementById('mobile-logout-link');
   if (mobileLogoutLink) mobileLogoutLink.style.display = '';
 
+  // Same reasoning as hero-create-profile-btn above — don't invite an
+  // already-registered member into the registration modal from the mobile menu.
+  var mobileRegisterLink = document.getElementById('mobile-register-link');
+  if (mobileRegisterLink) mobileRegisterLink.style.display = 'none';
+
   // No point showing "Create Free Profile" to someone who already has one.
   var heroCreateBtn = document.getElementById('hero-create-profile-btn');
   if (heroCreateBtn) heroCreateBtn.style.display = 'none';
@@ -2572,79 +2438,6 @@ function updateNavForSession() {
       e.preventDefault();
       handleLogout();
     };
-  }
-}
-
-// ══════════════════════════════════════════
-//  LIVE PROFILE SHOWCASE — real members, never real photo/contact for anonymous visitors
-// ══════════════════════════════════════════
-function privacyShieldFor(preset) {
-  if (preset === 'strict') return { label: '🛡️ Strict Privacy', cls: 'strict' };
-  if (preset === 'open')   return { label: '🔓 Open Profile', cls: 'open' };
-  return { label: '🔒 Standard Privacy', cls: 'standard' };
-}
-
-// Same brand-gradient initial avatar as the member dashboard's missing-photo
-// placeholder (dashboard.html avatarPlaceholderHtml) — kept inside the
-// existing "Photo Hidden" teaser rather than replacing the teaser itself,
-// since that lock/register-to-view treatment is intentional here (this
-// panel never shows a real photo to anonymous visitors, unlike the
-// dashboard's placeholder which only appears when one is genuinely missing).
-function showcaseAvatarHtml(name) {
-  var initial = (name || '').trim().charAt(0).toUpperCase() || '?';
-  return '<div style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;' +
-    'background:linear-gradient(135deg,var(--burgundy),var(--rose));color:#fff;' +
-    'font-family:\'Playfair Display\',serif;font-weight:700;font-size:1.5rem">' + escapeHtml(initial) + '</div>';
-}
-
-function showcaseCardHtml(p) {
-  var shield = privacyShieldFor(p.privacy_preset);
-  var badge = p.is_verified
-    ? '<span class="profile-verified-badge">✓ Verified</span>'
-    : (p.package === 'premium' ? '<span class="profile-featured-badge">⭐ Premium</span>' : '');
-
-  var isStrict = p.privacy_preset === 'strict';
-  var detailsLine2 = isStrict
-    ? 'Details available after registration'
-    : [p.religion, p.sect].filter(Boolean).join(' · ') + (p.marital_status ? ' · ' + p.marital_status : '');
-  var midLine = isStrict ? '' : [p.education, p.profession].filter(Boolean).join(' · ');
-
-  return '' +
-    '<div class="profile-card fade-in visible">' +
-      '<div class="profile-card-top" style="position:relative">' +
-        '<div class="photo-blurred">' +
-          showcaseAvatarHtml(p.name) +
-          '<span>Photo Hidden</span>' +
-          '<button class="unlock-info-btn" onclick="openModal(\'register\')">🔒 Register to View</button>' +
-        '</div>' +
-        badge +
-        '<div class="privacy-shield">' + shield.label + '</div>' +
-      '</div>' +
-      '<div class="profile-card-body">' +
-        '<div class="profile-name">' + p.name + '</div>' +
-        '<div class="profile-details">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + (midLine ? '<br>' + midLine : '') + '</div>' +
-        (detailsLine2 ? '<div style="font-size:.78rem;color:var(--mid);margin-bottom:.5rem">' + detailsLine2 + '</div>' : '') +
-        '<div class="contact-badge via-us">🔒 Contact via Rishta Square</div>' +
-        '<div class="profile-actions">' +
-          '<button class="btn-via-us" onclick="openModal(\'register\')" style="flex:1">Register to Connect</button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-}
-
-async function loadShowcaseProfiles() {
-  var grid = document.getElementById('showcase-profiles-grid');
-  if (!grid || typeof apiCall !== 'function') return;
-
-  try {
-    var result = await apiCall('/public/showcase-profiles?limit=6', 'GET');
-    if (!result.success || !result.data.length) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--mid)">New profiles are being added — check back soon.</div>';
-      return;
-    }
-    grid.innerHTML = result.data.map(showcaseCardHtml).join('');
-  } catch (err) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--mid)">New profiles are being added — check back soon.</div>';
   }
 }
 
