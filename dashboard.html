@@ -368,10 +368,16 @@ a{text-decoration:none;color:inherit}
   .logo-text{display:none}
   /* With the logo text gone, space-between left a big gap between the
      logo and the bell/name — pull topbar-right in next to topbar-left
-     instead of pinning it to the far edge, and let the name use the
-     freed-up room (was clamped tighter than desktop's 120px). */
+     instead of pinning it to the far edge. A fixed max-width on the name
+     still left it truncating with empty space visible past it, since
+     that space belongs to the flex container, not the name span itself —
+     so let the chip and name grow (min-width:0 is required for a flex
+     item's text-overflow:ellipsis to actually kick in instead of
+     overflowing) and consume whatever room is actually left. */
   .topbar{justify-content:flex-start;gap:1.5rem}
-  .user-chip-name{max-width:120px}
+  .topbar-right{flex:1}
+  .user-chip{flex:1;min-width:0}
+  .user-chip-name{flex:1;min-width:0;max-width:none}
   .sidebar{display:block;position:fixed;top:64px;left:0;bottom:0;width:260px;max-width:80vw;
     transform:translateX(-100%);transition:transform .25s ease;z-index:70;overflow-y:auto;
     box-shadow:4px 0 24px rgba(0,0,0,0.25)}
@@ -402,9 +408,6 @@ a{text-decoration:none;color:inherit}
   .stats-grid{grid-template-columns:1fr}
   .profiles-grid{grid-template-columns:1fr}
   .content{padding:1.5rem 4%}
-  /* Narrower phones can't spare the full 120px without risking overflow
-     next to the hamburger/logo/bell — still well above the old 70px. */
-  .user-chip-name{max-width:90px}
 }
 </style>
 </head>
