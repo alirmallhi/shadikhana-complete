@@ -365,6 +365,7 @@ a{text-decoration:none;color:inherit}
 @media(max-width:900px){
   .layout{grid-template-columns:1fr}
   .hamburger-btn{display:flex}
+  .logo-text{display:none}
   .sidebar{display:block;position:fixed;top:64px;left:0;bottom:0;width:260px;max-width:80vw;
     transform:translateX(-100%);transition:transform .25s ease;z-index:70;overflow-y:auto;
     box-shadow:4px 0 24px rgba(0,0,0,0.25)}
@@ -407,7 +408,7 @@ a{text-decoration:none;color:inherit}
     <button class="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <a href="/" class="logo"><div class="logo-dot"><img src="/assets/images/rs-logo-header.png" alt="Rishta Square"></div>Rishta Square</a>
+    <a href="/" class="logo"><div class="logo-dot"><img src="/assets/images/rs-logo-header.png" alt="Rishta Square"></div><span class="logo-text">Rishta Square</span></a>
   </div>
   <div class="topbar-right">
     <button class="notif-btn" onclick="showPanel('notifications')">🔔<span class="notif-dot" id="notif-indicator"></span></button>
