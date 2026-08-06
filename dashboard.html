@@ -363,20 +363,24 @@ a{text-decoration:none;color:inherit}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
-  .layout{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr;min-height:calc(100vh - 112px)}
   .hamburger-btn{display:flex}
   .logo-text{display:none}
-  /* Three-way header layout: hamburger+logo pinned left, avatar+name
-     centered, bell pinned right. topbar-right no longer acts as its own
-     box on mobile (display:contents) so its two children — the bell and
-     the user-chip — become independent grid items of .topbar itself,
-     each placed in their own column instead of being stuck together. */
-  .topbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.6rem}
-  .topbar-left{justify-self:start}
+  /* Two-row header: hamburger+logo and bell share row 1 (left/right
+     edges), avatar+name gets its own centered row 2 below — both rows
+     still inside the maroon topbar block itself (fixed height:64px
+     swapped for a taller fixed height that fits both rows), rather than
+     the name pill spilling out past a height:64px box into the page
+     content underneath. topbar-right no longer acts as its own box on
+     mobile (display:contents) so its two children — the bell and the
+     user-chip — become independent grid items of .topbar itself. */
+  .topbar{height:112px;display:grid;grid-template-columns:auto 1fr auto;
+    grid-template-rows:auto auto;align-items:center;gap:.5rem .6rem;padding:.5rem 5%}
+  .topbar-left{grid-column:1;grid-row:1;justify-self:start}
   .topbar-right{display:contents}
-  .user-chip{grid-column:2;justify-self:center;min-width:0}
-  .notif-btn{grid-column:3;justify-self:end}
-  .user-chip-name{font-size:1rem;max-width:150px}
+  .user-chip{grid-column:1/-1;grid-row:2;justify-self:center;min-width:0}
+  .notif-btn{grid-column:3;grid-row:1;justify-self:end}
+  .user-chip-name{font-size:1rem;max-width:200px}
 
   /* Bell, hamburger, and logo read as visually mismatched sizes on mobile
      (hamburger's thin 22px bars and the 24px logo image both looked
@@ -386,11 +390,11 @@ a{text-decoration:none;color:inherit}
   .hamburger-btn span{width:24px;height:2.5px}
   .logo-dot{padding:4px 7px}
   .logo-dot img{height:30px}
-  .sidebar{display:block;position:fixed;top:64px;left:0;bottom:0;width:260px;max-width:80vw;
+  .sidebar{display:block;position:fixed;top:112px;left:0;bottom:0;width:260px;max-width:80vw;
     transform:translateX(-100%);transition:transform .25s ease;z-index:70;overflow-y:auto;
     box-shadow:4px 0 24px rgba(0,0,0,0.25)}
   .sidebar.mobile-open{transform:translateX(0)}
-  .sidebar-backdrop{display:block;position:fixed;top:64px;left:0;right:0;bottom:0;
+  .sidebar-backdrop{display:block;position:fixed;top:112px;left:0;right:0;bottom:0;
     background:rgba(0,0,0,0.4);z-index:60;opacity:0;pointer-events:none;transition:opacity .25s ease}
   .sidebar-backdrop.open{opacity:1;pointer-events:auto}
   .logout-btn{display:none}
