@@ -80,38 +80,57 @@ a{text-decoration:none;color:inherit}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
 .card-title{font-weight:700;font-size:1.02rem}
 
-/* ── DASHBOARD HOME ── */
-.welcome-banner{background:linear-gradient(135deg,var(--burg),#5A1028);border-radius:20px;
-  padding:1.8rem 2rem;color:#fff;margin-bottom:1.5rem;display:flex;align-items:center;
-  justify-content:space-between;flex-wrap:wrap;gap:1rem}
-.welcome-banner.is-premium{background:linear-gradient(160deg,#03162A 0%,#072444 45%,#03162A 100%)}
-.welcome-text h2{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:.3rem}
-.welcome-text p{font-size:.86rem;color:rgba(255,255,255,0.8)}
-.pkg-badge-big{background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.3);
-  border-radius:12px;padding:.6rem 1.2rem;text-align:center}
-.pkg-badge-big .pname{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;opacity:.8}
-.pkg-badge-big .pval{font-weight:700;font-size:1.05rem;margin-top:.15rem}
+/* ── DASHBOARD HOME — HERO CARD ── */
+.hero-card{background:linear-gradient(135deg,var(--burg),#5A1028);border-radius:20px;
+  padding:1.7rem 1.9rem;color:#fff;margin-bottom:1.5rem;display:flex;align-items:center;
+  gap:1.4rem;flex-wrap:wrap}
+.hero-card.is-premium{background:linear-gradient(160deg,#03162A 0%,#072444 45%,#03162A 100%)}
+.hero-photo-wrap{position:relative;width:104px;height:104px;flex-shrink:0}
+.hero-ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.hero-ring-track{fill:none;stroke:rgba(255,255,255,0.25);stroke-width:5}
+.hero-ring-fill{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;
+  stroke-dasharray:289;stroke-dashoffset:289;transition:stroke-dashoffset .6s ease}
+.hero-photo{position:absolute;top:8px;left:8px;right:8px;bottom:8px;border-radius:50%;
+  background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;overflow:hidden;border:3px solid rgba(255,255,255,0.9)}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-edit-btn{position:absolute;bottom:0;right:0;width:30px;height:30px;border-radius:50%;
+  background:var(--gold);color:#fff;border:2.5px solid #fff;display:flex;align-items:center;
+  justify-content:center;font-size:.82rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);padding:0}
+.hero-edit-btn:hover{filter:brightness(1.08)}
+.hero-info{flex:1;min-width:180px}
+.hero-greeting{font-size:.8rem;color:rgba(255,255,255,0.75);margin-bottom:.15rem}
+.hero-top-row{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
+.hero-top-row h2{font-family:'Playfair Display',serif;font-size:1.32rem;font-weight:700;line-height:1.2}
+.hero-pkg-badge{font-size:.66rem;font-weight:700;padding:3px 10px;border-radius:10px;
+  background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.3);
+  text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.hero-pkg-badge.is-premium-badge{background:#F0997B;color:#4A1B0C;border-color:rgba(0,0,0,0.18)}
+.hero-meta{font-size:.88rem;color:rgba(255,255,255,0.85);margin-top:.4rem}
+.hero-since{font-size:.76rem;color:rgba(255,255,255,0.6);margin-top:.3rem}
+.hero-upgrade-link{display:inline-block;margin-top:.5rem;font-size:.76rem;font-weight:700;
+  color:#fff;opacity:.9;text-decoration:underline}
 
 .status-banner{border-radius:14px;padding:1rem 1.3rem;margin-bottom:1.5rem;font-size:.86rem;
   display:flex;align-items:center;gap:.7rem}
 .status-pending{background:#FEF3E2;color:#8A6010;border:1.5px solid rgba(184,151,90,0.3)}
 .status-active{background:#E8F5F0;color:var(--green);border:1.5px solid rgba(45,122,95,0.25)}
 
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:1.5rem}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:1.5rem}
 .stat-card{background:var(--white);border-radius:16px;padding:1.3rem;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
 .stat-icon{font-size:1.5rem;margin-bottom:.5rem}
 .stat-value{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--burg)}
 .stat-label{font-size:.78rem;color:var(--mid);margin-top:.2rem}
 
-.completion-bar-track{background:var(--light);border-radius:8px;height:10px;overflow:hidden;margin-top:.6rem}
-.completion-bar-fill{height:10px;background:linear-gradient(90deg,var(--gold),var(--burg));border-radius:8px;transition:width .5s}
-
-.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.qa-btn{background:var(--ivory);border:1.5px solid var(--light);border-radius:14px;padding:1.1rem;
-  text-align:center;cursor:pointer;transition:border-color .2s,transform .2s}
-.qa-btn:hover{border-color:var(--burg);transform:translateY(-2px)}
-.qa-icon{font-size:1.6rem;margin-bottom:.4rem}
-.qa-label{font-size:.84rem;font-weight:600}
+.quick-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.qa-btn{background:var(--white);border:none;border-radius:16px;padding:1.4rem 1rem;
+  text-align:center;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.qa-btn:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,0.13)}
+.qa-icon-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:1.5rem;margin:0 auto .7rem}
+.qa-icon-circle.maroon{background:linear-gradient(135deg,#7A2436,#5A1028);color:#fff}
+.qa-icon-circle.navy{background:linear-gradient(160deg,#03162A,#0C3A66);color:#fff}
+.qa-label{font-size:.86rem;font-weight:700}
 
 /* ── PROFILE FORM ── */
 .form-section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
@@ -401,27 +420,27 @@ a{text-decoration:none;color:inherit}
   .user-chip{padding:.3rem .5rem .3rem .3rem;gap:6px}
   .user-avatar{width:26px;height:26px}
   .user-chip-name{font-size:1rem;max-width:120px}
-  .stats-grid{grid-template-columns:1fr 1fr;order:3}
   .profiles-grid{grid-template-columns:1fr 1fr}
-  .quick-actions{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
-  /* Desktop keeps DOM order (stats first) — this reordering is mobile-only.
-     Quick Actions and Today's Picks are the actionable content, so they
-     move above the stats grid (mostly zeros for new members, pushing
-     everything useful far down the page otherwise); Finding the Right
-     Match stays last on both. */
-  #panel-home.active{display:flex;flex-direction:column}
-  #quick-actions-card{order:1}
-  #todays-picks-card{order:2}
-  #completion-checklist-card{order:4}
-  #finding-match-card{order:5}
+  /* Quick Actions/Today's Picks/Stats/Finding-the-Right-Match now render in
+     this exact order in the HTML itself (hero card, then the actionable
+     stuff, stats de-emphasized further down) — no flex/order reshuffling
+     needed here anymore, on mobile or desktop. */
+  .hero-card{padding:1.4rem 1.5rem}
 }
 @media(max-width:600px){
   .interest-row{flex-wrap:wrap}
   .interest-action-btns{flex-wrap:wrap;width:100%;justify-content:flex-end}
-  .stats-grid{grid-template-columns:1fr}
+  .stats-grid{gap:.6rem}
+  .stat-card{padding:.9rem .6rem}
+  .stat-icon{font-size:1.25rem;margin-bottom:.3rem}
+  .stat-value{font-size:1.35rem}
+  .stat-label{font-size:.68rem}
   .profiles-grid{grid-template-columns:1fr}
   .content{padding:1.5rem 4%}
+  .hero-card{flex-direction:column;text-align:center;padding:1.5rem 1.2rem}
+  .hero-top-row{justify-content:center}
+  .hero-info{min-width:0}
 }
 </style>
 </head>
@@ -506,21 +525,49 @@ a{text-decoration:none;color:inherit}
       <h1 class="page-title">Welcome to Your Dashboard</h1>
       <p class="page-sub">Here's a quick overview of your Rishta Square profile</p>
 
-      <div class="welcome-banner">
-        <div class="welcome-text">
-          <h2 id="welcome-name">Assalam o Alaikum!</h2>
-          <p id="welcome-sub">Loading your profile...</p>
+      <div class="hero-card" id="hero-card" title="Profile completeness">
+        <div class="hero-photo-wrap">
+          <svg class="hero-ring" viewBox="0 0 100 100">
+            <circle class="hero-ring-track" cx="50" cy="50" r="46"></circle>
+            <circle class="hero-ring-fill" id="hero-ring-fill" cx="50" cy="50" r="46"></circle>
+          </svg>
+          <div class="hero-photo" id="hero-photo">👤</div>
+          <button class="hero-edit-btn" onclick="showPanel('profile')" title="Edit My Profile" aria-label="Edit My Profile">✏️</button>
         </div>
-        <div class="pkg-badge-big">
-          <div class="pname">Your Package</div>
-          <div class="pval" id="welcome-package">—</div>
-          <a href="#" id="welcome-upgrade-link" onclick="showPanel('premium');return false" style="display:none;font-size:.72rem;color:#fff;opacity:.85;text-decoration:underline;margin-top:.4rem">Why Upgrade? →</a>
+        <div class="hero-info">
+          <div class="hero-greeting">Assalam o Alaikum</div>
+          <div class="hero-top-row">
+            <h2 id="hero-name">Loading…</h2>
+            <span class="hero-pkg-badge" id="hero-pkg-badge">—</span>
+          </div>
+          <div class="hero-meta" id="hero-meta"></div>
+          <div class="hero-since" id="hero-since"></div>
+          <a href="#" id="hero-upgrade-link" onclick="showPanel('premium');return false" class="hero-upgrade-link" style="display:none">Why Upgrade? →</a>
         </div>
       </div>
 
       <div class="status-banner" id="status-banner" style="display:none"></div>
 
       <div id="whats-new-banner" style="display:none"></div>
+
+      <div class="card" id="quick-actions-card">
+        <div class="card-header"><span class="card-title">Quick Actions</span></div>
+        <div class="quick-actions">
+          <div class="qa-btn" onclick="showPanel('browse')">
+            <div class="qa-icon-circle maroon">🔍</div>
+            <div class="qa-label">Browse Profiles</div>
+          </div>
+          <div class="qa-btn" onclick="showPanel('matches')">
+            <div class="qa-icon-circle navy">💍</div>
+            <div class="qa-label">View Matchmaker's Picks</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="todays-picks-card" style="display:none">
+        <div class="card-header"><span class="card-title">✨ Today's Picks</span></div>
+        <div id="todays-picks-results" style="padding:1.2rem 1.5rem 1.5rem"></div>
+      </div>
 
       <div class="stats-grid">
         <div class="stat-card" style="cursor:pointer" onclick="goToInterests('sent')">
@@ -538,12 +585,6 @@ a{text-decoration:none;color:inherit}
           <div class="stat-value" id="stat-matches">0</div>
           <div class="stat-label">Matchmaker's Picks</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-value" id="stat-completion">0%</div>
-          <div class="stat-label">Profile Complete</div>
-          <div class="completion-bar-track"><div class="completion-bar-fill" id="completion-bar" style="width:0%"></div></div>
-        </div>
       </div>
 
       <div class="card" id="completion-checklist-card" style="display:none">
@@ -551,28 +592,6 @@ a{text-decoration:none;color:inherit}
         <div id="completion-checklist" style="padding:.6rem 1.5rem 1.5rem"></div>
       </div>
 
-      <div class="card" id="todays-picks-card" style="display:none">
-        <div class="card-header"><span class="card-title">✨ Today's Picks</span></div>
-        <div id="todays-picks-results" style="padding:1.2rem 1.5rem 1.5rem"></div>
-      </div>
-
-      <div class="card" id="quick-actions-card">
-        <div class="card-header"><span class="card-title">Quick Actions</span></div>
-        <div class="quick-actions">
-          <div class="qa-btn" onclick="showPanel('profile')">
-            <div class="qa-icon">✏️</div>
-            <div class="qa-label">Edit My Profile</div>
-          </div>
-          <div class="qa-btn" onclick="showPanel('browse')">
-            <div class="qa-icon">🔍</div>
-            <div class="qa-label">Browse Profiles</div>
-          </div>
-          <div class="qa-btn" onclick="showPanel('matches')">
-            <div class="qa-icon">💍</div>
-            <div class="qa-label">View Matchmaker's Picks</div>
-          </div>
-        </div>
-      </div>
       <div class="card" id="finding-match-card">
         <div class="card-header"><span class="card-title">💡 Finding the Right Match</span></div>
         <div style="padding:1.2rem 1.5rem 1.5rem">
@@ -1182,8 +1201,6 @@ function renderUserChip() {
   var name = currentMember.full_name || currentMember.display_name || 'Member';
   document.getElementById('user-name-chip').textContent = name;
   document.getElementById('user-initial').textContent = name.charAt(0).toUpperCase();
-  document.getElementById('welcome-name').textContent = 'Assalam o Alaikum, ' + name.split(' ')[0] + '!';
-  document.querySelector('.welcome-banner').classList.toggle('is-premium', currentMember.package === 'premium');
 }
 
 // ══════════════════════════════════════════
@@ -1233,11 +1250,24 @@ function showPanel(id, navEl) {
 async function renderDashboardHome() {
   if (!currentMember) return;
 
-  var pkgLabel = (currentMember.package || 'basic').toUpperCase();
-  document.getElementById('welcome-package').textContent = pkgLabel;
-  document.getElementById('welcome-upgrade-link').style.display = currentMember.package === 'premium' ? 'none' : 'block';
-  document.getElementById('welcome-sub').textContent =
+  var isPremiumMember = currentMember.package === 'premium';
+  document.getElementById('hero-card').classList.toggle('is-premium', isPremiumMember);
+  document.getElementById('hero-name').textContent = currentMember.display_name || currentMember.full_name || 'Member';
+  var pkgBadge = document.getElementById('hero-pkg-badge');
+  pkgBadge.textContent = (currentMember.package || 'basic').toUpperCase();
+  pkgBadge.classList.toggle('is-premium-badge', isPremiumMember);
+  document.getElementById('hero-meta').textContent =
+    [currentMember.age ? (currentMember.age + ' yrs') : null, currentMember.city || null].filter(Boolean).join(' · ');
+  document.getElementById('hero-since').textContent =
     'Member since ' + new Date(currentMember.created_at || Date.now()).toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+  document.getElementById('hero-upgrade-link').style.display = isPremiumMember ? 'none' : 'inline-block';
+
+  // Own-profile photo is always shown unmasked — photo_privacy governs what
+  // OTHER members see, never what a member sees of their own dashboard.
+  var heroPhoto = document.getElementById('hero-photo');
+  heroPhoto.innerHTML = currentMember.photo_url
+    ? '<img src="' + currentMember.photo_url + '" alt="Your profile photo">'
+    : '👤';
 
   // Status banner
   var statusEl = document.getElementById('status-banner');
@@ -1267,8 +1297,9 @@ async function renderDashboardHome() {
   ];
   var filled = checklistItems.filter(function(i) { return currentMember[i.field] && currentMember[i.field] !== '—'; }).length;
   var pct = Math.round((filled / checklistItems.length) * 100);
-  document.getElementById('stat-completion').textContent = pct + '%';
-  document.getElementById('completion-bar').style.width = pct + '%';
+  var ringCircumference = 289;
+  document.getElementById('hero-ring-fill').style.strokeDashoffset = ringCircumference - (ringCircumference * pct / 100);
+  document.getElementById('hero-card').title = pct + '% profile complete';
 
   var missing = checklistItems.filter(function(i) { return !currentMember[i.field] || currentMember[i.field] === '—'; });
   var checklistCard = document.getElementById('completion-checklist-card');
