@@ -84,6 +84,7 @@ a{text-decoration:none;color:inherit}
 .welcome-banner{background:linear-gradient(135deg,var(--burg),#5A1028);border-radius:20px;
   padding:1.8rem 2rem;color:#fff;margin-bottom:1.5rem;display:flex;align-items:center;
   justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.welcome-banner.is-premium{background:linear-gradient(160deg,#03162A 0%,#072444 45%,#03162A 100%)}
 .welcome-text h2{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:.3rem}
 .welcome-text p{font-size:.86rem;color:rgba(255,255,255,0.8)}
 .pkg-badge-big{background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.3);
@@ -472,14 +473,7 @@ a{text-decoration:none;color:inherit}
       <span class="nav-badge" id="messages-badge" style="display:none">0</span>
     </div>
     <div class="nav-item" onclick="showPanel('saved', this)">
-      <span class="nav-item-icon">🤍</span>Saved
-    </div>
-    <div class="nav-item" onclick="showPanel('alerts', this)">
-      <span class="nav-item-icon">🔔</span>Saved Searches
-    </div>
-    <div class="nav-item" onclick="showPanel('compliments', this)">
-      <span class="nav-item-icon">😊</span>Compliments
-      <span class="nav-badge" id="compliments-badge" style="display:none">0</span>
+      <span class="nav-item-icon">🤍</span>Saved Profiles
     </div>
     <div class="nav-item" id="nav-item-viewers" style="display:none" onclick="showPanel('viewers', this)">
       <span class="nav-item-icon">👁️</span>Who Viewed Me
@@ -1156,7 +1150,6 @@ async function initDashboard() {
   renderDashboardHome();
   loadInterestsCount();
   loadMessagesCount();
-  loadComplimentsBadgeCount();
   checkPendingPhotoRequests();
   loadUnreadNotifCount();
   loadTodaysPicks();
@@ -1170,7 +1163,6 @@ async function initDashboard() {
     setInterval(function() {
       loadMessagesCount();
       loadInterestsCount();
-      loadComplimentsBadgeCount();
       checkPendingPhotoRequests();
       loadUnreadNotifCount();
       // If the member currently has the Messages panel open, also refresh
@@ -1189,6 +1181,7 @@ function renderUserChip() {
   document.getElementById('user-name-chip').textContent = name;
   document.getElementById('user-initial').textContent = name.charAt(0).toUpperCase();
   document.getElementById('welcome-name').textContent = 'Assalam o Alaikum, ' + name.split(' ')[0] + '!';
+  document.querySelector('.welcome-banner').classList.toggle('is-premium', currentMember.package === 'premium');
 }
 
 // ══════════════════════════════════════════
@@ -2812,7 +2805,11 @@ async function loadInterests() {
     .filter(function(i) { return i.status !== 'accepted'; });
 
   if (!list.length) {
-    container.innerHTML = '<div class="empty-state"><div class="ei">💌</div>No ' + currentInterestTab + ' interests yet.</div>';
+    // Accepted interests are filtered out above (they live in Connections
+    // now), so "no interests yet" would misleadingly read as no activity
+    // ever, even for a member with a full history of accepted ones.
+    var emptyCopy = currentInterestTab === 'received' ? 'No pending interest requests' : 'No pending sent interests';
+    container.innerHTML = '<div class="empty-state"><div class="ei">💌</div>' + emptyCopy + '</div>';
     return;
   }
 
