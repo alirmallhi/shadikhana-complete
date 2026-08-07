@@ -37,10 +37,10 @@ function formatCnicInput(el) {
   el.value = formatted;
 }
 
-// ── Automatically open WhatsApp in background with profile summary ──
-// Called right after a successful database save — no extra click needed
-function autoNotifyWhatsApp(payload) {
-  var msg =
+// ── Build the pre-filled profile summary shared by the auto-popup below
+// and the visible "Send Payment Screenshot" button on the success screen ──
+function buildWhatsAppRegistrationMessage(payload) {
+  return (
     'RISHTA SQUARE - NEW PROFILE REGISTRATION\n' +
     '========================================\n' +
     'Name: '             + (payload.full_name || '-')   + '\n' +
@@ -60,11 +60,20 @@ function autoNotifyWhatsApp(payload) {
     'Package: ' + (payload.package || '-') + '\n' +
     'Payment Method: ' + (payload.payment_method || '-') + '\n' +
     '========================================\n' +
-    'Submitted automatically from rishtasquare.com';
+    'Submitted automatically from rishtasquare.com'
+  );
+}
 
-  var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+// ── Automatically open WhatsApp in background with profile summary ──
+// Called right after a successful database save — no extra click needed.
+// Best-effort only: this runs after an awaited fetch, outside the direct
+// user-gesture chain, so browsers frequently block the popup silently. The
+// visible button on the success screen (wired in submitRegistration below)
+// carries the same message and is a real click, so it's the reliable path —
+// this is just a bonus if the browser happens to allow it.
+function autoNotifyWhatsApp(payload) {
+  var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildWhatsAppRegistrationMessage(payload));
 
-  // Open in a new background tab — does not interrupt the user's flow
   var waWindow = window.open(url, '_blank');
 
   if (!waWindow) {
@@ -101,6 +110,7 @@ async function submitRegistration() {
     profile_for:         (typeof selectedProfileFor !== 'undefined' ? selectedProfileFor : 'self_male'),
     guardian_name:       gv('f-guardianname'),
     guardian_declaration: document.getElementById('f-guardian-declaration') ? document.getElementById('f-guardian-declaration').checked : false,
+    tos_agreement:        document.getElementById('f-tos-agreement') ? document.getElementById('f-tos-agreement').checked : false,
     gender:              gv('f-gender'),
     date_of_birth:       gv('f-dob'),
     marital_status:      gv('f-marital'),
@@ -170,6 +180,10 @@ async function submitRegistration() {
     alert('Please confirm the registration declaration before continuing.');
     return;
   }
+  if (!payload.tos_agreement) {
+    alert('Please agree to the Terms of Service and Privacy Policy before continuing.');
+    return;
+  }
   if (payload.cnic && payload.cnic.replace(/\D/g, '').length !== 13) {
     alert('CNIC must be 13 digits, or leave it blank.');
     return;
@@ -228,6 +242,14 @@ async function submitRegistration() {
       if (pkgDisplay) {
         var pkgAmounts = { basic: '10,000', premium: '35,000' };
         pkgDisplay.textContent = 'PKR ' + (pkgAmounts[payload.package] || '10,000');
+      }
+
+      // The visible button is the reliable path (a real click, not an
+      // after-await popup — see autoNotifyWhatsApp above), so it needs the
+      // same pre-filled message the "How this works" copy promises.
+      var waBtn = document.getElementById('success-wa-btn');
+      if (waBtn) {
+        waBtn.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(buildWhatsAppRegistrationMessage(payload));
       }
 
     } else {

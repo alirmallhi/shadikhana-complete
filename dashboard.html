@@ -197,6 +197,8 @@ a{text-decoration:none;color:inherit}
   align-items:flex-end;gap:5px}
 .pc-badge{font-size:.62rem;font-weight:700;
   padding:3px 8px;border-radius:10px;background:#E8F5F0;color:var(--green)}
+.pc-badge-overseas{font-size:.62rem;font-weight:700;
+  padding:3px 8px;border-radius:10px;background:#E3EEFC;color:#1D5FA8}
 .pc-premium-badge{font-size:.62rem;font-weight:700;
   padding:3px 8px;border-radius:10px;background:#F0997B;color:#4A1B0C;
   border:1px solid rgba(0,0,0,0.18);box-shadow:0 1px 5px rgba(0,0,0,0.3)}
@@ -757,7 +759,7 @@ a{text-decoration:none;color:inherit}
           </div>
           <div class="privacy-toggle-row">
             <div class="ptog-left">
-              <div class="ptog-label">Family Details <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-label">Family Details <span class="ptog-badge mutual" data-preset-badge>After Mutual Interest</span></div>
               <div class="ptog-sub">Parents' names, occupations & family description hidden until matched</div>
             </div>
             <label class="privacy-mini-toggle">
@@ -767,7 +769,7 @@ a{text-decoration:none;color:inherit}
           </div>
           <div class="privacy-toggle-row">
             <div class="ptog-left">
-              <div class="ptog-label">Income & Employer <span class="ptog-badge premium">Premium+ Only</span></div>
+              <div class="ptog-label">Income & Employer <span class="ptog-badge mutual" data-preset-badge>After Mutual Interest</span></div>
               <div class="ptog-sub">Monthly income and employer name visible to Premium only</div>
             </div>
             <label class="privacy-mini-toggle">
@@ -777,7 +779,7 @@ a{text-decoration:none;color:inherit}
           </div>
           <div class="privacy-toggle-row">
             <div class="ptog-left">
-              <div class="ptog-label">Exact Location <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-label">Exact Location <span class="ptog-badge mutual" data-preset-badge>After Mutual Interest</span></div>
               <div class="ptog-sub">Hide area/neighbourhood — only show city until matched</div>
             </div>
             <label class="privacy-mini-toggle">
@@ -797,7 +799,7 @@ a{text-decoration:none;color:inherit}
           </div>
           <div class="privacy-toggle-row">
             <div class="ptog-left">
-              <div class="ptog-label">Marital History Details <span class="ptog-badge mutual">After Mutual Interest</span></div>
+              <div class="ptog-label">Marital History Details <span class="ptog-badge mutual" data-preset-badge>After Mutual Interest</span></div>
               <div class="ptog-sub">Detailed marital info (divorce/widowed details) hidden until matched</div>
             </div>
             <label class="privacy-mini-toggle">
@@ -1396,6 +1398,16 @@ function loadProfileForm() {
   var isPremium = currentMember.package === 'premium';
   document.getElementById('p-contact-preference-row').style.display = isPremium ? 'flex' : 'none';
   document.getElementById('p-contact-preference').checked = currentMember.contact_preference === 'via_us';
+
+  // Under the Strict preset, these fields never unlock even after a mutual
+  // match (enforced server-side in viewProfile's displayUnlocked override) —
+  // "After Mutual Interest" would be true for Standard but false for Strict,
+  // so members can't tell from the label alone what turning the toggle ON
+  // actually means for them.
+  var isStrict = currentMember.privacy_preset === 'strict';
+  document.querySelectorAll('[data-preset-badge]').forEach(function(badge) {
+    badge.textContent = isStrict ? 'Always Hidden' : 'After Mutual Interest';
+  });
   var fields = ['full_name','display_name','height','weight','complexion',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
@@ -1879,12 +1891,19 @@ function premiumBadgeHtml(pkg) {
   return pkg === 'premium' ? '<span class="pc-premium-badge">★ Premium</span>' : '';
 }
 
+// Country of Residence not being Pakistan, not nationality/citizenship —
+// e.g. a Pakistani studying or working abroad. Shared so every card and the
+// profile detail view use the same rule.
+function overseasBadgeHtml(p) {
+  return (p.country && p.country !== 'Pakistan') ? '<span class="pc-badge-overseas">🌍 Overseas Pakistani</span>' : '';
+}
+
 // Premium always leads, Verified follows — the paid tier indicator gets
 // visual priority over everything else. Shared here so every card stays
 // consistent instead of each one concatenating badges in its own order.
 function profileBadgesHtml(p) {
   var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
-  return premiumBadgeHtml(p.package) + verifiedBadge;
+  return premiumBadgeHtml(p.package) + verifiedBadge + overseasBadgeHtml(p);
 }
 
 function matchBadgeHtml(score) {
@@ -2509,10 +2528,11 @@ async function loadSavedProfiles() {
   result.data.forEach(function(p) {
     var photo = profilePhotoHtml(p);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var overseasBadge = overseasBadgeHtml(p);
     var activity = formatLastActive(p.last_active_at);
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + verifiedBadge +
+      '<div class="pc-top">' + photo + verifiedBadge + overseasBadge +
       '<button class="pc-save-btn" onclick="event.stopPropagation();toggleSaveProfile(\'' + p.uuid + '\', true, this)">❤️</button>' +
       '</div>' +
       '<div class="pc-body">' +
@@ -2570,10 +2590,11 @@ async function loadProfileViewers() {
   viewers.forEach(function(p) {
     var photo = profilePhotoHtml(p);
     var verifiedBadge = p.is_verified ? '<span class="pc-badge">✓ Verified</span>' : '';
+    var overseasBadge = overseasBadgeHtml(p);
     var activity = formatLastActive(p.last_viewed_at);
     html +=
       '<div class="profile-card" onclick="viewProfileDetail(\'' + p.uuid + '\')">' +
-      '<div class="pc-top">' + photo + verifiedBadge + '</div>' +
+      '<div class="pc-top">' + photo + verifiedBadge + overseasBadge + '</div>' +
       '<div class="pc-body">' +
       '<div class="pc-name">' + (p.display_name || p.full_name || 'Rishta Square Member') + '</div>' +
       '<div class="pc-meta">' + (p.age || '—') + ' yrs · ' + (p.city || '—') + ' · ' + (p.profession || '—') + '</div>' +
