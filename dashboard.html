@@ -484,6 +484,9 @@ a{text-decoration:none;color:inherit}
     <div class="nav-item" onclick="showPanel('viewers', this)">
       <span class="nav-item-icon">👁️</span>Who Viewed Me
     </div>
+    <div class="nav-item" onclick="showPanel('premium', this)">
+      <span class="nav-item-icon">⭐</span>Premium Features
+    </div>
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-section-label">Account</div>
@@ -515,6 +518,7 @@ a{text-decoration:none;color:inherit}
         <div class="pkg-badge-big">
           <div class="pname">Your Package</div>
           <div class="pval" id="welcome-package">—</div>
+          <a href="#" id="welcome-upgrade-link" onclick="showPanel('premium');return false" style="display:none;font-size:.72rem;color:#fff;opacity:.85;text-decoration:underline;margin-top:.4rem">Why Upgrade? →</a>
         </div>
       </div>
 
@@ -607,6 +611,9 @@ a{text-decoration:none;color:inherit}
       <h1 class="page-title">My Profile</h1>
       <p class="page-sub">Keep your profile up to date for better matches</p>
       <button class="btn-filter" style="margin-bottom:1.2rem" onclick="previewMyProfile()">👁️ Preview How Others See My Profile</button>
+      <div id="profile-upgrade-hint" style="display:none;margin:-.6rem 0 1.2rem">
+        <a href="#" onclick="showPanel('premium');return false" style="font-size:.82rem;color:var(--burg);font-weight:600;text-decoration:none">⭐ See what Premium unlocks →</a>
+      </div>
 
       <div class="card">
         <div class="photo-section">
@@ -941,6 +948,42 @@ a{text-decoration:none;color:inherit}
       </div>
     </div>
 
+    <!-- ══════════ WHY UPGRADE TO PREMIUM ══════════ -->
+    <div class="panel" id="panel-premium">
+      <h1 class="page-title">Why Upgrade to Premium</h1>
+      <p class="page-sub">What Premium unlocks on the platform itself — separate from the concierge matchmaker service described elsewhere on the site</p>
+
+      <div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
+        <div class="stat-card" style="text-align:left">
+          <div class="stat-icon">📷</div>
+          <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Photo &amp; Media Sharing</div>
+          <div style="font-size:.82rem;color:var(--mid);line-height:1.5">Send and receive photos directly in your conversations, not just text.</div>
+        </div>
+        <div class="stat-card" style="text-align:left">
+          <div class="stat-icon">✓</div>
+          <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Read Receipts</div>
+          <div style="font-size:.82rem;color:var(--mid);line-height:1.5">See exactly when the person you're messaging has seen your message.</div>
+        </div>
+        <div class="stat-card" style="text-align:left">
+          <div class="stat-icon">⭐</div>
+          <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Priority Placement</div>
+          <div style="font-size:.82rem;color:var(--mid);line-height:1.5">Your profile is shown first in Browse Profiles and Today's Picks results, ahead of Basic members.</div>
+        </div>
+        <div class="stat-card" style="text-align:left">
+          <div class="stat-icon">👁️</div>
+          <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Who Viewed My Profile</div>
+          <div style="font-size:.82rem;color:var(--mid);line-height:1.5">See exactly who's checked out your profile, and when.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1.5rem;text-align:center;padding:2rem 1.5rem">
+        <div style="font-size:.72rem;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:.6rem">Premium Pricing</div>
+        <div id="premium-price-line" style="font-size:1.4rem;font-weight:700;color:var(--charcoal);margin-bottom:.4rem">—</div>
+        <div style="font-size:.86rem;color:var(--mid);margin-bottom:1.5rem;max-width:420px;margin-left:auto;margin-right:auto">Plus a PKR 125,000 success fee — only if and when your rishta is confirmed. No match, no success fee.</div>
+        <div id="premium-cta-area"></div>
+      </div>
+    </div>
+
     <!-- ══════════ SAVED SEARCHES ══════════ -->
     <div class="panel" id="panel-alerts">
       <h1 class="page-title">Saved Searches</h1>
@@ -1177,6 +1220,7 @@ function showPanel(id, navEl) {
   if (id === 'matches')     loadMyMatches();
   if (id === 'saved')       loadSavedProfiles();
   if (id === 'viewers')     loadProfileViewers();
+  if (id === 'premium')     loadPremiumFeaturesPanel();
   if (id === 'alerts')      loadSavedSearches();
   if (id === 'compliments') loadCompliments();
   if (id === 'interests')   loadInterests();
@@ -1192,6 +1236,7 @@ async function renderDashboardHome() {
 
   var pkgLabel = (currentMember.package || 'basic').toUpperCase();
   document.getElementById('welcome-package').textContent = pkgLabel;
+  document.getElementById('welcome-upgrade-link').style.display = currentMember.package === 'premium' ? 'none' : 'block';
   document.getElementById('welcome-sub').textContent =
     'Member since ' + new Date(currentMember.created_at || Date.now()).toLocaleDateString('en-GB', { month:'long', year:'numeric' });
 
@@ -1346,6 +1391,7 @@ async function loadInterestsCount() {
 // ══════════════════════════════════════════
 function loadProfileForm() {
   if (!currentMember) return;
+  document.getElementById('profile-upgrade-hint').style.display = currentMember.package === 'premium' ? 'none' : 'block';
   var fields = ['full_name','display_name','height','weight','complexion',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
@@ -2466,14 +2512,16 @@ async function loadProfileViewers() {
 
   // Premium-only — checked client-side first so a Basic member gets the
   // upsell state instead of a bare "Could not load" from the backend's
-  // requirePremium 403 (same gate as chat photos/read receipts).
+  // requirePremium 403 (same gate as chat photos/read receipts). Links to
+  // the consolidated Why Upgrade to Premium panel instead of carrying its
+  // own standalone pitch — same for every other Premium-gated feature.
   if (!currentMember || currentMember.package !== 'premium') {
     container.innerHTML =
       '<div class="empty-state" style="padding:2.5rem 1.5rem">' +
       '<div class="ei">🔒</div>' +
       '<div style="font-weight:700;color:var(--charcoal);margin-bottom:.4rem">Upgrade to Premium to see who\'s viewed your profile</div>' +
       '<div style="font-size:.86rem;margin-bottom:1.2rem">Premium members can see exactly who\'s checked out their profile, and when.</div>' +
-      '<a href="https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent('Hi, I\'d like to upgrade to Premium.') + '" target="_blank" class="btn-save" style="display:inline-block;text-decoration:none">Upgrade to Premium</a>' +
+      '<a href="#" onclick="showPanel(\'premium\');return false" class="btn-save" style="display:inline-block;text-decoration:none">See Why Upgrade to Premium</a>' +
       '</div>';
     return;
   }
@@ -2510,6 +2558,57 @@ async function loadProfileViewers() {
   });
   html += '</div>';
   container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+//  WHY UPGRADE TO PREMIUM
+// ══════════════════════════════════════════
+// Portal-only features — deliberately excludes service-based Premium perks
+// (dedicated matchmaker, in-person meet-ups, etc.) already described
+// elsewhere on the site, per this panel's stated scope.
+async function loadPremiumFeaturesPanel() {
+  var priceLine = document.getElementById('premium-price-line');
+  var ctaArea   = document.getElementById('premium-cta-area');
+  if (!currentMember) return;
+
+  if (currentMember.package === 'premium') {
+    priceLine.textContent = "You're a Premium member";
+    ctaArea.innerHTML = '<div style="color:var(--green);font-weight:700">✓ All Premium features are already unlocked on your account.</div>';
+    return;
+  }
+
+  // A first-time Basic->Premium upgrade is a PKR 25,000 fee — the
+  // difference between the two registration prices, not the full PKR
+  // 35,000 a brand-new Premium registrant pays (see PACKAGE_UPGRADE_FEE /
+  // applyPackageChange on the backend). Showing the full 35,000 here would
+  // overstate what actually gets charged on approval.
+  priceLine.textContent = 'PKR 25,000 upgrade fee';
+  ctaArea.innerHTML = '<div class="loading-spinner">Loading...</div>';
+
+  var result = await apiCall('/member/profile-change-requests', 'GET');
+  var pendingUpgrade = result.success && result.data.some(function(r) { return r.field_name === 'package' && r.status === 'pending'; });
+
+  if (pendingUpgrade) {
+    ctaArea.innerHTML =
+      '<button class="btn-save" disabled>Upgrade Request Pending Review</button>' +
+      '<div style="font-size:.78rem;color:var(--mid);margin-top:.6rem">Our team will review your request and confirm shortly.</div>';
+  } else {
+    ctaArea.innerHTML = '<button class="btn-save" id="premium-upgrade-btn" onclick="requestPremiumUpgrade()">Request Upgrade to Premium</button>';
+  }
+}
+
+async function requestPremiumUpgrade() {
+  var btn = document.getElementById('premium-upgrade-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+
+  var result = await apiCall('/member/profile-change-request', 'POST', { field_name: 'package', requested_value: 'premium' });
+
+  if (result.success) {
+    loadPremiumFeaturesPanel();
+  } else {
+    alert(result.message || 'Could not submit your upgrade request. Please try again.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Request Upgrade to Premium'; }
+  }
 }
 
 // ══════════════════════════════════════════
