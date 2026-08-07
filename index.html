@@ -1190,30 +1190,20 @@ function dismissLaunchBanner() {
       </div>
       <div class="form-row">
         <div class="form-group"><label>Marital Status<span class="required-star">*</span></label>
-          <select id="f-marital">
+          <select id="f-marital" onchange="document.getElementById('f-children-group').style.display = this.value === 'Never Married' ? 'none' : 'block'">
             <option value="">Select Status</option>
           </select>
         </div>
-        <div class="form-group"><label>Children (if any)</label>
+        <div class="form-group" id="f-children-group" style="display:none"><label>Children (if any)</label>
           <select id="f-children">
           </select>
         </div>
       </div>
 
       <div class="form-section-label">Physical Appearance</div>
-      <div class="form-row">
-        <div class="form-group"><label>Height<span class="required-star">*</span></label>
-          <select id="f-height">
-            <option value="">Select Height</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Weight (kg)</label>
-          <input type="number" id="f-weight" placeholder="e.g. 65" min="35" max="200">
-        </div>
-      </div>
-      <div class="form-group"><label>Complexion</label>
-        <select id="f-complexion">
-          <option value="">Select Complexion</option>
+      <div class="form-group"><label>Height</label>
+        <select id="f-height">
+          <option value="">Select Height</option>
         </select>
       </div>
 
@@ -1256,9 +1246,10 @@ function dismissLaunchBanner() {
           </select>
         </div>
         <div class="form-group"><label>Caste / Biradari<span class="required-star">*</span></label>
-          <select id="f-caste">
+          <select id="f-caste" onchange="document.getElementById('f-caste-other').style.display = this.value === 'Other' ? 'block' : 'none'">
             <option value="">Select Caste</option>
           </select>
+          <input type="text" id="f-caste-other" placeholder="Please specify your caste/biradari" style="display:none;margin-top:.6rem">
         </div>
       </div>
       <div class="form-row">
@@ -1304,7 +1295,7 @@ function dismissLaunchBanner() {
             <option>Employed – Government / Civil Service</option>
             <option>Self-Employed / Business Owner</option>
             <option>Student</option>
-            <option>Housewife / Not Working</option>
+            <option>Homemaker</option>
             <option>Retired</option>
             <option>Unemployed (seeking)</option>
           </select>
@@ -1436,57 +1427,8 @@ function dismissLaunchBanner() {
         </select>
       </div>
 
-      <div class="form-section-label">Contact Preference</div>
-
-      <div class="contact-pref-box" id="contact-pref-box">
-        <div class="pref-toggle-row">
-          <div class="pref-toggle-label">
-            <h4 id="pref-title">🔒 Contact via Rishta Square Only</h4>
-            <p id="pref-desc">Other members will not be able to contact you directly. All communication will go through Rishta Square management. Recommended for privacy.</p>
-          </div>
-          <label class="pref-switch">
-            <input type="checkbox" id="f-contact-direct" onchange="toggleContactPref(this)">
-            <span class="pref-switch-slider"></span>
-          </label>
-        </div>
-        <div id="pref-status-tag" class="pref-status-tag pref-status-viaus">🔒 Via Rishta Square Only</div>
-      </div>
-
-      <div id="contact-direct-details" style="display:none">
-        <div style="background:rgba(15,162,107,0.06);border:1.5px solid rgba(15,162,107,0.2);
-                    border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:.84rem;color:#1A5C45">
-          <strong>✅ Direct contact enabled.</strong> Your mobile and WhatsApp will be shown to Premium members only.
-          Basic members will still need to contact you through Rishta Square.
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Preferred Contact Method</label>
-            <select id="f-contact-method">
-              <option value="both">📱 WhatsApp + Phone Call</option>
-              <option value="whatsapp">💬 WhatsApp Only</option>
-              <option value="call">📞 Phone Call Only</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Contact Hours (Optional)</label>
-            <select id="f-contact-hours">
-              <option value="anytime">Any Time</option>
-              <option value="morning">Morning (8am–12pm)</option>
-              <option value="afternoon">Afternoon (12pm–5pm)</option>
-              <option value="evening">Evening (5pm–9pm)</option>
-              <option value="weekends">Weekends Only</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Message to Interested Families</label>
-          <input type="text" id="f-contact-note"
-                 placeholder='e.g. "Please WhatsApp first before calling. Serious proposals only."'
-                 style="font-size:.86rem">
-        </div>
-      </div>
-
       <div class="form-section-label">Privacy Settings</div>
+      <p style="font-size:.82rem;color:var(--mid);margin:-.6rem 0 1rem">Your contact number is never shown to other members automatically, under any of the settings below — you exchange contact details yourself once you're ready, either directly in messages or through Rishta Square.</p>
 
       <!-- Preset Cards -->
       <div class="privacy-preset-grid">
@@ -1500,13 +1442,13 @@ function dismissLaunchBanner() {
           <div class="privacy-check-mark">✓</div>
           <div class="privacy-preset-icon">🔒</div>
           <div class="privacy-preset-name">Standard</div>
-          <div class="privacy-preset-desc">Basics visible, sensitive info after mutual interest</div>
+          <div class="privacy-preset-desc">Basics visible, sensitive info unlocks after mutual interest</div>
         </div>
         <div class="privacy-preset-card" id="preset-strict" onclick="setPrivacyPreset('strict')">
           <div class="privacy-check-mark">✓</div>
           <div class="privacy-preset-icon">🛡️</div>
           <div class="privacy-preset-name">Strict</div>
-          <div class="privacy-preset-desc">Only basic info shown. Everything else hidden</div>
+          <div class="privacy-preset-desc">Only basic info shown — photo, family & other details stay hidden even after mutual interest</div>
         </div>
       </div>
 
@@ -1534,16 +1476,6 @@ function dismissLaunchBanner() {
             </label>
           </div>
 
-          <div class="privacy-toggle-row">
-            <div class="ptog-left">
-              <div class="ptog-label">Contact Number <span class="ptog-badge mutual">After Mutual Interest</span></div>
-              <div class="ptog-sub">Your mobile & WhatsApp hidden until mutual interest is confirmed</div>
-            </div>
-            <label class="privacy-mini-toggle">
-              <input type="checkbox" id="priv-contact" onchange="updatePrivacySummary()">
-              <span class="pmt-slider"></span>
-            </label>
-          </div>
 
           <div class="privacy-toggle-row">
             <div class="ptog-left">
@@ -1761,22 +1693,32 @@ function dismissLaunchBanner() {
         <div style="font-size:.74rem;color:var(--mid);margin-top:3px">One-time registration · No recurring charges</div>
       </div>
 
-      <div class="form-section-label">Payment Methods You'll Have Access To</div>
+      <div class="form-section-label">Pay via Any of These Methods</div>
       <div class="pm-grid">
         <div class="pm-card pm-card-bank">
           <div class="pm-icon">🏦</div>
           <div class="pm-card-name">Bank Transfer</div>
+          <div class="pm-card-detail">Meezan Bank<br>Title: ALI REHAN MALLHI<br>Acc No: 02510104365908<br>IBAN: <strong id="reg-pm-bank">PK77MEZN0002510104365908</strong><br>Branch: DHA Phase VI Br-Lahore</div>
+          <button class="pm-copy-btn" onclick="copyPaymentDetail('reg-pm-bank', this)">Copy IBAN</button>
+          <div style="margin-top:.9rem">
+            <img src="/assets/images/meezan-bank-qr.jpeg" alt="Meezan Bank QR code for bank transfer" style="width:140px;height:140px;border-radius:8px;display:block;margin:0 auto;background:#fff">
+            <div style="font-size:.68rem;color:rgba(255,255,255,0.55);margin-top:.5rem">Scan with your banking app to pay</div>
+          </div>
         </div>
         <div class="pm-card pm-card-jazzcash">
           <div class="pm-icon">📱</div>
           <div class="pm-card-name">JazzCash</div>
+          <div class="pm-card-detail">Number:<br><strong id="reg-pm-jazzcash">0321-4133233</strong></div>
+          <button class="pm-copy-btn" onclick="copyPaymentDetail('reg-pm-jazzcash', this)">Copy Number</button>
         </div>
         <div class="pm-card pm-card-nayapay">
           <div class="pm-icon">🟢</div>
           <div class="pm-card-name">NayaPay</div>
+          <div class="pm-card-detail">NayaPay ID: alimallhi@nayapay<br>Acc No: 03214133233<br>IBAN: <strong id="reg-pm-nayapay">PK58NAYA1234503214133233</strong></div>
+          <button class="pm-copy-btn" onclick="copyPaymentDetail('reg-pm-nayapay', this)">Copy IBAN</button>
         </div>
       </div>
-      <div style="font-size:.78rem;color:var(--mid);margin:.7rem 0 1.2rem;text-align:center">Full account details go in the WhatsApp chat below — pick whichever works best for you when you pay.</div>
+      <div style="font-size:.78rem;color:var(--mid);margin:.9rem 0 1.2rem;text-align:center">After paying, send your payment screenshot in the WhatsApp chat below so our team can confirm it.</div>
 
       <div style="background:#FDF6EC;border:1.5px solid #E8D5A8;border-radius:10px;padding:1rem 1.1rem;margin-bottom:1.1rem">
         <label style="display:flex;align-items:flex-start;gap:.7rem;cursor:pointer;font-size:.83rem;color:var(--charcoal);line-height:1.5">
@@ -1990,15 +1932,21 @@ function dismissLaunchBanner() {
 // ══════════════════════════════════════════
 //  PRIVACY CONTROLS
 // ══════════════════════════════════════════
+// Contact number isn't a toggle here at all anymore — it's never shown to
+// another member automatically under any preset (see fetchMaskedProfile on
+// the backend). Standard vs Strict now differ in more than which fields
+// start masked: Strict's masked fields (photo/family/income/marital/
+// location) never unlock even after mutual interest — enforced server-side
+// based on privacy_preset itself, not just these flags.
 const PRIVACY_PRESETS = {
-  open:     { photo:false, contact:false, family:false, income:false, location:false, name:false, marital:false },
-  standard: { photo:true,  contact:true,  family:true,  income:true,  location:false, name:false, marital:true  },
-  strict:   { photo:true,  contact:true,  family:true,  income:true,  location:true,  name:true,  marital:true  }
+  open:     { photo:false, family:false, income:false, location:false, name:false, marital:false },
+  standard: { photo:true,  family:true,  income:true,  location:false, name:false, marital:true  },
+  strict:   { photo:true,  family:true,  income:true,  location:true,  name:true,  marital:true  }
 };
 const PRIVACY_SUMMARIES = {
-  open:     '🔓 <strong>Open:</strong> All your profile information is visible to all active members.',
-  standard: '🔒 <strong>Standard:</strong> Basic info visible to all. Photo, contact, family, income & marital history shown only after mutual interest.',
-  strict:   '🛡️ <strong>Strict:</strong> Only name/alias, age, city, religion & education are visible. Everything else hidden.',
+  open:     '🔓 <strong>Open:</strong> All your profile information is visible to all active members. Your contact number is never shown automatically.',
+  standard: '🔒 <strong>Standard:</strong> Basic info visible to all. Photo, family, income & marital history shown only after mutual interest.',
+  strict:   '🛡️ <strong>Strict:</strong> Only name/alias, age, city, religion & education are visible. Everything else stays hidden — even after mutual interest.',
   custom:   '⚙️ <strong>Custom:</strong> Your own mix of privacy settings applied.'
 };
 let currentPrivacyPreset = 'standard';
@@ -2039,7 +1987,7 @@ function updatePrivacySummary(forcePreset) {
   if (forcePreset) { summary.innerHTML = PRIVACY_SUMMARIES[preset] || PRIVACY_SUMMARIES.standard; return; }
   var expected = PRIVACY_PRESETS[preset] || {};
   var isCustom = false;
-  ['photo','contact','family','income','location','name','marital'].forEach(function(k) {
+  ['photo','family','income','location','name','marital'].forEach(function(k) {
     var tog = document.getElementById('priv-' + k);
     if (tog && tog.checked !== expected[k]) isCustom = true;
   });
@@ -2052,7 +2000,6 @@ function getPrivacySettings() {
   return {
     privacy_preset: document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'standard',
     priv_photo:     !!(document.getElementById('priv-photo')    && document.getElementById('priv-photo').checked),
-    priv_contact:   !!(document.getElementById('priv-contact')  && document.getElementById('priv-contact').checked),
     priv_family:    !!(document.getElementById('priv-family')   && document.getElementById('priv-family').checked),
     priv_income:    !!(document.getElementById('priv-income')   && document.getElementById('priv-income').checked),
     priv_location:  !!(document.getElementById('priv-location') && document.getElementById('priv-location').checked),
@@ -2081,30 +2028,6 @@ function openPrivacyLocked(type) {
   if (title) title.textContent = cfg.title;
   if (desc)  desc.textContent  = cfg.desc;
   openModal('privacy-locked');
-}
-
-// ══════════════════════════════════════════
-//  CONTACT PREFERENCE TOGGLE
-// ══════════════════════════════════════════
-function toggleContactPref(checkbox) {
-  var box       = document.getElementById('contact-pref-box');
-  var title     = document.getElementById('pref-title');
-  var desc      = document.getElementById('pref-desc');
-  var statusTag = document.getElementById('pref-status-tag');
-  var details   = document.getElementById('contact-direct-details');
-  if (checkbox.checked) {
-    if (box)       box.className       = 'contact-pref-box direct';
-    if (title)     title.textContent   = '📱 Allow Direct Contact';
-    if (desc)      desc.textContent    = 'Other members can contact you directly via WhatsApp or phone call. Your number will be visible to Premium members.';
-    if (statusTag) { statusTag.className = 'pref-status-tag pref-status-direct'; statusTag.textContent = '📱 Direct Contact Enabled'; }
-    if (details)   details.style.display = 'block';
-  } else {
-    if (box)       box.className       = 'contact-pref-box via-us';
-    if (title)     title.textContent   = '🔒 Contact via Rishta Square Only';
-    if (desc)      desc.textContent    = 'Other members will not be able to contact you directly. All communication will go through Rishta Square management.';
-    if (statusTag) { statusTag.className = 'pref-status-tag pref-status-viaus'; statusTag.textContent = '🔒 Via Rishta Square Only'; }
-    if (details)   details.style.display = 'none';
-  }
 }
 
 // ══════════════════════════════════════════
@@ -2376,84 +2299,6 @@ function updateCityFieldForCountry() {
 }
 
 // ══════════════════════════════════════════
-//  WHATSAPP REGISTRATION SUBMISSION
-// ══════════════════════════════════════════
-function sendToWhatsApp() {
-  var planEl = document.getElementById('plan-summary-text');
-  var plan   = planEl ? planEl.textContent.trim() : '—';
-  var priv   = getPrivacySettings();
-  // Profession is now a controlled dropdown (RS_PROFESSION) so Browse's
-  // keyword-matching categories work reliably for new registrations — but
-  // "Other" needs the actual specified text here, not the literal word
-  // "Other", so admin has the real profession when manually creating the
-  // member from this WhatsApp message.
-  var profession = gv('f-profession') === 'Other' ? gv('f-profession-other') : gv('f-profession');
-  // City is a Pakistan-only dropdown — free text for every other country
-  // (see updateCityFieldForCountry above).
-  var city = gv('f-country') === 'Pakistan' ? gv('f-city') : gv('f-city-other');
-
-  var lines = [
-    '🌸 *NEW RISHTA SQUARE REGISTRATION* 🌸',
-    '─────────────────────────────',
-    '*📋 ACCOUNT DETAILS*',
-    '• Full Name: '       + gv('f-fullname'),
-    '• Display Name: '    + gv('f-alias'),
-    '• Mobile: '          + gv('f-mobile'),
-    '• WhatsApp: '        + gv('f-whatsapp'),
-    '• Email: '           + gv('f-email'),
-    '─────────────────────────────',
-    '*👤 PERSONAL DETAILS*',
-    '• Gender: '          + gv('f-gender'),
-    '• Date of Birth: '   + gv('f-dob'),
-    '• Marital Status: '  + gv('f-marital'),
-    '• Children: '        + gv('f-children'),
-    '• Height: '          + gv('f-height'),
-    '• Weight: '          + gv('f-weight') + ' kg',
-    '• Complexion: '      + gv('f-complexion'),
-    '─────────────────────────────',
-    '*🕌 RELIGION & BACKGROUND*',
-    '• Religion: '        + gv('f-religion'),
-    '• Sect: '            + gv('f-sect'),
-    '• Ethnicity: '       + gv('f-ethnicity'),
-    '• Caste: '           + gv('f-caste'),
-    '• Education: '       + gv('f-education'),
-    '• Field of Study: '  + gv('f-studyfield'),
-    '• Institution: '     + gv('f-institution'),
-    '─────────────────────────────',
-    '*💼 CAREER & RESIDENCE*',
-    '• Employment: '      + gv('f-employment'),
-    '• Profession: '      + profession,
-    '• Income: '          + gv('f-income'),
-    '• City: '            + city,
-    '• Country: '         + gv('f-country'),
-    '• House Size: '      + gv('f-housesize'),
-    '─────────────────────────────',
-    '*👨‍👩‍👧 PARENTS*',
-    '• Father Name: '     + gv('f-fathername'),
-    '• Father Job: '      + gv('f-fatherjob'),
-    '• Mother Name: '     + gv('f-mothername'),
-    '• Mother Job: '      + gv('f-motherjob'),
-    '• Siblings: '        + gv('f-siblings'),
-    '─────────────────────────────',
-    '*🔒 PRIVACY & CONTACT*',
-    '• Privacy Preset: '  + priv.privacy_preset,
-    '• Contact Pref: '    + (document.getElementById('f-contact-direct') && document.getElementById('f-contact-direct').checked ? 'Direct Contact' : 'Via Rishta Square'),
-    '─────────────────────────────',
-    '*💳 PACKAGE & PAYMENT*',
-    '• Package: '         + plan,
-    '─────────────────────────────',
-    '⏳ _Awaiting payment confirmation & profile review._',
-    '_Rishta Square Team — rishtasquare.com_'
-  ];
-
-  var msg     = lines.join('\n');
-  var encoded = encodeURIComponent(msg);
-  window.open('https://wa.me/923105786268?text=' + encoded, '_blank');
-  closeModal('register');
-  openModal('success');
-}
-
-// ══════════════════════════════════════════
 //  SCROLL FADE-IN
 // ══════════════════════════════════════════
 // Add js-ready to body — this enables fade-in animations safely
@@ -2590,9 +2435,9 @@ if (silverRadio) silverRadio.checked = true;
 <script src="/formOptions.js"></script>
 <script>
 rsPopulateSelect(document.getElementById('f-marital'), RS_MARITAL_STATUS);
+document.getElementById('f-marital').value = 'Never Married';
 rsPopulateSelect(document.getElementById('f-children'), RS_CHILDREN);
 rsPopulateSelect(document.getElementById('f-height'), RS_HEIGHT);
-rsPopulateSelect(document.getElementById('f-complexion'), RS_COMPLEXION);
 rsPopulateSelect(document.getElementById('f-religion'), RS_RELIGION);
 rsSyncSectToReligion(document.getElementById('f-religion'), document.getElementById('f-sect'), document.getElementById('f-sect-group'));
 rsPopulateSelect(document.getElementById('f-ethnicity'), RS_ETHNICITY);

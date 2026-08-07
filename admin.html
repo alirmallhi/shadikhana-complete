@@ -1843,6 +1843,10 @@ function buildMemberProfileHtml(m, payments) {
     html += '<button class="btn-sm" style="background:var(--charcoal);color:#fff;padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;cursor:pointer;border:none" ' +
             'onclick="adminChangeMemberPackage(' + m.id + ', \'' + otherPkg + '\', this)">Switch to ' + otherPkg.charAt(0).toUpperCase() + otherPkg.slice(1) + '</button>';
   }
+  if (m.account_status === 'suspended') {
+    html += '<button class="btn-sm" style="background:var(--green);color:#fff;padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;cursor:pointer;border:none" ' +
+            'onclick="reactivateMemberAction(' + m.id + ', \'' + escapeHtml(m.full_name).replace(/'/g, "\\'") + '\')">Reactivate</button>';
+  }
   html += '</div>';
 
   if (m.about_me) html += '<span class="amd-section-label">About</span><div class="amd-narrative">' + escapeHtml(m.about_me) + '</div>';
@@ -2019,6 +2023,20 @@ async function loadDashboardStats() {
       paymentsBadge.textContent = pendingPaymentsCount;
     } else {
       paymentsBadge.style.display = 'none';
+    }
+
+    // Previously only updated once the Flagged Members panel was actually
+    // opened (inside loadFlaggedPanel) — meaning the sidebar badge never
+    // showed anything until an admin already knew to check, defeating the
+    // point of a badge. Now driven by the same dashboard-load fetch as
+    // every other sidebar badge.
+    var flaggedBadge = document.getElementById('flagged-badge');
+    var flaggedPendingCount = d.flagged_pending || 0;
+    if (flaggedPendingCount > 0) {
+      flaggedBadge.style.display = 'inline-block';
+      flaggedBadge.textContent = flaggedPendingCount;
+    } else {
+      flaggedBadge.style.display = 'none';
     }
 
     // Quick stats — package breakdown
@@ -2749,6 +2767,12 @@ async function loadFlaggedPanel() {
       } else {
         actions = '<span style="color:var(--mid);font-size:.8rem">' + r.status + '</span>';
       }
+      // Independent of the report's own status (pending/reviewed/actioned/
+      // dismissed) — the member can still be suspended right now and need
+      // reactivating regardless of what happened to this particular report.
+      if (r.reported_account_status === 'suspended') {
+        actions += ' <button class="action-btn action-approve" onclick="reactivateMemberAction(' + r.reported_member_id + ', \'' + r.reported_name.replace(/'/g, "\\'") + '\')">Reactivate</button>';
+      }
       return '<tr>' +
         '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + r.reported_member_id + ')"><strong style="text-decoration:underline;text-decoration-color:var(--light)">' + r.reported_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + r.reported_account_status + '</span></td>' +
         '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + r.reporter_member_id + ')" style="text-decoration:underline;text-decoration-color:var(--light)">' + r.reporter_name + '</td>' +
@@ -2779,6 +2803,25 @@ async function handleReportAction(reportId, status, suspend) {
   }
 }
 
+async function reactivateMemberAction(memberId, memberName) {
+  if (!confirm('Reactivate ' + memberName + '\'s account? They will be able to use the platform again.')) return;
+
+  var result = await adminAPI('/admin/members/' + memberId + '/reactivate', 'PUT');
+
+  if (result.success) {
+    // Called from both the Flagged Members list and the member detail
+    // view — refresh whichever is actually open rather than assuming one.
+    if (document.getElementById('admin-profile-overlay').classList.contains('open')) {
+      viewAdminMemberDetail(memberId);
+    }
+    if (document.getElementById('panel-flagged').classList.contains('active')) {
+      loadFlaggedPanel();
+    }
+    if (typeof loadDashboardStats === 'function') loadDashboardStats();
+  } else {
+    alert(result.message || 'Could not reactivate this member.');
+  }
+}
 
 async function loadReportsPanel() {
   try {
@@ -3255,6 +3298,7 @@ function openAddMemberModal() {
     document.getElementById(id).selectedIndex = 0;
   });
   document.getElementById('am-profession-other').style.display = 'none';
+  document.getElementById('am-caste-other').style.display = 'none';
   document.getElementById('am-country').value = 'Pakistan';
   document.getElementById('am-package').value = 'basic';
   document.getElementById('am-mark_paid').checked = false;
@@ -3309,10 +3353,14 @@ async function saveNewMember() {
     mark_paid: document.getElementById('am-mark_paid').checked
   };
 
-  // Profession is a controlled dropdown (RS_PROFESSION) — "Other" needs the
-  // actual specified text saved, not the literal word "Other".
+  // Profession/Caste are controlled dropdowns (RS_PROFESSION/RS_CASTE) —
+  // "Other" needs the actual specified text saved, not the literal word
+  // "Other".
   if (body.profession === 'Other') {
     body.profession = amVal('am-profession-other') || 'Other';
+  }
+  if (body.caste === 'Other') {
+    body.caste = amVal('am-caste-other') || 'Other';
   }
 
   btn.disabled = true;
@@ -3472,7 +3520,12 @@ async function deleteAdminAccount(id, name) {
       <div><label>Religion</label><select id="am-religion"><option value="">Select Religion</option></select></div>
       <div><label>Sect</label><select id="am-sect"><option value="">Select Sect</option></select></div>
       <div><label>Ethnicity</label><select id="am-ethnicity"><option value="">Select Ethnicity</option></select></div>
-      <div><label>Caste</label><select id="am-caste"><option value="">Select Caste</option></select></div>
+      <div><label>Caste</label>
+        <select id="am-caste" onchange="document.getElementById('am-caste-other').style.display = this.value === 'Other' ? 'block' : 'none'">
+          <option value="">Select Caste</option>
+        </select>
+        <input type="text" id="am-caste-other" placeholder="Please specify" style="display:none;margin-top:.4rem">
+      </div>
       <div><label>Education</label><select id="am-education"><option value="">Select Education</option></select></div>
       <div><label>Institution</label><input type="text" id="am-institution"></div>
     </div>

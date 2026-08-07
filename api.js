@@ -56,7 +56,6 @@ function autoNotifyWhatsApp(payload) {
     'Height: '           + (payload.height || '-')        + '\n' +
     "Father's Job: "     + (payload.father_occupation || '-') + '\n' +
     "Mother's Job: "     + (payload.mother_occupation || '-') + '\n' +
-    'Contact Pref: '     + (payload.contact_preference === 'direct' ? 'Direct Contact Allowed' : 'Via Rishta Square Only') + '\n' +
     '----------------------------------------\n' +
     'Package: ' + (payload.package || '-') + '\n' +
     'Payment Method: ' + (payload.payment_method || '-') + '\n' +
@@ -78,6 +77,19 @@ async function submitRegistration() {
   var btn = document.getElementById('submit-btn') ||
             document.querySelector('#reg-step-6 .btn-primary');
 
+  // Profession is a controlled dropdown with an "Other" free-text reveal
+  // (RS_PROFESSION) — send the actual specified text, not the literal
+  // word "Other". City is a Pakistan-only dropdown — free text for every
+  // other country (see updateCityFieldForCountry). This is the payload
+  // that actually reaches the backend and autoNotifyWhatsApp below, unlike
+  // sendToWhatsApp() in index.html, which builds a similarly-named but
+  // entirely unused message (no button calls it) — don't confuse the two.
+  var resolvedProfession = gv('f-profession') === 'Other' ? gv('f-profession-other') : gv('f-profession');
+  var resolvedCity = gv('f-country') === 'Pakistan' ? gv('f-city') : gv('f-city-other');
+  // Caste is a controlled dropdown with an "Other" free-text reveal too
+  // (RS_CASTE) — same reasoning as profession above.
+  var resolvedCaste = gv('f-caste') === 'Other' ? gv('f-caste-other') : gv('f-caste');
+
   var payload = {
     full_name:           gv('f-fullname'),
     display_name:        gv('f-alias'),
@@ -94,22 +106,20 @@ async function submitRegistration() {
     marital_status:      gv('f-marital'),
     children:            gv('f-children'),
     height:              gv('f-height'),
-    weight:              gv('f-weight'),
-    complexion:          gv('f-complexion'),
     religion:            gv('f-religion'),
     sect:                gv('f-sect'),
     ethnicity:           gv('f-ethnicity'),
-    caste:               gv('f-caste'),
+    caste:               resolvedCaste,
     piety_level:         gv('f-piety'),
     education:           gv('f-education'),
     study_field:         gv('f-studyfield'),
     institution:         gv('f-institution'),
     employment_status:   gv('f-employment'),
-    profession:          gv('f-profession'),
+    profession:          resolvedProfession,
     monthly_income:      gv('f-income'),
     employer:            gv('f-employer'),
     country:             gv('f-country'),
-    city:                gv('f-city'),
+    city:                resolvedCity,
     area:                gv('f-area'),
     residence_status:    gv('f-residencestatus'),
     house_size:          gv('f-housesize'),
@@ -134,16 +144,18 @@ async function submitRegistration() {
     payment_method:      gv('payment-method') || 'bank_transfer',
     privacy_preset:      document.getElementById('f-privacy-preset') ? document.getElementById('f-privacy-preset').value : 'standard',
     priv_photo:          document.getElementById('priv-photo') ? document.getElementById('priv-photo').checked : false,
-    priv_contact:        document.getElementById('priv-contact') ? document.getElementById('priv-contact').checked : false,
     priv_family:         document.getElementById('priv-family') ? document.getElementById('priv-family').checked : false,
     priv_income:         document.getElementById('priv-income') ? document.getElementById('priv-income').checked : false,
     priv_location:       document.getElementById('priv-location') ? document.getElementById('priv-location').checked : false,
     priv_name:           document.getElementById('priv-name') ? document.getElementById('priv-name').checked : false,
-    priv_marital:        document.getElementById('priv-marital') ? document.getElementById('priv-marital').checked : false,
-    contact_preference:  document.getElementById('f-contact-direct') && document.getElementById('f-contact-direct').checked ? 'direct' : 'via_us',
-    contact_method:      gv('f-contact-method') || 'both',
-    contact_hours:       gv('f-contact-hours') || 'anytime',
-    contact_note:        gv('f-contact-note') || ''
+    priv_marital:        document.getElementById('priv-marital') ? document.getElementById('priv-marital').checked : false
+    // contact_preference/contact_method/contact_hours/contact_note removed
+    // — the "Contact via Rishta Square Only" registration toggle they came
+    // from is gone (contact number is never auto-shown to anyone now,
+    // regardless of preference — see fetchMaskedProfile on the backend).
+    // The register endpoint hardcodes contact_preference to 'direct' for
+    // every new registration; Premium members can opt into routing contact
+    // through Rishta Square staff from their dashboard after registering.
   };
 
   // Validation

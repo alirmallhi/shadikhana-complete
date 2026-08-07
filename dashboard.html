@@ -468,7 +468,7 @@ a{text-decoration:none;color:inherit}
       <span class="nav-badge" id="interests-badge" style="display:none">0</span>
     </div>
     <div class="nav-item" onclick="showPanel('messages', this)">
-      <span class="nav-item-icon">💬</span>Messages
+      <span class="nav-item-icon">💬</span>Connections
       <span class="nav-badge" id="messages-badge" style="display:none">0</span>
     </div>
     <div class="nav-item" onclick="showPanel('saved', this)">
@@ -481,10 +481,10 @@ a{text-decoration:none;color:inherit}
       <span class="nav-item-icon">😊</span>Compliments
       <span class="nav-badge" id="compliments-badge" style="display:none">0</span>
     </div>
-    <div class="nav-item" onclick="showPanel('viewers', this)">
+    <div class="nav-item" id="nav-item-viewers" style="display:none" onclick="showPanel('viewers', this)">
       <span class="nav-item-icon">👁️</span>Who Viewed Me
     </div>
-    <div class="nav-item" onclick="showPanel('premium', this)">
+    <div class="nav-item" id="nav-item-premium" style="display:none" onclick="showPanel('premium', this)">
       <span class="nav-item-icon">⭐</span>Premium Features
     </div>
 
@@ -705,7 +705,10 @@ a{text-decoration:none;color:inherit}
               <select id="p-ethnicity"><option value="">Select</option></select>
             </div>
             <div class="form-group"><label>Caste</label>
-              <select id="p-caste"><option value="">Select</option></select>
+              <select id="p-caste" onchange="document.getElementById('p-caste-other').style.display = this.value === 'Other' ? 'block' : 'none'">
+                <option value="">Select</option>
+              </select>
+              <input type="text" id="p-caste-other" placeholder="Please specify" style="display:none;margin-top:.5rem">
             </div>
           </div>
           <div class="form-group"><label>Education</label>
@@ -747,13 +750,14 @@ a{text-decoration:none;color:inherit}
           <div class="form-group"><label>Family Description</label><textarea id="p-family_description"></textarea></div>
 
           <div class="form-section-label">Privacy Settings</div>
-          <div class="privacy-toggle-row">
+          <p style="font-size:.82rem;color:var(--mid);margin:-.4rem 0 .8rem;max-width:520px">Your contact number is never shown to other members automatically — you exchange contact details yourself once you're ready, either directly in messages or through Rishta Square.</p>
+          <div class="privacy-toggle-row" id="p-contact-preference-row" style="display:none">
             <div class="ptog-left">
-              <div class="ptog-label">Contact Number <span class="ptog-badge mutual">After Mutual Interest</span></div>
-              <div class="ptog-sub">Your mobile & WhatsApp hidden until mutual interest is confirmed</div>
+              <div class="ptog-label">Contact via Rishta Square Only <span class="ptog-badge premium">Premium</span></div>
+              <div class="ptog-sub">When ON, other members can't message you directly — they're asked to reach Rishta Square instead, and we relay contact for you</div>
             </div>
             <label class="privacy-mini-toggle">
-              <input type="checkbox" id="p-priv_contact">
+              <input type="checkbox" id="p-contact-preference">
               <span class="pmt-slider"></span>
             </label>
           </div>
@@ -955,6 +959,11 @@ a{text-decoration:none;color:inherit}
 
       <div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
         <div class="stat-card" style="text-align:left">
+          <div class="stat-icon">⭐</div>
+          <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Priority Placement</div>
+          <div style="font-size:.82rem;color:var(--mid);line-height:1.5">Your profile is shown first in Browse Profiles and Today's Picks results, ahead of Basic members.</div>
+        </div>
+        <div class="stat-card" style="text-align:left">
           <div class="stat-icon">📷</div>
           <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Photo &amp; Media Sharing</div>
           <div style="font-size:.82rem;color:var(--mid);line-height:1.5">Send and receive photos directly in your conversations, not just text.</div>
@@ -963,11 +972,6 @@ a{text-decoration:none;color:inherit}
           <div class="stat-icon">✓</div>
           <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Read Receipts</div>
           <div style="font-size:.82rem;color:var(--mid);line-height:1.5">See exactly when the person you're messaging has seen your message.</div>
-        </div>
-        <div class="stat-card" style="text-align:left">
-          <div class="stat-icon">⭐</div>
-          <div style="font-weight:700;font-size:.92rem;margin-bottom:.3rem">Priority Placement</div>
-          <div style="font-size:.82rem;color:var(--mid);line-height:1.5">Your profile is shown first in Browse Profiles and Today's Picks results, ahead of Basic members.</div>
         </div>
         <div class="stat-card" style="text-align:left">
           <div class="stat-icon">👁️</div>
@@ -1019,10 +1023,10 @@ a{text-decoration:none;color:inherit}
       </div>
     </div>
 
-    <!-- ══════════ MESSAGES ══════════ -->
+    <!-- ══════════ CONNECTIONS ══════════ -->
     <div class="panel" id="panel-messages">
-      <h1 class="page-title">Messages</h1>
-      <p class="page-sub">Chat with members you've mutually matched with</p>
+      <h1 class="page-title">Connections</h1>
+      <p class="page-sub">Everyone you've mutually matched with — tap someone to chat</p>
 
       <div class="msg-layout">
         <div class="msg-conv-col" id="msg-conv-col">
@@ -1392,6 +1396,13 @@ async function loadInterestsCount() {
 function loadProfileForm() {
   if (!currentMember) return;
   document.getElementById('profile-upgrade-hint').style.display = currentMember.package === 'premium' ? 'none' : 'block';
+  // "Contact via Rishta Square Only" is Premium-exclusive — never shown to
+  // Basic members, matching the backend's own enforcement in updateProfile
+  // (a Basic member's request to set this is silently rejected server-side
+  // too, this is just the UI half of that same rule).
+  var isPremium = currentMember.package === 'premium';
+  document.getElementById('p-contact-preference-row').style.display = isPremium ? 'flex' : 'none';
+  document.getElementById('p-contact-preference').checked = currentMember.contact_preference === 'via_us';
   var fields = ['full_name','display_name','height','weight','complexion',
                 'profession','employer','monthly_income','area',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
@@ -1451,6 +1462,17 @@ function loadProfileForm() {
     profSelect.value = 'Other';
     document.getElementById('p-profession-other').value = currentMember.profession;
     document.getElementById('p-profession-other').style.display = 'block';
+  }
+
+  // Same reasoning as profession above — plus the caste "Other" option's
+  // value itself changed (was "Other (specify in description)", now just
+  // "Other"), so anyone who previously selected the old option also needs
+  // this fallback even though caste was already a controlled dropdown.
+  var casteSelect = document.getElementById('p-caste');
+  if (casteSelect && !casteSelect.value && currentMember.caste && currentMember.caste !== '—') {
+    casteSelect.value = 'Other';
+    document.getElementById('p-caste-other').value = currentMember.caste;
+    document.getElementById('p-caste-other').style.display = 'block';
   }
 
   // Sect depends on Religion (just set above), so it has to be synced —
@@ -1724,16 +1746,27 @@ async function saveProfile() {
     if (el) updates[f] = el.value;
   });
 
-  ['priv_contact', 'priv_family', 'priv_income', 'priv_location', 'priv_name', 'priv_marital'].forEach(function(f) {
+  ['priv_family', 'priv_income', 'priv_location', 'priv_name', 'priv_marital'].forEach(function(f) {
     var el = document.getElementById('p-' + f);
     if (el) updates[f] = el.checked;
   });
 
-  // Profession is a controlled dropdown (RS_PROFESSION) — "Other" needs the
-  // actual specified text saved, not the literal word "Other".
+  // Premium-only — the row itself is hidden for Basic members (so this
+  // checkbox is always unchecked/'direct' for them anyway), but the
+  // backend re-validates the package regardless of what gets sent here.
+  var contactPrefEl = document.getElementById('p-contact-preference');
+  if (contactPrefEl) updates.contact_preference = contactPrefEl.checked ? 'via_us' : 'direct';
+
+  // Profession/Caste are controlled dropdowns (RS_PROFESSION/RS_CASTE) —
+  // "Other" needs the actual specified text saved, not the literal word
+  // "Other".
   if (updates.profession === 'Other') {
     var otherEl = document.getElementById('p-profession-other');
     updates.profession = (otherEl && otherEl.value.trim()) || 'Other';
+  }
+  if (updates.caste === 'Other') {
+    var casteOtherEl = document.getElementById('p-caste-other');
+    updates.caste = (casteOtherEl && casteOtherEl.value.trim()) || 'Other';
   }
 
   var result = await apiCall('/member/profile', 'PUT', updates);
@@ -2769,7 +2802,14 @@ async function loadInterests() {
     return;
   }
 
-  var list = currentInterestTab === 'sent' ? result.data.sent : result.data.received;
+  // Accepted interests now live in Connections (see loadMessagesPanel) —
+  // this tab is for pending/unresolved requests only, not a full history,
+  // so an accepted interest no longer needs to appear in both places.
+  // Dashboard Home's "Interests Sent/Received" stat cards and the sidebar
+  // badge both read /interests directly rather than through this function,
+  // so they're unaffected and still reflect true lifetime counts.
+  var list = (currentInterestTab === 'sent' ? result.data.sent : result.data.received)
+    .filter(function(i) { return i.status !== 'accepted'; });
 
   if (!list.length) {
     container.innerHTML = '<div class="empty-state"><div class="ei">💌</div>No ' + currentInterestTab + ' interests yet.</div>';
@@ -2778,27 +2818,37 @@ async function loadInterests() {
 
   var html = '';
   list.forEach(function(i) {
-    var statusClass = i.status === 'accepted' ? 'is-accepted' : i.status === 'rejected' ? 'is-rejected' : 'is-sent';
+    // 'accepted' never reaches here — filtered out above — so this is
+    // effectively just sent vs rejected now.
+    var statusClass = i.status === 'rejected' ? 'is-rejected' : 'is-sent';
     var statusLabel = i.status.charAt(0).toUpperCase() + i.status.slice(1);
+    // account_status might not be 'active' if this member was later
+    // suspended or (soft-)deleted — View Profile/Message would otherwise
+    // 404/error since viewProfile only resolves active members, so those
+    // actions are dropped in favor of a plain "no longer active" note
+    // instead of a broken-looking clickable row.
+    var isGone = i.account_status !== 'active';
+    var name = i.display_name || i.full_name || (isGone ? 'No longer active' : 'Rishta Square Member');
 
     html += '<div class="interest-row">' +
-      '<div class="interest-av" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">👤</div>' +
-      '<div class="interest-info" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">' +
-      '<div class="interest-name">' + (i.display_name || i.full_name || 'Rishta Square Member') + '</div>' +
-      '<div class="interest-meta">' + (i.age || '—') + ' yrs · ' + (i.city || '—') + ' · ' + (i.profession || '—') + '</div>' +
+      (isGone
+        ? '<div class="interest-av">👤</div><div class="interest-info">'
+        : '<div class="interest-av" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">👤</div><div class="interest-info" style="cursor:pointer" onclick="viewProfileDetail(\'' + i.uuid + '\')">') +
+      '<div class="interest-name">' + name + '</div>' +
+      '<div class="interest-meta"' + (isGone ? ' style="font-style:italic"' : '') + '>' +
+      (isGone ? 'This member is no longer active' : (i.age || '—') + ' yrs · ' + (i.city || '—') + ' · ' + (i.profession || '—')) +
+      '</div>' +
       '</div>';
 
-    if (currentInterestTab === 'received' && i.status === 'sent') {
+    if (isGone) {
+      html += '<div class="interest-action-btns">' +
+        '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
+        '</div>';
+    } else if (currentInterestTab === 'received' && i.status === 'sent') {
       html += '<div class="interest-action-btns">' +
         '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + i.uuid + '\')">View Profile</button>' +
         '<button class="btn-accept" onclick="respondToInterest(' + i.id + ', \'accepted\')">Accept</button>' +
         '<button class="btn-reject" onclick="respondToInterest(' + i.id + ', \'rejected\')">Decline</button>' +
-        '</div>';
-    } else if (i.status === 'accepted') {
-      html += '<div class="interest-action-btns">' +
-        '<span class="interest-status ' + statusClass + '">' + statusLabel + '</span>' +
-        '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + i.uuid + '\')">View Profile</button>' +
-        '<button class="btn-accept" data-uuid="' + i.uuid + '" data-name="' + escapeHtml(i.display_name || i.full_name || 'Rishta Square Member') + '" onclick="startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>' +
         '</div>';
     } else {
       html += '<div class="interest-action-btns">' +
@@ -2815,6 +2865,13 @@ async function loadInterests() {
 async function respondToInterest(interestId, action) {
   var result = await apiCall('/interests/respond', 'POST', { interest_id: interestId, action: action });
   if (result.success) {
+    // Accepted interests move to Connections, so this row is about to
+    // disappear from the (pending-only) Interests list entirely — a quick
+    // confirmation of where it went beats it just vanishing with no
+    // explanation.
+    if (action === 'accepted') {
+      alert('🎉 It\'s a match! You can find them under Connections to start chatting.');
+    }
     loadInterests();
     loadInterestsCount();
   } else {
@@ -2837,62 +2894,69 @@ function applyMessagingPremiumUi() {
   if (panel) panel.classList.toggle('messaging-premium', isPremium);
   var photoBtn = document.getElementById('msg-photo-btn');
   if (photoBtn) photoBtn.style.display = isPremium ? '' : 'none';
+
+  // Who Viewed Me and Premium Features are mutually exclusive in the
+  // sidebar rather than both showing at once: a Premium member has no use
+  // for an upgrade pitch to a tier they're already on, and a Basic member's
+  // "Who Viewed Me" is nothing but that same upgrade pitch anyway (see its
+  // locked state in loadProfileViewers) — showing both was two nav entries
+  // funneling to the same place.
+  var viewersNav = document.getElementById('nav-item-viewers');
+  var premiumNav = document.getElementById('nav-item-premium');
+  if (viewersNav) viewersNav.style.display = isPremium ? 'flex' : 'none';
+  if (premiumNav) premiumNav.style.display = isPremium ? 'none' : 'flex';
 }
 
 async function loadMessagesPanel() {
   var col = document.getElementById('msg-conv-col');
   col.innerHTML = '<div class="loading-spinner">Loading...</div>';
 
-  var convosResult   = await apiCall('/messages', 'GET');
-  var contactsResult = await apiCall('/messages/contacts', 'GET');
+  // Connections tab: every mutual match in one WhatsApp-style list, sorted
+  // by most recent activity (message time, or when matched if no message
+  // yet) — replaces the old split of "Conversations" (had messages) vs
+  // "Start a Conversation" (matched, no messages), which needed a second
+  // API call and client-side dedup to assemble. The backend's single
+  // /connections query already does both in the right order.
+  var result = await apiCall('/connections', 'GET');
 
-  if (!convosResult.success || !contactsResult.success) {
-    col.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load messages.</div>';
+  if (!result.success) {
+    col.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load connections.</div>';
     return;
   }
 
-  var convos   = convosResult.data;
-  var contacts = contactsResult.data;
-  var convoUuids = convos.map(function(c) { return c.uuid; });
-  var newContacts = contacts.filter(function(c) { return convoUuids.indexOf(c.uuid) === -1; });
+  var connections = result.data;
 
-  if (!convos.length && !newContacts.length) {
-    col.innerHTML = '<div class="empty-state" style="padding:2rem 1rem"><div class="ei">💬</div>No conversations yet. Once you have a mutual match, you can start chatting here.</div>';
+  if (!connections.length) {
+    col.innerHTML = '<div class="empty-state" style="padding:2rem 1rem"><div class="ei">💬</div>No connections yet. Once you have a mutual match, they\'ll show up here.</div>';
     return;
   }
 
   var html = '';
-
-  if (convos.length) {
-    html += '<div class="msg-section-label">Conversations</div>';
-    convos.forEach(function(c) {
-      var name = c.display_name || c.full_name || 'Rishta Square Member';
-      var unreadBadge = c.unread_count > 0 ? '<span class="msg-conv-unread">' + c.unread_count + '</span>' : '';
+  connections.forEach(function(c) {
+    var name = c.display_name || c.full_name || 'Rishta Square Member';
+    // account_status might not be 'active' if this member was later
+    // suspended or (soft-)deleted — the connection and any message history
+    // still exist and remain viewable, but say so instead of silently
+    // rendering their old preview/last-message as if nothing happened.
+    var isGone = c.account_status !== 'active';
+    var unreadBadge = c.unread_count > 0 ? '<span class="msg-conv-unread">' + c.unread_count + '</span>' : '';
+    var preview;
+    if (isGone) {
+      preview = 'No longer active';
+    } else if (c.last_message_time) {
       var previewText = c.last_message || (c.last_message_photo_url ? '📷 Photo' : '');
-      var preview = (c.last_message_sender_id === currentMember.id ? 'You: ' : '') + previewText;
-      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)">' +
-        '<div class="msg-conv-av">👤</div>' +
-        '<div class="msg-conv-info">' +
-        '<div class="msg-conv-name">' + name + '</div>' +
-        '<div class="msg-conv-preview">' + preview + '</div>' +
-        '</div>' + unreadBadge +
-        '</div>';
-    });
-  }
-
-  if (newContacts.length) {
-    html += '<div class="msg-section-label">Start a Conversation</div>';
-    newContacts.forEach(function(c) {
-      var name = c.display_name || c.full_name || 'Rishta Square Member';
-      html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)">' +
-        '<div class="msg-conv-av">👤</div>' +
-        '<div class="msg-conv-info">' +
-        '<div class="msg-conv-name">' + name + '</div>' +
-        '<div class="msg-conv-preview">' + [c.city, c.profession].filter(Boolean).join(' · ') + '</div>' +
-        '</div>' +
-        '</div>';
-    });
-  }
+      preview = (c.last_message_sender_id === currentMember.id ? 'You: ' : '') + previewText;
+    } else {
+      preview = '👋 Say hello!';
+    }
+    html += '<div class="msg-conv-item" data-uuid="' + c.uuid + '" data-name="' + escapeHtml(name) + '" onclick="openConversation(this.dataset.uuid, this.dataset.name, this)" style="' + (isGone ? 'opacity:.65' : '') + '">' +
+      '<div class="msg-conv-av">👤</div>' +
+      '<div class="msg-conv-info">' +
+      '<div class="msg-conv-name">' + name + '</div>' +
+      '<div class="msg-conv-preview"' + (isGone || !c.last_message_time ? ' style="font-style:italic"' : '') + '>' + preview + '</div>' +
+      '</div>' + unreadBadge +
+      '</div>';
+  });
 
   col.innerHTML = html;
 

@@ -6,7 +6,7 @@
 // profile — keeping one shared list here (instead of two copies that can
 // drift apart) is what guarantees that.
 
-var RS_MARITAL_STATUS = ['Never Married', 'Divorced', 'Widowed', 'Separated'];
+var RS_MARITAL_STATUS = ['Never Married', 'Married', 'Divorced', 'Widowed', 'Separated'];
 
 var RS_CHILDREN = [
   'No Children',
@@ -29,11 +29,17 @@ var RS_COMPLEXION = ['Very Fair', 'Fair', 'Wheatish', 'Wheatish Brown', 'Brown',
 
 var RS_BODY_TYPE = ['Slim / Lean', 'Athletic', 'Average', 'Heavyset', 'Prefer not to say'];
 
-var RS_RELIGION = ['Islam', 'Christianity', 'Hinduism', 'Other'];
+// Ahmadi is its own Religion option, not a Sect under Islam — Ahmadis are
+// constitutionally defined as non-Muslim in Pakistan (Constitution (Second
+// Amendment) Act, 1974), so grouping it as a "sect of Islam" misrepresents
+// both the community's own beliefs and Pakistani law. Sect is hidden for
+// this value the same way it already is for every non-Islam religion (see
+// rsSyncSectToReligion below).
+var RS_RELIGION = ['Islam', 'Christianity', 'Hinduism', 'Ahmadi', 'Other'];
 
 var RS_SECT = [
-  'Sunni – Barelvi', 'Sunni – Deobandi', 'Sunni – Ahle Hadith', 'Sunni – Other',
-  'Shia – Ithna Ashari', 'Shia – Ismaili', 'Shia – Other', 'Ahmadi',
+  'Sunni – Ahle Sunnat (Barelvi)', 'Sunni – Deobandi', 'Sunni – Ahle Hadith', 'Sunni – Other',
+  'Shia – Ithna Ashari', 'Shia – Ismaili', 'Shia – Other',
   'Non-Denominational', 'Prefer not to say'
 ];
 
@@ -45,7 +51,7 @@ var RS_ETHNICITY = [
 var RS_CASTE = [
   { group: 'Syed / Sadat', options: ['Syed'] },
   { group: 'Punjabi', options: [
-    'Awan', 'Arain', 'Rajput', 'Jat', 'Gujjar', 'Sheikh', 'Chaudhry', 'Mian', 'Butt', 'Mughal', 'Malik',
+    'Awan', 'Arain', 'Rajput', 'Jatt', 'Gujjar', 'Sheikh', 'Chaudhry', 'Mian', 'Butt', 'Mughal', 'Malik',
     'Chishti', 'Kamboh', 'Khokhar', 'Warraich', 'Cheema', 'Sial', 'Tarar', 'Bhatti', 'Ghumman',
     'Virk', 'Randhawa', 'Dogar', 'Gondal'
   ] },
@@ -56,7 +62,7 @@ var RS_CASTE = [
     'Yusufzai', 'Durrani', 'Afridi', 'Khattak', 'Achakzai', 'Mohmand', 'Wazir', 'Mehsud',
     'Bangash', 'Orakzai', 'Marwat', 'Niazi', 'Khalil', 'Tanoli'
   ] },
-  { options: ['Other (specify in description)', 'Does Not Matter'] }
+  { options: ['Other', 'Does Not Matter'] }
 ];
 
 // Browse filter's profession categories are keyword-based buckets over free
@@ -85,13 +91,13 @@ var RS_PIETY = [
 ];
 
 var RS_EDUCATION = [
-  'Matric (Grade 10)',
-  'Intermediate (Grade 12 / F.A / F.Sc)',
-  'Diploma / Certificate',
-  "Bachelor's (BA / BSc / BBA / MBBS etc.)",
-  "Master's (MA / MSc / MBA / MS etc.)",
-  'M.Phil / MPhil',
   'PhD / Doctorate',
+  'M.Phil / MPhil',
+  "Master's (MA / MSc / MBA / MS etc.)",
+  "Bachelor's (BA / BSc / BBA / MBBS etc.)",
+  'Diploma / Certificate',
+  'Intermediate (Grade 12 / F.A / F.Sc)',
+  'Matric (Grade 10)',
   'Islamic Studies / Aalim',
   'Other'
 ];
