@@ -1761,20 +1761,22 @@ function dismissLaunchBanner() {
         <div style="font-size:.74rem;color:var(--mid);margin-top:3px">One-time registration · No recurring charges</div>
       </div>
 
-      <div class="form-group"><label>Payment Method<span class="required-star">*</span></label>
-        <select id="payment-method" onchange="updatePaymentFields()">
-          <option value="meezan">🏦 Bank Transfer</option>
-          <option value="jazzcash">📱 JazzCash</option>
-          <option value="nayapay">🟢 NayaPay</option>
-        </select>
+      <div class="form-section-label">Payment Methods You'll Have Access To</div>
+      <div class="pm-grid">
+        <div class="pm-card pm-card-bank">
+          <div class="pm-icon">🏦</div>
+          <div class="pm-card-name">Bank Transfer</div>
+        </div>
+        <div class="pm-card pm-card-jazzcash">
+          <div class="pm-icon">📱</div>
+          <div class="pm-card-name">JazzCash</div>
+        </div>
+        <div class="pm-card pm-card-nayapay">
+          <div class="pm-icon">🟢</div>
+          <div class="pm-card-name">NayaPay</div>
+        </div>
       </div>
-      <div id="payment-fields">
-        <div class="form-group"><label>JazzCash Mobile Number</label><input type="tel" placeholder="03xx-xxxxxxx"></div>
-      </div>
-
-      <div style="background:#E8F5F0;border-radius:10px;padding:.85rem 1rem;margin-bottom:1.1rem;font-size:.81rem;color:var(--green);line-height:1.5">
-        🔒 256-bit SSL encrypted. Your payment details are never stored on our servers.
-      </div>
+      <div style="font-size:.78rem;color:var(--mid);margin:.7rem 0 1.2rem;text-align:center">Full account details go in the WhatsApp chat below — pick whichever works best for you when you pay.</div>
 
       <div style="background:#FDF6EC;border:1.5px solid #E8D5A8;border-radius:10px;padding:1rem 1.1rem;margin-bottom:1.1rem">
         <label style="display:flex;align-items:flex-start;gap:.7rem;cursor:pointer;font-size:.83rem;color:var(--charcoal);line-height:1.5">
@@ -2338,26 +2340,6 @@ function selectPlan(card, plan) {
 }
 
 // ══════════════════════════════════════════
-//  PAYMENT FIELDS (dynamic by method)
-// ══════════════════════════════════════════
-function updatePaymentFields() {
-  var method = document.getElementById('payment-method');
-  if (!method) return;
-  var val    = method.value;
-  var fields = document.getElementById('payment-fields');
-  if (!fields) return;
-  if (val === 'jazzcash') {
-    fields.innerHTML = '<div class="form-group"><label>JazzCash Mobile Number</label><input type="tel" placeholder="03xx-xxxxxxx"></div>';
-  } else if (val === 'nayapay') {
-    fields.innerHTML = '<div class="form-group"><label>NayaPay Details</label><div style="background:var(--ivory);border-radius:10px;padding:.8rem 1rem;font-size:.84rem;color:var(--mid);border:1.5px solid var(--light)">Send to:<br><strong style="color:var(--charcoal)">NayaPay ID:</strong> alimallhi@nayapay<br><strong style="color:var(--charcoal)">Acc No:</strong> 03214133233<br><strong style="color:var(--charcoal)">IBAN:</strong> PK58NAYA1234503214133233<br><br>Send screenshot to WhatsApp: <strong>💬 +92 310 5786268</strong></div></div>';
-  } else if (val === 'meezan' || val === 'bank_transfer') {
-    fields.innerHTML = '<div class="form-group"><label>Bank Transfer Details</label><div style="background:var(--ivory);border-radius:10px;padding:.8rem 1rem;font-size:.84rem;color:var(--mid);border:1.5px solid var(--light)">Transfer to:<br><strong style="color:var(--charcoal)">Meezan Bank</strong><br>Title: ALI REHAN MALLHI<br>Acc No: 02510104365908<br>IBAN: PK77MEZN0002510104365908<br>Branch: DHA Phase VI Br-Lahore<br><br>Send screenshot to WhatsApp: <strong>💬 +92 310 5786268</strong></div></div>';
-  } else {
-    fields.innerHTML = '<div class="form-group"><label>Card Number</label><input type="text" placeholder="1234 5678 9012 3456"></div><div class="form-row"><div class="form-group"><label>Expiry</label><input type="text" placeholder="MM/YY"></div><div class="form-group"><label>CVV</label><input type="text" placeholder="123"></div></div>';
-  }
-}
-
-// ══════════════════════════════════════════
 //  FORM VALUE GETTER
 // ══════════════════════════════════════════
 function gv(id) {
@@ -2399,8 +2381,6 @@ function updateCityFieldForCountry() {
 function sendToWhatsApp() {
   var planEl = document.getElementById('plan-summary-text');
   var plan   = planEl ? planEl.textContent.trim() : '—';
-  var pmEl   = document.getElementById('payment-method');
-  var pm     = pmEl ? pmEl.options[pmEl.selectedIndex].text.trim() : '—';
   var priv   = getPrivacySettings();
   // Profession is now a controlled dropdown (RS_PROFESSION) so Browse's
   // keyword-matching categories work reliably for new registrations — but
@@ -2461,7 +2441,6 @@ function sendToWhatsApp() {
     '─────────────────────────────',
     '*💳 PACKAGE & PAYMENT*',
     '• Package: '         + plan,
-    '• Payment Method: '  + pm,
     '─────────────────────────────',
     '⏳ _Awaiting payment confirmation & profile review._',
     '_Rishta Square Team — rishtasquare.com_'
