@@ -557,7 +557,7 @@ function applyPermissionVisibility() {
       <option value="">All Genders</option><option value="Male">Male</option><option value="Female">Female</option>
     </select>
     <select class="filter-select" id="members-filter-status">
-      <option value="">All Status</option><option value="active">Active</option><option value="pending">Pending</option><option value="matched">Matched</option><option value="suspended">Suspended</option>
+      <option value="">All Status</option><option value="active">Active</option><option value="pending">Pending</option><option value="matched">Matched</option><option value="suspended">Suspended</option><option value="deleted">Deleted</option>
     </select>
     <button class="btn-sm btn-sm-primary" onclick="loadMembersPanel(1)">Search</button>
   </div>
@@ -2159,7 +2159,7 @@ async function loadMembersPanel(page) {
 
       return '<tr>' +
         '<td class="amd-clickable" onclick="viewAdminMemberDetail(' + m.id + ')"><strong style="text-decoration:underline;text-decoration-color:var(--light)">' + m.full_name + '</strong><br><span style="font-size:.75rem;color:var(--mid)">' + m.gender + ' · ' + (m.age || '—') + '</span></td>' +
-        '<td>' + m.mobile + '<br><span style="font-size:.75rem;color:var(--mid)">' + m.email + '</span></td>' +
+        '<td>' + m.mobile + '<br><span style="font-size:.75rem;color:var(--mid)">' + (m.account_status === 'deleted' ? (m.original_email || m.email) : m.email) + '</span></td>' +
         '<td><span class="status-badge ' + pkgClass + '">' + pkgIcon + ' ' + m.package.charAt(0).toUpperCase() + m.package.slice(1) + '</span></td>' +
         '<td>' + (m.city || '—') + '</td>' +
         '<td>' + paidBadge + '<br><span style="font-size:.72rem;color:var(--mid)">' + amount + '</span></td>' +
@@ -2174,7 +2174,9 @@ async function loadMembersPanel(page) {
           (isMaster
             ? '<button class="action-btn action-approve" onclick="inviteMemberToLogin(' + m.id + ', \'' + m.email.replace(/'/g, "\\'") + '\')">' + (m.has_credentials ? 'Regenerate Login' : 'Invite to Login') + '</button> '
             : '') +
-          '<button class="action-btn action-delete" onclick="deleteMemberConfirm(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Del</button>' +
+          (m.account_status === 'deleted'
+            ? ''
+            : '<button class="action-btn action-delete" onclick="deleteMemberConfirm(' + m.id + ', \'' + m.full_name.replace(/'/g, "\\'") + '\')">Del</button>') +
         '</td>' +
       '</tr>';
     }).join('');

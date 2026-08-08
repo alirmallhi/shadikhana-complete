@@ -109,8 +109,12 @@ async function submitRegistration() {
     password:            document.getElementById('f-password') ? document.getElementById('f-password').value : '',
     profile_for:         (typeof selectedProfileFor !== 'undefined' ? selectedProfileFor : 'self_male'),
     guardian_name:       gv('f-guardianname'),
-    guardian_declaration: document.getElementById('f-guardian-declaration') ? document.getElementById('f-guardian-declaration').checked : false,
-    tos_agreement:        document.getElementById('f-tos-agreement') ? document.getElementById('f-tos-agreement').checked : false,
+    // Single checkbox now covers both confirmations — the backend still
+    // tracks them as two distinct consents (guardian_declaration_accepted /
+    // tos_agreement_accepted), so both fields are sent from the one checked
+    // state rather than changing what's stored.
+    guardian_declaration: document.getElementById('f-registration-agreement') ? document.getElementById('f-registration-agreement').checked : false,
+    tos_agreement:        document.getElementById('f-registration-agreement') ? document.getElementById('f-registration-agreement').checked : false,
     gender:              gv('f-gender'),
     date_of_birth:       gv('f-dob'),
     marital_status:      gv('f-marital'),
@@ -176,12 +180,8 @@ async function submitRegistration() {
     alert('Password must be at least 6 characters.');
     return;
   }
-  if (!payload.guardian_declaration) {
-    alert('Please confirm the registration declaration before continuing.');
-    return;
-  }
-  if (!payload.tos_agreement) {
-    alert('Please agree to the Terms of Service and Privacy Policy before continuing.');
+  if (!payload.guardian_declaration || !payload.tos_agreement) {
+    alert('Please confirm the registration declaration and agree to the Terms of Service before continuing.');
     return;
   }
   if (payload.cnic && payload.cnic.replace(/\D/g, '').length !== 13) {

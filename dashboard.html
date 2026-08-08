@@ -2495,8 +2495,14 @@ async function previewMyProfile() {
     (p.mother_occupation ? detailField("Mother's Occupation", p.mother_occupation) : '') +
     '</div>';
 
+  // Strict never unlocks the photo, even after a mutual match (same
+  // privacy_preset override as the Standard/Strict badge labels elsewhere)
+  // — the generic "until someone becomes a mutual match" wording implies a
+  // future reveal that won't actually happen for a Strict member.
   var photoNote = p.photo_locked
-    ? '<div style="text-align:center;margin-top:.6rem"><span class="interest-status is-sent">🔒 Your photo is hidden until someone becomes a mutual match</span></div>'
+    ? (p.privacy_preset === 'strict'
+        ? '<div style="text-align:center;margin-top:.6rem"><span class="interest-status is-sent">🔒 Your photo stays hidden — even after a mutual match, per your Strict privacy setting</span></div>'
+        : '<div style="text-align:center;margin-top:.6rem"><span class="interest-status is-sent">🔒 Your photo is hidden until someone becomes a mutual match</span></div>')
     : '';
 
   var html =
