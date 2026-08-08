@@ -28,7 +28,10 @@
     '.photo-lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;cursor:default}' +
     '.photo-lightbox-close{position:absolute;top:1.2rem;right:1.2rem;background:rgba(255,255,255,0.15);' +
     'color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;' +
-    'display:flex;align-items:center;justify-content:center;line-height:1}';
+    'display:flex;align-items:center;justify-content:center;line-height:1}' +
+    '.photo-lightbox-change{display:none;position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);' +
+    'background:#E8B84B;color:#fff;border:none;border-radius:24px;padding:.7rem 1.4rem;font-size:.86rem;' +
+    'font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,0.35)}';
   document.head.appendChild(style);
 
   var overlay = document.createElement('div');
@@ -46,13 +49,29 @@
   img.id = 'photo-lightbox-img';
   img.alt = 'Full-size photo';
 
+  // Only shown when openPhotoLightbox is called with an onChangePhoto
+  // callback (own-profile views on dashboard.html) — admin.html viewing
+  // another member's photo never passes one, so this stays hidden there.
+  var changeBtn = document.createElement('button');
+  changeBtn.type = 'button';
+  changeBtn.className = 'photo-lightbox-change';
+  changeBtn.textContent = '📷 Change Photo';
+
   overlay.appendChild(closeBtn);
   overlay.appendChild(img);
+  overlay.appendChild(changeBtn);
   document.body.appendChild(overlay);
 
-  window.openPhotoLightbox = function (url) {
+  window.openPhotoLightbox = function (url, onChangePhoto) {
     if (!url) return;
     img.src = url;
+    if (typeof onChangePhoto === 'function') {
+      changeBtn.style.display = 'flex';
+      changeBtn.onclick = function (e) { e.stopPropagation(); onChangePhoto(); };
+    } else {
+      changeBtn.style.display = 'none';
+      changeBtn.onclick = null;
+    }
     overlay.classList.add('open');
   };
   window.closePhotoLightbox = function () {

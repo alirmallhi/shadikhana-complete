@@ -92,10 +92,10 @@ a{text-decoration:none;color:inherit}
   stroke-dasharray:289;stroke-dashoffset:289;transition:stroke-dashoffset .6s ease}
 .hero-photo{position:absolute;top:8px;left:8px;right:8px;bottom:8px;border-radius:50%;
   background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;
-  font-size:2.2rem;overflow:hidden;border:3px solid rgba(255,255,255,0.9)}
+  font-size:2.2rem;overflow:hidden;border:3px solid rgba(255,255,255,0.9);cursor:pointer}
 .hero-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .hero-edit-btn{position:absolute;bottom:0;right:0;width:30px;height:30px;border-radius:50%;
-  background:var(--gold);color:#fff;border:2.5px solid #fff;display:flex;align-items:center;
+  background:#E8B84B;color:#fff;border:2.5px solid #fff;display:flex;align-items:center;
   justify-content:center;font-size:.82rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);padding:0}
 .hero-edit-btn:hover{filter:brightness(1.08)}
 .hero-info{flex:1;min-width:180px}
@@ -144,6 +144,28 @@ a{text-decoration:none;color:inherit}
   width:100%;padding:.7rem .9rem;border:1.5px solid var(--light);border-radius:10px;
   font-size:.87rem;font-family:inherit;background:var(--cream);color:var(--charcoal);outline:none}
 
+/* Privacy preset cards — copied from index.html's registration privacy
+   section, same reasoning as the toggle rows below: Profile Edit should
+   match it exactly, not invent a second pattern. */
+.privacy-preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.2rem}
+.privacy-preset-card{border:2px solid var(--light);border-radius:14px;padding:1rem .8rem;
+                     text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.privacy-preset-card:hover{border-color:var(--rose);transform:translateY(-2px)}
+.privacy-preset-card.selected{border-color:var(--burg);background:rgba(26,18,37,0.04)}
+.privacy-preset-card.selected-open{border-color:#2D7A5F;background:rgba(15,162,107,0.05)}
+.privacy-preset-card.selected-strict{border-color:#1565C0;background:rgba(21,101,192,0.05)}
+.privacy-preset-icon{font-size:1.8rem;margin-bottom:.4rem}
+.privacy-preset-name{font-weight:700;font-size:.88rem;margin-bottom:.25rem}
+.privacy-preset-desc{font-size:.7rem;color:var(--mid);line-height:1.4}
+.privacy-check-mark{position:absolute;top:8px;right:8px;width:18px;height:18px;
+                    border-radius:50%;background:var(--burg);color:#fff;
+                    font-size:.65rem;display:none;align-items:center;justify-content:center}
+.privacy-preset-card.selected .privacy-check-mark,
+.privacy-preset-card.selected-open .privacy-check-mark,
+.privacy-preset-card.selected-strict .privacy-check-mark{display:flex}
+.privacy-preset-card.selected-open .privacy-check-mark{background:#2D7A5F}
+.privacy-preset-card.selected-strict .privacy-check-mark{background:#1565C0}
+
 /* Privacy toggle rows — copied from index.html's registration privacy
    section so Profile Edit matches it exactly, not a new pattern. */
 .privacy-toggle-row{display:flex;align-items:center;justify-content:space-between;
@@ -175,7 +197,7 @@ a{text-decoration:none;color:inherit}
 .photo-section{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;padding:1.2rem;
   background:var(--ivory);border-radius:14px}
 .photo-preview{width:90px;height:90px;border-radius:50%;background:var(--light);
-  display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;flex-shrink:0}
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;flex-shrink:0;cursor:pointer}
 .photo-preview img{width:100%;height:100%;object-fit:cover}
 .photo-upload-btn{background:var(--white);border:1.5px solid var(--light);border-radius:8px;
   padding:.6rem 1.1rem;font-size:.82rem;font-weight:600;cursor:pointer}
@@ -244,10 +266,6 @@ a{text-decoration:none;color:inherit}
   padding:.5rem;font-size:.78rem;font-weight:600;cursor:pointer}
 .btn-interest-sm:hover{background:var(--rose)}
 .btn-interest-sm:disabled{background:var(--light);color:var(--mid);cursor:not-allowed}
-.btn-compliment-sm{background:var(--white);border:1.5px solid var(--gold);color:#8A6A2E;border-radius:8px;
-  padding:.5rem .6rem;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap}
-.btn-compliment-sm:hover{background:var(--gold);color:#fff}
-.btn-compliment-sm:disabled{background:var(--light);border-color:var(--light);color:var(--mid);cursor:not-allowed}
 
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--mid)}
 .empty-state .ei{font-size:2.5rem;margin-bottom:.8rem}
@@ -531,7 +549,7 @@ a{text-decoration:none;color:inherit}
             <circle class="hero-ring-track" cx="50" cy="50" r="46"></circle>
             <circle class="hero-ring-fill" id="hero-ring-fill" cx="50" cy="50" r="46"></circle>
           </svg>
-          <div class="hero-photo" id="hero-photo">👤</div>
+          <div class="hero-photo" id="hero-photo" onclick="openMyPhotoLightbox()" title="View/change your photo">👤</div>
           <button class="hero-edit-btn" onclick="showPanel('profile')" title="Edit My Profile" aria-label="Edit My Profile">✏️</button>
         </div>
         <div class="hero-info">
@@ -632,7 +650,7 @@ a{text-decoration:none;color:inherit}
 
       <div class="card">
         <div class="photo-section">
-          <div class="photo-preview" id="profile-photo-preview">👤</div>
+          <div class="photo-preview" id="profile-photo-preview" onclick="openMyPhotoLightbox()" title="View/change your photo">👤</div>
           <div>
             <input type="file" id="photo-upload-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
             <button class="photo-upload-btn" onclick="document.getElementById('photo-upload-input').click()">📷 Change Photo</button>
@@ -765,7 +783,30 @@ a{text-decoration:none;color:inherit}
           <div class="form-group"><label>Family Description</label><textarea id="p-family_description"></textarea></div>
 
           <div class="form-section-label">Privacy Settings</div>
-          <p style="font-size:.82rem;color:var(--mid);margin:-.4rem 0 .8rem;max-width:520px">Your contact number is never shown to other members automatically — you exchange contact details yourself once you're ready, either directly in messages or through Rishta Square.</p>
+          <p style="font-size:.82rem;color:var(--mid);margin:-.4rem 0 .8rem;max-width:520px">Your contact number is never shown to other members automatically, under any of the settings below — you exchange contact details yourself once you're ready, either directly in messages or through Rishta Square.</p>
+
+          <div class="privacy-preset-grid">
+            <div class="privacy-preset-card" id="p-preset-open" onclick="setProfilePrivacyPreset('open')">
+              <div class="privacy-check-mark">✓</div>
+              <div class="privacy-preset-icon">🔓</div>
+              <div class="privacy-preset-name" style="color:#2D7A5F">Open</div>
+              <div class="privacy-preset-desc">All information visible to active members</div>
+            </div>
+            <div class="privacy-preset-card" id="p-preset-standard" onclick="setProfilePrivacyPreset('standard')">
+              <div class="privacy-check-mark">✓</div>
+              <div class="privacy-preset-icon">🔒</div>
+              <div class="privacy-preset-name">Standard</div>
+              <div class="privacy-preset-desc">Basics visible, sensitive info unlocks after mutual interest</div>
+            </div>
+            <div class="privacy-preset-card" id="p-preset-strict" onclick="setProfilePrivacyPreset('strict')">
+              <div class="privacy-check-mark">✓</div>
+              <div class="privacy-preset-icon">🛡️</div>
+              <div class="privacy-preset-name">Strict</div>
+              <div class="privacy-preset-desc">Only basic info shown — sensitive details stay hidden even after mutual interest</div>
+            </div>
+          </div>
+          <p style="font-size:.76rem;color:var(--mid);margin:-.4rem 0 1.2rem">Custom Privacy Settings below always reflects your current toggles — switching presets applies that preset's defaults to them.</p>
+
           <div class="privacy-toggle-row" id="p-contact-preference-row" style="display:none">
             <div class="ptog-left">
               <div class="ptog-label">Contact via Rishta Square Only <span class="ptog-badge premium">Premium</span></div>
@@ -1013,16 +1054,6 @@ a{text-decoration:none;color:inherit}
       </div>
     </div>
 
-    <!-- ══════════ COMPLIMENTS ══════════ -->
-    <div class="panel" id="panel-compliments">
-      <h1 class="page-title">Compliments Received</h1>
-      <p class="page-sub">People who've sent you a friendly icebreaker</p>
-
-      <div id="compliments-results">
-        <div class="loading-spinner">Loading compliments...</div>
-      </div>
-    </div>
-
     <!-- ══════════ INTERESTS ══════════ -->
     <div class="panel" id="panel-interests">
       <h1 class="page-title">Interests</h1>
@@ -1117,20 +1148,6 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
-<!-- COMPLIMENT MODAL -->
-<div class="overlay" id="overlay-compliment">
-  <div class="detail-modal" style="max-width:420px">
-    <button class="detail-close" onclick="closeComplimentModal()">✕</button>
-    <div style="padding:.5rem 0 1rem">
-      <h3 style="font-size:1.1rem;margin-bottom:.3rem">😊 Send a Compliment to <span id="compliment-target-name"></span></h3>
-      <p style="font-size:.82rem;color:var(--mid);margin-bottom:1.2rem">A friendly way to break the ice — one compliment per profile.</p>
-      <div id="compliment-presets" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem"></div>
-      <textarea id="compliment-custom" placeholder="Or write your own (150 characters max)" maxlength="150" style="width:100%;min-height:60px;padding:.7rem;border:1.5px solid var(--light);border-radius:8px;font-family:inherit;font-size:.85rem;margin-bottom:1rem"></textarea>
-      <button class="btn-save" id="compliment-submit-btn" style="width:100%" onclick="submitCompliment()">Send Compliment</button>
-    </div>
-  </div>
-</div>
-
 <script src="/capacitor-bridge.js"></script>
 <script src="/api.js"></script>
 <script src="/passwordRules.js"></script>
@@ -1176,9 +1193,9 @@ async function initDashboard() {
   loadTodaysPicks();
 
   // Keep unread counts live while the member is on the dashboard, rather
-  // than only checking once at login. A message/interest/compliment that
-  // arrives while they're already browsing should still show up without
-  // needing a manual refresh.
+  // than only checking once at login. A message/interest that arrives while
+  // they're already browsing should still show up without needing a manual
+  // refresh.
   if (!window._skPollingStarted) {
     window._skPollingStarted = true;
     setInterval(function() {
@@ -1238,7 +1255,6 @@ function showPanel(id, navEl) {
   if (id === 'viewers')     loadProfileViewers();
   if (id === 'premium')     loadPremiumFeaturesPanel();
   if (id === 'alerts')      loadSavedSearches();
-  if (id === 'compliments') loadCompliments();
   if (id === 'interests')   loadInterests();
   if (id === 'messages')    loadMessagesPanel();
   if (id === 'notifications') loadNotifications();
@@ -1371,7 +1387,7 @@ async function checkWhatsNew() {
 // The bell badge combines pending-received-interests + pending photo
 // requests — the two actionable "needs your response" item types — plus
 // unreadGeneralNotifCount, which covers everything else that lands in the
-// notifications table (match_recommendation, message, compliment, etc.).
+// notifications table (match_recommendation, message, photo_reveal, etc.).
 // Previously the badge only counted the first two, so a member could have
 // a brand-new "New Match Recommendation!" notification sitting unread and
 // never see any indicator that it existed. Kept as separately-updated
@@ -1524,6 +1540,7 @@ function loadProfileForm() {
     var el = document.getElementById('p-' + f);
     if (el) el.checked = !!currentMember[f];
   });
+  highlightPrivacyPreset(currentMember.privacy_preset || 'standard');
 
   var photoPreview = document.getElementById('profile-photo-preview');
   if (currentMember.photo_url) {
@@ -1770,6 +1787,54 @@ async function unblockMemberAction(uuid, name) {
   }
 }
 
+// Same bundles as index.html's registration PRIVACY_PRESETS, minus `photo`
+// — Profile Photo has its own dedicated Show/Blur/Hide control elsewhere on
+// this page (see savePhotoPrivacyOption) rather than a toggle in this list,
+// so switching presets here deliberately leaves it untouched.
+const PROFILE_PRIVACY_PRESETS = {
+  open:     { family:false, income:false, location:false, name:false, marital:false },
+  standard: { family:true,  income:true,  location:false, name:false, marital:true  },
+  strict:   { family:true,  income:true,  location:true,  name:true,  marital:true  }
+};
+
+function highlightPrivacyPreset(preset) {
+  var idMap = { open:'p-preset-open', standard:'p-preset-standard', strict:'p-preset-strict' };
+  var classMap = { open:'selected-open', standard:'selected', strict:'selected-strict' };
+  Object.keys(idMap).forEach(function(key) {
+    var el = document.getElementById(idMap[key]);
+    if (el) el.className = 'privacy-preset-card';
+  });
+  var target = document.getElementById(idMap[preset]);
+  if (target) target.className = 'privacy-preset-card ' + (classMap[preset] || 'selected');
+}
+
+// Applies the chosen preset's toggle defaults (family/income/location/name/
+// marital) and stages privacy_preset itself for the next Save — like every
+// other field on this page, it isn't sent to the backend until Save
+// Changes is clicked. If the member has already customized their toggles
+// away from their current preset's defaults, confirm before overwriting
+// that customization rather than silently discarding it.
+function setProfilePrivacyPreset(preset) {
+  var defaults = PROFILE_PRIVACY_PRESETS[preset] || PROFILE_PRIVACY_PRESETS.standard;
+  var baseDefaults = PROFILE_PRIVACY_PRESETS[currentMember.privacy_preset || 'standard'] || PROFILE_PRIVACY_PRESETS.standard;
+  var isCustomized = Object.keys(baseDefaults).some(function(key) {
+    var el = document.getElementById('p-priv_' + key);
+    return el && el.checked !== baseDefaults[key];
+  });
+  if (isCustomized) {
+    var presetLabel = preset.charAt(0).toUpperCase() + preset.slice(1);
+    if (!confirm('Switching to ' + presetLabel + ' will reset your customized privacy toggles below to match it. Continue?')) {
+      return;
+    }
+  }
+  Object.keys(defaults).forEach(function(key) {
+    var el = document.getElementById('p-priv_' + key);
+    if (el) el.checked = defaults[key];
+  });
+  currentMember.privacy_preset = preset;
+  highlightPrivacyPreset(preset);
+}
+
 async function saveProfile() {
   var fields = ['display_name','height','weight','complexion',
                 'profession','employer','monthly_income','area',
@@ -1786,6 +1851,7 @@ async function saveProfile() {
     var el = document.getElementById('p-' + f);
     if (el) updates[f] = el.checked;
   });
+  updates.privacy_preset = currentMember.privacy_preset || 'standard';
 
   // Premium-only — the row itself is hidden for Basic members (so this
   // checkbox is always unchecked/'direct' for them anyway), but the
@@ -1868,8 +1934,10 @@ async function handlePhotoUpload(input) {
     });
     var data = await res.json();
     if (data.success) {
-      document.getElementById('profile-photo-preview').innerHTML =
-        '<img src="' + data.data.photo_url + '" alt="Profile photo">';
+      var photoImg = '<img src="' + data.data.photo_url + '" alt="Profile photo">';
+      document.getElementById('profile-photo-preview').innerHTML = photoImg;
+      var heroPhoto = document.getElementById('hero-photo');
+      if (heroPhoto) heroPhoto.innerHTML = '<img src="' + data.data.photo_url + '" alt="Your profile photo">';
       currentMember.photo_url = data.data.photo_url;
     } else {
       alert('Photo upload failed: ' + (data.message || 'Please try again.'));
@@ -1877,6 +1945,22 @@ async function handlePhotoUpload(input) {
   } catch (err) {
     alert('Photo upload failed. Please try again.');
   }
+}
+
+// Own-photo lightbox — no photo yet jumps straight to the upload picker
+// (nothing to view full-size), otherwise opens the shared lightbox with a
+// Change Photo option wired into the same upload flow as the My Profile
+// "📷 Change Photo" button, rather than duplicating upload logic here.
+function openMyPhotoLightbox() {
+  if (!currentMember || !currentMember.photo_url) {
+    var input = document.getElementById('photo-upload-input');
+    if (input) input.click();
+    return;
+  }
+  openPhotoLightbox(currentMember.photo_url, function () {
+    closePhotoLightbox();
+    document.getElementById('photo-upload-input').click();
+  });
 }
 
 // ══════════════════════════════════════════
@@ -1896,15 +1980,14 @@ function avatarPlaceholderHtml(name, radius) {
 // Builds the same photo/placeholder markup every card already built, plus —
 // only when explicitly asked for via enableLightbox — a click-to-expand
 // wrapper around a real, unlocked photo. Listing/grid cards (Browse,
-// Smart Matching, Saved, Who Viewed, Compliments) deliberately leave this
-// off: the photo there is just part of a bigger tappable card that
-// navigates to the profile, and on mobile especially the photo is most of
-// that tappable area, so intercepting its tap for a lightbox instead made
-// it hard to actually open a profile. Only the profile detail view
+// Smart Matching, Saved, Who Viewed) deliberately leave this off: the photo
+// there is just part of a bigger tappable card that navigates to the
+// profile, and on mobile especially the photo is most of that tappable
+// area, so intercepting its tap for a lightbox instead made it hard to
+// actually open a profile. Only the profile detail view
 // (viewProfileDetail/previewMyProfile) opts in. A locked (blurred/hidden)
 // photo or the placeholder never gets the lightbox wrapper regardless.
-// `placeholder`, if given, overrides the default avatar-initial
-// placeholder (Compliments cards use a plain 👤 emoji instead).
+// `placeholder`, if given, overrides the default avatar-initial placeholder.
 function profilePhotoHtml(p, radius, placeholder, enableLightbox) {
   if (!p.photo_url) return placeholder !== undefined ? placeholder : avatarPlaceholderHtml(p.display_name || p.full_name, radius);
   var radiusStyle = radius ? 'border-radius:' + radius + 'px;' : '';
@@ -2069,9 +2152,6 @@ async function loadBrowseProfiles(page) {
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       interestActionHtml(p, 'sm') +
-      (p.has_complimented
-        ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
-        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>'
     );
   }).join('');
@@ -2204,10 +2284,7 @@ async function viewProfileDetail(uuid) {
 
   var actionBtn = p.is_mutual_match
     ? '<button class="btn-save" style="width:100%;margin-top:1.2rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="closeDetailModal();startConversation(this.dataset.uuid, this.dataset.name)">💬 Message</button>'
-    : interestActionHtml(p, 'full') +
-      (p.has_complimented
-        ? '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" disabled>✓ Compliment Sent</button>'
-        : '<button class="btn-compliment-sm" style="width:100%;margin-top:.6rem;padding:.7rem" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="openComplimentModal(this.dataset.uuid, this.dataset.name)">😊 Send a Compliment</button>');
+    : interestActionHtml(p, 'full');
 
   // Partner preferences — age/city are supplementary; the written
   // description is the single highest-weighted factor in the matching
@@ -2411,69 +2488,6 @@ async function submitReport() {
 }
 
 // ══════════════════════════════════════════
-//  COMPLIMENTS (icebreaker)
-// ══════════════════════════════════════════
-var complimentTargetUuid = null;
-var complimentPresetsCache = null;
-
-async function openComplimentModal(uuid, name) {
-  complimentTargetUuid = uuid;
-  document.getElementById('compliment-target-name').textContent = name;
-  document.getElementById('compliment-custom').value = '';
-
-  var presetsContainer = document.getElementById('compliment-presets');
-  presetsContainer.innerHTML = '<div style="font-size:.82rem;color:var(--mid)">Loading...</div>';
-  document.getElementById('overlay-compliment').classList.add('open');
-
-  if (!complimentPresetsCache) {
-    var result = await apiCall('/compliment-presets', 'GET');
-    complimentPresetsCache = result.success ? result.data : [];
-  }
-
-  presetsContainer.innerHTML = complimentPresetsCache.map(function(preset, i) {
-    return '<label style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;cursor:pointer;padding:.5rem;border:1.5px solid var(--light);border-radius:8px">' +
-      '<input type="radio" name="compliment-preset" value="' + escapeHtml(preset) + '"> ' + preset +
-      '</label>';
-  }).join('');
-}
-
-function closeComplimentModal() {
-  document.getElementById('overlay-compliment').classList.remove('open');
-  complimentTargetUuid = null;
-}
-
-async function submitCompliment() {
-  var selected = document.querySelector('input[name="compliment-preset"]:checked');
-  var customText = document.getElementById('compliment-custom').value.trim();
-  var message = customText || (selected ? selected.value : '');
-
-  if (!message) {
-    alert('Please choose a compliment or write your own.');
-    return;
-  }
-
-  var btn = document.getElementById('compliment-submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-
-  var result = await apiCall('/member/compliment', 'POST', {
-    receiver_uuid: complimentTargetUuid,
-    message: message
-  });
-
-  btn.disabled = false;
-  btn.textContent = 'Send Compliment';
-
-  if (result.success) {
-    alert('Compliment sent! 😊');
-    closeComplimentModal();
-    closeDetailModal();
-  } else {
-    alert(result.message || 'Could not send compliment.');
-  }
-}
-
-// ══════════════════════════════════════════
 //  MY MATCHES
 // ══════════════════════════════════════════
 async function loadTodaysPicks() {
@@ -2536,9 +2550,6 @@ async function loadMyMatches() {
       (p.admin_notes ? '<div class="pc-meta" style="font-style:italic;color:var(--burg)">"' + p.admin_notes + '"</div>' : '') +
       '<div class="pc-actions">' +
       interestActionHtml(p, 'sm') +
-      (p.has_complimented
-        ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
-        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -2572,9 +2583,6 @@ async function loadSavedProfiles() {
       (activity.label ? '<div class="pc-meta pc-activity">' + activity.dot + activity.label + '</div>' : '') +
       '<div class="pc-actions">' +
       interestActionHtml(p, 'sm') +
-      (p.has_complimented
-        ? '<button class="btn-compliment-sm" disabled>✓ Sent</button>'
-        : '<button class="btn-compliment-sm" data-uuid="' + p.uuid + '" data-name="' + escapeHtml(p.display_name || p.full_name || 'Rishta Square Member') + '" onclick="event.stopPropagation();openComplimentModal(this.dataset.uuid, this.dataset.name)">😊</button>') +
       '</div></div></div>';
   });
   html += '</div>';
@@ -2772,51 +2780,6 @@ function runSavedSearch(s) {
   document.getElementById('filter-age-min').value = s.age_min || '';
   document.getElementById('filter-age-max').value = s.age_max || '';
   showPanel('browse'); // its own auto-load will now pick up the filters set above
-}
-
-async function loadComplimentsBadgeCount() {
-  var result = await apiCall('/member/compliments/unread-count', 'GET');
-  var badge = document.getElementById('compliments-badge');
-  if (result.success && result.data.count > 0) {
-    badge.style.display = 'inline-block';
-    badge.textContent = result.data.count;
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-async function loadCompliments() {
-  var container = document.getElementById('compliments-results');
-  container.innerHTML = '<div class="loading-spinner">Loading compliments...</div>';
-
-  var result = await apiCall('/member/compliments', 'GET');
-  if (!result.success || !result.data.length) {
-    container.innerHTML = '<div class="empty-state"><div class="ei">😊</div>No compliments yet. When someone sends you one, it\'ll show up here.</div>';
-    document.getElementById('compliments-badge').style.display = 'none';
-    return;
-  }
-
-  document.getElementById('compliments-badge').style.display = 'none';
-
-  var html = result.data.map(function(c) {
-    var initial = '👤';
-    var photo = profilePhotoHtml(c, 10, initial);
-    var name = c.display_name || c.full_name || 'Rishta Square Member';
-    var date = new Date(c.created_at).toLocaleDateString();
-    return '<div class="interest-row">' +
-      '<div class="interest-av" style="cursor:pointer" onclick="viewProfileDetail(\'' + c.uuid + '\')">' + photo + '</div>' +
-      '<div class="interest-info" style="cursor:pointer" onclick="viewProfileDetail(\'' + c.uuid + '\')">' +
-      '<div class="interest-name">' + name + '</div>' +
-      '<div class="interest-meta">' + (c.age || '—') + ' yrs · ' + (c.city || '—') + '</div>' +
-      '<div style="font-size:.84rem;color:var(--burg);font-style:italic;margin-top:.3rem">"' + escapeHtml(c.message) + '"</div>' +
-      '<div style="font-size:.72rem;color:var(--mid);margin-top:.2rem">' + date + '</div>' +
-      '</div>' +
-      '<div class="interest-action-btns">' +
-      '<button class="btn-outline-sm" onclick="viewProfileDetail(\'' + c.uuid + '\')">View Profile</button>' +
-      '</div>' +
-      '</div>';
-  }).join('');
-  container.innerHTML = html;
 }
 
 // ══════════════════════════════════════════
@@ -3266,8 +3229,17 @@ async function loadNotifications() {
   } else {
     if (html) html += '<div class="msg-section-label">Notifications</div>';
     generalNotifs.forEach(function(n) {
-      html += '<div class="interest-row">' +
-        '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'compliment' ? '😊' : n.type === 'photo_reveal' ? '🔓' : (n.type === 'match' || n.type === 'match_recommendation') ? '💍' : n.type === 'verification' ? '✅' : n.type === 'profile_change' ? '✏️' : '🔔') + '</div>' +
+      var relatedName = n.related_display_name || n.related_full_name || 'Rishta Square Member';
+      // data-* + a shared handler (not an inline onclick built from n.body/
+      // relatedName directly) — same pattern used elsewhere in this file —
+      // so a name/title containing a quote can't break out of the handler.
+      var routesToThread = (n.type === 'message' || n.type === 'match') && n.related_uuid;
+      var isClickable = routesToThread || n.type === 'interest' || n.type === 'match_recommendation';
+      var attrs = isClickable ? ' style="cursor:pointer" data-notif-type="' + n.type + '"' : '';
+      if (routesToThread) attrs += ' data-uuid="' + n.related_uuid + '" data-name="' + escapeHtml(relatedName) + '"';
+      if (isClickable) attrs += ' onclick="handleNotificationClick(this)"';
+      html += '<div class="interest-row"' + attrs + '>' +
+        '<div class="interest-av">' + (n.type === 'interest' ? '💌' : n.type === 'message' ? '💬' : n.type === 'photo_reveal' ? '🔓' : (n.type === 'match' || n.type === 'match_recommendation') ? '💍' : n.type === 'verification' ? '✅' : n.type === 'profile_change' ? '✏️' : '🔔') + '</div>' +
         '<div class="interest-info">' +
         '<div class="interest-name">' + n.title + '</div>' +
         '<div class="interest-meta">' + n.body + '</div>' +
@@ -3292,6 +3264,21 @@ async function respondPhotoRevealAction(requestId, action, btn) {
     checkPendingPhotoRequests();
   } else {
     alert(result.message || 'Could not update request.');
+  }
+}
+
+// Routes a clicked notification row to its relevant context — the pending
+// "Approve/Deny" photo-request section above is deliberately excluded from
+// all of this (see loadNotifications): those rows keep their inline
+// buttons and aren't card-clickable, to avoid the two interactions conflicting.
+function handleNotificationClick(el) {
+  var type = el.dataset.notifType;
+  if (type === 'message' || type === 'match') {
+    startConversation(el.dataset.uuid, el.dataset.name);
+  } else if (type === 'interest') {
+    goToInterests('received');
+  } else if (type === 'match_recommendation') {
+    showPanel('matches');
   }
 }
 
