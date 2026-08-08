@@ -1201,7 +1201,7 @@ function dismissLaunchBanner() {
       </div>
 
       <div class="form-section-label">Physical Appearance</div>
-      <div class="form-group"><label>Height</label>
+      <div class="form-group" style="max-width:200px"><label>Height</label>
         <select id="f-height">
           <option value="">Select Height</option>
         </select>
@@ -1694,28 +1694,21 @@ function dismissLaunchBanner() {
       </div>
 
       <div class="form-section-label">Pay via Any of These Methods</div>
-      <div class="pm-grid">
-        <div class="pm-card pm-card-bank">
-          <div class="pm-icon">🏦</div>
-          <div class="pm-card-name">Bank Transfer</div>
-          <div class="pm-card-detail">Meezan Bank<br>Title: ALI REHAN MALLHI<br>Acc No: 02510104365908<br>IBAN: <strong id="reg-pm-bank">PK77MEZN0002510104365908</strong><br>Branch: DHA Phase VI Br-Lahore</div>
-          <button class="pm-copy-btn" onclick="copyPaymentDetail('reg-pm-bank', this)">Copy IBAN</button>
-          <div style="margin-top:.9rem">
-            <img src="/assets/images/meezan-bank-qr.jpeg" alt="Meezan Bank QR code for bank transfer" style="width:140px;height:140px;border-radius:8px;display:block;margin:0 auto;background:#fff">
-            <div style="font-size:.68rem;color:rgba(255,255,255,0.55);margin-top:.5rem">Scan with your banking app to pay</div>
-          </div>
+      <div style="background:var(--ivory);border-radius:14px;padding:1.2rem;margin-bottom:1rem;text-align:left">
+        <div style="font-size:.86rem;line-height:1.9">
+          🏦 <strong>Bank Transfer:</strong> Meezan Bank<br>
+          &nbsp;&nbsp;&nbsp;Title: ALI REHAN MALLHI<br>
+          &nbsp;&nbsp;&nbsp;Acc No: 02510104365908<br>
+          &nbsp;&nbsp;&nbsp;IBAN: <span id="reg-pm-bank">PK77MEZN0002510104365908</span><br>
+          &nbsp;&nbsp;&nbsp;Branch: DHA Phase VI Br-Lahore<br>
+          📱 <strong>JazzCash:</strong> <span id="reg-pm-jazzcash">0321-4133233</span><br>
+          🟢 <strong>NayaPay:</strong> alimallhi@nayapay<br>
+          &nbsp;&nbsp;&nbsp;Acc No: 03214133233<br>
+          &nbsp;&nbsp;&nbsp;IBAN: <span id="reg-pm-nayapay">PK58NAYA1234503214133233</span>
         </div>
-        <div class="pm-card pm-card-jazzcash">
-          <div class="pm-icon">📱</div>
-          <div class="pm-card-name">JazzCash</div>
-          <div class="pm-card-detail">Number:<br><strong id="reg-pm-jazzcash">0321-4133233</strong></div>
-          <button class="pm-copy-btn" onclick="copyPaymentDetail('reg-pm-jazzcash', this)">Copy Number</button>
-        </div>
-        <div class="pm-card pm-card-nayapay">
-          <div class="pm-icon">🟢</div>
-          <div class="pm-card-name">NayaPay</div>
-          <div class="pm-card-detail">NayaPay ID: alimallhi@nayapay<br>Acc No: 03214133233<br>IBAN: <strong id="reg-pm-nayapay">PK58NAYA1234503214133233</strong></div>
-          <button class="pm-copy-btn" onclick="copyPaymentDetail('reg-pm-nayapay', this)">Copy IBAN</button>
+        <div style="text-align:center;margin-top:1rem">
+          <img src="/assets/images/meezan-bank-qr.jpeg" alt="Meezan Bank QR code for bank transfer" style="width:130px;height:130px;border-radius:8px;display:inline-block;background:#fff">
+          <div style="font-size:.72rem;color:var(--mid);margin-top:.4rem">Scan to pay via Bank Transfer</div>
         </div>
       </div>
       <div style="font-size:.78rem;color:var(--mid);margin:.9rem 0 1.2rem;text-align:center">After paying, send your payment screenshot in the WhatsApp chat below so our team can confirm it.</div>

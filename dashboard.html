@@ -89,15 +89,12 @@ a{text-decoration:none;color:inherit}
 .hero-ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
 .hero-ring-track{fill:none;stroke:rgba(255,255,255,0.25);stroke-width:5}
 .hero-ring-fill{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;
-  stroke-dasharray:289;stroke-dashoffset:289;transition:stroke-dashoffset .6s ease}
+  stroke-dasharray:289;stroke-dashoffset:289;transition:stroke-dashoffset .6s ease,stroke .3s ease}
+.hero-ring-fill.is-complete{stroke:var(--green)}
 .hero-photo{position:absolute;top:8px;left:8px;right:8px;bottom:8px;border-radius:50%;
   background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;
   font-size:2.2rem;overflow:hidden;border:3px solid rgba(255,255,255,0.9);cursor:pointer}
 .hero-photo img{width:100%;height:100%;object-fit:cover;display:block}
-.hero-edit-btn{position:absolute;bottom:0;right:0;width:30px;height:30px;border-radius:50%;
-  background:#E8B84B;color:#fff;border:2.5px solid #fff;display:flex;align-items:center;
-  justify-content:center;font-size:.82rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);padding:0}
-.hero-edit-btn:hover{filter:brightness(1.08)}
 .hero-info{flex:1;min-width:180px}
 .hero-greeting{font-size:.8rem;color:rgba(255,255,255,0.75);margin-bottom:.15rem}
 .hero-top-row{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
@@ -123,14 +120,19 @@ a{text-decoration:none;color:inherit}
 .stat-label{font-size:.78rem;color:var(--mid);margin-top:.2rem}
 
 .quick-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
-.qa-btn{background:var(--white);border:none;border-radius:16px;padding:1.4rem 1rem;
+.qa-btn{position:relative;background:var(--white);border:none;border-radius:16px;padding:1.4rem 1rem;
   text-align:center;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
 .qa-btn:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,0.13)}
 .qa-icon-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;
   justify-content:center;font-size:1.5rem;margin:0 auto .7rem}
 .qa-icon-circle.maroon{background:linear-gradient(135deg,#7A2436,#5A1028);color:#fff}
 .qa-icon-circle.navy{background:linear-gradient(160deg,#03162A,#0C3A66);color:#fff}
+.qa-icon-circle.gold{background:linear-gradient(135deg,#D4A94F,#B8975A);color:#fff}
+.qa-icon-circle.green{background:linear-gradient(135deg,#3A9974,#215D45);color:#fff}
 .qa-label{font-size:.86rem;font-weight:700}
+.qa-badge{position:absolute;top:10px;right:10px;background:var(--rose);color:#fff;
+  font-size:.65rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;padding:0 5px}
 
 /* ── PROFILE FORM ── */
 .form-section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
@@ -550,7 +552,6 @@ a{text-decoration:none;color:inherit}
             <circle class="hero-ring-fill" id="hero-ring-fill" cx="50" cy="50" r="46"></circle>
           </svg>
           <div class="hero-photo" id="hero-photo" onclick="openMyPhotoLightbox()" title="View/change your photo">👤</div>
-          <button class="hero-edit-btn" onclick="showPanel('profile')" title="Edit My Profile" aria-label="Edit My Profile">✏️</button>
         </div>
         <div class="hero-info">
           <div class="hero-greeting">Assalam o Alaikum</div>
@@ -578,6 +579,16 @@ a{text-decoration:none;color:inherit}
           <div class="qa-btn" onclick="showPanel('matches')">
             <div class="qa-icon-circle navy">💍</div>
             <div class="qa-label">View Matchmaker's Picks</div>
+          </div>
+          <div class="qa-btn" onclick="showPanel('messages')">
+            <div class="qa-icon-circle gold">💬</div>
+            <div class="qa-label">Connections</div>
+            <span class="qa-badge" id="qa-connections-badge" style="display:none">0</span>
+          </div>
+          <div class="qa-btn" onclick="showPanel('interests')">
+            <div class="qa-icon-circle green">💌</div>
+            <div class="qa-label">Interests</div>
+            <span class="qa-badge" id="qa-interests-badge" style="display:none">0</span>
           </div>
         </div>
       </div>
@@ -761,6 +772,29 @@ a{text-decoration:none;color:inherit}
           <div class="form-group"><label>Monthly Income</label><input type="text" id="p-monthly_income"></div>
 
           <div class="form-section-label">Location</div>
+          <div class="form-row">
+            <div class="form-group"><label>Country of Residence</label>
+              <select id="p-country" onchange="updateProfileCityFieldForCountry()">
+                <option>Pakistan</option>
+                <option>United Kingdom</option><option>United Arab Emirates</option>
+                <option>Saudi Arabia</option><option>United States</option>
+                <option>Canada</option><option>Australia</option>
+                <option>Qatar</option><option>Kuwait</option><option>Other</option>
+              </select>
+            </div>
+            <div class="form-group"><label>City of Residence</label>
+              <select id="p-city">
+                <option value="">Select City</option>
+                <option>Lahore</option><option>Karachi</option><option>Islamabad</option>
+                <option>Rawalpindi</option><option>Faisalabad</option><option>Multan</option>
+                <option>Peshawar</option><option>Quetta</option><option>Hyderabad</option>
+                <option>Sialkot</option><option>Gujranwala</option><option>Gujrat</option>
+                <option>Bahawalpur</option><option>Sargodha</option><option>Abbottabad</option>
+                <option>Other</option>
+              </select>
+              <input type="text" id="p-city-other" placeholder="Enter your city" style="display:none;margin-top:.5rem">
+            </div>
+          </div>
           <div class="form-group"><label>Area / Neighbourhood</label><input type="text" id="p-area"></div>
 
           <div class="form-section-label">Partner Preferences</div>
@@ -1292,9 +1326,18 @@ async function renderDashboardHome() {
     statusEl.className = 'status-banner status-pending';
     statusEl.innerHTML = '⏳ <span>Your profile is under review. We will activate it within 24 hours of payment confirmation.</span>';
   } else if (currentMember.account_status === 'active') {
-    statusEl.style.display = 'flex';
-    statusEl.className = 'status-banner status-active';
-    statusEl.innerHTML = '✅ <span>Your profile is active and visible to other members!</span>';
+    // Shown exactly once ever per member (persisted in localStorage, not
+    // just this session) — a celebratory "you're live" moment, not an
+    // ongoing status indicator that belongs on every visit.
+    var activeBannerKey = 'sk_active_banner_seen_' + currentMember.id;
+    if (!localStorage.getItem(activeBannerKey)) {
+      statusEl.style.display = 'flex';
+      statusEl.className = 'status-banner status-active';
+      statusEl.innerHTML = '✅ <span>Your profile is active and visible to other members!</span>';
+      localStorage.setItem(activeBannerKey, '1');
+    } else {
+      statusEl.style.display = 'none';
+    }
   } else {
     statusEl.style.display = 'none';
   }
@@ -1314,7 +1357,9 @@ async function renderDashboardHome() {
   var filled = checklistItems.filter(function(i) { return currentMember[i.field] && currentMember[i.field] !== '—'; }).length;
   var pct = Math.round((filled / checklistItems.length) * 100);
   var ringCircumference = 289;
-  document.getElementById('hero-ring-fill').style.strokeDashoffset = ringCircumference - (ringCircumference * pct / 100);
+  var ringFillEl = document.getElementById('hero-ring-fill');
+  ringFillEl.style.strokeDashoffset = ringCircumference - (ringCircumference * pct / 100);
+  ringFillEl.classList.toggle('is-complete', pct >= 100);
   document.getElementById('hero-card').title = pct + '% profile complete';
 
   var missing = checklistItems.filter(function(i) { return !currentMember[i.field] || currentMember[i.field] === '—'; });
@@ -1372,15 +1417,22 @@ async function checkWhatsNew() {
   var parts = [];
   if (d.new_matches)   parts.push(d.new_matches + ' new match' + (d.new_matches === 1 ? '' : 'es'));
   if (d.new_interests) parts.push(d.new_interests + ' new interest' + (d.new_interests === 1 ? '' : 's'));
+  if (d.new_messages)  parts.push(d.new_messages + ' new message' + (d.new_messages === 1 ? '' : 's'));
 
   if (!parts.length) { banner.style.display = 'none'; return; }
+
+  // Routes to whichever is most actionable when more than one thing is new
+  // — a new message (something to reply to) outranks a new interest
+  // (something to accept/decline), which outranks a new recommendation
+  // (browse at your own pace).
+  var targetPanel = d.new_messages ? 'messages' : (d.new_interests ? 'interests' : 'matches');
 
   banner.style.display = 'block';
   banner.innerHTML =
     '<div class="card" style="background:var(--ivory);margin-bottom:1.2rem">' +
     '<div style="padding:1rem 1.4rem;font-size:.9rem">' +
-    '✨ <strong>Since your last visit:</strong> ' + escapeHtml(parts.join(' and ')) + '. ' +
-    '<a href="javascript:void(0)" onclick="showPanel(\'matches\')" style="color:var(--burg);font-weight:700;text-decoration:underline">Take a look</a>' +
+    '✨ <strong>Since your last visit:</strong> ' + escapeHtml(parts.join(', ')) + '. ' +
+    '<a href="javascript:void(0)" onclick="showPanel(\'' + targetPanel + '\')" style="color:var(--burg);font-weight:700;text-decoration:underline">Take a look</a>' +
     '</div></div>';
 }
 
@@ -1421,11 +1473,14 @@ async function loadInterestsCount() {
   if (result.success) {
     var pendingReceived = result.data.received.filter(function(i) { return i.status === 'sent'; }).length;
     var badge = document.getElementById('interests-badge');
+    var qaBadge = document.getElementById('qa-interests-badge');
     if (pendingReceived > 0) {
       badge.style.display = 'inline-block';
       badge.textContent = pendingReceived;
+      if (qaBadge) { qaBadge.style.display = 'flex'; qaBadge.textContent = pendingReceived; }
     } else {
       badge.style.display = 'none';
+      if (qaBadge) qaBadge.style.display = 'none';
     }
     pendingInterestsCount = pendingReceived;
     updateNotifBellBadge();
@@ -1435,6 +1490,18 @@ async function loadInterestsCount() {
 // ══════════════════════════════════════════
 //  MY PROFILE
 // ══════════════════════════════════════════
+// Same Pakistan-dropdown-vs-free-text split as index.html's registration
+// form (updateCityFieldForCountry) — kept as a separate function/id set
+// (p- prefixed) rather than sharing code across the two pages.
+function updateProfileCityFieldForCountry() {
+  var isPakistan = document.getElementById('p-country').value === 'Pakistan';
+  var citySelect = document.getElementById('p-city');
+  var cityOther  = document.getElementById('p-city-other');
+  citySelect.style.display = isPakistan ? '' : 'none';
+  cityOther.style.display  = isPakistan ? 'none' : '';
+  if (isPakistan) { cityOther.value = ''; } else { citySelect.value = ''; }
+}
+
 function loadProfileForm() {
   if (!currentMember) return;
   document.getElementById('profile-upgrade-hint').style.display = currentMember.package === 'premium' ? 'none' : 'block';
@@ -1456,7 +1523,7 @@ function loadProfileForm() {
     badge.textContent = isStrict ? 'Always Hidden' : 'After Mutual Interest';
   });
   var fields = ['full_name','display_name','height','weight','complexion',
-                'profession','employer','monthly_income','area',
+                'profession','employer','monthly_income','area','country',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
                 'piety_level','religion','ethnicity','caste','education'];
@@ -1503,6 +1570,25 @@ function loadProfileForm() {
     var el = document.getElementById('p-' + f);
     if (el && currentMember[f] && currentMember[f] !== '—') el.value = currentMember[f];
   });
+
+  // City depends on Country (just set above) — same Pakistan-dropdown vs
+  // free-text split as registration (see updateProfileCityFieldForCountry).
+  updateProfileCityFieldForCountry();
+  if (currentMember.city && currentMember.city !== '—') {
+    if ((currentMember.country || 'Pakistan') === 'Pakistan') {
+      var citySelectEl = document.getElementById('p-city');
+      citySelectEl.value = currentMember.city;
+      // Legacy/free-text city that doesn't match the controlled list —
+      // same "Other" fallback pattern as Profession/Caste below.
+      if (!citySelectEl.value) {
+        citySelectEl.value = 'Other';
+        document.getElementById('p-city-other').value = currentMember.city;
+        document.getElementById('p-city-other').style.display = 'block';
+      }
+    } else {
+      document.getElementById('p-city-other').value = currentMember.city;
+    }
+  }
 
   // Profession became a controlled dropdown after members could already
   // have arbitrary free text saved from before — assigning a non-matching
@@ -1837,7 +1923,7 @@ function setProfilePrivacyPreset(preset) {
 
 async function saveProfile() {
   var fields = ['display_name','height','weight','complexion',
-                'profession','employer','monthly_income','area',
+                'profession','employer','monthly_income','area','country',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
                 'piety_level','religion','sect','ethnicity','caste','education'];
@@ -1846,6 +1932,13 @@ async function saveProfile() {
     var el = document.getElementById('p-' + f);
     if (el) updates[f] = el.value;
   });
+
+  // Same Pakistan-dropdown-vs-free-text resolution as registration
+  // (see submitRegistration in api.js) — whichever field is actually
+  // visible/active for the selected country is the one that's authoritative.
+  updates.city = updates.country === 'Pakistan'
+    ? document.getElementById('p-city').value
+    : document.getElementById('p-city-other').value;
 
   ['priv_family', 'priv_income', 'priv_location', 'priv_name', 'priv_marital'].forEach(function(f) {
     var el = document.getElementById('p-' + f);
@@ -2261,8 +2354,13 @@ async function viewProfileDetail(uuid) {
   var saveIcon = p.is_saved ? '❤️' : '🤍';
   var saveBtn = '<button class="pc-save-btn" onclick="toggleSaveProfile(\'' + p.uuid + '\', ' + !!p.is_saved + ', this)">' + saveIcon + '</button>';
 
+  // Strict members' photos never unlock via an approved reveal request —
+  // the same privacy_preset override that keeps viewProfile from unlocking
+  // it applies here too — so the request flow is a dead end for them.
+  // Hidden entirely rather than left as a button that "works" but never
+  // actually shows anything.
   var photoRevealBtn = '';
-  if (p.photo_locked) {
+  if (p.photo_locked && p.privacy_preset !== 'strict') {
     if (p.photo_reveal_status === 'pending') {
       photoRevealBtn = '<div style="text-align:center;margin-top:.6rem"><span class="interest-status is-sent">⏳ Photo request sent</span></div>';
     } else {
@@ -3164,11 +3262,14 @@ async function loadMessagesCount() {
   if (result.success) {
     var totalUnread = result.data.reduce(function(sum, c) { return sum + (c.unread_count || 0); }, 0);
     var badge = document.getElementById('messages-badge');
+    var qaBadge = document.getElementById('qa-connections-badge');
     if (totalUnread > 0) {
       badge.style.display = 'inline-block';
       badge.textContent = totalUnread;
+      if (qaBadge) { qaBadge.style.display = 'flex'; qaBadge.textContent = totalUnread; }
     } else {
       badge.style.display = 'none';
+      if (qaBadge) qaBadge.style.display = 'none';
     }
   }
 }
