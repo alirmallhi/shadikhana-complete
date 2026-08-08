@@ -72,6 +72,13 @@ a{text-decoration:none;color:inherit}
 .content{padding:2rem 5%;max-width:1100px}
 .panel{display:none}
 .panel.active{display:block}
+/* Mobile-only — desktop always has the sidebar for navigation, so this
+   stays hidden entirely outside the 900px breakpoint regardless of
+   .has-back (see updateMobileBackBtn). One shared element above every
+   panel rather than duplicating a back button into each panel's markup. */
+.mobile-back-btn{display:none;background:none;border:none;color:var(--burg);
+  font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;
+  padding:.4rem 0;margin-bottom:.6rem;align-items:center;gap:.3rem}
 .page-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;margin-bottom:.3rem;color:#2C1015}
 .page-sub{color:#6B3A45;font-size:.92rem;margin-bottom:2rem}
 
@@ -408,6 +415,7 @@ a{text-decoration:none;color:inherit}
   .layout{grid-template-columns:1fr}
   .hamburger-btn{display:flex}
   .logo-text{display:none}
+  .mobile-back-btn.has-back{display:flex}
   .sidebar{display:block;position:fixed;top:64px;left:0;bottom:0;width:260px;max-width:80vw;
     transform:translateX(-100%);transition:transform .25s ease;z-index:70;overflow-y:auto;
     box-shadow:4px 0 24px rgba(0,0,0,0.25)}
@@ -539,6 +547,8 @@ a{text-decoration:none;color:inherit}
 
   <!-- MAIN CONTENT -->
   <main class="content">
+
+    <button class="mobile-back-btn" id="mobile-back-btn" onclick="goBackMobile()" aria-label="Back">← Back</button>
 
     <!-- ══════════ DASHBOARD HOME ══════════ -->
     <div class="panel active" id="panel-home">
@@ -722,11 +732,7 @@ a{text-decoration:none;color:inherit}
             <input type="text" id="p-cnic-display" disabled style="background:var(--light);cursor:not-allowed">
           </div>
           <p style="font-size:.78rem;color:var(--mid);margin:-.6rem 0 1rem">Gender, Date of Birth, Marital Status, Children, and CNIC affect matching, so corrections go through a quick admin review — use "Request a Profile Correction" below.</p>
-          <div class="form-row">
-            <div class="form-group"><label>Height</label><input type="text" id="p-height"></div>
-            <div class="form-group"><label>Weight (kg)</label><input type="number" id="p-weight"></div>
-          </div>
-          <div class="form-group"><label>Complexion</label><input type="text" id="p-complexion"></div>
+          <div class="form-group"><label>Height</label><input type="text" id="p-height"></div>
 
           <div class="form-section-label">Religious Practice</div>
           <div class="form-row">
@@ -1194,6 +1200,12 @@ a{text-decoration:none;color:inherit}
 
 var currentMember = null;
 var currentInterestTab = 'received';
+// Panel navigation history, for the mobile back button — every showPanel()
+// call (sidebar click, notification click-through, stat-card click, etc.)
+// pushes the panel it's leaving, so "Back" always returns to wherever the
+// member actually came from rather than a hardcoded destination.
+var panelHistory = [];
+var isNavigatingBack = false;
 
 document.addEventListener('DOMContentLoaded', function() {
   if (!isLoggedIn()) {
@@ -1269,9 +1281,16 @@ function closeMobileNav() {
 
 function showPanel(id, navEl) {
   closeMobileNav();
+  var current = document.querySelector('.panel.active');
+  var currentId = current ? current.id.replace('panel-', '') : null;
+  if (!isNavigatingBack && currentId && currentId !== id) {
+    panelHistory.push(currentId);
+  }
+  isNavigatingBack = false;
   document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
   var panel = document.getElementById('panel-' + id);
   if (panel) panel.classList.add('active');
+  updateMobileBackBtn();
 
   document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
   if (navEl) navEl.classList.add('active');
@@ -1292,6 +1311,18 @@ function showPanel(id, navEl) {
   if (id === 'interests')   loadInterests();
   if (id === 'messages')    loadMessagesPanel();
   if (id === 'notifications') loadNotifications();
+}
+
+function goBackMobile() {
+  if (!panelHistory.length) { showPanel('home'); return; }
+  var prev = panelHistory.pop();
+  isNavigatingBack = true;
+  showPanel(prev);
+}
+
+function updateMobileBackBtn() {
+  var btn = document.getElementById('mobile-back-btn');
+  if (btn) btn.classList.toggle('has-back', panelHistory.length > 0);
 }
 
 // ══════════════════════════════════════════
@@ -1326,15 +1357,17 @@ async function renderDashboardHome() {
     statusEl.className = 'status-banner status-pending';
     statusEl.innerHTML = '⏳ <span>Your profile is under review. We will activate it within 24 hours of payment confirmation.</span>';
   } else if (currentMember.account_status === 'active') {
-    // Shown exactly once ever per member (persisted in localStorage, not
-    // just this session) — a celebratory "you're live" moment, not an
-    // ongoing status indicator that belongs on every visit.
-    var activeBannerKey = 'sk_active_banner_seen_' + currentMember.id;
-    if (!localStorage.getItem(activeBannerKey)) {
+    // Shown exactly once ever per member — tracked server-side
+    // (active_banner_shown) rather than localStorage, which didn't survive
+    // a different device/browser, a cleared cache, or private browsing:
+    // any of those give a "fresh" localStorage with nothing to check, so
+    // the banner kept reappearing instead of staying gone for good.
+    if (!currentMember.active_banner_shown) {
       statusEl.style.display = 'flex';
       statusEl.className = 'status-banner status-active';
       statusEl.innerHTML = '✅ <span>Your profile is active and visible to other members!</span>';
-      localStorage.setItem(activeBannerKey, '1');
+      currentMember.active_banner_shown = true;
+      apiCall('/member/profile', 'PUT', { active_banner_shown: true });
     } else {
       statusEl.style.display = 'none';
     }
@@ -1522,7 +1555,7 @@ function loadProfileForm() {
   document.querySelectorAll('[data-preset-badge]').forEach(function(badge) {
     badge.textContent = isStrict ? 'Always Hidden' : 'After Mutual Interest';
   });
-  var fields = ['full_name','display_name','height','weight','complexion',
+  var fields = ['full_name','display_name','height',
                 'profession','employer','monthly_income','area','country',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
@@ -1922,7 +1955,7 @@ function setProfilePrivacyPreset(preset) {
 }
 
 async function saveProfile() {
-  var fields = ['display_name','height','weight','complexion',
+  var fields = ['display_name','height',
                 'profession','employer','monthly_income','area','country',
                 'partner_age_min','partner_age_max','partner_city','partner_education','partner_description',
                 'about_me','family_description','wali_name','wali_mobile',
