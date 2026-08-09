@@ -240,20 +240,30 @@ a.ledger-item:hover{background:rgba(255,255,255,0.04)}
    it disappears on its own once a campaign ends with no extra code to run.
    Deliberately a different red, not the site's gold/rose (#B8975A already
    covers half the card's own accents) — a live campaign should read as
-   something new/urgent, not blend into the existing palette. */
+   something new/urgent, not blend into the existing palette. Carries a
+   simple headline only (e.g. "LIMITED-TIME OFFER") — the actual price
+   comparison lives on the card's own price display (.promo-price-original
+   below), not crammed into this strip. */
 .promo-badge-overlay{position:absolute;top:0;left:0;right:0;
   background:linear-gradient(135deg,#E63950,#A81338);color:#fff;font-weight:800;
-  font-size:.86rem;text-align:center;padding:.7rem 1rem;
-  box-shadow:0 2px 10px rgba(0,0,0,0.28);letter-spacing:.01em;z-index:5;line-height:1.3}
+  font-size:1.05rem;text-align:center;padding:1.1rem 1rem;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3);letter-spacing:.03em;text-transform:uppercase;
+  z-index:5;line-height:1.2}
 .promo-badge-overlay:empty{display:none}
-.promo-badge-strike{font-size:.74rem;font-weight:600;text-decoration:line-through;opacity:.8;margin-left:.35rem}
 .promo-badge-inline{display:inline-flex;align-items:center;gap:4px;margin-left:.5rem;
   background:linear-gradient(135deg,#E63950,#A81338);color:#fff;font-weight:800;
-  font-size:.7rem;padding:4px 10px;border-radius:10px;vertical-align:middle;white-space:nowrap}
+  font-size:.72rem;padding:4px 11px;border-radius:10px;vertical-align:middle;
+  white-space:nowrap;letter-spacing:.02em;text-transform:uppercase}
 .promo-badge-inline:empty{display:none;margin-left:0}
-/* Extra headroom so the banner never overlaps the card's own icon/badge —
-   toggled by api.js alongside the badge itself, never left on its own. */
-.plan-card.has-promo{padding-top:4.6rem}
+/* The original price, struck through, ahead of the new discounted/free
+   price wherever a package's price is actually displayed — this is where
+   the "you're saving money" moment happens, not the banner above. */
+.promo-price-original{text-decoration:line-through;opacity:.55;font-weight:600}
+.plan-price .promo-price-original{display:block;font-size:1.2rem;margin-bottom:.15rem}
+/* Extra headroom so the taller banner never overlaps the card's own
+   icon/badge — toggled by api.js alongside the badge itself, never left on
+   its own. */
+.plan-card.has-promo{padding-top:5.8rem}
 .plan-icon{font-size:1.8rem;margin-bottom:.8rem}
 .plan-name{font-family:var(--font-mono);font-size:.74rem;font-weight:500;letter-spacing:.09em;text-transform:uppercase;margin-bottom:.5rem}
 .plan-card:not(.featured) .plan-name{color:var(--mid)}
@@ -405,6 +415,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
 .psc-info{flex:1}
 .psc-name{font-weight:700;font-size:.95rem}
 .psc-price{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--burgundy)}
+.psc-price .promo-price-original{font-size:.82rem;margin-right:.4rem}
 .psc-desc{font-size:.75rem;color:var(--mid);margin-top:2px}
 .psc-badge{font-size:.68rem;padding:3px 8px;border-radius:10px;font-weight:600;white-space:nowrap}
 .step-indicator{display:flex;align-items:center;gap:.5rem;margin-bottom:1.8rem}
@@ -722,7 +733,7 @@ function dismissLaunchBanner() {
       <div class="plan-badge" style="background:var(--charcoal);color:var(--gold)">Full Platform Access · Self-Service</div>
       <div class="plan-icon">🌱</div>
       <div class="plan-name">Basic</div>
-      <div class="plan-price">PKR 10,000</div>
+      <div class="plan-price" id="plan-price-basic">PKR 10,000</div>
       <div class="plan-sub">One-time registration fee · Non-refundable</div>
       <p style="font-size:.85rem;color:var(--mid);line-height:1.6;margin:.6rem 0 1rem">Built for members who are comfortable browsing, connecting, and managing their own search — with Smart Match suggestions and admin-reviewed recommendations from our team along the way. Ideal if you want full platform access at the lowest cost.</p>
       <div class="plan-success-fee" id="plan-total-basic">💍 Success fee: PKR 65,000 (on confirmed match only)<br><strong>Total if matched: PKR 75,000</strong></div>
@@ -746,7 +757,7 @@ function dismissLaunchBanner() {
       <div class="plan-badge">Full-Service · Dedicated Matchmaker</div>
       <div class="plan-icon">⭐</div>
       <div class="plan-name">Premium</div>
-      <div class="plan-price">PKR 35,000</div>
+      <div class="plan-price" id="plan-price-premium">PKR 35,000</div>
       <div class="plan-sub">One-time registration fee · Non-refundable</div>
       <p style="font-size:.85rem;color:rgba(255,255,255,0.75);line-height:1.6;margin:.6rem 0 1rem">Built for members who want a dedicated matchmaker personally involved in their search — arranged family meet-ups, in-person consultation, and hands-on attention throughout. A natural fit for busy professionals, business families, and overseas Pakistanis who want us more directly involved.</p>
       <div class="plan-success-fee" id="plan-total-premium">💍 Success fee: PKR 125,000 (on confirmed match only)<br><strong>Total if matched: PKR 160,000</strong></div>
@@ -1036,9 +1047,9 @@ function dismissLaunchBanner() {
     <!-- CTA strip -->
     <div style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.3);border-radius:18px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
       <div>
-        <div id="promo-showcase-note" style="display:none;margin-bottom:.6rem;font-size:.84rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#E63950,#A81338);padding:6px 13px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.28)"></div>
+        <div id="promo-showcase-note" style="display:none;margin-bottom:.7rem;font-size:.98rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#E63950,#A81338);padding:9px 16px;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,0.3);letter-spacing:.03em;text-transform:uppercase;display:inline-block"></div>
         <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Premium Registration</div>
-        <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 35,000 one-time registration (non-refundable) &nbsp;·&nbsp; PKR 125,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
+        <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6"><span id="showcase-price">PKR 35,000</span> one-time registration (non-refundable) &nbsp;·&nbsp; PKR 125,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
       </div>
       <a href="#" class="btn-primary" onclick="openModal('register','premium');return false" style="background:linear-gradient(135deg,#2196F3,#0D6EBE);color:#fff;font-weight:700;white-space:nowrap;flex-shrink:0">
         Register Premium →
@@ -1679,16 +1690,16 @@ function dismissLaunchBanner() {
       <div onclick="selectPlan(this,'basic')" class="plan-select-card selected" data-plan="basic">
         <input type="radio" name="pkg" value="basic" checked>
         <div class="psc-info">
-          <div class="psc-name">🌱 Basic</div>
-          <div class="psc-price">PKR 10,000<span class="promo-badge-inline" id="promo-badge-psc-basic"></span></div>
+          <div class="psc-name">🌱 Basic<span class="promo-badge-inline" id="promo-badge-psc-basic"></span></div>
+          <div class="psc-price" id="psc-price-basic">PKR 10,000</div>
           <div class="psc-desc">Core access · Success fee on match: PKR 65,000 · <span id="psc-total-basic">Total if matched: PKR 75,000</span></div>
         </div>
       </div>
       <div onclick="selectPlan(this,'premium')" class="plan-select-card" data-plan="premium">
         <input type="radio" name="pkg" value="premium">
         <div class="psc-info">
-          <div class="psc-name">⭐ Premium</div>
-          <div class="psc-price">PKR 35,000<span class="promo-badge-inline" id="promo-badge-psc-premium"></span></div>
+          <div class="psc-name">⭐ Premium<span class="promo-badge-inline" id="promo-badge-psc-premium"></span></div>
+          <div class="psc-price" id="psc-price-premium">PKR 35,000</div>
           <div class="psc-desc">All features + dedicated matchmaker + family meet-ups arranged · Success fee: PKR 125,000 · <span id="psc-total-premium">Total if matched: PKR 160,000</span></div>
         </div>
         <span class="psc-badge" style="background:rgba(26,18,37,0.1);color:var(--burgundy)">Full-Service</span>

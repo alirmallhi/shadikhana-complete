@@ -43,63 +43,80 @@ function formatPKR(n) {
   return 'PKR ' + Number(n).toLocaleString();
 }
 
-// Builds the overlay badge markup used consistently across every pricing
-// display in scope — same red, same wording, two layout variants: a
-// full-width horizontal banner across the top of the large pricing cards,
-// and a compact inline pill for the tight package-select row in the
-// registration modal (a full-width banner wouldn't fit that layout).
-function promoBadgeHtml(pkg, inline) {
+// The banner/pill now carries a simple headline only — no price math
+// crammed into it. `short` is for the compact package-select pill, which
+// doesn't have room for the full phrase.
+function promoBadgeText(short) {
+  return short ? '🎉 Offer' : '🎉 Limited-Time Offer';
+}
+
+// Struck-through original price immediately followed by the new
+// discounted/free price — this is where the "you're saving money" moment
+// actually happens now, on the package's own price display, not buried in
+// the banner. Returns null (caller leaves the element's original static
+// text alone) when there's no active campaign.
+function promoPriceHtml(pkg) {
   var promo = window.activePromotion;
-  if (!promo) return '';
+  if (!promo) return null;
   var price = pkg === 'premium' ? promo.premium_price : promo.basic_price;
   var original = pkg === 'premium' ? 35000 : 10000;
-  var priceText = price === 0 ? 'FREE NOW' : formatPKR(price);
-  if (inline) {
-    return '<span class="promo-badge-inline">🎉 ' + priceText +
-      (price > 0 ? ' <s>' + formatPKR(original) + '</s>' : '') +
-      '</span>';
-  }
-  return '<div class="promo-badge-overlay">🎉 ' + priceText +
-    (price > 0 ? '<span class="promo-badge-strike">' + formatPKR(original) + '</span>' : '') +
-    '</div>';
+  var priceLabel = price === 0 ? 'FREE' : formatPKR(price);
+  return '<span class="promo-price-original">' + formatPKR(original) + '</span>' + priceLabel;
+}
+
+// Full-width banner overlaid on a pricing card — also toggles has-promo on
+// the parent card, which adds headroom so the (now much bigger) banner
+// never overlaps the card's own icon/badge underneath it.
+function applyCardBanner(elId) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = window.activePromotion ? promoBadgeText() : '';
+  if (el.parentElement) el.parentElement.classList.toggle('has-promo', !!window.activePromotion);
+}
+
+function applyInlineBadge(elId) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = window.activePromotion ? promoBadgeText(true) : '';
+}
+
+function applyPromoPrice(elId, pkg) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  var html = promoPriceHtml(pkg);
+  if (html !== null) el.innerHTML = html;
 }
 
 function applyActivePromotionToPage() {
   var promo = window.activePromotion;
 
   // "Choose Your Path" pricing cards (index.html) / comparison cards
-  // (package-details.html) — same id used on both since only one is ever
-  // on the page at once. The parent card gets extra top padding whenever
-  // the banner is showing, so the now-much-bigger banner never overlaps
-  // the card's own icon/badge underneath it.
-  var basicBadgeSlot = document.getElementById('promo-badge-basic');
-  if (basicBadgeSlot) {
-    basicBadgeSlot.innerHTML = promoBadgeHtml('basic');
-    if (basicBadgeSlot.parentElement) basicBadgeSlot.parentElement.classList.toggle('has-promo', !!promo);
-  }
-  var premiumBadgeSlot = document.getElementById('promo-badge-premium');
-  if (premiumBadgeSlot) {
-    premiumBadgeSlot.innerHTML = promoBadgeHtml('premium');
-    if (premiumBadgeSlot.parentElement) premiumBadgeSlot.parentElement.classList.toggle('has-promo', !!promo);
-  }
+  // (package-details.html) — same ids used on both since only one page is
+  // ever loaded at once.
+  applyCardBanner('promo-badge-basic');
+  applyCardBanner('promo-badge-premium');
+  applyPromoPrice('plan-price-basic', 'basic');
+  applyPromoPrice('plan-price-premium', 'premium');
+  applyPromoPrice('pd-price-basic', 'basic');
+  applyPromoPrice('pd-price-premium', 'premium');
 
   // Registration modal — package-select step (compact inline variant)
-  var pscBasicBadgeSlot = document.getElementById('promo-badge-psc-basic');
-  if (pscBasicBadgeSlot) pscBasicBadgeSlot.innerHTML = promoBadgeHtml('basic', true);
-  var pscPremiumBadgeSlot = document.getElementById('promo-badge-psc-premium');
-  if (pscPremiumBadgeSlot) pscPremiumBadgeSlot.innerHTML = promoBadgeHtml('premium', true);
+  applyInlineBadge('promo-badge-psc-basic');
+  applyInlineBadge('promo-badge-psc-premium');
+  applyPromoPrice('psc-price-basic', 'basic');
+  applyPromoPrice('psc-price-premium', 'premium');
 
-  // Premium Showcase CTA strip banner line
+  // Premium Showcase CTA strip
   var showcaseNote = document.getElementById('promo-showcase-note');
   if (showcaseNote) {
     if (promo) {
-      var premiumPrice = promo.premium_price === 0 ? 'FREE' : formatPKR(promo.premium_price);
       showcaseNote.style.display = 'inline-block';
-      showcaseNote.innerHTML = '🎉 Limited time: <s>PKR 35,000</s> ' + premiumPrice + ' registration —';
+      showcaseNote.textContent = promoBadgeText();
     } else {
       showcaseNote.style.display = 'none';
     }
   }
+  applyPromoPrice('showcase-price', 'premium');
 
   // "Total if matched" (registration + success fee) — the discount itself
   // is already shown via the badges above; this just keeps the combined
