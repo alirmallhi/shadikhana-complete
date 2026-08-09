@@ -423,6 +423,9 @@ function applyPermissionVisibility() {
   <button class="nav-item" data-perm="success_fees" onclick="showPanel('successfee',this)">
     <span class="nav-item-icon">🏆</span>Success Fees
   </button>
+  <button class="nav-item" data-perm="promotions" onclick="showPanel('promotions',this)">
+    <span class="nav-item-icon">🎉</span>Promotions
+  </button>
   <button class="nav-item" data-perm="connections" onclick="showPanel('connections',this)">
     <span class="nav-item-icon">💞</span>Connections
   </button>
@@ -780,6 +783,39 @@ function applyPermissionVisibility() {
 </div>
 
 
+<!-- ══════════ PROMOTIONS ══════════ -->
+<div class="panel" id="panel-promotions">
+  <div class="card" style="margin-bottom:1.2rem">
+    <div class="card-header"><span class="card-title" id="promo-form-title">Create a Campaign</span></div>
+    <div style="padding:0 1.5rem 1.5rem">
+      <input type="hidden" id="promo-edit-id">
+      <div class="form-group"><label>Campaign Name</label><input type="text" id="promo-name" placeholder="e.g. Launch Month Free Registration"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Start Date</label><input type="date" id="promo-start"></div>
+        <div class="form-group"><label>End Date</label><input type="date" id="promo-end"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Basic Registration Price (PKR)</label><input type="number" id="promo-basic-price" min="0" placeholder="e.g. 0"></div>
+        <div class="form-group"><label>Premium Registration Price (PKR)</label><input type="number" id="promo-premium-price" min="0" placeholder="e.g. 25000"></div>
+      </div>
+      <p style="font-size:.78rem;color:var(--mid);margin-bottom:1rem">Success fees are never affected by a campaign — always PKR 65,000 (Basic) / PKR 125,000 (Premium), regardless of the registration price above.</p>
+      <button class="btn-sm btn-sm-primary" onclick="submitPromotionForm()" id="promo-submit-btn">Create Campaign</button>
+      <button class="btn-sm" onclick="cancelPromotionEdit()" id="promo-cancel-btn" style="display:none">Cancel Edit</button>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:1.2rem 1.5rem"><span class="card-title">All Campaigns</span></div>
+    <table>
+      <thead><tr><th>Name</th><th>Dates</th><th>Pricing</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="promotions-table-body">
+        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
 <!-- ══════════ REPORTS ══════════ -->
     <div class="panel" id="panel-reports">
   <div class="kpi-grid">
@@ -811,22 +847,6 @@ function applyPermissionVisibility() {
 <!-- ══════════ SETTINGS ══════════ -->
     <div class="panel" id="panel-settings">
       <div class="settings-grid">
-        <div class="settings-section">
-          <h3>💰 Pricing Configuration</h3>
-          <div class="form-group-sm">
-            <label>Basic Package Fee (PKR)</label>
-            <input type="number" id="set-basic-fee" value="10000">
-            <label>Premium Package Fee (PKR)</label>
-            <input type="number" id="set-premium-fee" value="35000">
-            <label>Success Fee Policy</label>
-            <select id="set-success-fee-policy">
-              <option value="equal">Equal to registration fee (current)</option>
-              <option value="fixed">Fixed flat fee</option>
-              <option value="custom">Custom per member</option>
-            </select>
-          </div>
-          <button class="btn-sm btn-sm-primary" id="btn-save-pricing" onclick="saveSettingsSection('pricing')">Save Pricing</button>
-        </div>
         <div class="settings-section">
           <h3>📱 Payment Gateway</h3>
           <div class="form-group-sm">
@@ -975,6 +995,7 @@ const pageTitles={
   payments:'Payments <span>All Transactions</span>',
   pending:'Pending Approvals <span>Requires Action</span>',
   successfee:'Success Fees <span>Revenue Tracker</span>',
+  promotions:'Promotions <span>Pricing Campaigns</span>',
   connections:'Connections <span>Mutual Matches</span>',
   reports:'Reports <span>Analytics</span>',
   settings:'Settings <span>Configuration</span>',
@@ -1461,6 +1482,7 @@ function showPanel(id, btn){
   document.querySelector('.sidebar').classList.remove('open');
   // Load data for matching panel when opened
   if(id === 'matching') { loadMatchingStats(); loadMatchingPanel(); }
+  if(id === 'promotions') { loadPromotionsPanel(); }
 }
 
 // Draw revenue chart
@@ -1531,7 +1553,11 @@ async function loadPendingPayments() {
     }
 
     var rows = members.map(function(m) {
-      var amount = pkgAmounts[m.package] || 0;
+      // The member's actual recorded registration payment (correctly
+      // reflects any campaign pricing that was active when they paid) —
+      // pkgAmounts is only a fallback for the rare case there's no payment
+      // record yet (e.g. they registered but never submitted payment details).
+      var amount = m.reg_amount != null ? Number(m.reg_amount) : (pkgAmounts[m.package] || 0);
       var submittedDate = new Date(m.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
       var pkgBadgeClass = m.package === 'premium' ? 'status-premium' : 'status-basic';
       var pkgIcon = m.package === 'premium' ? '⭐' : '🌱';
@@ -2736,6 +2762,139 @@ async function deleteStoryAction(id) {
   }
 }
 
+// ══════════════════════════════════════════
+//  PROMOTIONS / PRICING CAMPAIGNS
+// ══════════════════════════════════════════
+var loadedPromotions = [];
+
+var PROMO_STATUS_LABELS = {
+  active:    '<span class="status-badge status-active">✓ Active</span>',
+  scheduled: '<span class="status-badge status-pending">⏳ Scheduled</span>',
+  ended:     '<span class="status-badge status-basic">Ended</span>',
+  inactive:  '<span class="status-badge status-basic">Manually Off</span>'
+};
+
+async function loadPromotionsPanel() {
+  var tbody = document.getElementById('promotions-table-body');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
+
+  try {
+    var data = await adminAPI('/admin/promotions');
+    if (!data.success) throw new Error(data.message);
+
+    loadedPromotions = data.data;
+
+    if (!loadedPromotions.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--mid)">No campaigns yet. Create one above.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = loadedPromotions.map(function(p) {
+      var pricing = 'Basic: PKR ' + Number(p.basic_price).toLocaleString() + '<br>Premium: PKR ' + Number(p.premium_price).toLocaleString();
+      var isEffectivelyOn = p.status === 'active';
+      var overrideNote = p.manual_override !== null
+        ? '<br><a href="javascript:void(0)" onclick="clearPromotionOverride(' + p.id + ')" style="font-size:.72rem;color:var(--mid);text-decoration:underline">Reset to automatic (by dates)</a>'
+        : '';
+      return '<tr>' +
+        '<td><strong>' + escapeHtml(p.name) + '</strong></td>' +
+        '<td style="font-size:.82rem;color:var(--mid)">' + p.start_date + ' to ' + p.end_date + '</td>' +
+        '<td style="font-size:.82rem;color:var(--mid)">' + pricing + '</td>' +
+        '<td>' + (PROMO_STATUS_LABELS[p.status] || p.status) + overrideNote + '</td>' +
+        '<td>' +
+        '<button class="action-btn" onclick="togglePromotionOverride(' + p.id + ', ' + !isEffectivelyOn + ')">' + (isEffectivelyOn ? 'Deactivate' : 'Activate') + '</button> ' +
+        '<button class="action-btn" onclick="editPromotionAction(' + p.id + ')">Edit</button> ' +
+        '<button class="action-btn" style="color:var(--rose)" onclick="deletePromotionAction(' + p.id + ')">Delete</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+async function submitPromotionForm() {
+  var editId = document.getElementById('promo-edit-id').value;
+  var payload = {
+    name: document.getElementById('promo-name').value.trim(),
+    start_date: document.getElementById('promo-start').value,
+    end_date: document.getElementById('promo-end').value,
+    basic_price: document.getElementById('promo-basic-price').value,
+    premium_price: document.getElementById('promo-premium-price').value
+  };
+
+  if (!payload.name || !payload.start_date || !payload.end_date || payload.basic_price === '' || payload.premium_price === '') {
+    alert('Please fill in the campaign name, both dates, and both prices.');
+    return;
+  }
+
+  var result = editId
+    ? await adminAPI('/admin/promotions/' + editId, 'PUT', payload)
+    : await adminAPI('/admin/promotions', 'POST', payload);
+
+  if (result.success) {
+    cancelPromotionEdit();
+    loadPromotionsPanel();
+  } else {
+    alert(result.message || 'Could not save campaign.');
+  }
+}
+
+function editPromotionAction(id) {
+  var promo = loadedPromotions.find(function(p) { return p.id === id; });
+  if (!promo) return;
+  document.getElementById('promo-edit-id').value = promo.id;
+  document.getElementById('promo-name').value = promo.name;
+  document.getElementById('promo-start').value = promo.start_date;
+  document.getElementById('promo-end').value = promo.end_date;
+  document.getElementById('promo-basic-price').value = promo.basic_price;
+  document.getElementById('promo-premium-price').value = promo.premium_price;
+  document.getElementById('promo-form-title').textContent = 'Edit Campaign';
+  document.getElementById('promo-submit-btn').textContent = 'Save Changes';
+  document.getElementById('promo-cancel-btn').style.display = 'inline-block';
+  document.getElementById('promo-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function cancelPromotionEdit() {
+  document.getElementById('promo-edit-id').value = '';
+  document.getElementById('promo-name').value = '';
+  document.getElementById('promo-start').value = '';
+  document.getElementById('promo-end').value = '';
+  document.getElementById('promo-basic-price').value = '';
+  document.getElementById('promo-premium-price').value = '';
+  document.getElementById('promo-form-title').textContent = 'Create a Campaign';
+  document.getElementById('promo-submit-btn').textContent = 'Create Campaign';
+  document.getElementById('promo-cancel-btn').style.display = 'none';
+}
+
+async function togglePromotionOverride(id, turnOn) {
+  var result = await adminAPI('/admin/promotions/' + id + '/override', 'PUT', { override: turnOn });
+  if (result.success) {
+    loadPromotionsPanel();
+  } else {
+    alert(result.message || 'Could not update campaign status.');
+  }
+}
+
+async function clearPromotionOverride(id) {
+  var result = await adminAPI('/admin/promotions/' + id + '/override', 'PUT', { override: null });
+  if (result.success) {
+    loadPromotionsPanel();
+  } else {
+    alert(result.message || 'Could not update campaign status.');
+  }
+}
+
+async function deletePromotionAction(id) {
+  if (!confirm('Delete this campaign permanently? This does not affect payments already recorded during it.')) return;
+  var result = await adminAPI('/admin/promotions/' + id, 'DELETE');
+  if (result.success) {
+    loadPromotionsPanel();
+  } else {
+    alert(result.message || 'Could not delete campaign.');
+  }
+}
+
 async function loadFlaggedPanel() {
   var tbody = document.getElementById('flagged-table-body');
   var status = document.getElementById('flagged-status-filter').value;
@@ -2894,12 +3053,6 @@ async function loadSettingsPanel() {
     if (!data.success) { console.log('Settings load error:', data.message); return; }
     var d = data.data;
 
-    if (d.pricing) {
-      document.getElementById('set-basic-fee').value = d.pricing.basic_fee ?? 10000;
-      document.getElementById('set-premium-fee').value = d.pricing.premium_fee ?? 35000;
-      document.getElementById('set-success-fee-policy').value = d.pricing.success_fee_policy || 'equal';
-    }
-
     if (d.payment_gateway) {
       document.getElementById('set-meezan-iban').value = d.payment_gateway.meezan_iban || '';
       document.getElementById('set-jazzcash-id').value = d.payment_gateway.jazzcash_merchant_id || '';
@@ -2925,13 +3078,6 @@ async function loadSettingsPanel() {
 }
 
 function readSettingsSection(section) {
-  if (section === 'pricing') {
-    return {
-      basic_fee: Number(document.getElementById('set-basic-fee').value) || 0,
-      premium_fee: Number(document.getElementById('set-premium-fee').value) || 0,
-      success_fee_policy: document.getElementById('set-success-fee-policy').value
-    };
-  }
   if (section === 'payment_gateway') {
     return {
       meezan_iban: document.getElementById('set-meezan-iban').value.trim(),
@@ -2952,7 +3098,6 @@ function readSettingsSection(section) {
 }
 
 var settingsButtonIds = {
-  pricing: 'btn-save-pricing',
   payment_gateway: 'btn-save-gateway',
   platform_toggles: 'btn-save-toggles'
 };
@@ -3141,7 +3286,8 @@ var ADMIN_PERMISSION_LABELS = {
   smart_matching:   'Smart Matching',
   broadcast:        'Broadcast',
   success_fees:     'Success Fees',
-  connections:      'Connections'
+  connections:      'Connections',
+  promotions:       'Promotions'
 };
 
 async function loadManageAdminsPanel() {

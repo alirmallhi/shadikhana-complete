@@ -235,6 +235,19 @@ a.ledger-item:hover{background:rgba(255,255,255,0.04)}
 .plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(26,18,37,0.1)}
 .plan-card.featured{border-color:var(--ink);background:linear-gradient(160deg,var(--ink) 0%,#132B44 100%);color:#fff;transform:scale(1.04);box-shadow:0 24px 60px rgba(8,27,46,0.35)}
 .plan-badge{position:absolute;top:0;right:20px;background:var(--gold);color:var(--ink);font-size:.65rem;font-weight:600;font-family:var(--font-mono);padding:4px 12px;border-radius:0 0 8px 8px;letter-spacing:.06em;text-transform:uppercase}
+/* Promotional campaign badge — populated by api.js's applyActivePromotionToPage()
+   only while a campaign is active; empty (and hidden via :empty) otherwise, so
+   it disappears on its own once a campaign ends with no extra code to run. */
+.promo-badge-overlay{position:absolute;top:16px;left:-42px;width:170px;padding:5px 0;
+  background:linear-gradient(135deg,#E8B84B,#B8975A);color:#fff;font-weight:800;
+  font-size:.72rem;text-align:center;transform:rotate(-45deg);
+  box-shadow:0 2px 10px rgba(0,0,0,0.3);letter-spacing:.02em;z-index:5;line-height:1.5}
+.promo-badge-overlay:empty{display:none}
+.promo-badge-strike{display:block;font-size:.62rem;font-weight:600;text-decoration:line-through;opacity:.85}
+.promo-badge-inline{display:inline-flex;align-items:center;gap:4px;margin-left:.5rem;
+  background:linear-gradient(135deg,#E8B84B,#B8975A);color:#fff;font-weight:800;
+  font-size:.68rem;padding:3px 9px;border-radius:10px;vertical-align:middle;white-space:nowrap}
+.promo-badge-inline:empty{display:none;margin-left:0}
 .plan-icon{font-size:1.8rem;margin-bottom:.8rem}
 .plan-name{font-family:var(--font-mono);font-size:.74rem;font-weight:500;letter-spacing:.09em;text-transform:uppercase;margin-bottom:.5rem}
 .plan-card:not(.featured) .plan-name{color:var(--mid)}
@@ -699,13 +712,14 @@ function dismissLaunchBanner() {
   <div class="plans-grid">
     <!-- Basic -->
     <div class="plan-card fade-in">
+      <div class="promo-badge-overlay" id="promo-badge-basic"></div>
       <div class="plan-badge" style="background:var(--charcoal);color:var(--gold)">Full Platform Access · Self-Service</div>
       <div class="plan-icon">🌱</div>
       <div class="plan-name">Basic</div>
       <div class="plan-price">PKR 10,000</div>
       <div class="plan-sub">One-time registration fee · Non-refundable</div>
       <p style="font-size:.85rem;color:var(--mid);line-height:1.6;margin:.6rem 0 1rem">Built for members who are comfortable browsing, connecting, and managing their own search — with Smart Match suggestions and admin-reviewed recommendations from our team along the way. Ideal if you want full platform access at the lowest cost.</p>
-      <div class="plan-success-fee">💍 Success fee: PKR 65,000 (on confirmed match only)<br><strong>Total if matched: PKR 75,000</strong></div>
+      <div class="plan-success-fee" id="plan-total-basic">💍 Success fee: PKR 65,000 (on confirmed match only)<br><strong>Total if matched: PKR 75,000</strong></div>
       <ul class="plan-features">
         <li>Full profile creation</li>
         <li>Unlimited profile browsing</li>
@@ -722,13 +736,14 @@ function dismissLaunchBanner() {
     </div>
     <!-- Premium -->
     <div class="plan-card featured fade-in">
+      <div class="promo-badge-overlay" id="promo-badge-premium"></div>
       <div class="plan-badge">Full-Service · Dedicated Matchmaker</div>
       <div class="plan-icon">⭐</div>
       <div class="plan-name">Premium</div>
       <div class="plan-price">PKR 35,000</div>
       <div class="plan-sub">One-time registration fee · Non-refundable</div>
       <p style="font-size:.85rem;color:rgba(255,255,255,0.75);line-height:1.6;margin:.6rem 0 1rem">Built for members who want a dedicated matchmaker personally involved in their search — arranged family meet-ups, in-person consultation, and hands-on attention throughout. A natural fit for busy professionals, business families, and overseas Pakistanis who want us more directly involved.</p>
-      <div class="plan-success-fee">💍 Success fee: PKR 125,000 (on confirmed match only)<br><strong>Total if matched: PKR 160,000</strong></div>
+      <div class="plan-success-fee" id="plan-total-premium">💍 Success fee: PKR 125,000 (on confirmed match only)<br><strong>Total if matched: PKR 160,000</strong></div>
       <ul class="plan-features">
         <li>Everything in Basic, plus a dedicated human matchmaker</li>
         <li>Featured profile placement</li>
@@ -1015,6 +1030,7 @@ function dismissLaunchBanner() {
     <!-- CTA strip -->
     <div style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.3);border-radius:18px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
       <div>
+        <div id="promo-showcase-note" style="display:none;margin-bottom:.5rem;font-size:.78rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#E8B84B,#B8975A);padding:4px 11px;border-radius:10px"></div>
         <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Premium Registration</div>
         <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 35,000 one-time registration (non-refundable) &nbsp;·&nbsp; PKR 125,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
       </div>
@@ -1658,16 +1674,16 @@ function dismissLaunchBanner() {
         <input type="radio" name="pkg" value="basic" checked>
         <div class="psc-info">
           <div class="psc-name">🌱 Basic</div>
-          <div class="psc-price">PKR 10,000</div>
-          <div class="psc-desc">Core access · Success fee on match: PKR 65,000 · Total if matched: PKR 75,000</div>
+          <div class="psc-price">PKR 10,000<span class="promo-badge-inline" id="promo-badge-psc-basic"></span></div>
+          <div class="psc-desc">Core access · Success fee on match: PKR 65,000 · <span id="psc-total-basic">Total if matched: PKR 75,000</span></div>
         </div>
       </div>
       <div onclick="selectPlan(this,'premium')" class="plan-select-card" data-plan="premium">
         <input type="radio" name="pkg" value="premium">
         <div class="psc-info">
           <div class="psc-name">⭐ Premium</div>
-          <div class="psc-price">PKR 35,000</div>
-          <div class="psc-desc">All features + dedicated matchmaker + family meet-ups arranged · Success fee: PKR 125,000 · Total if matched: PKR 160,000</div>
+          <div class="psc-price">PKR 35,000<span class="promo-badge-inline" id="promo-badge-psc-premium"></span></div>
+          <div class="psc-desc">All features + dedicated matchmaker + family meet-ups arranged · Success fee: PKR 125,000 · <span id="psc-total-premium">Total if matched: PKR 160,000</span></div>
         </div>
         <span class="psc-badge" style="background:rgba(26,18,37,0.1);color:var(--burgundy)">Full-Service</span>
       </div>
@@ -1691,6 +1707,7 @@ function dismissLaunchBanner() {
         <div style="font-size:.78rem;color:var(--mid)">You selected</div>
         <div style="font-weight:700;font-size:1.1rem;color:var(--burgundy)" id="plan-summary-text">Basic – PKR 10,000</div>
         <div style="font-size:.74rem;color:var(--mid);margin-top:3px">One-time registration · No recurring charges</div>
+        <div id="reg-promo-note" style="display:none;margin-top:.6rem;font-size:.78rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#E8B84B,#B8975A);padding:5px 11px;border-radius:8px"></div>
       </div>
 
       <div class="form-section-label">Pay via Any of These Methods</div>
@@ -1879,6 +1896,7 @@ function dismissLaunchBanner() {
       <div style="font-size:.78rem;font-weight:700;color:var(--burgundy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem">Amount Due</div>
       <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--burgundy)" id="success-package-display">PKR 10,000</div>
       <div style="font-size:.78rem;color:var(--mid);margin-top:.2rem">One-time registration fee · No recurring charges</div>
+      <div id="success-promo-note" style="display:none;margin-top:.6rem;font-size:.76rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#E8B84B,#B8975A);padding:5px 11px;border-radius:8px"></div>
     </div>
 
     <div style="background:var(--ivory);border-radius:14px;padding:1.2rem;margin-bottom:1rem;text-align:left">
@@ -2239,7 +2257,23 @@ function goStep(n) {
   }
   if (n === 6) {
     var pst = document.getElementById('plan-summary-text');
-    if (pst) pst.textContent = planNames[selectedPlan] || 'Basic – PKR 10,000';
+    var promoNote = document.getElementById('reg-promo-note');
+    var promo = window.activePromotion;
+    if (pst && promo) {
+      var promoPrice = selectedPlan === 'premium' ? promo.premium_price : promo.basic_price;
+      var originalPrice = selectedPlan === 'premium' ? 35000 : 10000;
+      var successFee = selectedPlan === 'premium' ? '125,000' : '65,000';
+      var priceLabel = promoPrice === 0 ? 'FREE' : formatPKR(promoPrice);
+      pst.innerHTML = (selectedPlan === 'premium' ? 'Premium' : 'Basic') + ' – <s style="opacity:.6">' + formatPKR(originalPrice) + '</s> ' + priceLabel +
+        '  ·  Success fee on match: PKR ' + successFee;
+      if (promoNote) {
+        promoNote.style.display = 'inline-block';
+        promoNote.textContent = '🎉 ' + promo.name + ' — limited-time price, ends ' + new Date(promo.end_date + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+      }
+    } else if (pst) {
+      pst.textContent = planNames[selectedPlan] || 'Basic – PKR 10,000';
+      if (promoNote) promoNote.style.display = 'none';
+    }
   }
   currentStep = n;
   var modal = document.querySelector('#modal-register .modal');
@@ -2312,6 +2346,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setPrivacyPreset('standard');
   loadSuccessStories();
   updateNavForSession();
+  loadActivePromotion();
 
   // Supports deep-linking straight into registration pre-set to a specific
   // package — e.g. rishtasquare.com/?package=premium from an ad/WhatsApp

@@ -22,6 +22,107 @@ async function apiCall(endpoint, method, body) {
   }
 }
 
+// ── Active pricing campaign ──
+// Fetched once on page load (index.html only) and applied to every known
+// pricing display on the page — homepage cards, registration modal,
+// confirmation screen — from this one place, so a campaign takes effect
+// everywhere at once instead of each display needing its own fetch/logic.
+// window.activePromotion stays null if there's no campaign running right
+// now; every caller below already treats null as "show normal pricing."
+async function loadActivePromotion() {
+  try {
+    var result = await apiCall('/public/active-promotion', 'GET');
+    window.activePromotion = (result.success && result.data) ? result.data : null;
+  } catch (err) {
+    window.activePromotion = null;
+  }
+  applyActivePromotionToPage();
+}
+
+function formatPKR(n) {
+  return 'PKR ' + Number(n).toLocaleString();
+}
+
+// Builds the small overlay badge markup used consistently across every
+// pricing card in scope — same colors/icon/wording everywhere, just two
+// layout variants: a rotated corner ribbon for the large "Choose Your
+// Path" cards (roomy enough for two lines), and a compact inline pill for
+// the tight package-select row in the registration modal (a rotated
+// ribbon wouldn't fit that layout).
+function promoBadgeHtml(pkg, inline) {
+  var promo = window.activePromotion;
+  if (!promo) return '';
+  var price = pkg === 'premium' ? promo.premium_price : promo.basic_price;
+  var original = pkg === 'premium' ? 35000 : 10000;
+  var priceText = price === 0 ? 'FREE NOW' : formatPKR(price);
+  if (inline) {
+    return '<span class="promo-badge-inline">🎉 ' + priceText +
+      (price > 0 ? ' <s>' + formatPKR(original) + '</s>' : '') +
+      '</span>';
+  }
+  return '<div class="promo-badge-overlay">🎉 ' + priceText +
+    (price > 0 ? '<span class="promo-badge-strike">' + formatPKR(original) + '</span>' : '') +
+    '</div>';
+}
+
+function applyActivePromotionToPage() {
+  var promo = window.activePromotion;
+
+  // "Choose Your Path" pricing cards
+  var basicBadgeSlot = document.getElementById('promo-badge-basic');
+  if (basicBadgeSlot) basicBadgeSlot.innerHTML = promoBadgeHtml('basic');
+  var premiumBadgeSlot = document.getElementById('promo-badge-premium');
+  if (premiumBadgeSlot) premiumBadgeSlot.innerHTML = promoBadgeHtml('premium');
+
+  // Registration modal — package-select step (compact inline variant)
+  var pscBasicBadgeSlot = document.getElementById('promo-badge-psc-basic');
+  if (pscBasicBadgeSlot) pscBasicBadgeSlot.innerHTML = promoBadgeHtml('basic', true);
+  var pscPremiumBadgeSlot = document.getElementById('promo-badge-psc-premium');
+  if (pscPremiumBadgeSlot) pscPremiumBadgeSlot.innerHTML = promoBadgeHtml('premium', true);
+
+  // Premium Showcase CTA strip banner line
+  var showcaseNote = document.getElementById('promo-showcase-note');
+  if (showcaseNote) {
+    if (promo) {
+      var premiumPrice = promo.premium_price === 0 ? 'FREE' : formatPKR(promo.premium_price);
+      showcaseNote.style.display = 'inline-block';
+      showcaseNote.innerHTML = '🎉 Limited time: <s>PKR 35,000</s> ' + premiumPrice + ' registration —';
+    } else {
+      showcaseNote.style.display = 'none';
+    }
+  }
+
+  // "Total if matched" (registration + success fee) — the discount itself
+  // is already shown via the badges above; this just keeps the combined
+  // total from being stale/wrong next to them while a campaign is active.
+  // Success fee is never discounted, so only the registration half of the
+  // total changes.
+  updateTotalIfMatched('plan-total-basic', 'basic', 65000);
+  updateTotalIfMatched('plan-total-premium', 'premium', 125000);
+  updateTotalIfMatched('psc-total-basic', 'basic', 65000);
+  updateTotalIfMatched('psc-total-premium', 'premium', 125000);
+  updateTotalIfMatched('pd-total-basic', 'basic', 65000);
+  updateTotalIfMatched('pd-total-premium', 'premium', 125000);
+}
+
+function effectiveRegPrice(pkg) {
+  var promo = window.activePromotion;
+  if (!promo) return pkg === 'premium' ? 35000 : 10000;
+  return pkg === 'premium' ? promo.premium_price : promo.basic_price;
+}
+
+// Swaps just the "Total if matched: PKR X" figure inside whatever markup
+// already surrounds it, rather than rebuilding the whole element — works
+// unchanged if the source text is added to or reworded later, and leaves
+// the element completely untouched (falls back to the correct static
+// figure already in the HTML) when no campaign is active.
+function updateTotalIfMatched(elId, pkg, successFee) {
+  var el = document.getElementById(elId);
+  if (!el || !window.activePromotion) return;
+  var total = effectiveRegPrice(pkg) + successFee;
+  el.innerHTML = el.innerHTML.replace(/Total if matched: PKR [\d,]+/, 'Total if matched: ' + formatPKR(total));
+}
+
 function gv(id) {
   var el = document.getElementById(id);
   return el ? (el.value || '').trim() : '';
@@ -224,8 +325,11 @@ async function submitRegistration() {
       autoNotifyWhatsApp(payload);
 
       // Record a pending payment entry — actual confirmation happens manually
-      // once admin verifies the payment screenshot sent via WhatsApp/email
-      await apiCall('/payment/bank-transfer', 'POST', {
+      // once admin verifies the payment screenshot sent via WhatsApp/email.
+      // Amount is computed server-side (campaign-aware — see
+      // utils/promotions.js), not guessed here, so the success screen below
+      // shows whatever this member was actually charged.
+      var bankTransferResult = await apiCall('/payment/bank-transfer', 'POST', {
         payment_type: 'registration',
         sender_name: payload.full_name
       });
@@ -240,8 +344,20 @@ async function submitRegistration() {
       }
       var pkgDisplay = document.getElementById('success-package-display');
       if (pkgDisplay) {
-        var pkgAmounts = { basic: '10,000', premium: '35,000' };
-        pkgDisplay.textContent = 'PKR ' + (pkgAmounts[payload.package] || '10,000');
+        var pkgAmounts = { basic: 10000, premium: 35000 };
+        var chargedAmount = (bankTransferResult.success && bankTransferResult.data && bankTransferResult.data.amount != null)
+          ? bankTransferResult.data.amount
+          : (pkgAmounts[payload.package] || 10000);
+        pkgDisplay.textContent = 'PKR ' + Number(chargedAmount).toLocaleString();
+      }
+      var successPromoNote = document.getElementById('success-promo-note');
+      if (successPromoNote) {
+        if (window.activePromotion) {
+          successPromoNote.style.display = 'inline-block';
+          successPromoNote.textContent = '🎉 ' + window.activePromotion.name + ' — promotional pricing applied';
+        } else {
+          successPromoNote.style.display = 'none';
+        }
       }
 
       // The visible button is the reliable path (a real click, not an
