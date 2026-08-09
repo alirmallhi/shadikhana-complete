@@ -99,6 +99,8 @@ function applyActivePromotionToPage() {
   applyPromoPrice('plan-price-premium', 'premium');
   applyPromoPrice('pd-price-basic', 'basic');
   applyPromoPrice('pd-price-premium', 'premium');
+  updateRegisterButtonPrice('reg-btn-basic', 'basic');
+  updateRegisterButtonPrice('reg-btn-premium', 'premium');
 
   // Registration modal — package-select step (compact inline variant)
   applyInlineBadge('promo-badge-psc-basic');
@@ -147,6 +149,17 @@ function updateTotalIfMatched(elId, pkg, successFee) {
   if (!el || !window.activePromotion) return;
   var total = effectiveRegPrice(pkg) + successFee;
   el.innerHTML = el.innerHTML.replace(/Total if matched: PKR [\d,]+/, 'Total if matched: ' + formatPKR(total));
+}
+
+// Swaps just the trailing "PKR X" price in a "Register – Basic · PKR 10,000"
+// style button/link, leaving the rest of the label (and the static fallback
+// price when no campaign is active) untouched.
+function updateRegisterButtonPrice(elId, pkg) {
+  var el = document.getElementById(elId);
+  if (!el || !window.activePromotion) return;
+  var price = effectiveRegPrice(pkg);
+  var priceLabel = price === 0 ? 'FREE' : formatPKR(price);
+  el.textContent = el.textContent.replace(/PKR [\d,]+$/, priceLabel);
 }
 
 function gv(id) {
