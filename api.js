@@ -43,12 +43,11 @@ function formatPKR(n) {
   return 'PKR ' + Number(n).toLocaleString();
 }
 
-// Builds the small overlay badge markup used consistently across every
-// pricing card in scope — same colors/icon/wording everywhere, just two
-// layout variants: a rotated corner ribbon for the large "Choose Your
-// Path" cards (roomy enough for two lines), and a compact inline pill for
-// the tight package-select row in the registration modal (a rotated
-// ribbon wouldn't fit that layout).
+// Builds the overlay badge markup used consistently across every pricing
+// display in scope — same red, same wording, two layout variants: a
+// full-width horizontal banner across the top of the large pricing cards,
+// and a compact inline pill for the tight package-select row in the
+// registration modal (a full-width banner wouldn't fit that layout).
 function promoBadgeHtml(pkg, inline) {
   var promo = window.activePromotion;
   if (!promo) return '';
@@ -68,11 +67,21 @@ function promoBadgeHtml(pkg, inline) {
 function applyActivePromotionToPage() {
   var promo = window.activePromotion;
 
-  // "Choose Your Path" pricing cards
+  // "Choose Your Path" pricing cards (index.html) / comparison cards
+  // (package-details.html) — same id used on both since only one is ever
+  // on the page at once. The parent card gets extra top padding whenever
+  // the banner is showing, so the now-much-bigger banner never overlaps
+  // the card's own icon/badge underneath it.
   var basicBadgeSlot = document.getElementById('promo-badge-basic');
-  if (basicBadgeSlot) basicBadgeSlot.innerHTML = promoBadgeHtml('basic');
+  if (basicBadgeSlot) {
+    basicBadgeSlot.innerHTML = promoBadgeHtml('basic');
+    if (basicBadgeSlot.parentElement) basicBadgeSlot.parentElement.classList.toggle('has-promo', !!promo);
+  }
   var premiumBadgeSlot = document.getElementById('promo-badge-premium');
-  if (premiumBadgeSlot) premiumBadgeSlot.innerHTML = promoBadgeHtml('premium');
+  if (premiumBadgeSlot) {
+    premiumBadgeSlot.innerHTML = promoBadgeHtml('premium');
+    if (premiumBadgeSlot.parentElement) premiumBadgeSlot.parentElement.classList.toggle('has-promo', !!promo);
+  }
 
   // Registration modal — package-select step (compact inline variant)
   var pscBasicBadgeSlot = document.getElementById('promo-badge-psc-basic');

@@ -235,19 +235,25 @@ a.ledger-item:hover{background:rgba(255,255,255,0.04)}
 .plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(26,18,37,0.1)}
 .plan-card.featured{border-color:var(--ink);background:linear-gradient(160deg,var(--ink) 0%,#132B44 100%);color:#fff;transform:scale(1.04);box-shadow:0 24px 60px rgba(8,27,46,0.35)}
 .plan-badge{position:absolute;top:0;right:20px;background:var(--gold);color:var(--ink);font-size:.65rem;font-weight:600;font-family:var(--font-mono);padding:4px 12px;border-radius:0 0 8px 8px;letter-spacing:.06em;text-transform:uppercase}
-/* Promotional campaign badge — populated by api.js's applyActivePromotionToPage()
+/* Promotional campaign banner — populated by api.js's applyActivePromotionToPage()
    only while a campaign is active; empty (and hidden via :empty) otherwise, so
-   it disappears on its own once a campaign ends with no extra code to run. */
-.promo-badge-overlay{position:absolute;top:16px;left:-42px;width:170px;padding:5px 0;
-  background:linear-gradient(135deg,#E8B84B,#B8975A);color:#fff;font-weight:800;
-  font-size:.72rem;text-align:center;transform:rotate(-45deg);
-  box-shadow:0 2px 10px rgba(0,0,0,0.3);letter-spacing:.02em;z-index:5;line-height:1.5}
+   it disappears on its own once a campaign ends with no extra code to run.
+   Deliberately a different red, not the site's gold/rose (#B8975A already
+   covers half the card's own accents) — a live campaign should read as
+   something new/urgent, not blend into the existing palette. */
+.promo-badge-overlay{position:absolute;top:0;left:0;right:0;
+  background:linear-gradient(135deg,#E63950,#A81338);color:#fff;font-weight:800;
+  font-size:.86rem;text-align:center;padding:.7rem 1rem;
+  box-shadow:0 2px 10px rgba(0,0,0,0.28);letter-spacing:.01em;z-index:5;line-height:1.3}
 .promo-badge-overlay:empty{display:none}
-.promo-badge-strike{display:block;font-size:.62rem;font-weight:600;text-decoration:line-through;opacity:.85}
+.promo-badge-strike{font-size:.74rem;font-weight:600;text-decoration:line-through;opacity:.8;margin-left:.35rem}
 .promo-badge-inline{display:inline-flex;align-items:center;gap:4px;margin-left:.5rem;
-  background:linear-gradient(135deg,#E8B84B,#B8975A);color:#fff;font-weight:800;
-  font-size:.68rem;padding:3px 9px;border-radius:10px;vertical-align:middle;white-space:nowrap}
+  background:linear-gradient(135deg,#E63950,#A81338);color:#fff;font-weight:800;
+  font-size:.7rem;padding:4px 10px;border-radius:10px;vertical-align:middle;white-space:nowrap}
 .promo-badge-inline:empty{display:none;margin-left:0}
+/* Extra headroom so the banner never overlaps the card's own icon/badge —
+   toggled by api.js alongside the badge itself, never left on its own. */
+.plan-card.has-promo{padding-top:4.6rem}
 .plan-icon{font-size:1.8rem;margin-bottom:.8rem}
 .plan-name{font-family:var(--font-mono);font-size:.74rem;font-weight:500;letter-spacing:.09em;text-transform:uppercase;margin-bottom:.5rem}
 .plan-card:not(.featured) .plan-name{color:var(--mid)}
@@ -1030,7 +1036,7 @@ function dismissLaunchBanner() {
     <!-- CTA strip -->
     <div style="background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.3);border-radius:18px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap">
       <div>
-        <div id="promo-showcase-note" style="display:none;margin-bottom:.5rem;font-size:.78rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#E8B84B,#B8975A);padding:4px 11px;border-radius:10px"></div>
+        <div id="promo-showcase-note" style="display:none;margin-bottom:.6rem;font-size:.84rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#E63950,#A81338);padding:6px 13px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.28)"></div>
         <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:#5BC4F5;margin-bottom:.4rem">Premium Registration</div>
         <div style="font-size:.88rem;color:rgba(255,255,255,0.65);line-height:1.6">PKR 35,000 one-time registration (non-refundable) &nbsp;·&nbsp; PKR 125,000 success fee on confirmed match only &nbsp;·&nbsp; No monthly charges</div>
       </div>
