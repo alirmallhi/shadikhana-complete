@@ -847,9 +847,9 @@ a{text-decoration:none;color:inherit}
           </div>
           <p style="font-size:.76rem;color:var(--mid);margin:-.4rem 0 1.2rem">Custom Privacy Settings below always reflects your current toggles — switching presets applies that preset's defaults to them.</p>
 
-          <div class="privacy-toggle-row" id="p-contact-preference-row" style="display:none">
+          <div class="privacy-toggle-row" id="p-contact-preference-row">
             <div class="ptog-left">
-              <div class="ptog-label">Contact via Rishta Square Only <span class="ptog-badge premium">Premium</span></div>
+              <div class="ptog-label">Contact via Rishta Square Only</div>
               <div class="ptog-sub">When ON, other members can't message you directly — they're asked to reach Rishta Square instead, and we relay contact for you</div>
             </div>
             <label class="privacy-mini-toggle">
@@ -1002,6 +1002,9 @@ a{text-decoration:none;color:inherit}
         </select>
         <input class="filter-input" id="filter-age-min" type="number" placeholder="Min Age" style="max-width:100px">
         <input class="filter-input" id="filter-age-max" type="number" placeholder="Max Age" style="max-width:100px">
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.84rem;color:var(--charcoal);cursor:pointer;padding:.6rem .3rem">
+          <input type="checkbox" id="filter-overseas" onchange="loadBrowseProfiles(1)"> 🌍 Overseas Pakistanis only
+        </label>
         <select class="filter-select" id="filter-sort" onchange="loadBrowseProfiles(1)">
           <option value="match">Sort: Highest Match %</option>
           <option value="newest">Sort: Newest Registered</option>
@@ -1009,7 +1012,6 @@ a{text-decoration:none;color:inherit}
           <option value="name">Sort: Name A-Z</option>
         </select>
         <button class="btn-filter" onclick="loadBrowseProfiles(1)">Search</button>
-        <button class="btn-filter" style="background:var(--gold);color:var(--charcoal)" onclick="saveCurrentSearch()">💾 Save This Search</button>
       </div>
 
       <div id="browse-results">
@@ -1081,16 +1083,6 @@ a{text-decoration:none;color:inherit}
         <div id="premium-price-line" style="font-size:1.4rem;font-weight:700;color:var(--charcoal);margin-bottom:.4rem">—</div>
         <div style="font-size:.86rem;color:var(--mid);margin-bottom:1.5rem;max-width:420px;margin-left:auto;margin-right:auto">Plus a PKR 125,000 success fee — only if and when your rishta is confirmed. No match, no success fee.</div>
         <div id="premium-cta-area"></div>
-      </div>
-    </div>
-
-    <!-- ══════════ SAVED SEARCHES ══════════ -->
-    <div class="panel" id="panel-alerts">
-      <h1 class="page-title">Saved Searches</h1>
-      <p class="page-sub">Get notified when a new profile matches criteria you care about — save a search from the Browse page</p>
-
-      <div id="alerts-results">
-        <div class="loading-spinner">Loading...</div>
       </div>
     </div>
 
@@ -1307,7 +1299,6 @@ function showPanel(id, navEl) {
   if (id === 'saved')       loadSavedProfiles();
   if (id === 'viewers')     loadProfileViewers();
   if (id === 'premium')     loadPremiumFeaturesPanel();
-  if (id === 'alerts')      loadSavedSearches();
   if (id === 'interests')   loadInterests();
   if (id === 'messages')    loadMessagesPanel();
   if (id === 'notifications') loadNotifications();
@@ -1538,12 +1529,6 @@ function updateProfileCityFieldForCountry() {
 function loadProfileForm() {
   if (!currentMember) return;
   document.getElementById('profile-upgrade-hint').style.display = currentMember.package === 'premium' ? 'none' : 'block';
-  // "Contact via Rishta Square Only" is Premium-exclusive — never shown to
-  // Basic members, matching the backend's own enforcement in updateProfile
-  // (a Basic member's request to set this is silently rejected server-side
-  // too, this is just the UI half of that same rule).
-  var isPremium = currentMember.package === 'premium';
-  document.getElementById('p-contact-preference-row').style.display = isPremium ? 'flex' : 'none';
   document.getElementById('p-contact-preference').checked = currentMember.contact_preference === 'via_us';
 
   // Under the Strict preset, these fields never unlock even after a mutual
@@ -1979,9 +1964,6 @@ async function saveProfile() {
   });
   updates.privacy_preset = currentMember.privacy_preset || 'standard';
 
-  // Premium-only — the row itself is hidden for Basic members (so this
-  // checkbox is always unchecked/'direct' for them anyway), but the
-  // backend re-validates the package regardless of what gets sent here.
   var contactPrefEl = document.getElementById('p-contact-preference');
   if (contactPrefEl) updates.contact_preference = contactPrefEl.checked ? 'via_us' : 'direct';
 
@@ -2227,6 +2209,7 @@ async function loadBrowseProfiles(page) {
     caste: document.getElementById('filter-caste').value,
     age_min: document.getElementById('filter-age-min').value,
     age_max: document.getElementById('filter-age-max').value,
+    overseas_only: document.getElementById('filter-overseas').checked ? 'true' : '',
     sortBy: document.getElementById('filter-sort').value
   };
 
@@ -2832,91 +2815,6 @@ async function requestPremiumUpgrade() {
     alert(result.message || 'Could not submit your upgrade request. Please try again.');
     if (btn) { btn.disabled = false; btn.textContent = 'Request Upgrade to Premium'; }
   }
-}
-
-// ══════════════════════════════════════════
-//  SAVED SEARCHES / ALERTS
-// ══════════════════════════════════════════
-async function saveCurrentSearch() {
-  var name_filter = document.getElementById('filter-name').value;
-  var city = document.getElementById('filter-city').value;
-  var religion = document.getElementById('filter-religion').value;
-  var age_min = document.getElementById('filter-age-min').value;
-  var age_max = document.getElementById('filter-age-max').value;
-
-  if (!name_filter && !city && !religion && !age_min && !age_max) {
-    alert('Set at least one search filter above before saving.');
-    return;
-  }
-
-  var label = prompt('Give this saved search a short label (optional):', '');
-  if (label === null) return; // cancelled
-
-  var result = await apiCall('/member/saved-searches', 'POST', {
-    label: label, name_filter: name_filter, city: city, religion: religion,
-    age_min: age_min, age_max: age_max
-  });
-
-  if (result.success) {
-    alert('✅ Search saved — you\'ll get notified when a new profile matches it.');
-  } else {
-    alert('⚠️ ' + (result.message || 'Could not save this search.'));
-  }
-}
-
-async function loadSavedSearches() {
-  var container = document.getElementById('alerts-results');
-  container.innerHTML = '<div class="loading-spinner">Loading...</div>';
-
-  var result = await apiCall('/member/saved-searches', 'GET');
-  if (!result.success) {
-    container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>Could not load your saved searches.</div>';
-    return;
-  }
-
-  var searches = result.data.searches;
-  if (!searches.length) {
-    container.innerHTML = '<div class="empty-state"><div class="ei">🔔</div>No saved searches yet. Set filters on the Browse Profiles page and tap "Save This Search" to get notified about new matches automatically.</div>';
-    return;
-  }
-
-  var html = '';
-  searches.forEach(function(s) {
-    var parts = [];
-    if (s.name_filter) parts.push('Name: "' + s.name_filter + '"');
-    if (s.city)        parts.push('City: ' + s.city);
-    if (s.religion)    parts.push('Religion: ' + s.religion);
-    if (s.age_min || s.age_max) parts.push('Age: ' + (s.age_min || 'any') + '–' + (s.age_max || 'any'));
-
-    html +=
-      '<div class="card" style="margin-bottom:1rem">' +
-      '<div style="padding:1.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">' +
-      '<div>' +
-      '<div style="font-weight:700;font-size:.95rem">' + escapeHtml(s.label || 'Saved Search') + '</div>' +
-      '<div style="font-size:.82rem;color:var(--mid);margin-top:.3rem">' + escapeHtml(parts.join(' · ') || 'All profiles') + '</div>' +
-      (s.last_notified_at ? '<div style="font-size:.74rem;color:var(--mid);margin-top:.3rem">Last alert: ' + new Date(s.last_notified_at).toLocaleDateString() + '</div>' : '') +
-      '</div>' +
-      '<div style="display:flex;gap:.6rem;flex-shrink:0">' +
-      '<button class="btn-filter" onclick=\'runSavedSearch(' + JSON.stringify(s).replace(/'/g, "&#39;") + ')\'>Run Search</button>' +
-      '<button class="btn-filter" style="background:transparent;border:1.5px solid var(--light);color:var(--mid)" onclick="deleteSavedSearchById(' + s.id + ')">Delete</button>' +
-      '</div></div></div>';
-  });
-  container.innerHTML = html;
-}
-
-async function deleteSavedSearchById(id) {
-  if (!confirm('Delete this saved search?')) return;
-  await apiCall('/member/saved-searches/' + id, 'DELETE');
-  loadSavedSearches();
-}
-
-function runSavedSearch(s) {
-  document.getElementById('filter-name').value = s.name_filter || '';
-  document.getElementById('filter-city').value = s.city || '';
-  document.getElementById('filter-religion').value = s.religion || '';
-  document.getElementById('filter-age-min').value = s.age_min || '';
-  document.getElementById('filter-age-max').value = s.age_max || '';
-  showPanel('browse'); // its own auto-load will now pick up the filters set above
 }
 
 // ══════════════════════════════════════════
