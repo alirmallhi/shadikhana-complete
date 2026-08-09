@@ -713,7 +713,7 @@ function dismissLaunchBanner() {
       <div class="trust-promise-icon">🔒</div>
       <div>
         <h3>Your Privacy, Protected</h3>
-        <p>Profiles are never public — only visible to genuine, registered members. Sensitive details like contact info, family background, and income stay hidden until mutual interest is confirmed. We never share member data with anyone outside Rishta Square.</p>
+        <p>Profiles are never public — only visible to genuine, registered members. Your contact number is never shared with other members automatically; you exchange it yourself, or through Rishta Square, whenever you're ready. Sensitive details like family background and income stay hidden until mutual interest is confirmed, and members who choose Strict privacy can keep their photo and other sensitive data hidden even after a match. We never share member data with anyone outside Rishta Square.</p>
       </div>
     </div>
   </div>
@@ -959,11 +959,11 @@ function dismissLaunchBanner() {
         </div>
         <div class="feature-item fade-in">
           <div class="feature-icon fi4">📍</div>
-          <div><h4>In-Person &amp; Family Meet-Up Service</h4><p>Premium members get in-person consultations at our Lahore office, plus fully arranged family meet-ups with a senior Rishta Square matchmaker present.</p></div>
+          <div><h4>In-Person &amp; Family Meet-Up Service</h4><p>Premium members get in-person consultations at our Lahore office, plus fully arranged family meet-ups coordinated by the Rishta Square matchmaker.</p></div>
         </div>
         <div class="feature-item fade-in">
           <div class="feature-icon fi5">🔍</div>
-          <div><h4>Advanced Search & Filters</h4><p>Filter by province, city, sect, caste, profession, and education.</p></div>
+          <div><h4>Advanced Search & Filters</h4><p>Filter by city, sect, caste, profession, education, age.</p></div>
         </div>
         <div class="feature-item fade-in">
           <div class="feature-icon fi6">💰</div>
@@ -1726,25 +1726,32 @@ function dismissLaunchBanner() {
         <div id="reg-promo-note" style="display:none;margin-top:.6rem;font-size:.78rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#E8B84B,#B8975A);padding:5px 11px;border-radius:8px"></div>
       </div>
 
-      <div class="form-section-label">Pay via Any of These Methods</div>
-      <div style="background:var(--ivory);border-radius:14px;padding:1.2rem;margin-bottom:1rem;text-align:left">
-        <div style="font-size:.86rem;line-height:1.9">
-          🏦 <strong>Bank Transfer:</strong> Meezan Bank<br>
-          &nbsp;&nbsp;&nbsp;Title: ALI REHAN MALLHI<br>
-          &nbsp;&nbsp;&nbsp;Acc No: 02510104365908<br>
-          &nbsp;&nbsp;&nbsp;IBAN: <span id="reg-pm-bank">PK77MEZN0002510104365908</span><br>
-          &nbsp;&nbsp;&nbsp;Branch: DHA Phase VI Br-Lahore<br>
-          📱 <strong>JazzCash:</strong> <span id="reg-pm-jazzcash">0321-4133233</span><br>
-          🟢 <strong>NayaPay:</strong> alimallhi@nayapay<br>
-          &nbsp;&nbsp;&nbsp;Acc No: 03214133233<br>
-          &nbsp;&nbsp;&nbsp;IBAN: <span id="reg-pm-nayapay">PK58NAYA1234503214133233</span>
+      <div id="reg-payment-instructions">
+        <div class="form-section-label">Pay via Any of These Methods</div>
+        <div style="background:var(--ivory);border-radius:14px;padding:1.2rem;margin-bottom:1rem;text-align:left">
+          <div style="font-size:.86rem;line-height:1.9">
+            🏦 <strong>Bank Transfer:</strong> Meezan Bank<br>
+            &nbsp;&nbsp;&nbsp;Title: ALI REHAN MALLHI<br>
+            &nbsp;&nbsp;&nbsp;Acc No: 02510104365908<br>
+            &nbsp;&nbsp;&nbsp;IBAN: <span id="reg-pm-bank">PK77MEZN0002510104365908</span><br>
+            &nbsp;&nbsp;&nbsp;Branch: DHA Phase VI Br-Lahore<br>
+            📱 <strong>JazzCash:</strong> <span id="reg-pm-jazzcash">0321-4133233</span><br>
+            🟢 <strong>NayaPay:</strong> alimallhi@nayapay<br>
+            &nbsp;&nbsp;&nbsp;Acc No: 03214133233<br>
+            &nbsp;&nbsp;&nbsp;IBAN: <span id="reg-pm-nayapay">PK58NAYA1234503214133233</span>
+          </div>
+          <div style="text-align:center;margin-top:1rem">
+            <img src="/assets/images/meezan-bank-qr.jpeg" alt="Meezan Bank QR code for bank transfer" style="width:130px;height:130px;border-radius:8px;display:inline-block;background:#fff">
+            <div style="font-size:.72rem;color:var(--mid);margin-top:.4rem">Scan to pay via Bank Transfer</div>
+          </div>
         </div>
-        <div style="text-align:center;margin-top:1rem">
-          <img src="/assets/images/meezan-bank-qr.jpeg" alt="Meezan Bank QR code for bank transfer" style="width:130px;height:130px;border-radius:8px;display:inline-block;background:#fff">
-          <div style="font-size:.72rem;color:var(--mid);margin-top:.4rem">Scan to pay via Bank Transfer</div>
-        </div>
+        <div style="font-size:.78rem;color:var(--mid);margin:.9rem 0 1.2rem;text-align:center">After paying, send your payment screenshot in the WhatsApp chat below so our team can confirm it.</div>
       </div>
-      <div style="font-size:.78rem;color:var(--mid);margin:.9rem 0 1.2rem;text-align:center">After paying, send your payment screenshot in the WhatsApp chat below so our team can confirm it.</div>
+
+      <div id="reg-free-note" style="display:none;background:rgba(37,211,102,0.08);border:1.5px solid rgba(37,211,102,0.25);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1.2rem;font-size:.88rem;color:#1A7A3C;line-height:1.6;text-align:center">
+        🎉 <strong>Your registration is free — no payment needed.</strong><br>
+        Just confirm your details below and hit Submit to complete your registration.
+      </div>
 
       <div style="background:#FDF6EC;border:1.5px solid #E8D5A8;border-radius:10px;padding:1rem 1.1rem;margin-bottom:1.1rem">
         <label style="display:flex;align-items:flex-start;gap:.7rem;cursor:pointer;font-size:.83rem;color:var(--charcoal);line-height:1.5">
@@ -1756,7 +1763,7 @@ function dismissLaunchBanner() {
         Your profile will be reviewed by our team before going live.
       </div>
 
-      <div style="background:rgba(37,211,102,0.08);border:1.5px solid rgba(37,211,102,0.25);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.84rem;color:#1A7A3C;line-height:1.7">
+      <div id="reg-whatsapp-howitworks" style="background:rgba(37,211,102,0.08);border:1.5px solid rgba(37,211,102,0.25);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:.84rem;color:#1A7A3C;line-height:1.7">
         <strong>📱 How this works:</strong><br>
         Clicking the button below will open <strong>WhatsApp</strong> with your full profile pre-filled as a message. Simply <strong>press Send</strong> — then share your payment screenshot in the same chat. Our team confirms within 24 hours.
       </div>
@@ -2275,11 +2282,13 @@ function goStep(n) {
     var pst = document.getElementById('plan-summary-text');
     var promoNote = document.getElementById('reg-promo-note');
     var promo = window.activePromotion;
+    var isFreeReg = false;
     if (pst && promo) {
       var promoPrice = selectedPlan === 'premium' ? promo.premium_price : promo.basic_price;
       var originalPrice = selectedPlan === 'premium' ? 35000 : 10000;
       var successFee = selectedPlan === 'premium' ? '125,000' : '65,000';
       var priceLabel = promoPrice === 0 ? 'FREE' : formatPKR(promoPrice);
+      isFreeReg = promoPrice === 0;
       pst.innerHTML = (selectedPlan === 'premium' ? 'Premium' : 'Basic') + ' – <s style="opacity:.6">' + formatPKR(originalPrice) + '</s> ' + priceLabel +
         '  ·  Success fee on match: PKR ' + successFee;
       if (promoNote) {
@@ -2290,6 +2299,17 @@ function goStep(n) {
       pst.textContent = planNames[selectedPlan] || 'Basic – PKR 10,000';
       if (promoNote) promoNote.style.display = 'none';
     }
+
+    // Only when the effective registration price is exactly PKR 0 (never
+    // just "a campaign is active" — Premium stays paid during the same
+    // campaign) do we skip the payment-methods/screenshot instructions in
+    // favor of a plain "nothing to pay" message leading straight to Submit.
+    var payInstructions = document.getElementById('reg-payment-instructions');
+    var freeNote         = document.getElementById('reg-free-note');
+    var howItWorks        = document.getElementById('reg-whatsapp-howitworks');
+    if (payInstructions) payInstructions.style.display = isFreeReg ? 'none' : '';
+    if (freeNote)         freeNote.style.display        = isFreeReg ? 'block' : 'none';
+    if (howItWorks)        howItWorks.style.display       = isFreeReg ? 'none' : '';
   }
   currentStep = n;
   var modal = document.querySelector('#modal-register .modal');

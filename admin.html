@@ -707,8 +707,11 @@ function applyPermissionVisibility() {
 
 <!-- ══════════ CONNECTIONS (read-only: who matched whom, and when) ══════════ -->
     <div class="panel" id="panel-connections">
-  <div id="record-match-btn-wrap" style="display:none;justify-content:flex-end;margin-bottom:1.2rem">
-    <button class="btn-sm btn-sm-primary" onclick="openRecordMatchModal()">+ Record a Match</button>
+  <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap">
+    <input id="connections-search" class="filter-input" placeholder="🔍 Search by member name..." autocomplete="off" style="flex:1;min-width:220px" oninput="filterConnectionsPanel()">
+    <div id="record-match-btn-wrap" style="display:none">
+      <button class="btn-sm btn-sm-primary" onclick="openRecordMatchModal()">+ Record a Match</button>
+    </div>
   </div>
   <div class="card" style="padding:0;overflow:hidden">
     <div class="card-header" style="padding:1.2rem 1.5rem">
@@ -914,8 +917,10 @@ function applyPermissionVisibility() {
           <option value="0">⏳ Not Reviewed</option>
           <option value="1">✅ Reviewed</option>
         </select>
-        <select id="mk-filter-piety" class="filter-select" onchange="loadMatchingPanel()">
-          <option value="">All Practice Levels</option>
+        <select id="mk-filter-recommended" class="filter-select" onchange="loadMatchingPanel()">
+          <option value="">All Statuses</option>
+          <option value="0">⏳ Pending Recommendation</option>
+          <option value="1">✅ Recommendation Sent</option>
         </select>
         <input id="mk-filter-minscore" class="filter-input" type="number" value="40" min="1" max="100"
                placeholder="Min score" style="width:110px" onchange="loadMatchingPanel()">
@@ -1050,12 +1055,12 @@ async function fetchMatchingResults() {
   const tier      = document.getElementById('mk-filter-tier')?.value || '';
   const reviewed  = document.getElementById('mk-filter-reviewed')?.value;
   const minScore  = document.getElementById('mk-filter-minscore')?.value || 40;
-  const piety     = document.getElementById('mk-filter-piety')?.value || '';
+  const recommended = document.getElementById('mk-filter-recommended')?.value;
 
   let url = `/admin/matching/all?page=${mkCurrentPage}&limit=15&min_score=${minScore}`;
   if (tier)     url += `&tier=${tier}`;
   if (reviewed !== '' && reviewed !== undefined) url += `&reviewed=${reviewed}`;
-  if (piety)    url += `&piety_level=${encodeURIComponent(piety)}`;
+  if (recommended !== '' && recommended !== undefined) url += `&recommended=${recommended}`;
 
   document.getElementById('matching-results').innerHTML =
     '<div style="text-align:center;padding:2rem;color:var(--mid)">⏳ Loading matches...</div>';
@@ -2402,47 +2407,75 @@ async function loadSuccessFeePanel() {
 // ══════════════════════════════════════════
 //  CONNECTIONS PANEL — read-only, metadata only (no messages, no contact info)
 // ══════════════════════════════════════════
+var loadedConnections = [];
+
 async function loadConnectionsPanel() {
   var tbody = document.getElementById('connections-table-body');
   tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">Loading...</td></tr>';
 
+  var searchEl = document.getElementById('connections-search');
+  if (searchEl) searchEl.value = '';
+
   var isMaster = isAdminMaster();
   var canManageSuccessFees = isMaster || !!getAdminPermissions().success_fees;
-  document.getElementById('record-match-btn-wrap').style.display = canManageSuccessFees ? 'flex' : 'none';
+  document.getElementById('record-match-btn-wrap').style.display = canManageSuccessFees ? 'block' : 'none';
 
   try {
     var data = await adminAPI('/admin/connections');
     if (!data.success) throw new Error(data.message);
 
-    if (!data.data.length) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">No mutual matches yet.</td></tr>';
-      return;
-    }
-
-    tbody.innerHTML = data.data.map(function(c) {
-      var dateStr = new Date(c.matched_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-      var nameAEsc = c.member_a_name.replace(/'/g, "\\'");
-      var nameBEsc = c.member_b_name.replace(/'/g, "\\'");
-      var successAction = c.status === 'confirmed'
-        ? '<span class="status-badge status-active">✓ Confirmed</span>'
-        : (canManageSuccessFees
-            ? '<button class="action-btn action-approve" onclick="markMatchSuccessful(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">Mark as Successful Match</button>'
-            : '');
-      return '<tr>' +
-        '<td>' + c.member_a_name + '</td>' +
-        '<td>' + c.member_b_name + '</td>' +
-        '<td>' + dateStr + '</td>' +
-        '<td>' +
-          (isMaster
-            ? '<button class="action-btn action-view" onclick="viewConnectionMessages(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">View Messages</button> '
-            : '') +
-          successAction +
-        '</td>' +
-      '</tr>';
-    }).join('');
+    loadedConnections = data.data;
+    renderConnectionsTable(loadedConnections, isMaster, canManageSuccessFees);
   } catch (err) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
   }
+}
+
+// Client-side filter over the already-loaded connections list — the same
+// approach the rest of this panel already uses (no pagination on this
+// endpoint), so no new backend query params are needed.
+function filterConnectionsPanel() {
+  var query = (document.getElementById('connections-search').value || '').trim().toLowerCase();
+  var isMaster = isAdminMaster();
+  var canManageSuccessFees = isMaster || !!getAdminPermissions().success_fees;
+
+  var filtered = !query ? loadedConnections : loadedConnections.filter(function(c) {
+    return c.member_a_name.toLowerCase().indexOf(query) !== -1 ||
+           c.member_b_name.toLowerCase().indexOf(query) !== -1;
+  });
+  renderConnectionsTable(filtered, isMaster, canManageSuccessFees);
+}
+
+function renderConnectionsTable(list, isMaster, canManageSuccessFees) {
+  var tbody = document.getElementById('connections-table-body');
+
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--mid)">' +
+      (loadedConnections.length ? 'No connections match that search.' : 'No mutual matches yet.') + '</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = list.map(function(c) {
+    var dateStr = new Date(c.matched_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    var nameAEsc = c.member_a_name.replace(/'/g, "\\'");
+    var nameBEsc = c.member_b_name.replace(/'/g, "\\'");
+    var successAction = c.status === 'confirmed'
+      ? '<span class="status-badge status-active">✓ Confirmed</span>'
+      : (canManageSuccessFees
+          ? '<button class="action-btn action-approve" onclick="markMatchSuccessful(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">Mark as Successful Match</button>'
+          : '');
+    return '<tr>' +
+      '<td>' + c.member_a_name + '</td>' +
+      '<td>' + c.member_b_name + '</td>' +
+      '<td>' + dateStr + '</td>' +
+      '<td>' +
+        (isMaster
+          ? '<button class="action-btn action-view" onclick="viewConnectionMessages(' + c.match_id + ', \'' + nameAEsc + '\', \'' + nameBEsc + '\')">View Messages</button> '
+          : '') +
+        successAction +
+      '</td>' +
+    '</tr>';
+  }).join('');
 }
 
 // ── Master-only: view the full message thread between a matched pair ──
@@ -3813,7 +3846,6 @@ rsPopulateSelect(document.getElementById('am-ethnicity'), RS_ETHNICITY);
 rsPopulateSelect(document.getElementById('am-caste'), RS_CASTE);
 rsPopulateSelect(document.getElementById('am-education'), RS_EDUCATION);
 rsPopulateSelect(document.getElementById('am-profession'), RS_PROFESSION);
-rsPopulateSelect(document.getElementById('mk-filter-piety'), RS_PIETY);
 </script>
 
 </body>
