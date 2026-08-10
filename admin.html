@@ -382,6 +382,24 @@ function applyPermissionVisibility() {
   } else if (!isMaster && manageAdminsItem) {
     manageAdminsItem.remove();
   }
+
+  // One-time pre-launch tool — master-only, same injection pattern as
+  // Manage Admins above. Safe to leave in place after launch: it's inert
+  // (a scan-then-confirm flow, nothing runs without an explicit action).
+  var cleanupItem = document.getElementById('nav-cleanup');
+  if (isMaster && !cleanupItem) {
+    var logoutBtn2 = document.querySelector('.nav-item[onclick="adminLogout()"]');
+    if (logoutBtn2) {
+      var item2 = document.createElement('button');
+      item2.className = 'nav-item';
+      item2.id = 'nav-cleanup';
+      item2.setAttribute('onclick', "showPanel('cleanup',this)");
+      item2.innerHTML = '<span class="nav-item-icon">🧹</span>Data Cleanup';
+      logoutBtn2.parentNode.insertBefore(item2, logoutBtn2);
+    }
+  } else if (!isMaster && cleanupItem) {
+    cleanupItem.remove();
+  }
 }
 </script>
 
@@ -988,6 +1006,43 @@ function applyPermissionVisibility() {
       </div>
     </div>
 
+    <!-- ══════════ TEST DATA CLEANUP (one-time pre-launch tool, master-only) ══════════ -->
+    <div class="panel" id="panel-cleanup">
+      <div class="card" style="padding:1.2rem 1.5rem;margin-bottom:1.2rem;background:#FDF0F0;border:1.5px solid #E8B8B8">
+        <div style="font-weight:700;color:var(--rose);margin-bottom:.4rem">⚠️ Permanent, irreversible hard-delete tool</div>
+        <div style="font-size:.85rem;color:var(--charcoal);line-height:1.6">
+          This permanently removes selected member accounts and every related record (payments, matches, messages, interests, notifications, etc.) across the database. There is <strong>no undo</strong> — review the list carefully before confirming.
+          This tool never touches the Promotions system.
+        </div>
+        <div id="cleanup-promotions-note" style="font-size:.78rem;color:var(--mid);margin-top:.6rem"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.6rem">
+        <button class="btn-sm btn-sm-primary" onclick="loadCleanupPanel()">🔍 Scan All Members</button>
+        <span id="cleanup-summary" style="font-size:.85rem;color:var(--mid)"></span>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:1.2rem">
+        <table>
+          <thead><tr>
+            <th style="width:36px"><input type="checkbox" id="cleanup-select-all" onchange="cleanupToggleAll(this.checked)"></th>
+            <th>Name</th><th>Email</th><th>Package</th><th>Status</th><th>Registered</th><th>Flags</th>
+          </tr></thead>
+          <tbody id="cleanup-table-body">
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Click "Scan All Members" to load.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="padding:1.2rem 1.5rem">
+        <div id="cleanup-impact" style="font-size:.85rem;color:var(--mid);margin-bottom:1rem">Select accounts above to see what would be deleted.</div>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+          <input id="cleanup-confirm-text" class="filter-input" placeholder="Type DELETE to confirm" autocomplete="off" style="max-width:220px" oninput="checkCleanupConfirmState()">
+          <button class="btn-sm" id="cleanup-execute-btn" style="background:var(--rose);color:#fff;font-weight:700" disabled onclick="executeCleanupAction()">🗑️ Permanently Delete Selected</button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </main>
 
@@ -1004,7 +1059,8 @@ const pageTitles={
   connections:'Connections <span>Mutual Matches</span>',
   reports:'Reports <span>Analytics</span>',
   settings:'Settings <span>Configuration</span>',
-  manageAdmins:'Manage Admins <span>Staff Accounts &amp; Permissions</span>'
+  manageAdmins:'Manage Admins <span>Staff Accounts &amp; Permissions</span>',
+  cleanup:'Test Data Cleanup <span>One-Time Pre-Launch Tool</span>'
 };
 
 
@@ -3212,6 +3268,7 @@ showPanel = function(id, btn) {
   if (id === 'reports')     loadReportsPanel();
   if (id === 'settings')    loadSettingsPanel();
   if (id === 'manageAdmins') loadManageAdminsPanel();
+  if (id === 'cleanup')     loadCleanupPanel();
 };
 
 // ══════════════════════════════════════════
@@ -3366,6 +3423,155 @@ async function loadManageAdminsPanel() {
     }).join('');
   } catch (err) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+// ══════════════════════════════════════════
+//  TEST DATA CLEANUP — one-time pre-launch tool (master-only)
+//  Scan -> review/select -> impact preview -> typed confirm -> execute.
+//  Nothing is ever deleted without an explicit "DELETE" typed by a human
+//  and a browser confirm() on top of that.
+// ══════════════════════════════════════════
+var cleanupMembers = [];
+var cleanupSelectedIds = new Set();
+var cleanupImpactTimer = null;
+
+async function loadCleanupPanel() {
+  var tbody = document.getElementById('cleanup-table-body');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">Scanning...</td></tr>';
+  document.getElementById('cleanup-summary').textContent = '';
+  document.getElementById('cleanup-confirm-text').value = '';
+  cleanupSelectedIds = new Set();
+
+  try {
+    var data = await adminAPI('/admin/cleanup/test-accounts/preview');
+    if (!data.success) throw new Error(data.message);
+
+    cleanupMembers = data.data.members;
+    // Pre-select only exact matches against the known test-name list —
+    // everything else (including "suspicious" heuristic flags) is shown
+    // but left unchecked for a human to decide.
+    cleanupMembers.forEach(function(m) { if (m.is_known_test_name) cleanupSelectedIds.add(m.id); });
+
+    renderCleanupTable();
+    renderCleanupPromotions(data.data.promotions);
+    updateCleanupImpact();
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--rose)">Error: ' + err.message + '</td></tr>';
+  }
+}
+
+function renderCleanupPromotions(promotions) {
+  var el = document.getElementById('cleanup-promotions-note');
+  if (!el) return;
+  if (!promotions.length) {
+    el.textContent = 'No campaigns currently exist in Promotions.';
+    return;
+  }
+  el.innerHTML = 'Live campaigns in Promotions right now (never touched by this tool): ' +
+    promotions.map(function(p) {
+      return '<strong>' + escapeHtml(p.name) + '</strong> (' + p.start_date + ' – ' + p.end_date + ')';
+    }).join(', ');
+}
+
+function renderCleanupTable() {
+  var tbody = document.getElementById('cleanup-table-body');
+  if (!cleanupMembers.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--mid)">No members found.</td></tr>';
+    document.getElementById('cleanup-select-all').checked = false;
+    return;
+  }
+  document.getElementById('cleanup-select-all').checked = cleanupSelectedIds.size === cleanupMembers.length;
+
+  tbody.innerHTML = cleanupMembers.map(function(m) {
+    var checked = cleanupSelectedIds.has(m.id) ? 'checked' : '';
+    var dateStr = new Date(m.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+    var flags = [];
+    if (m.is_known_test_name) {
+      flags.push('<span style="background:#FDECEC;color:var(--rose);border-radius:6px;padding:2px 7px;font-size:.68rem;font-weight:700;display:inline-block;margin:1px">Known test name</span>');
+    }
+    (m.heuristic_flags || []).forEach(function(f) {
+      flags.push('<span style="background:#FFF6E0;color:#8A6010;border-radius:6px;padding:2px 7px;font-size:.68rem;font-weight:700;display:inline-block;margin:1px">' + escapeHtml(f.replace(/-/g, ' ')) + '</span>');
+    });
+    return '<tr>' +
+      '<td><input type="checkbox" ' + checked + ' onchange="cleanupToggleOne(' + m.id + ', this.checked)"></td>' +
+      '<td>' + escapeHtml(m.full_name) + '</td>' +
+      '<td>' + escapeHtml(m.email) + '</td>' +
+      '<td>' + escapeHtml((m.package || '').toUpperCase()) + '</td>' +
+      '<td>' + escapeHtml(m.account_status || '') + '</td>' +
+      '<td>' + dateStr + '</td>' +
+      '<td>' + (flags.join('') || '—') + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function cleanupToggleAll(checked) {
+  cleanupSelectedIds = new Set(checked ? cleanupMembers.map(function(m) { return m.id; }) : []);
+  renderCleanupTable();
+  updateCleanupImpact();
+}
+
+function cleanupToggleOne(id, checked) {
+  if (checked) cleanupSelectedIds.add(id); else cleanupSelectedIds.delete(id);
+  document.getElementById('cleanup-select-all').checked = cleanupSelectedIds.size === cleanupMembers.length;
+  updateCleanupImpact();
+}
+
+function updateCleanupImpact() {
+  document.getElementById('cleanup-summary').textContent = cleanupSelectedIds.size + ' of ' + cleanupMembers.length + ' selected';
+  checkCleanupConfirmState();
+
+  var impactEl = document.getElementById('cleanup-impact');
+  clearTimeout(cleanupImpactTimer);
+  if (!cleanupSelectedIds.size) {
+    impactEl.textContent = 'Select accounts above to see what would be deleted.';
+    return;
+  }
+  impactEl.textContent = 'Calculating impact...';
+  cleanupImpactTimer = setTimeout(async function() {
+    try {
+      var data = await adminAPI('/admin/cleanup/test-accounts/impact', 'POST', { member_ids: Array.from(cleanupSelectedIds) });
+      if (!data.success) throw new Error(data.message);
+      var rel = data.data.related;
+      var lines = Object.keys(rel)
+        .filter(function(k) { return rel[k] > 0; })
+        .map(function(k) { return rel[k] + ' ' + k.replace(/_/g, ' '); });
+      impactEl.innerHTML = '<strong>' + data.data.member_count + ' member account(s)</strong> selected — will also permanently delete <strong>' +
+        data.data.total_related + ' related record(s)</strong>' + (lines.length ? ' (' + escapeHtml(lines.join(', ')) + ')' : '') + '.';
+    } catch (err) {
+      impactEl.textContent = 'Error calculating impact: ' + err.message;
+    }
+  }, 400);
+}
+
+function checkCleanupConfirmState() {
+  var text = document.getElementById('cleanup-confirm-text').value.trim();
+  document.getElementById('cleanup-execute-btn').disabled = !(text === 'DELETE' && cleanupSelectedIds.size > 0);
+}
+
+async function executeCleanupAction() {
+  if (!cleanupSelectedIds.size) return;
+  if (document.getElementById('cleanup-confirm-text').value.trim() !== 'DELETE') return;
+  if (!confirm('This will PERMANENTLY delete ' + cleanupSelectedIds.size + ' member account(s) and all related records (payments, matches, messages, etc). This cannot be undone.\n\nContinue?')) return;
+
+  var btn = document.getElementById('cleanup-execute-btn');
+  var originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Deleting...';
+
+  try {
+    var data = await adminAPI('/admin/cleanup/test-accounts/execute', 'POST', {
+      member_ids: Array.from(cleanupSelectedIds),
+      confirm: 'DELETE'
+    });
+    if (!data.success) throw new Error(data.message);
+    alert(data.message);
+    document.getElementById('cleanup-confirm-text').value = '';
+    loadCleanupPanel();
+  } catch (err) {
+    alert('Cleanup failed: ' + err.message);
+    btn.textContent = originalText;
+    checkCleanupConfirmState();
   }
 }
 
