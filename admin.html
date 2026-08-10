@@ -1041,6 +1041,19 @@ function applyPermissionVisibility() {
           <button class="btn-sm" id="cleanup-execute-btn" style="background:var(--rose);color:#fff;font-weight:700" disabled onclick="executeCleanupAction()">🗑️ Permanently Delete Selected</button>
         </div>
       </div>
+
+      <div class="card" style="padding:1.2rem 1.5rem;margin-top:1.5rem">
+        <div style="font-weight:700;margin-bottom:.4rem">🧹 Orphaned Records</div>
+        <div style="font-size:.85rem;color:var(--mid);line-height:1.6;margin-bottom:1rem">
+          Rows in payments, matches, messages, and other member-linked tables whose member account no longer exists — e.g. left behind by member deletions from before this account had a proper cleanup path. These are never counted correctly anywhere (the Payments list hides them, but revenue/activity totals don't), so they're always safe to remove.
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem">
+          <button class="btn-sm btn-sm-primary" onclick="scanOrphans()">🔍 Scan for Orphaned Records</button>
+          <span id="orphan-summary" style="font-size:.85rem;color:var(--mid)"></span>
+        </div>
+        <div id="orphan-detail" style="font-size:.82rem;color:var(--mid);margin-top:.8rem"></div>
+        <button class="btn-sm" id="orphan-purge-btn" style="background:var(--rose);color:#fff;font-weight:700;margin-top:1rem;display:none" onclick="purgeOrphansAction()">🗑️ Permanently Purge Orphaned Records</button>
+      </div>
     </div>
 
   </div><!-- /content -->
@@ -3442,6 +3455,10 @@ async function loadCleanupPanel() {
   document.getElementById('cleanup-summary').textContent = '';
   document.getElementById('cleanup-confirm-text').value = '';
   cleanupSelectedIds = new Set();
+  lastOrphanScan = null;
+  document.getElementById('orphan-summary').textContent = '';
+  document.getElementById('orphan-detail').textContent = '';
+  document.getElementById('orphan-purge-btn').style.display = 'none';
 
   try {
     var data = await adminAPI('/admin/cleanup/test-accounts/preview');
@@ -3572,6 +3589,64 @@ async function executeCleanupAction() {
     alert('Cleanup failed: ' + err.message);
     btn.textContent = originalText;
     checkCleanupConfirmState();
+  }
+}
+
+// ── Orphaned records (payments/matches/messages/etc. whose member no
+// longer exists — not tied to the selectable test-account list above,
+// since "does this row's member id still exist" isn't a judgment call). ──
+var lastOrphanScan = null;
+
+async function scanOrphans() {
+  var summary = document.getElementById('orphan-summary');
+  var detail = document.getElementById('orphan-detail');
+  var purgeBtn = document.getElementById('orphan-purge-btn');
+  summary.textContent = 'Scanning...';
+  detail.textContent = '';
+  purgeBtn.style.display = 'none';
+  lastOrphanScan = null;
+
+  try {
+    var data = await adminAPI('/admin/cleanup/orphans/preview');
+    if (!data.success) throw new Error(data.message);
+    lastOrphanScan = data.data;
+
+    if (!data.data.total_related) {
+      summary.textContent = 'No orphaned records found.';
+      detail.textContent = '';
+      return;
+    }
+
+    summary.textContent = data.data.total_related + ' orphaned record(s) found.';
+    var lines = Object.keys(data.data.related)
+      .filter(function(k) { return data.data.related[k] > 0; })
+      .map(function(k) { return data.data.related[k] + ' ' + k.replace(/_/g, ' '); });
+    detail.textContent = lines.join(', ');
+    purgeBtn.style.display = 'inline-block';
+  } catch (err) {
+    summary.textContent = 'Error: ' + err.message;
+  }
+}
+
+async function purgeOrphansAction() {
+  if (!lastOrphanScan || !lastOrphanScan.total_related) return;
+  if (!confirm('This will PERMANENTLY delete ' + lastOrphanScan.total_related + ' orphaned record(s) (rows whose member account no longer exists). This cannot be undone.\n\nContinue?')) return;
+
+  var btn = document.getElementById('orphan-purge-btn');
+  var originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Purging...';
+
+  try {
+    var data = await adminAPI('/admin/cleanup/orphans/purge', 'POST', {});
+    if (!data.success) throw new Error(data.message);
+    alert(data.message);
+    scanOrphans();
+  } catch (err) {
+    alert('Purge failed: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
   }
 }
 
