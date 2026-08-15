@@ -2225,6 +2225,19 @@ async function loadBrowseProfiles(page) {
     return;
   }
 
+  // Platform-wide pre-launch state — not enough active profiles yet
+  // (checked server-side on every load, independent of any filter applied
+  // here). Filters are hidden too since there's nothing meaningful to
+  // search yet; both come back automatically once the pool grows.
+  var filterBar = document.querySelector('#panel-browse .filter-bar');
+  if (result.data.below_launch_threshold) {
+    if (filterBar) filterBar.style.display = 'none';
+    container.innerHTML = '<div class="empty-state"><div class="ei">🚀</div>New members are joining Rishta Square every day and their profiles are being reviewed by our team. You will see all the profiles listed once our Independence Day launch campaign ends, so stay tuned.</div>';
+    if (loadMoreArea) loadMoreArea.innerHTML = '';
+    return;
+  }
+  if (filterBar) filterBar.style.display = '';
+
   var rawProfiles = result.data.profiles || [];
   if (!rawProfiles.length) {
     if (page === 1) {
