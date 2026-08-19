@@ -51,34 +51,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .mobile-menu.open{display:flex}
 .mobile-menu a{text-decoration:none;color:var(--charcoal);font-size:1rem;font-weight:500;padding:.5rem 0;border-bottom:1px solid var(--light)}
 
-/* LAUNCH BANNER — dismissible, hidden for logged-in members (see the inline
-   script right after it in <body>). Sits above the fixed nav, which is
-   pushed down (and .hero's top padding increased to match) only while
-   body has .has-launch-banner — removed the moment the banner is hidden,
-   so nothing leaves a gap once it's gone. */
-.launch-banner{position:fixed;top:0;left:0;right:0;z-index:101;background:linear-gradient(90deg,var(--burgundy),#3a2a4a);
-  color:#fff;text-align:center;padding:.85rem 2.8rem .85rem 1rem;font-size:.92rem;font-weight:600;line-height:1.5;
-  box-shadow:0 2px 10px rgba(0,0,0,0.2)}
-/* #E8B84B, not var(--gold) (#B8975A) — the muted brand gold only just
-   cleared WCAG AA against this gradient (4.73:1 at its lighter end,
-   #3a2a4a) and read as low-contrast/washed-out. This brighter gold (also
-   used for gold accents elsewhere in the app) hits AAA against both ends
-   of the gradient (9.84:1 / 7.07:1) while staying in the same gold family
-   as the rest of the banner. */
-.launch-banner strong{font-size:1.14em;font-weight:800;color:#E8B84B}
-.launch-banner a{color:#E8B84B;text-decoration:underline;font-weight:800;display:inline-block;
-  animation:launchPulse 1.8s ease-in-out infinite}
-@keyframes launchPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.82}}
-.launch-banner-close{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;
-  color:rgba(255,255,255,0.85);font-size:1.15rem;cursor:pointer;padding:.2rem .5rem;line-height:1}
-.launch-banner-close:hover{color:#fff}
-body.has-launch-banner nav{top:50px}
-body.has-launch-banner .mobile-menu{top:122px}
-body.has-launch-banner .hero{padding-top:126px}
-@media(max-width:600px){
-  .launch-banner{font-size:.8rem;padding:.7rem 2.4rem .7rem .7rem}
-}
-
 /* URDU MODE */
 body.urdu-mode .hero-text{direction:rtl}
 body.urdu-mode .nav-logo,.urdu-content{font-family:'Noto Nastaliq Urdu',serif}
@@ -574,37 +546,10 @@ footer{background:var(--charcoal);color:rgba(255,255,255,0.75);padding:60px 5% 3
     .fade-in { opacity: 1 !important; transform: none !important; }
   </style>
 </head>
-<body class="has-launch-banner">
+<body>
 <noscript>
 
 </noscript>
-
-<!-- LAUNCH BANNER -->
-<div class="launch-banner" id="launch-banner">
-  🎉 <strong>Launching August 14</strong> — <a href="#" onclick="openModal('register');return false">join now and be among our first members</a>
-  <button class="launch-banner-close" onclick="dismissLaunchBanner()" aria-label="Dismiss">✕</button>
-</div>
-<script>
-// Runs synchronously, before nav/hero paint, so a logged-in or
-// already-dismissed visitor never sees the banner flash in and out —
-// same reasoning as isLoggedIn() in api.js, just inlined here since api.js
-// itself hasn't loaded yet at this point in the page.
-(function () {
-  var dismissed = localStorage.getItem('sk_launch_banner_dismissed') === '1';
-  var loggedIn  = !!localStorage.getItem('sk_token');
-  if (dismissed || loggedIn) {
-    document.body.classList.remove('has-launch-banner');
-    var b = document.getElementById('launch-banner');
-    if (b) b.style.display = 'none';
-  }
-})();
-function dismissLaunchBanner() {
-  localStorage.setItem('sk_launch_banner_dismissed', '1');
-  document.body.classList.remove('has-launch-banner');
-  var b = document.getElementById('launch-banner');
-  if (b) b.style.display = 'none';
-}
-</script>
 
 <!-- NAV -->
 <nav>
